@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/repos/asf/!svn/ver/887812/incubator/thrift/trunk/lib/csharp/src/Server
+END
+TThreadedServer.cs
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/repos/asf/!svn/ver/756311/incubator/thrift/trunk/lib/csharp/src/Server/TThreadedServer.cs
+END
+TThreadPoolServer.cs
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/repos/asf/!svn/ver/887812/incubator/thrift/trunk/lib/csharp/src/Server/TThreadPoolServer.cs
+END
+TSimpleServer.cs
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/repos/asf/!svn/ver/887812/incubator/thrift/trunk/lib/csharp/src/Server/TSimpleServer.cs
+END
+TServer.cs
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/repos/asf/!svn/ver/887812/incubator/thrift/trunk/lib/csharp/src/Server/TServer.cs
+END

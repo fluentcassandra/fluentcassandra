@@ -1,0 +1,89 @@
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/repos/asf/!svn/ver/887812/incubator/thrift/trunk/lib/csharp/src/Protocol
+END
+TProtocolFactory.cs
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/repos/asf/!svn/ver/887812/incubator/thrift/trunk/lib/csharp/src/Protocol/TProtocolFactory.cs
+END
+TBase.cs
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/repos/asf/!svn/ver/756311/incubator/thrift/trunk/lib/csharp/src/Protocol/TBase.cs
+END
+TList.cs
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/repos/asf/!svn/ver/887812/incubator/thrift/trunk/lib/csharp/src/Protocol/TList.cs
+END
+TSet.cs
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/repos/asf/!svn/ver/887812/incubator/thrift/trunk/lib/csharp/src/Protocol/TSet.cs
+END
+TMap.cs
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/repos/asf/!svn/ver/887812/incubator/thrift/trunk/lib/csharp/src/Protocol/TMap.cs
+END
+TProtocolUtil.cs
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/repos/asf/!svn/ver/887812/incubator/thrift/trunk/lib/csharp/src/Protocol/TProtocolUtil.cs
+END
+TProtocolException.cs
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/repos/asf/!svn/ver/887812/incubator/thrift/trunk/lib/csharp/src/Protocol/TProtocolException.cs
+END
+TProtocol.cs
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/repos/asf/!svn/ver/887812/incubator/thrift/trunk/lib/csharp/src/Protocol/TProtocol.cs
+END
+TType.cs
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/repos/asf/!svn/ver/887812/incubator/thrift/trunk/lib/csharp/src/Protocol/TType.cs
+END
+TField.cs
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/repos/asf/!svn/ver/887812/incubator/thrift/trunk/lib/csharp/src/Protocol/TField.cs
+END
+TMessage.cs
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/repos/asf/!svn/ver/887812/incubator/thrift/trunk/lib/csharp/src/Protocol/TMessage.cs
+END
+TStruct.cs
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/repos/asf/!svn/ver/887812/incubator/thrift/trunk/lib/csharp/src/Protocol/TStruct.cs
+END
+TBinaryProtocol.cs
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/repos/asf/!svn/ver/887812/incubator/thrift/trunk/lib/csharp/src/Protocol/TBinaryProtocol.cs
+END
+TMessageType.cs
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/repos/asf/!svn/ver/761389/incubator/thrift/trunk/lib/csharp/src/Protocol/TMessageType.cs
+END
