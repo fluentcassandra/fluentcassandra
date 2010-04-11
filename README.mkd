@@ -1,0 +1,23 @@
+FluentCassandra
+===============
+
+FluentCassandra is a .NET library for accessing Cassandra, which wraps the THrift client library and provides a more fluent POCO interface for accessing and querying the objects in Cassandra.
+
+Installing Cassandra
+--------------------
+
+Taken from the "Cassandra Jump Start For Windows" by Nick Berardi: http://www.coderjournal.com/2010/03/cassandra-jump-start-for-the-windows-developer/
+
+ 1. Download Cassandra from http://cassandra.apache.org/
+ 2. Extract Cassandra to a directory of your choice (I used c:\development\cassandra)
+ 3. Set the following environment variables
+    JAVA_HOME (To the directory where you install the JRE, this should not be the bin directory)
+    CASSANDRA_HOME (To the directory you extracted the files to in step 1)
+ 4. Modify your Cassandra config file as you like and don’t forget to update the directory locations from a UNIX like path to something on your windows directory (in my example the config file is located at c:\development\cassandra\conf\storage-conf.xml)
+ 5. Open cmd and run the cassandra.bat file (in my example the batch file is located at c:\development\cassandra\bin\cassandra.bat) 
+    cd c:\development\cassandra\bin\
+    .\cassandra.bat
+ 6. You can verify that Cassandra is running, by trying to connect to the server.  To do this open a new cmd and run the cassandra-cli.bat file from the bin directory.
+    cd c:\development\cassandra\bin\
+    .\cassandra-cli.bat
+    connect localhost/9160
