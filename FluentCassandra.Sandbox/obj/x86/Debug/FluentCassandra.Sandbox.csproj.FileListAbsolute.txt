@@ -1,7 +1,0 @@
-C:\development\projects\FluentCassandra\FluentCassandra.Sandbox\bin\Debug\FluentCassandra.Sandbox.exe
-C:\development\projects\FluentCassandra\FluentCassandra.Sandbox\bin\Debug\FluentCassandra.Sandbox.pdb
-C:\development\projects\FluentCassandra\FluentCassandra.Sandbox\bin\Debug\FluentCassandra.dll
-C:\development\projects\FluentCassandra\FluentCassandra.Sandbox\bin\Debug\FluentCassandra.pdb
-C:\development\projects\FluentCassandra\FluentCassandra.Sandbox\obj\x86\Debug\ResolveAssemblyReference.cache
-C:\development\projects\FluentCassandra\FluentCassandra.Sandbox\obj\x86\Debug\FluentCassandra.Sandbox.exe
-C:\development\projects\FluentCassandra\FluentCassandra.Sandbox\obj\x86\Debug\FluentCassandra.Sandbox.pdb
