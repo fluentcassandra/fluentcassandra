@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Net.NetworkInformation;
 
-namespace ManagedFusion
+namespace FluentCassandra
 {
 	public static class GuidGenerator
 	{
@@ -54,7 +54,7 @@ namespace ManagedFusion
 			return GenerateTimeBasedGuid(DateTime.UtcNow, RandomNode);
 		}
 
-		public static Guid GenerateTimeBased(DateTime dateTime)
+		public static Guid GenerateTimeBasedGuid(DateTime dateTime)
 		{
 			return GenerateTimeBasedGuid(dateTime, RandomNode);
 		}

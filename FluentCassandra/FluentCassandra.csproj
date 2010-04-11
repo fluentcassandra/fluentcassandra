@@ -8,14 +8,15 @@
     <ProjectGuid>{EAA32600-3C2A-4B34-B9B2-5764F280FCE3}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Phenomenon</RootNamespace>
-    <AssemblyName>Phenomenon</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <RootNamespace>FluentCassandra</RootNamespace>
+    <AssemblyName>FluentCassandra</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation />
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -73,7 +74,10 @@
     <Compile Include="Apache\Cassandra\TimedOutException.cs" />
     <Compile Include="Apache\Cassandra\TokenRange.cs" />
     <Compile Include="Apache\Cassandra\UnavailableException.cs" />
+    <Compile Include="FluentColumn.cs" />
+    <Compile Include="FluentColumnFamily.cs" />
     <Compile Include="GuidGenerator.cs" />
+    <Compile Include="IFluentColumn.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Thrift\Collections\THashSet.cs" />
     <Compile Include="Thrift\Protocol\TBase.cs" />
