@@ -43,8 +43,11 @@ namespace FluentCassandra
 			get { return GetBytes(Value); }
 		}
 
-		private byte[] GetBytes(object obj)
+		public static byte[] GetBytes(object obj)
 		{
+			if (obj is Guid)
+				return ((Guid)obj).ToByteArray();
+
 			switch (Type.GetTypeCode(obj.GetType()))
 			{
 				case TypeCode.Byte:
@@ -73,7 +76,7 @@ namespace FluentCassandra
 				case TypeCode.UInt64:
 					return BitConverter.GetBytes((ulong)obj);
 				case TypeCode.Decimal:
-					return GetBytes((decimal)obj);
+					return FromDecimal((decimal)obj);
 				case TypeCode.String:
 					return Encoding.UTF8.GetBytes((string)obj);
 				default:
@@ -92,7 +95,7 @@ namespace FluentCassandra
 			return new decimal(bits);
 		}
 
-		public static byte[] GetBytes(decimal d)
+		public static byte[] FromDecimal(decimal d)
 		{
 			byte[] bytes = new byte[16];
 
