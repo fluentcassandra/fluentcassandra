@@ -74,6 +74,7 @@
     <Compile Include="Apache\Cassandra\TimedOutException.cs" />
     <Compile Include="Apache\Cassandra\TokenRange.cs" />
     <Compile Include="Apache\Cassandra\UnavailableException.cs" />
+    <Compile Include="CassandraContext.cs" />
     <Compile Include="ColumnFamilyMap.cs" />
     <Compile Include="FluentColumn.cs" />
     <Compile Include="FluentColumnFamily.cs" />

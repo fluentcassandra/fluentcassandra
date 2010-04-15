@@ -94,100 +94,19 @@ namespace FluentCassandra
 
 		public void Insert(T obj)
 		{
-			Insert(PrepareColumnFamily(obj));
-		}
-
-		public void Insert(FluentColumnFamily record)
-		{
-			TTransport transport = new TSocket("localhost", 9160);
-			TProtocol protocol = new TBinaryProtocol(transport);
-			Cassandra.Client client = new Cassandra.Client(protocol);
-
-			transport.Open();
-
-			var utf8 = Encoding.UTF8;
-			string keySpace = _keyspace;
-			string columnFamily = record.ColumnFamily;
-			string key = record.Key;
-
-			foreach (var col in record)
-			{
-				var path = new ColumnPath {
-					Column_family = columnFamily,
-					Column = col.NameBytes
-				};
-
-				client.insert(
-					keySpace,
-					key,
-					path,
-					col.ValueBytes,
-					col.Timestamp.Ticks,
-					ConsistencyLevel.ONE
-				);
-			}
-
-			transport.Close();
+			var record = PrepareColumnFamily(obj);
+			CassandraContext context = new CassandraContext(_keyspace);
+			context.Open();
+			context.Insert(record);
+			context.Close();
 		}
 
 		public void Remove(T obj)
 		{
-			RemoveByKey(_key(obj));
-		}
-
-		public void RemoveByKey(string key)
-		{
-			TTransport transport = new TSocket("localhost", 9160);
-			TProtocol protocol = new TBinaryProtocol(transport);
-			Cassandra.Client client = new Cassandra.Client(protocol);
-
-			transport.Open();
-
-			var utf8 = Encoding.UTF8;
-			string keySpace = _keyspace;
-			string columnFamily = _columnFamily;
-
-			var path = new ColumnPath {
-				Column_family = columnFamily
-			};
-
-			client.remove(
-				keySpace,
-				key,
-				path,
-				DateTimeOffset.UtcNow.Ticks,
-				ConsistencyLevel.ONE
-			);
-
-			transport.Close();
-		}
-
-		public void RemoveColumn(string key, string columnName)
-		{
-			TTransport transport = new TSocket("localhost", 9160);
-			TProtocol protocol = new TBinaryProtocol(transport);
-			Cassandra.Client client = new Cassandra.Client(protocol);
-
-			transport.Open();
-
-			var utf8 = Encoding.UTF8;
-			string keySpace = _keyspace;
-			string columnFamily = _columnFamily;
-
-			var path = new ColumnPath {
-				Column_family = columnFamily,
-				Column = FluentColumn<string>.GetBytes(columnName)
-			};
-
-			client.remove(
-				keySpace,
-				key,
-				path,
-				DateTimeOffset.UtcNow.Ticks,
-				ConsistencyLevel.ONE
-			);
-
-			transport.Close();
+			CassandraContext context = new CassandraContext(_keyspace);
+			context.Open();
+			context.Remove(_columnFamily, _key(obj));
+			context.Close();
 		}
 	}
 }

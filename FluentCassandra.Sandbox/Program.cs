@@ -42,6 +42,8 @@ namespace FluentCassandra.Sandbox
 	{
 		private static void Main(string[] args)
 		{
+			CassandraContext.Init("localhost");
+
 			var mapping = new LocationMap();
 
 			var location = new Location {
