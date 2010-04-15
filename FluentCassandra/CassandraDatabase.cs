@@ -8,13 +8,15 @@ using Apache.Cassandra;
 
 namespace FluentCassandra
 {
-	public class CassandraContext : IDisposable
+	public class CassandraDatabase : IDisposable
 	{
+		private static string _initKeyspace;
 		private static string _initHost;
 		private static int _initPort;
 
-		public static void Init(string host, int port = 9160)
+		public static void Init(string keyspace, string host = "localhost", int port = 9160)
 		{
+			_initKeyspace = keyspace;
 			_initHost = host;
 			_initPort = port;
 		}
@@ -27,10 +29,10 @@ namespace FluentCassandra
 		private TProtocol _protocol;
 		private Cassandra.Client _client;
 
-		public CassandraContext(string keyspace)
-			: this(keyspace, _initHost, _initPort) { }
+		public CassandraDatabase()
+			: this(_initKeyspace, _initHost, _initPort) { }
 
-		public CassandraContext(string keyspace, string host, int port = 9160)
+		public CassandraDatabase(string keyspace, string host = "localhost", int port = 9160)
 		{
 			_keyspace = keyspace;
 			_host = host;

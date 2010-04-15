@@ -5,6 +5,7 @@ using System.Text;
 using Thrift.Transport;
 using Thrift.Protocol;
 using Apache.Cassandra;
+using FluentCassandra.Configuration;
 
 namespace FluentCassandra.Sandbox
 {
@@ -21,28 +22,27 @@ namespace FluentCassandra.Sandbox
 		public string Name;
 	}
 
-	public class LocationMap : ColumnFamilyMap<Location>
-	{
-		public LocationMap()
-		{
-			Keyspace("Keyspace1");
-			ColumnFamily("Location");
-			Key(x => x.Id);
-			Map(x => x.Latitude);
-			Map(x => x.Longitude);
-			Map(x => x.Street);
-			Map(x => x.City);
-			Map(x => x.State);
-			Map(x => x.PostalCode);
-			Map(x => x.Name);
-		}
-	}
+	public class LocationMap : ColumnFamilyMap<Location> { }
 
 	internal class Program
 	{
 		private static void Main(string[] args)
 		{
-			CassandraContext.Init("localhost");
+			CassandraDatabase.Init("Keyspace1");
+
+			CassandraConfiguration.Initialize(c => {
+				c.For<Location>(m => {
+					m.UseColumnFamily("Location");
+					m.ForKey(p => p.Id);
+					m.ForProperty(p => p.Latitude);
+					m.ForProperty(p => p.Longitude);
+					m.ForProperty(p => p.Street);
+					m.ForProperty(p => p.City);
+					m.ForProperty(p => p.State);
+					m.ForProperty(p => p.PostalCode);
+					m.ForProperty(p => p.Name);
+				});
+			});
 
 			var mapping = new LocationMap();
 
@@ -59,8 +59,10 @@ namespace FluentCassandra.Sandbox
 				PostalCode = "19001"
 			};
 
+			Console.WriteLine("Insert record");
 			mapping.Insert(location);
 
+			Console.WriteLine("Done");
 			Console.Read();
 		}
 	}
