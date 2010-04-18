@@ -33,15 +33,16 @@ namespace FluentCassandra
 		public FluentColumnFamily PrepareColumnFamily(T obj)
 		{
 			FluentColumnFamily record = new FluentColumnFamily();
-			record.ColumnFamily = _config.ColumnFamily;
+			record.Name = _config.ColumnFamily;
 			record.Key = _config.KeyMap.KeyAccessor(obj);
 
 			foreach (var col in _config.PropertyMap)
 			{
-				record.Columns.Add(new FluentColumn<string> {
+				var fcol = new FluentColumn {
 					Name = col.Alias,
-					Value = col.PropertyAccessor(obj)
-				});
+				};
+				fcol.SetValue(col.PropertyAccessor(obj));
+				record.Columns.Add(fcol);
 			}
 
 			return record;
@@ -73,6 +74,47 @@ namespace FluentCassandra
 		public void Remove(T obj)
 		{
 			Remove(PrepareColumnFamily(obj));
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <typeparam name="TResult"></typeparam>
+		/// <param name="key"></param>
+		/// <param name="exp"></param>
+		/// <returns></returns>
+		public TResult Get<TResult>(string key, Expression<Func<T, TResult>> exp)
+		{
+			var name = GetName(exp);
+			var selection = _config.PropertyMap.FirstOrDefault(x => x.PropertyName == name);
+			var col = base.Get(key, _config.ColumnFamily, /* superColumn */ null, selection.Alias);
+
+			return col.GetValue<TResult>();
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="exp"></param>
+		/// <returns></returns>
+		private string GetName(Expression exp)
+		{
+			switch (exp.NodeType)
+			{
+				case ExpressionType.MemberAccess:
+					return ((MemberExpression)exp).Member.Name;
+
+				case ExpressionType.Convert:
+				case ExpressionType.Quote:
+					return GetName(((UnaryExpression)exp).Operand);
+
+				case ExpressionType.Lambda:
+					return GetName(((LambdaExpression)exp).Body);
+
+				default:
+					return null;
+			}
 		}
 	}
 }

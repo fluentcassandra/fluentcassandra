@@ -10,26 +10,21 @@ namespace FluentCassandra
 	/// <summary>
 	/// 
 	/// </summary>
-	public class FluentSuperColumn : FluentSuperColumn<string> { }
-
-	/// <summary>
-	/// 
-	/// </summary>
 	/// <typeparam name="T"></typeparam>
-	public class FluentSuperColumn<T> : DynamicObject, IFluentColumn<T>, INotifyPropertyChanged, IEnumerable<FluentColumn<string>>
+	public class FluentSuperColumn : DynamicObject, IFluentColumn, INotifyPropertyChanged, IEnumerable<FluentColumn>
 	{
 		/// <summary>
 		/// 
 		/// </summary>
 		public FluentSuperColumn()
 		{
-			Columns = new List<FluentColumn<string>>();
+			Columns = new FluentColumnList(Family, this);
 		}
 
 		/// <summary>
 		/// The super column name.
 		/// </summary>
-		public T Name { get; set; }
+		public string Name { get; set; }
 
 		internal byte[] NameBytes
 		{
@@ -39,15 +34,76 @@ namespace FluentCassandra
 		/// <summary>
 		/// The columns in the super column.
 		/// </summary>
-		public IList<FluentColumn<string>> Columns { get; private set; }
+		public IList<FluentColumn> Columns { get; private set; }
 
 		/// <summary>
-		/// The columns in the super column.
+		/// 
 		/// </summary>
-		object IFluentColumn<T>.Value
+		/// <returns></returns>
+		object IFluentColumn.GetValue()
 		{
-			get { return Columns; }
-			set { throw new NotSupportedException("You need to use the Columns proprety for the Super Column type."); }
+			return Columns;
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <returns></returns>
+		T IFluentColumn.GetValue<T>()
+		{
+			throw new NotSupportedException("You need to use the Columns proprety for the Super Column type.");
+		}
+
+		/// <summary>
+		/// The column value.
+		/// </summary>
+		void IFluentColumn.SetValue(object obj)
+		{
+			throw new NotSupportedException("You need to use the Columns proprety for the Super Column type.");
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public FluentSuperColumnFamily Family
+		{
+			get;
+			internal set;
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		IFluentColumnFamily IFluentColumn.Family
+		{
+			get { return Family; }
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		FluentSuperColumn IFluentColumn.SuperColumn
+		{
+			get { return null; }
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		public FluentColumnPath GetPath()
+		{
+			return new FluentColumnPath(Family, this, null);
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		public FluentColumnParent GetParent()
+		{
+			return new FluentColumnParent(Family, this);
 		}
 
 		/// <summary>
@@ -58,9 +114,9 @@ namespace FluentCassandra
 		/// <returns></returns>
 		public override bool TryGetMember(GetMemberBinder binder, out object result)
 		{
-			FluentColumn<string> col = Columns.FirstOrDefault(c => c.Name == binder.Name);
+			FluentColumn col = Columns.FirstOrDefault(c => c.Name == binder.Name);
 
-			result = (col == null) ? null : col.Value;
+			result = (col == null) ? null : col.GetValue();
 			return col != null;
 		}
 
@@ -72,12 +128,12 @@ namespace FluentCassandra
 		/// <returns></returns>
 		public override bool TrySetMember(SetMemberBinder binder, object value)
 		{
-			FluentColumn<string> col = Columns.FirstOrDefault(c => c.Name == binder.Name);
+			FluentColumn col = Columns.FirstOrDefault(c => c.Name == binder.Name);
 
 			// if column doesn't exisit create it and add it to the columns
 			if (col == null)
 			{
-				col = new FluentColumn<string> {
+				col = new FluentColumn {
 					Name = binder.Name
 				};
 
@@ -85,7 +141,7 @@ namespace FluentCassandra
 			}
 
 			// set the column value
-			col.Value = value;
+			col.SetValue(value);
 
 			// notify that property has changed
 			OnPropertyChanged(binder.Name);
@@ -105,9 +161,9 @@ namespace FluentCassandra
 
 		#endregion
 
-		#region IEnumerable<FluentColumn<string>> Members
+		#region IEnumerable<FluentColumn> Members
 
-		public IEnumerator<FluentColumn<string>> GetEnumerator()
+		public IEnumerator<FluentColumn> GetEnumerator()
 		{
 			return Columns.GetEnumerator();
 		}

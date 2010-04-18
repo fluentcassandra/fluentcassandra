@@ -59,6 +59,11 @@ namespace FluentCassandra.Sandbox
 
 				Console.WriteLine("Insert record");
 				table.Insert(location);
+
+				var city = table.Get("19001", x => x.City);
+
+				Console.WriteLine("Get city back");
+				Console.WriteLine("City: {0}", city);
 			}
 
 			Console.WriteLine("Done");

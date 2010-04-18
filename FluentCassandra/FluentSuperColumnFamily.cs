@@ -8,12 +8,12 @@ using System.ComponentModel;
 
 namespace FluentCassandra
 {
-	public class FluentColumnFamily : FluentColumnFamily<FluentColumn>
+	public class FluentSuperColumnFamily : FluentColumnFamily<FluentSuperColumn>
 	{
-		public FluentColumnFamily()
-			: base(ColumnType.Normal)
+		public FluentSuperColumnFamily()
+			: base(ColumnType.Super)
 		{
-			Columns = new FluentColumnList(this);
+			Columns = new FluentSuperColumnList(this);
 		}
 
 		/// <summary>
@@ -24,20 +24,19 @@ namespace FluentCassandra
 		/// <returns></returns>
 		public override bool TrySetMember(SetMemberBinder binder, object value)
 		{
+			if (!(value is FluentSuperColumn))
+				throw new ArgumentException("Value must be of type FluentSuperColumn<string>, because this column family is of type Super.", "value");
+
 			var col = Columns.FirstOrDefault(c => c.Name == binder.Name);
 
 			// if column doesn't exisit create it and add it to the columns
 			if (col == null)
 			{
-				col = new FluentColumn();
+				col = (FluentSuperColumn)value;
 				col.Name = binder.Name;
 
 				Columns.Add(col);
 			}
-
-			// set the column value
-			if (!(value is FluentSuperColumn))
-				col.SetValue(value);
 
 			// notify that property has changed
 			OnPropertyChanged(binder.Name);

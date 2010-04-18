@@ -8,6 +8,7 @@ using System.Collections;
 
 namespace FluentCassandra
 {
+	/// <seealso href=""/>
 	public class CassandraColumnFamily
 	{
 		private CassandraKeyspace _keyspace;
@@ -36,12 +37,35 @@ namespace FluentCassandra
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="superColumn"></param>
+		/// <returns></returns>
+		public int ColumnCount(FluentSuperColumn superColumn)
+		{
+			return ColumnCount(superColumn.GetParent());
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="columnParent"></param>
+		/// <returns></returns>
+		public int ColumnCount(FluentColumnParent columnParent)
+		{
+			return ColumnCount(
+				columnParent.ColumnFamily, 
+				columnParent.SuperColumn == null ? null : columnParent.SuperColumn.Name
+			);
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="record"></param>
 		/// <param name="superColumnName"></param>
 		/// <returns></returns>
-		public int ColumnCount(FluentColumnFamily record, string superColumnName = null)
+		public int ColumnCount(IFluentColumnFamily record, string superColumnName = null)
 		{
-			return ColumnCount(record.Key, record.ColumnFamily, superColumnName);
+			return ColumnCount(record.Key, record.Name, superColumnName);
 		}
 
 		/// <summary>
@@ -71,10 +95,34 @@ namespace FluentCassandra
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="record"></param>
-		public void Insert(FluentColumnFamily record)
+		/// <param name="col"></param>
+		public void Insert(IFluentColumn col)
 		{
-			Insert(record.Key, record.ColumnFamily, record);
+			Insert(col.GetPath());
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="record"></param>
+		public void Insert(IFluentColumnFamily record)
+		{
+			foreach (var col in record)
+				Insert(col);
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="path"></param>
+		public void Insert(FluentColumnPath path)
+		{
+			Insert(
+				path.ColumnFamily.Key,
+				path.ColumnFamily.Name,
+				path.SuperColumn == null ? null : path.SuperColumn.Name,
+				path.Column
+			);
 		}
 
 		/// <summary>
@@ -82,28 +130,66 @@ namespace FluentCassandra
 		/// </summary>
 		/// <param name="key"></param>
 		/// <param name="columnFamily"></param>
-		/// <param name="record"></param>
-		public void Insert(string key, string columnFamily, IEnumerable<FluentColumnPath<string>> record)
+		/// <param name="superColumnName"></param>
+		/// <param name="col"></param>
+		public void Insert(string key, string columnFamily, string superColumnName, FluentColumn col)
 		{
-			foreach (var col in record)
-			{
-				var path = new ColumnPath {
-					Column_family = col.ColumnFamily.ColumnFamily,
-					Column = col.Column.NameBytes
-				};
+			Insert(
+				key,
+				columnFamily,
+				superColumnName,
+				col.Name,
+				col.GetValue(),
+				col.Timestamp
+			);
+		}
 
-				if (col.SuperColumn != null)
-					path.Super_column = col.SuperColumn.NameBytes;
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="key"></param>
+		/// <param name="columnFamily"></param>
+		/// <param name="col"></param>
+		public void Insert(string key, string columnFamily, string superColumnName, string columnName, object value, DateTimeOffset timestamp)
+		{
+			var path = new ColumnPath {
+				Column_family = columnFamily,
+				Column = columnName.GetBytes()
+			};
 
-				GetClient().insert(
-					_keyspace.KeyspaceName,
-					key,
-					path,
-					col.Column.ValueBytes,
-					col.Column.Timestamp.Ticks,
-					ConsistencyLevel.ONE
-				);
-			}
+			if (!String.IsNullOrWhiteSpace(superColumnName))
+				path.Super_column = superColumnName.GetBytes();
+
+			GetClient().insert(
+				_keyspace.KeyspaceName,
+				key,
+				path,
+				value.GetBytes(),
+				timestamp.Ticks,
+				ConsistencyLevel.ONE
+			);
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="col"></param>
+		public void Remove(IFluentColumn col)
+		{
+			Remove(col.GetPath());
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="path"></param>
+		public void Remove(FluentColumnPath path)
+		{
+			Remove(
+				path.ColumnFamily,
+				path.SuperColumn == null ? null : path.SuperColumn.Name,
+				path.Column == null ? null : path.Column.Name
+			);
 		}
 
 		/// <summary>
@@ -112,9 +198,9 @@ namespace FluentCassandra
 		/// <param name="record"></param>
 		/// <param name="columnName"></param>
 		/// <param name="superColumnName"></param>
-		public void Remove(FluentColumnFamily record, string superColumnName = null, string columnName = null)
+		public void Remove(IFluentColumnFamily record, string superColumnName = null, string columnName = null)
 		{
-			Remove(record.Key, record.ColumnFamily, superColumnName, columnName);
+			Remove(record.Key, record.Name, superColumnName, columnName);
 		}
 
 		/// <summary>
@@ -142,6 +228,115 @@ namespace FluentCassandra
 				DateTimeOffset.UtcNow.Ticks,
 				ConsistencyLevel.ONE
 			);
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="col"></param>
+		public IFluentColumn Get(IFluentColumn col)
+		{
+			return Get(col.GetPath());
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="path"></param>
+		public IFluentColumn Get(FluentColumnPath path)
+		{
+			return Get(
+				path.ColumnFamily,
+				path.SuperColumn == null ? null : path.SuperColumn.Name,
+				path.Column == null ? null : path.Column.Name
+			);
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="record"></param>
+		/// <param name="columnName"></param>
+		/// <param name="superColumnName"></param>
+		public IFluentColumn Get(IFluentColumnFamily record, string superColumnName = null, string columnName = null)
+		{
+			return Get(record.Key, record.Name, superColumnName, columnName);
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="key"></param>
+		/// <param name="columnFamily"></param>
+		/// <param name="superColumnName"></param>
+		/// <param name="columnName"></param>
+		/// <returns></returns>
+		public IFluentColumn Get(string key, string columnFamily, string superColumnName, string columnName)
+		{
+			var path = new ColumnPath {
+				Column_family = columnFamily
+			};
+
+			if (!String.IsNullOrWhiteSpace(superColumnName))
+				path.Super_column = superColumnName.GetBytes();
+
+			if (!String.IsNullOrWhiteSpace(columnName))
+				path.Column = columnName.GetBytes();
+
+			var output = GetClient().get(
+				_keyspace.KeyspaceName,
+				key,
+				path,
+				ConsistencyLevel.ONE
+			);
+
+			return ConvertToFluentColumn(output);
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="col"></param>
+		/// <returns></returns>
+		protected IFluentColumn ConvertToFluentColumn(ColumnOrSuperColumn col)
+		{
+			if (col.Super_column != null)
+				return ConverSuperColumnToFluentColumn(col.Super_column);
+			else if (col.Column != null)
+				return ConvertColumnToFluentColumn(col.Column);
+			else
+				return null;
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="col"></param>
+		/// <returns></returns>
+		private FluentColumn ConvertColumnToFluentColumn(Column col)
+		{
+			return new FluentColumn {
+				Name = col.Name.GetObject<string>(),
+				ValueBytes = col.Value,
+				Timestamp = new DateTimeOffset(col.Timestamp, TimeSpan.Zero)
+			};
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="col"></param>
+		/// <returns></returns>
+		private FluentSuperColumn ConverSuperColumnToFluentColumn(SuperColumn col)
+		{
+			var superCol = new FluentSuperColumn() {
+				Name = col.Name.GetObject<string>()
+			};
+
+			foreach (var xcol in col.Columns)
+				superCol.Columns.Add(ConvertColumnToFluentColumn(xcol));
+
+			return superCol;
 		}
 	}
 }

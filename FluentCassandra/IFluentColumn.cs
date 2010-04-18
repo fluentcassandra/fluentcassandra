@@ -7,9 +7,18 @@ namespace FluentCassandra
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
 	/// <seealso href="http://wiki.apache.org/cassandra/API"/>
-	public interface IFluentColumn<T>
+	public interface IFluentColumn
 	{
-		T Name { get; set; }
-		object Value { get; set; }
+		string Name { get; }
+
+		object GetValue();
+		T GetValue<T>();
+		void SetValue(object obj);
+
+		IFluentColumnFamily Family { get; }
+		FluentSuperColumn SuperColumn { get; }
+
+		FluentColumnPath GetPath();
+		FluentColumnParent GetParent();
 	}
 }

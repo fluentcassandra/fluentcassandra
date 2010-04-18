@@ -5,13 +5,7 @@ using System.Text;
 
 namespace FluentCassandra
 {
-	public class FluentColumnPath : FluentColumnPath<string>
-	{
-		public FluentColumnPath(FluentColumnFamily columnFamily, FluentSuperColumn superColumn, FluentColumn column)
-			: base(columnFamily, superColumn, column) { }
-	}
-
-	public class FluentColumnPath<T> : FluentColumnParent<T>
+	public class FluentColumnPath : FluentColumnParent
 	{
 		/// <summary>
 		/// 
@@ -19,7 +13,7 @@ namespace FluentCassandra
 		/// <param name="columnFamily"></param>
 		/// <param name="superColumn"></param>
 		/// <param name="column"></param>
-		public FluentColumnPath(FluentColumnFamily columnFamily, FluentSuperColumn<T> superColumn, FluentColumn<T> column)
+		public FluentColumnPath(IFluentColumnFamily columnFamily, FluentSuperColumn superColumn, FluentColumn column)
 			: base(columnFamily, superColumn)
 		{
 			Column = column;
@@ -28,6 +22,6 @@ namespace FluentCassandra
 		/// <summary>
 		/// 
 		/// </summary>
-		public FluentColumn<T> Column { get; set; }
+		public FluentColumn Column { get; set; }
 	}
 }
