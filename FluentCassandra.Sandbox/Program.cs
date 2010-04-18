@@ -22,45 +22,44 @@ namespace FluentCassandra.Sandbox
 		public string Name;
 	}
 
-	public class LocationMap : ColumnFamilyMap<Location> { }
-
 	internal class Program
 	{
 		private static void Main(string[] args)
 		{
-			CassandraDatabase.Init("Keyspace1");
-
-			CassandraConfiguration.Initialize(c => {
-				c.For<Location>(m => {
-					m.UseColumnFamily("Location");
-					m.ForKey(p => p.Id);
-					m.ForProperty(p => p.Latitude);
-					m.ForProperty(p => p.Longitude);
-					m.ForProperty(p => p.Street);
-					m.ForProperty(p => p.City);
-					m.ForProperty(p => p.State);
-					m.ForProperty(p => p.PostalCode);
-					m.ForProperty(p => p.Name);
+			CassandraConfiguration.Initialize(config => {
+				config.For<Location>(x => {
+					x.UseColumnFamily("Location");
+					x.ForKey(p => p.Id);
+					x.ForProperty(p => p.Latitude);
+					x.ForProperty(p => p.Longitude);
+					x.ForProperty(p => p.Street);
+					x.ForProperty(p => p.City);
+					x.ForProperty(p => p.State);
+					x.ForProperty(p => p.PostalCode);
+					x.ForProperty(p => p.Name);
 				});
 			});
 
-			var mapping = new LocationMap();
+			using (var db = new CassandraContext("Keyspace1", "localhost"))
+			{
+				var location = new Location {
+					Id = "19001",
+					Name = "Some Location",
 
-			var location = new Location {
-				Id = "19001",
-				Name = "Some Location",
+					Latitude = 30.0M,
+					Longitude = -40.0M,
 
-				Latitude = 30.0M,
-				Longitude = -40.0M,
+					Street = "123 Some St.",
+					City = "Philadelphia",
+					State = "PA",
+					PostalCode = "19001"
+				};
 
-				Street = "123 Some St.",
-				City = "Philadelphia",
-				State = "PA",
-				PostalCode = "19001"
-			};
+				var table = db.GetColumnFamily<Location>();
 
-			Console.WriteLine("Insert record");
-			mapping.Insert(location);
+				Console.WriteLine("Insert record");
+				table.Insert(location);
+			}
 
 			Console.WriteLine("Done");
 			Console.Read();

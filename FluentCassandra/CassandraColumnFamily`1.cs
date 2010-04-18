@@ -10,16 +10,26 @@ using FluentCassandra.Configuration;
 
 namespace FluentCassandra
 {
-	public class ColumnFamilyMap<T>
+	public class CassandraColumnFamily<T> : CassandraColumnFamily
 	{
-		private string _keyspace;
 		private ITypeGetConfiguration<T> _config;
 
-		public ColumnFamilyMap()
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="keyspace"></param>
+		/// <param name="connection"></param>
+		public CassandraColumnFamily(CassandraKeyspace keyspace, IConnection connection)
+			: base(keyspace, connection)
 		{
 			_config = CassandraConfiguration.GetMapFor<T>();
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="obj"></param>
+		/// <returns></returns>
 		public FluentColumnFamily PrepareColumnFamily(T obj)
 		{
 			FluentColumnFamily record = new FluentColumnFamily();
@@ -37,21 +47,22 @@ namespace FluentCassandra
 			return record;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="obj"></param>
 		public void Insert(T obj)
 		{
-			var record = PrepareColumnFamily(obj);
-			CassandraDatabase context = new CassandraDatabase();
-			context.Open();
-			context.Insert(record);
-			context.Close();
+			Insert(PrepareColumnFamily(obj));
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="obj"></param>
 		public void Remove(T obj)
 		{
-			CassandraDatabase context = new CassandraDatabase();
-			context.Open();
-			context.Remove(_config.ColumnFamily, _config.KeyMap.KeyAccessor(obj));
-			context.Close();
+			Remove(PrepareColumnFamily(obj));
 		}
 	}
 }
