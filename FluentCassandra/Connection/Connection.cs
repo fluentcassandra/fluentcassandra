@@ -8,6 +8,11 @@ using Apache.Cassandra;
 
 namespace FluentCassandra
 {
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <remarks>Borrowed much of the layout from NoRM, I just couldn't resist it was very elegant in its design.</remarks>
+	/// <see href="http://github.com/robconery/NoRM/tree/master/NoRM/Connections/"/>
 	public class Connection : IConnection, IDisposable
 	{
 		private ConnectionBuilder _builder;
