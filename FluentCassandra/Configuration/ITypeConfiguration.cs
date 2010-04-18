@@ -27,11 +27,26 @@ namespace FluentCassandra.Configuration
 		/// 
 		/// </summary>
 		string ColumnFamily { get; }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		ColumnType ColumnType { get; }
 	}
 
 	public interface ITypeSetConfiguration<T> : ITypeConfiguration
 	{
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="columnFamily"></param>
 		void UseColumnFamily(string columnFamily);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="columnType"></param>
+		void UseColumnType(ColumnType columnType);
 
 		/// <summary>
 		/// 

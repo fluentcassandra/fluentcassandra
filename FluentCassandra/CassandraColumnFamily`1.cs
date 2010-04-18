@@ -51,6 +51,16 @@ namespace FluentCassandra
 		/// 
 		/// </summary>
 		/// <param name="obj"></param>
+		/// <returns></returns>
+		public int ColumnCount(T obj)
+		{
+			return ColumnCount(PrepareColumnFamily(obj));
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="obj"></param>
 		public void Insert(T obj)
 		{
 			Insert(PrepareColumnFamily(obj));

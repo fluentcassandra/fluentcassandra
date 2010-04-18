@@ -83,6 +83,7 @@
     <Compile Include="Configuration\CassandraConfigurationMap.cs" />
     <Compile Include="Configuration\CassandraTypeConfiguration.cs" />
     <Compile Include="Configuration\CassandraConfigurationContainer.cs" />
+    <Compile Include="ColumnType.cs" />
     <Compile Include="Configuration\IPropertyMapping.cs" />
     <Compile Include="Configuration\ITypeConfiguration.cs" />
     <Compile Include="Configuration\KeyMappingExpression.cs" />
@@ -97,12 +98,16 @@
     <Compile Include="Connection\Server.cs" />
     <Compile Include="FluentColumn.cs" />
     <Compile Include="FluentColumnFamily.cs" />
+    <Compile Include="FluentColumnParent.cs" />
+    <Compile Include="FluentColumnPath.cs" />
+    <Compile Include="FluentSuperColumn.cs" />
     <Compile Include="GuidGenerator.cs" />
     <Compile Include="Connection\IConnection.cs" />
     <Compile Include="Connection\IConnectionProvider.cs" />
     <Compile Include="IFluentColumn.cs" />
     <Compile Include="IHideObjectMembers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SerializationHelper.cs" />
     <Compile Include="Thrift\Collections\THashSet.cs" />
     <Compile Include="Thrift\Protocol\TBase.cs" />
     <Compile Include="Thrift\Protocol\TBinaryProtocol.cs" />

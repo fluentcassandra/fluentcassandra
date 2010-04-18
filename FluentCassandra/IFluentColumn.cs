@@ -1,4 +1,5 @@
 ﻿using System;
+
 namespace FluentCassandra
 {
 	/// <summary>
@@ -6,7 +7,7 @@ namespace FluentCassandra
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
 	/// <seealso href="http://wiki.apache.org/cassandra/API"/>
-	interface IFluentColumn<T>
+	public interface IFluentColumn<T>
 	{
 		T Name { get; set; }
 		object Value { get; set; }

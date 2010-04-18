@@ -11,6 +11,11 @@ namespace FluentCassandra.Configuration
 		private IKeyMapping _key;
 		private readonly IDictionary<string, IPropertMapping> _properties = new Dictionary<string, IPropertMapping>();
 
+		public CassandraTypeConfiguration()
+		{
+			ColumnType = ColumnType.Normal;
+		}
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -37,6 +42,12 @@ namespace FluentCassandra.Configuration
 			private set;
 		}
 
+		public ColumnType ColumnType
+		{
+			get;
+			private set;
+		}
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -44,6 +55,16 @@ namespace FluentCassandra.Configuration
 		public void UseColumnFamily(string columnFamily)
 		{
 			ColumnFamily = columnFamily;
+			CassandraConfiguration.FireTypeChangedEvent(typeof(T));
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="type"></param>
+		public void UseColumnType(ColumnType type)
+		{
+			ColumnType = type;
 			CassandraConfiguration.FireTypeChangedEvent(typeof(T));
 		}
 
