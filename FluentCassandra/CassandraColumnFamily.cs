@@ -296,12 +296,125 @@ namespace FluentCassandra
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="path"></param>
+		public IFluentColumnFamily GetSlice(FluentColumnParent path, IList<string> columnNames)
+		{
+			return GetSlice(
+				path.ColumnFamily,
+				columnNames,
+				path.SuperColumn == null ? null : path.SuperColumn.Name
+			);
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="record"></param>
+		/// <param name="columnName"></param>
+		/// <param name="superColumnName"></param>
+		public IFluentColumnFamily GetSlice(IFluentColumnFamily record, IList<string> columnNames, string superColumnName = null)
+		{
+			return GetSlice(record.Key, record.Name, superColumnName, columnNames);
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="key"></param>
+		/// <param name="columnFamily"></param>
+		/// <param name="superColumnName"></param>
+		/// <param name="columnName"></param>
+		/// <returns></returns>
+		public IFluentColumnFamily GetSlice(string key, string columnFamily, string superColumnName, IList<string> columnNames)
+		{
+			var parent = new ColumnParent {
+				Column_family = columnFamily
+			};
+
+			if (!String.IsNullOrWhiteSpace(superColumnName))
+				parent.Super_column = superColumnName.GetBytes();
+
+			var predicate = new SlicePredicate {
+				Column_names = columnNames.Select(x => x.GetBytes()).ToList()
+			};
+
+			var output = GetClient().get_slice(
+				_keyspace.KeyspaceName,
+				key,
+				parent,
+				predicate,
+				ConsistencyLevel.ONE
+			);
+
+			var family = ConvertToFluentColumnFamily(output);
+			family.Key = key;
+			family.Name = columnFamily;
+
+			return family;
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="cols"></param>
+		/// <returns></returns>
+		protected IFluentColumnFamily ConvertToFluentColumnFamily(List<ColumnOrSuperColumn> cols)
+		{
+			var sample = cols.FirstOrDefault();
+
+			if (sample == null)
+				return null;
+
+			var fluentSample = ConvertToFluentColumn(sample);
+
+			if (fluentSample is FluentColumn)
+				return ConvertColumnListToFluentColumnFamily(cols.Select(x => x.Column).ToList());
+			else if (fluentSample is FluentSuperColumn)
+				return ConvertSuperColumnListToFluentSuperColumnFamily(cols.Select(x => x.Super_column).ToList());
+			else
+				return null;
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="cols"></param>
+		/// <returns></returns>
+		private FluentColumnFamily ConvertColumnListToFluentColumnFamily(List<Column> cols)
+		{
+			var family = new FluentColumnFamily();
+
+			foreach (var col in cols)
+				family.Columns.Add(ConvertColumnToFluentColumn(col));
+
+			return family;
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="cols"></param>
+		/// <returns></returns>
+		private FluentSuperColumnFamily ConvertSuperColumnListToFluentSuperColumnFamily(List<SuperColumn> cols)
+		{
+			var family = new FluentSuperColumnFamily();
+
+			foreach (var col in cols)
+				family.Columns.Add(ConverSuperColumnToFluentSuperColumn(col));
+
+			return family;
+		}
+
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="col"></param>
 		/// <returns></returns>
 		protected IFluentColumn ConvertToFluentColumn(ColumnOrSuperColumn col)
 		{
 			if (col.Super_column != null)
-				return ConverSuperColumnToFluentColumn(col.Super_column);
+				return ConverSuperColumnToFluentSuperColumn(col.Super_column);
 			else if (col.Column != null)
 				return ConvertColumnToFluentColumn(col.Column);
 			else
@@ -327,7 +440,7 @@ namespace FluentCassandra
 		/// </summary>
 		/// <param name="col"></param>
 		/// <returns></returns>
-		private FluentSuperColumn ConverSuperColumnToFluentColumn(SuperColumn col)
+		private FluentSuperColumn ConverSuperColumnToFluentSuperColumn(SuperColumn col)
 		{
 			var superCol = new FluentSuperColumn() {
 				Name = col.Name.GetObject<string>()

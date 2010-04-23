@@ -6,7 +6,7 @@ using System.ComponentModel;
 
 namespace FluentCassandra
 {
-	public class BinaryConverter : ArrayConverter
+	internal class BinaryConverter : ArrayConverter
 	{
 		public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
 		{

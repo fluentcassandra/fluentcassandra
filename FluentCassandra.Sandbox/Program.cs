@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Thrift.Transport;
 using Thrift.Protocol;
-using Apache.Cassandra;
+
 using FluentCassandra.Configuration;
 
 namespace FluentCassandra.Sandbox
@@ -28,7 +28,7 @@ namespace FluentCassandra.Sandbox
 		{
 			CassandraConfiguration.Initialize(config => {
 				config.For<Location>(x => {
-					x.UseColumnFamily("Location");
+					x.UseColumnFamily("Standard1");
 					x.ForKey(p => p.Id);
 					x.ForProperty(p => p.Latitude);
 					x.ForProperty(p => p.Longitude);

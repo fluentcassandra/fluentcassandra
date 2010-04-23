@@ -6,7 +6,7 @@ using System.ComponentModel;
 
 namespace FluentCassandra
 {
-	internal static class SerializationHelper
+	internal static class BinaryHelper
 	{
 		public static T GetObject<T>(this byte[] bytes)
 		{
