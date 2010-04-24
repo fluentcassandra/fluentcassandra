@@ -91,7 +91,8 @@ namespace FluentCassandra
 		/// <returns></returns>
 		public override string ToString()
 		{
-			return String.Format("{0}: {1}", Name, _value);
+			var value = GetValue<string>();
+			return String.Format("{0}: {1}", Name, value);
 		}
 
 		/// <summary>

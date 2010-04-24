@@ -4,7 +4,7 @@ namespace FluentCassandra
 {
 	public interface IFluentMutationTracker
 	{
-		MutationState MutationState { get; }
+		IFluentRecord ParentRecord { get; }
 		void ColumnMutated(MutationType type, IFluentColumn column);
 		void Clear();
 		IEnumerable<FluentMutation> GetMutations();

@@ -7,14 +7,14 @@ using System.ComponentModel;
 
 namespace FluentCassandra
 {
-	public abstract class FluentRecord<T> : DynamicObject, IFluentRecord<T>, IFluentRecord, INotifyPropertyChanged, IEnumerable<FluentColumnPath>
+	public abstract class FluentRecord<T> : DynamicObject, IFluentRecord, IFluentRecord<T>, INotifyPropertyChanged, IEnumerable<FluentColumnPath>
 		where T : IFluentColumn
 	{
-		private static readonly DetachedFluentMutationTracker DetachedTracker = new DetachedFluentMutationTracker();
 		private  IFluentMutationTracker _mutationTracker;
 
 		public FluentRecord()
 		{
+			MutationTracker = new FluentMutationTracker(this);
 		}
 
 		/// <summary>
@@ -74,57 +74,10 @@ namespace FluentCassandra
 
 		#region IFluentRecordWithChangeTracker Members
 
-		protected IFluentMutationTracker MutationTracker
+		public IFluentMutationTracker MutationTracker
 		{
-			get
-			{
-				if (_mutationTracker == null)
-					_mutationTracker = DetachedTracker;
-
-				return _mutationTracker;
-			}
-			private set
-			{
-				_mutationTracker = value;
-			}
-		}
-
-		void IFluentRecord.SetMutationTracker(IFluentMutationTracker tracker)
-		{
-			if (MutationTracker != null && MutationTracker != DetachedTracker && MutationTracker != tracker)
-				throw new FluentCassandraException("You cannot change the mutation tracker after it has already been set.");
-
-			MutationTracker = tracker;
-		}
-
-		#endregion
-
-		#region class DetachedFluentMutationTracker
-		
-		private class DetachedFluentMutationTracker : IFluentMutationTracker
-		{
-
-			#region IFluentMutationTracker Members
-
-			public MutationState MutationState
-			{
-				get { return MutationState.Deleted; }
-			}
-
-			public void ColumnMutated(MutationType type, IFluentColumn column)
-			{
-			}
-
-			public void Clear()
-			{
-			}
-
-			public IEnumerable<FluentMutation> GetMutations()
-			{
-				return new FluentMutation[0];
-			}
-
-			#endregion
+			get;
+			private set;
 		}
 
 		#endregion

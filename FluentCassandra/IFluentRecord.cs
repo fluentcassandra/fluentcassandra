@@ -7,6 +7,6 @@ namespace FluentCassandra
 {
 	public interface IFluentRecord
 	{
-		void SetMutationTracker(IFluentMutationTracker tracker);
+		IFluentMutationTracker MutationTracker { get; }
 	}
 }

@@ -61,9 +61,6 @@ namespace FluentCassandra
 			col = (FluentSuperColumn)value;
 			col.Name = binder.Name;
 
-			// set mutation tracker
-			((IFluentRecord)col).SetMutationTracker(MutationTracker);
-
 			if (col == null)
 			{
 				Columns.Add(col);

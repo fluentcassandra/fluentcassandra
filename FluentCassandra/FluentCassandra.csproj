@@ -120,7 +120,6 @@
     <Compile Include="IFluentRecord`1.cs" />
     <Compile Include="IFluentSuperColumn.cs" />
     <Compile Include="IHideObjectMembers.cs" />
-    <Compile Include="MutationState.cs" />
     <Compile Include="MutationType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="BinaryHelper.cs" />

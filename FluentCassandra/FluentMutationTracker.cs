@@ -8,24 +8,17 @@ namespace FluentCassandra
 	public class FluentMutationTracker : IFluentMutationTracker
 	{
 		private IList<FluentMutation> _mutation;
-		private MutationState _state;
 
-		internal FluentMutationTracker(MutationState state = MutationState.Unchanged)
+		protected internal FluentMutationTracker(IFluentRecord parentRecord)
 		{
+			ParentRecord = parentRecord;
 			_mutation = new List<FluentMutation>();
-			_state = state;
 		}
 
-		public MutationState MutationState
-		{
-			get { return _state; }
-		}
+		public IFluentRecord ParentRecord { get; private set; }
 
 		public void ColumnMutated(MutationType type, IFluentColumn column)
 		{
-			if (_state == MutationState.Unchanged)
-				_state = MutationState.Modified;
-
 			_mutation.Add(new FluentMutation {
 				Type = type,
 				Column = column

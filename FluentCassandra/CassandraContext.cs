@@ -13,7 +13,7 @@ namespace FluentCassandra
 		private readonly IConnection _connection;
 		private readonly CassandraKeyspace _keyspace;
 
-		private IDictionary<IFluentRecord, IFluentMutationTracker> _attachedRecords;
+		private IList<IFluentMutationTracker> _trackers;
 		private bool _disposed;
 
 		/// <summary>
@@ -44,7 +44,7 @@ namespace FluentCassandra
 			_connectionProvider = connectionBuilder.Provider;
 			_connection = _connectionProvider.Open();
 			_keyspace = new CassandraKeyspace(_connectionBuilder.Keyspace, _connection);
-			_attachedRecords = new Dictionary<IFluentRecord, IFluentMutationTracker>();
+			_trackers = new List<IFluentMutationTracker>();
 		}
 
 		/// <summary>
@@ -72,6 +72,15 @@ namespace FluentCassandra
 		}
 
 		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		protected Cassandra.Client GetClient()
+		{
+			return _connection.Client;
+		}
+
+		/// <summary>
 		/// Gets a typed column family.
 		/// </summary>
 		/// <typeparam name="T">Type of column family.</typeparam>
@@ -90,59 +99,15 @@ namespace FluentCassandra
 			return _keyspace.GetColumnFamily(familyName);
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		public void Dispose()
+		public void Attach(IFluentRecord record)
 		{
-			Dispose(true);
+			var tracker = record.MutationTracker;
+
+			if (_trackers.Contains(tracker))
+				return;
+
+			_trackers.Add(tracker);
 		}
-
-		/// <summary>
-		/// The dispose.
-		/// </summary>
-		/// <param name="disposing">
-		/// The disposing.
-		/// </param>
-		protected virtual void Dispose(bool disposing)
-		{
-			if (!this._disposed && disposing && this._connection != null)
-				this._connectionProvider.Close(this._connection);
-
-			this._disposed = true;
-		}
-
-		/// <summary>
-		/// Finalizes an instance of the <see cref="Mongo"/> class. 
-		/// </summary>
-		~CassandraContext()
-		{
-			this.Dispose(false);
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="columnFamily"></param>
-		public void Attach(IFluentColumnFamily columnFamily)
-		{
-			var tracker = new FluentMutationTracker();
-			columnFamily.SetMutationTracker(tracker);
-			_attachedRecords.Add(columnFamily, tracker);
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
-		protected Cassandra.Client GetClient()
-		{
-			return _connection.Client;
-		}
-
-		/*
-		 * batch_mutate(keyspace, mutation_map, consistency_level)
-		 */
 
 		/// <summary>
 		/// Saves the pending changes.
@@ -151,10 +116,35 @@ namespace FluentCassandra
 		{
 			var mutations = new List<FluentMutation>();
 
-			foreach (var record in _attachedRecords)
-				mutations.AddRange(record.Value.GetMutations());
+			foreach (var tracker in _trackers)
+				mutations.AddRange(tracker.GetMutations());
 
 			BatchMutate(mutations);
+
+			foreach (var tracker in _trackers)
+				tracker.Clear();
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="record"></param>
+		public void SaveChanges(IFluentRecord record)
+		{
+			BatchMutate(record);
+		}
+
+		/*
+		 * batch_mutate(keyspace, mutation_map, consistency_level)
+		 */
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="record"></param>
+		public void BatchMutate(IFluentRecord record)
+		{
+			BatchMutate(record.MutationTracker.GetMutations());
 		}
 
 		/// <summary>
@@ -209,5 +199,39 @@ namespace FluentCassandra
 				ConsistencyLevel.ONE
 			);
 		}
+
+		#region IDisposable Members
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public void Dispose()
+		{
+			Dispose(true);
+		}
+
+		/// <summary>
+		/// The dispose.
+		/// </summary>
+		/// <param name="disposing">
+		/// The disposing.
+		/// </param>
+		protected virtual void Dispose(bool disposing)
+		{
+			if (!this._disposed && disposing && this._connection != null)
+				this._connectionProvider.Close(this._connection);
+
+			this._disposed = true;
+		}
+
+		/// <summary>
+		/// Finalizes an instance of the <see cref="Mongo"/> class. 
+		/// </summary>
+		~CassandraContext()
+		{
+			this.Dispose(false);
+		}
+
+		#endregion
 	}
 }
