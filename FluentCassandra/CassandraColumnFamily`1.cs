@@ -20,7 +20,7 @@ namespace FluentCassandra
 		/// <param name="keyspace"></param>
 		/// <param name="connection"></param>
 		public CassandraColumnFamily(CassandraKeyspace keyspace, IConnection connection)
-			: base(keyspace, connection)
+			: base(keyspace, connection, CassandraConfiguration.GetMapFor<T>().ColumnFamily)
 		{
 			_config = CassandraConfiguration.GetMapFor<T>();
 		}
@@ -32,9 +32,10 @@ namespace FluentCassandra
 		/// <returns></returns>
 		public FluentColumnFamily PrepareColumnFamily(T obj)
 		{
-			FluentColumnFamily record = new FluentColumnFamily();
-			record.Name = _config.ColumnFamily;
-			record.Key = _config.KeyMap.KeyAccessor(obj);
+			FluentColumnFamily record = new FluentColumnFamily(
+				_config.KeyMap.KeyAccessor(obj),
+				_config.ColumnFamily
+			);
 
 			foreach (var col in _config.PropertyMap)
 			{
@@ -52,19 +53,9 @@ namespace FluentCassandra
 		/// 
 		/// </summary>
 		/// <param name="obj"></param>
-		/// <returns></returns>
-		public int ColumnCount(T obj)
+		public void Add(T obj)
 		{
-			return ColumnCount(PrepareColumnFamily(obj));
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="obj"></param>
-		public void Insert(T obj)
-		{
-			Insert(PrepareColumnFamily(obj));
+			// TODO: wireup insert
 		}
 
 		/// <summary>
@@ -73,7 +64,7 @@ namespace FluentCassandra
 		/// <param name="obj"></param>
 		public void Remove(T obj)
 		{
-			Remove(PrepareColumnFamily(obj));
+			// TODO: wireup remove
 		}
 
 		/// <summary>
@@ -88,7 +79,7 @@ namespace FluentCassandra
 		{
 			var name = GetName(exp);
 			var selection = _config.PropertyMap.FirstOrDefault(x => x.PropertyName == name);
-			var col = base.Get(key, _config.ColumnFamily, /* superColumn */ null, selection.Alias);
+			var col = base.Get(key, /* superColumn */ null, selection.Alias);
 
 			return col.GetValue<TResult>();
 		}

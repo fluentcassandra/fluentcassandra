@@ -8,22 +8,34 @@ using System.Collections;
 
 namespace FluentCassandra
 {
-	/// <seealso href=""/>
+	/// <seealso href="http://wiki.apache.org/cassandra/API"/>
 	public class CassandraColumnFamily
 	{
 		private CassandraKeyspace _keyspace;
 		private IConnection _connection;
+		private string _familyName;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="keyspace"></param>
 		/// <param name="connection"></param>
-		public CassandraColumnFamily(CassandraKeyspace keyspace, IConnection connection)
+		public CassandraColumnFamily(CassandraKeyspace keyspace, IConnection connection, string familyName)
 		{
 			_keyspace = keyspace;
 			_connection = connection;
+			_familyName = familyName;
 		}
+
+		/// <summary>
+		/// The keyspace the column family belongs to.
+		/// </summary>
+		public CassandraKeyspace Keyspace { get { return _keyspace; } }
+
+		/// <summary>
+		/// The family name for this column family.
+		/// </summary>
+		public string FamilyName { get; private set; }
 
 		/// <summary>
 		/// 
@@ -33,6 +45,20 @@ namespace FluentCassandra
 		{
 			return _connection.Client;
 		}
+
+		/// <summary>
+		/// Verifies that the family passed in is part of this family.
+		/// </summary>
+		/// <param name="family"></param>
+		/// <returns></returns>
+		private bool IsPartOfFamily(IFluentColumnFamily family)
+		{
+			return String.Equals(family.FamilyName, FamilyName);
+		}
+
+		/*
+		 * i32 get_count(keyspace, key, column_parent, consistency_level) 
+		 */
 
 		/// <summary>
 		/// 
@@ -52,7 +78,7 @@ namespace FluentCassandra
 		public int ColumnCount(FluentColumnParent columnParent)
 		{
 			return ColumnCount(
-				columnParent.ColumnFamily, 
+				columnParent.ColumnFamily,
 				columnParent.SuperColumn == null ? null : columnParent.SuperColumn.Name
 			);
 		}
@@ -65,7 +91,10 @@ namespace FluentCassandra
 		/// <returns></returns>
 		public int ColumnCount(IFluentColumnFamily record, string superColumnName = null)
 		{
-			return ColumnCount(record.Key, record.Name, superColumnName);
+			if (IsPartOfFamily(record))
+				throw new FluentCassandraException("The record passed in is not part of this family.");
+
+			return ColumnCount(record.Key, superColumnName);
 		}
 
 		/// <summary>
@@ -75,13 +104,13 @@ namespace FluentCassandra
 		/// <param name="columnFamily"></param>
 		/// <param name="superColumnName"></param>
 		/// <returns></returns>
-		public int ColumnCount(string key, string columnFamily, string superColumnName)
+		public int ColumnCount(string key, string superColumnName)
 		{
 			var parent = new ColumnParent {
-				Column_family = columnFamily
+				Column_family = _familyName
 			};
 
-			if (!String.IsNullOrWhiteSpace(superColumnName))
+			if (!String.IsNullOrEmpty(superColumnName))
 				parent.Super_column = superColumnName.GetBytes();
 
 			return GetClient().get_count(
@@ -91,6 +120,10 @@ namespace FluentCassandra
 				ConsistencyLevel.ONE
 			);
 		}
+
+		/*
+		 * insert(keyspace, key, column_path, value, timestamp, consistency_level)
+		 */
 
 		/// <summary>
 		/// 
@@ -104,22 +137,14 @@ namespace FluentCassandra
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="record"></param>
-		public void Insert(IFluentColumnFamily record)
-		{
-			foreach (var col in record)
-				Insert(col);
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
 		/// <param name="path"></param>
 		public void Insert(FluentColumnPath path)
 		{
+			if (IsPartOfFamily(path.ColumnFamily))
+				throw new FluentCassandraException("The record passed in is not part of this family.");
+
 			Insert(
 				path.ColumnFamily.Key,
-				path.ColumnFamily.Name,
 				path.SuperColumn == null ? null : path.SuperColumn.Name,
 				path.Column
 			);
@@ -132,11 +157,10 @@ namespace FluentCassandra
 		/// <param name="columnFamily"></param>
 		/// <param name="superColumnName"></param>
 		/// <param name="col"></param>
-		public void Insert(string key, string columnFamily, string superColumnName, FluentColumn col)
+		public void Insert(string key, string superColumnName, FluentColumn col)
 		{
 			Insert(
 				key,
-				columnFamily,
 				superColumnName,
 				col.Name,
 				col.GetValue(),
@@ -150,10 +174,10 @@ namespace FluentCassandra
 		/// <param name="key"></param>
 		/// <param name="columnFamily"></param>
 		/// <param name="col"></param>
-		public void Insert(string key, string columnFamily, string superColumnName, string columnName, object value, DateTimeOffset timestamp)
+		public void Insert(string key, string superColumnName, string columnName, object value, DateTimeOffset timestamp)
 		{
 			var path = new ColumnPath {
-				Column_family = columnFamily,
+				Column_family = _familyName,
 				Column = columnName.GetBytes()
 			};
 
@@ -165,10 +189,14 @@ namespace FluentCassandra
 				key,
 				path,
 				value.GetBytes(),
-				timestamp.Ticks,
+				timestamp.UtcTicks,
 				ConsistencyLevel.ONE
 			);
 		}
+
+		/*
+		 * remove(keyspace, key, column_path, timestamp, consistency_level)
+		 */
 
 		/// <summary>
 		/// 
@@ -200,7 +228,10 @@ namespace FluentCassandra
 		/// <param name="superColumnName"></param>
 		public void Remove(IFluentColumnFamily record, string superColumnName = null, string columnName = null)
 		{
-			Remove(record.Key, record.Name, superColumnName, columnName);
+			if (IsPartOfFamily(record))
+				throw new FluentCassandraException("The record passed in is not part of this family.");
+
+			Remove(record.Key, superColumnName, columnName);
 		}
 
 		/// <summary>
@@ -209,10 +240,10 @@ namespace FluentCassandra
 		/// <param name="columnFamily"></param>
 		/// <param name="key"></param>
 		/// <param name="columnName"></param>
-		public void Remove(string key, string columnFamily, string superColumnName, string columnName)
+		public void Remove(string key, string superColumnName, string columnName)
 		{
 			var path = new ColumnPath {
-				Column_family = columnFamily
+				Column_family = _familyName
 			};
 
 			if (!String.IsNullOrWhiteSpace(superColumnName))
@@ -229,6 +260,10 @@ namespace FluentCassandra
 				ConsistencyLevel.ONE
 			);
 		}
+
+		/*
+		 * ColumnOrSuperColumn get(keyspace, key, column_path, consistency_level)
+		 */
 
 		/// <summary>
 		/// 
@@ -260,7 +295,10 @@ namespace FluentCassandra
 		/// <param name="superColumnName"></param>
 		public IFluentColumn Get(IFluentColumnFamily record, string superColumnName = null, string columnName = null)
 		{
-			return Get(record.Key, record.Name, superColumnName, columnName);
+			if (IsPartOfFamily(record))
+				throw new FluentCassandraException("The record passed in is not part of this family.");
+
+			return Get(record.Key, superColumnName, columnName);
 		}
 
 		/// <summary>
@@ -271,10 +309,10 @@ namespace FluentCassandra
 		/// <param name="superColumnName"></param>
 		/// <param name="columnName"></param>
 		/// <returns></returns>
-		public IFluentColumn Get(string key, string columnFamily, string superColumnName, string columnName)
+		public IFluentColumn Get(string key, string superColumnName, string columnName)
 		{
 			var path = new ColumnPath {
-				Column_family = columnFamily
+				Column_family = _familyName
 			};
 
 			if (!String.IsNullOrWhiteSpace(superColumnName))
@@ -290,19 +328,33 @@ namespace FluentCassandra
 				ConsistencyLevel.ONE
 			);
 
-			return ConvertToFluentColumn(output);
+			return ObjectHelper.ConvertToFluentColumn(output);
+		}
+
+		/*
+		 * list<ColumnOrSuperColumn> get_slice(keyspace, key, column_parent, predicate, consistency_level)
+		 */
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="record"></param>
+		/// <returns></returns>
+		public IFluentColumnFamily GetSlice(IFluentColumnFamily record)
+		{
+			return GetSlice(record);
 		}
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="path"></param>
-		public IFluentColumnFamily GetSlice(FluentColumnParent path, IList<string> columnNames)
+		/// <param name="parent"></param>
+		public IFluentColumnFamily GetSlice(FluentColumnParent parent, IList<string> columnNames)
 		{
 			return GetSlice(
-				path.ColumnFamily,
-				columnNames,
-				path.SuperColumn == null ? null : path.SuperColumn.Name
+				parent.ColumnFamily,
+				parent.SuperColumn == null ? null : parent.SuperColumn.Name,
+				columnNames
 			);
 		}
 
@@ -312,9 +364,15 @@ namespace FluentCassandra
 		/// <param name="record"></param>
 		/// <param name="columnName"></param>
 		/// <param name="superColumnName"></param>
-		public IFluentColumnFamily GetSlice(IFluentColumnFamily record, IList<string> columnNames, string superColumnName = null)
+		public IFluentColumnFamily GetSlice(IFluentColumnFamily record, string superColumnName = null, IList<string> columnNames = null)
 		{
-			return GetSlice(record.Key, record.Name, superColumnName, columnNames);
+			if (IsPartOfFamily(record))
+				throw new FluentCassandraException("The record passed in is not part of this family.");
+
+			if (columnNames == null)
+				columnNames = record.Select(x => x.Column.Name).ToList();
+
+			return GetSlice(record.Key, superColumnName, columnNames);
 		}
 
 		/// <summary>
@@ -325,18 +383,42 @@ namespace FluentCassandra
 		/// <param name="superColumnName"></param>
 		/// <param name="columnName"></param>
 		/// <returns></returns>
-		public IFluentColumnFamily GetSlice(string key, string columnFamily, string superColumnName, IList<string> columnNames)
+		public IFluentColumnFamily GetSlice(string key, string superColumnName, IList<string> columnNames)
+		{
+			var predicate = ObjectHelper.CreateSlicePredicate(columnNames);
+			return GetSlice(key, superColumnName, predicate);
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="key"></param>
+		/// <param name="columnFamily"></param>
+		/// <param name="superColumnName"></param>
+		/// <param name="columnName"></param>
+		/// <returns></returns>
+		public IFluentColumnFamily GetSlice(string key, string superColumnName, object start, object finish, bool reversed = false, int count = 100)
+		{
+			var predicate = ObjectHelper.CreateSlicePredicate(start, finish, reversed, count);
+			return GetSlice(key, superColumnName, predicate);
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="key"></param>
+		/// <param name="columnFamily"></param>
+		/// <param name="superColumnName"></param>
+		/// <param name="predicate"></param>
+		/// <returns></returns>
+		protected IFluentColumnFamily GetSlice(string key, string superColumnName, SlicePredicate predicate)
 		{
 			var parent = new ColumnParent {
-				Column_family = columnFamily
+				Column_family = _familyName
 			};
 
 			if (!String.IsNullOrWhiteSpace(superColumnName))
 				parent.Super_column = superColumnName.GetBytes();
-
-			var predicate = new SlicePredicate {
-				Column_names = columnNames.Select(x => x.GetBytes()).ToList()
-			};
 
 			var output = GetClient().get_slice(
 				_keyspace.KeyspaceName,
@@ -346,110 +428,9 @@ namespace FluentCassandra
 				ConsistencyLevel.ONE
 			);
 
-			var family = ConvertToFluentColumnFamily(output);
-			family.Key = key;
-			family.Name = columnFamily;
+			var record = ObjectHelper.ConvertToFluentColumnFamily(key, _familyName, superColumnName, output);
 
-			return family;
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="cols"></param>
-		/// <returns></returns>
-		protected IFluentColumnFamily ConvertToFluentColumnFamily(List<ColumnOrSuperColumn> cols)
-		{
-			var sample = cols.FirstOrDefault();
-
-			if (sample == null)
-				return null;
-
-			var fluentSample = ConvertToFluentColumn(sample);
-
-			if (fluentSample is FluentColumn)
-				return ConvertColumnListToFluentColumnFamily(cols.Select(x => x.Column).ToList());
-			else if (fluentSample is FluentSuperColumn)
-				return ConvertSuperColumnListToFluentSuperColumnFamily(cols.Select(x => x.Super_column).ToList());
-			else
-				return null;
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="cols"></param>
-		/// <returns></returns>
-		private FluentColumnFamily ConvertColumnListToFluentColumnFamily(List<Column> cols)
-		{
-			var family = new FluentColumnFamily();
-
-			foreach (var col in cols)
-				family.Columns.Add(ConvertColumnToFluentColumn(col));
-
-			return family;
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="cols"></param>
-		/// <returns></returns>
-		private FluentSuperColumnFamily ConvertSuperColumnListToFluentSuperColumnFamily(List<SuperColumn> cols)
-		{
-			var family = new FluentSuperColumnFamily();
-
-			foreach (var col in cols)
-				family.Columns.Add(ConverSuperColumnToFluentSuperColumn(col));
-
-			return family;
-		}
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="col"></param>
-		/// <returns></returns>
-		protected IFluentColumn ConvertToFluentColumn(ColumnOrSuperColumn col)
-		{
-			if (col.Super_column != null)
-				return ConverSuperColumnToFluentSuperColumn(col.Super_column);
-			else if (col.Column != null)
-				return ConvertColumnToFluentColumn(col.Column);
-			else
-				return null;
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="col"></param>
-		/// <returns></returns>
-		private FluentColumn ConvertColumnToFluentColumn(Column col)
-		{
-			return new FluentColumn {
-				Name = col.Name.GetObject<string>(),
-				ValueBytes = col.Value,
-				Timestamp = new DateTimeOffset(col.Timestamp, TimeSpan.Zero)
-			};
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="col"></param>
-		/// <returns></returns>
-		private FluentSuperColumn ConverSuperColumnToFluentSuperColumn(SuperColumn col)
-		{
-			var superCol = new FluentSuperColumn() {
-				Name = col.Name.GetObject<string>()
-			};
-
-			foreach (var xcol in col.Columns)
-				superCol.Columns.Add(ConvertColumnToFluentColumn(xcol));
-
-			return superCol;
+			return record;
 		}
 	}
 }

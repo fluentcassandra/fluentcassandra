@@ -9,16 +9,18 @@ namespace FluentCassandra
 	/// <seealso href="http://wiki.apache.org/cassandra/API"/>
 	public interface IFluentColumn
 	{
-		string Name { get; }
+		string Name { get; set; }
 
 		object GetValue();
 		T GetValue<T>();
 		void SetValue(object obj);
 
 		IFluentColumnFamily Family { get; }
-		FluentSuperColumn SuperColumn { get; }
+		IFluentSuperColumn SuperColumn { get; }
 
 		FluentColumnPath GetPath();
 		FluentColumnParent GetParent();
+
+		void SetParent(FluentColumnParent parent);
 	}
 }

@@ -11,19 +11,19 @@ namespace FluentCassandra
 	/// 
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
-	public class FluentSuperColumn : DynamicObject, IFluentColumn, INotifyPropertyChanged, IEnumerable<FluentColumn>
+	public class FluentSuperColumn : FluentRecord<FluentColumn>, IFluentSuperColumn, IFluentColumn
 	{
+		private FluentSuperColumnFamily _family;
+		private FluentColumnList<FluentColumn> _columns;
+
 		/// <summary>
 		/// 
 		/// </summary>
 		public FluentSuperColumn()
 		{
-			Columns = new FluentColumnList(Family, this);
+			_columns = new FluentColumnList<FluentColumn>(GetParent());
 		}
 
-		/// <summary>
-		/// The super column name.
-		/// </summary>
 		public string Name { get; set; }
 
 		internal byte[] NameBytes
@@ -34,7 +34,10 @@ namespace FluentCassandra
 		/// <summary>
 		/// The columns in the super column.
 		/// </summary>
-		public IList<FluentColumn> Columns { get; private set; }
+		public override IList<FluentColumn> Columns
+		{
+			get { return _columns; }
+		}
 
 		/// <summary>
 		/// 
@@ -68,8 +71,16 @@ namespace FluentCassandra
 		/// </summary>
 		public FluentSuperColumnFamily Family
 		{
-			get;
-			internal set;
+			get { return _family; }
+			internal set
+			{
+				_family = value;
+			
+				var parent = GetParent();
+				_columns.Parent = parent;
+				foreach (var col in Columns)
+					((IFluentColumn)col).SetParent(parent);
+			}
 		}
 
 		/// <summary>
@@ -83,7 +94,7 @@ namespace FluentCassandra
 		/// <summary>
 		/// 
 		/// </summary>
-		FluentSuperColumn IFluentColumn.SuperColumn
+		IFluentSuperColumn IFluentColumn.SuperColumn
 		{
 			get { return null; }
 		}
@@ -104,6 +115,14 @@ namespace FluentCassandra
 		public FluentColumnParent GetParent()
 		{
 			return new FluentColumnParent(Family, this);
+		}
+
+		void IFluentColumn.SetParent(FluentColumnParent parent)
+		{
+			if (!(parent.ColumnFamily is FluentSuperColumnFamily))
+				throw new CassandraException("Only a super column family can have a child that is a super column.");
+
+			Family = (FluentSuperColumnFamily)parent.ColumnFamily;
 		}
 
 		/// <summary>
@@ -129,13 +148,15 @@ namespace FluentCassandra
 		public override bool TrySetMember(SetMemberBinder binder, object value)
 		{
 			FluentColumn col = Columns.FirstOrDefault(c => c.Name == binder.Name);
+			var mutationType = MutationType.Changed;
 
 			// if column doesn't exisit create it and add it to the columns
 			if (col == null)
 			{
-				col = new FluentColumn {
-					Name = binder.Name
-				};
+				mutationType = MutationType.Added;
+
+				col = new FluentColumn();
+				col.Name = binder.Name;
 
 				Columns.Add(col);
 			}
@@ -143,40 +164,10 @@ namespace FluentCassandra
 			// set the column value
 			col.SetValue(value);
 
-			// notify that property has changed
-			OnPropertyChanged(binder.Name);
+			// notify the tracker that the column has changed
+			OnColumnMutated(mutationType, col);
 
 			return true;
 		}
-
-		#region INotifyPropertyChanged Members
-
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		private void OnPropertyChanged(string propertyName)
-		{
-			if (PropertyChanged != null)
-				PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-		}
-
-		#endregion
-
-		#region IEnumerable<FluentColumn> Members
-
-		public IEnumerator<FluentColumn> GetEnumerator()
-		{
-			return Columns.GetEnumerator();
-		}
-
-		#endregion
-
-		#region IEnumerable Members
-
-		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-		{
-			return Columns.GetEnumerator();
-		}
-
-		#endregion
 	}
 }

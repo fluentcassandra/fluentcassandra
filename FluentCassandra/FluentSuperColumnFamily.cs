@@ -8,12 +8,40 @@ using System.ComponentModel;
 
 namespace FluentCassandra
 {
-	public class FluentSuperColumnFamily : FluentColumnFamily<FluentSuperColumn>
+	public class FluentSuperColumnFamily : FluentRecord<FluentSuperColumn>, IFluentColumnFamily<FluentSuperColumn>, IFluentColumnFamily
 	{
-		public FluentSuperColumnFamily()
-			: base(ColumnType.Super)
+		private FluentColumnList<FluentSuperColumn> _columns;
+
+		public FluentSuperColumnFamily(string key, string familyName)
 		{
-			Columns = new FluentSuperColumnList(this);
+			Key = key;
+			FamilyName = familyName;
+
+			_columns = new FluentColumnList<FluentSuperColumn>(new FluentColumnParent(this, null));
+		}
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public string Key { get; set; }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public string FamilyName { get; set; }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public ColumnType ColumnType { get { return ColumnType.Super; } }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public override IList<FluentSuperColumn> Columns
+		{
+			get { return _columns; }
 		}
 
 		/// <summary>
@@ -28,18 +56,26 @@ namespace FluentCassandra
 				throw new ArgumentException("Value must be of type FluentSuperColumn<string>, because this column family is of type Super.", "value");
 
 			var col = Columns.FirstOrDefault(c => c.Name == binder.Name);
+			var mutationType = col == null ? MutationType.Added : MutationType.Changed;
 
-			// if column doesn't exisit create it and add it to the columns
+			col = (FluentSuperColumn)value;
+			col.Name = binder.Name;
+
+			// set mutation tracker
+			((IFluentRecord)col).SetMutationTracker(MutationTracker);
+
 			if (col == null)
 			{
-				col = (FluentSuperColumn)value;
-				col.Name = binder.Name;
-
 				Columns.Add(col);
 			}
+			else
+			{
+				int index = Columns.IndexOf(col);
+				Columns.Insert(index, col);
+			}
 
-			// notify that property has changed
-			OnPropertyChanged(binder.Name);
+			// notify the tracker that the column has changed
+			OnColumnMutated(mutationType, col);
 
 			return true;
 		}

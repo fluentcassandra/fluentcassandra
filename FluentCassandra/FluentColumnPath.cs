@@ -13,7 +13,7 @@ namespace FluentCassandra
 		/// <param name="columnFamily"></param>
 		/// <param name="superColumn"></param>
 		/// <param name="column"></param>
-		public FluentColumnPath(IFluentColumnFamily columnFamily, FluentSuperColumn superColumn, FluentColumn column)
+		public FluentColumnPath(IFluentColumnFamily columnFamily, IFluentSuperColumn superColumn, FluentColumn column)
 			: base(columnFamily, superColumn)
 		{
 			Column = column;

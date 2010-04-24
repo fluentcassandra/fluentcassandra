@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Collections.ObjectModel;
 
 namespace FluentCassandra
 {
-	public abstract class FluentColumnList<T> : IList<T>
+	internal class FluentColumnList<T> : IList<T>
 		where T : IFluentColumn
 	{
 		private List<T> _columns;
@@ -14,21 +15,16 @@ namespace FluentCassandra
 		/// 
 		/// </summary>
 		/// <param name="columnFamily"></param>
-		internal FluentColumnList(IFluentColumnFamily columnFamily)
+		public FluentColumnList(FluentColumnParent parent)
 		{
-			ColumnFamily = columnFamily;
+			Parent = parent;
 			_columns = new List<T>();
 		}
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public IFluentColumnFamily ColumnFamily { get; private set; }
-
-		/// <summary>
-		/// 
-		/// </summary>
-		protected List<T> Columns { get { return _columns; } }
+		public virtual FluentColumnParent Parent { get; internal set; }
 
 		/// <summary>
 		/// 
@@ -45,7 +41,11 @@ namespace FluentCassandra
 		/// </summary>
 		/// <param name="index"></param>
 		/// <param name="item"></param>
-		public abstract void Insert(int index, T item);
+		public void Insert(int index, T item)
+		{
+			item.SetParent(Parent);	
+			_columns.Insert(index, item);
+		}
 
 		/// <summary>
 		/// 
@@ -71,7 +71,11 @@ namespace FluentCassandra
 		/// 
 		/// </summary>
 		/// <param name="item"></param>
-		public abstract void Add(T item);
+		public void Add(T item)
+		{
+			item.SetParent(Parent);
+			_columns.Add(item);
+		}
 
 		/// <summary>
 		/// 

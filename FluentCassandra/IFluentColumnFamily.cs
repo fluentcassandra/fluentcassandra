@@ -1,13 +1,15 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.ComponentModel;
 
 namespace FluentCassandra
 {
-	public interface IFluentColumnFamily :  INotifyPropertyChanged, IEnumerable<FluentColumnPath>
+	public interface IFluentColumnFamily : IFluentRecord, INotifyPropertyChanged, IEnumerable<FluentColumnPath>
 	{
-		string Name { get; set; }
-		ColumnType ColumnType { get; }
 		string Key { get; set; }
+		string FamilyName { get; }
+		ColumnType ColumnType { get; }
 	}
 }

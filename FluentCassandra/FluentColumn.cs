@@ -85,6 +85,10 @@ namespace FluentCassandra
 			set { _valueCache = value; }
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
 		public override string ToString()
 		{
 			return String.Format("{0}: {1}", Name, _value);
@@ -103,7 +107,7 @@ namespace FluentCassandra
 		/// The super column parent if any.
 		/// </summary>
 		/// <remarks>This column will be <see langword="null"/> if it is not a paret of a column family of type super.</remarks>
-		public FluentSuperColumn SuperColumn
+		public IFluentSuperColumn SuperColumn
 		{
 			get;
 			internal set;
@@ -125,6 +129,16 @@ namespace FluentCassandra
 		public FluentColumnParent GetParent()
 		{
 			return new FluentColumnParent(Family, SuperColumn);
+		}
+
+		/// <summary>
+		/// Set the parent of this column.
+		/// </summary>
+		/// <param name="parent"></param>
+		void IFluentColumn.SetParent(FluentColumnParent parent)
+		{
+			Family = parent.ColumnFamily;
+			SuperColumn = parent.SuperColumn;
 		}
 	}
 }

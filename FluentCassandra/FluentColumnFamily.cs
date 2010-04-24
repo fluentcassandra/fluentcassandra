@@ -8,12 +8,39 @@ using System.ComponentModel;
 
 namespace FluentCassandra
 {
-	public class FluentColumnFamily : FluentColumnFamily<FluentColumn>
+	public class FluentColumnFamily : FluentRecord<FluentColumn>, IFluentColumnFamily<FluentColumn>, IFluentColumnFamily
 	{
-		public FluentColumnFamily()
-			: base(ColumnType.Normal)
+		private FluentColumnList<FluentColumn> _columns;
+
+		public FluentColumnFamily(string key, string familyName)
 		{
-			Columns = new FluentColumnList(this);
+			Key = key;
+			FamilyName = familyName;
+
+			_columns = new FluentColumnList<FluentColumn>(new FluentColumnParent(this, null));
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public string Key { get; set; }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public string FamilyName { get; set; }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public ColumnType ColumnType { get { return ColumnType.Normal; } }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public override IList<FluentColumn> Columns
+		{
+			get { return _columns; }
 		}
 
 		/// <summary>
@@ -25,10 +52,13 @@ namespace FluentCassandra
 		public override bool TrySetMember(SetMemberBinder binder, object value)
 		{
 			var col = Columns.FirstOrDefault(c => c.Name == binder.Name);
+			var mutationType = MutationType.Changed;
 
 			// if column doesn't exisit create it and add it to the columns
 			if (col == null)
 			{
+				mutationType = MutationType.Added;
+
 				col = new FluentColumn();
 				col.Name = binder.Name;
 
@@ -36,11 +66,10 @@ namespace FluentCassandra
 			}
 
 			// set the column value
-			if (!(value is FluentSuperColumn))
-				col.SetValue(value);
+			col.SetValue(value);
 
-			// notify that property has changed
-			OnPropertyChanged(binder.Name);
+			// notify the tracker that the column has changed
+			OnColumnMutated(mutationType, col);
 
 			return true;
 		}

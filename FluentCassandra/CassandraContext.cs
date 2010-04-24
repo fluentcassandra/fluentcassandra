@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Apache.Cassandra;
 
 namespace FluentCassandra
 {
@@ -11,6 +12,8 @@ namespace FluentCassandra
 		private readonly IConnectionProvider _connectionProvider;
 		private readonly IConnection _connection;
 		private readonly CassandraKeyspace _keyspace;
+
+		private IDictionary<IFluentRecord, IFluentMutationTracker> _attachedRecords;
 		private bool _disposed;
 
 		/// <summary>
@@ -41,6 +44,7 @@ namespace FluentCassandra
 			_connectionProvider = connectionBuilder.Provider;
 			_connection = _connectionProvider.Open();
 			_keyspace = new CassandraKeyspace(_connectionBuilder.Keyspace, _connection);
+			_attachedRecords = new Dictionary<IFluentRecord, IFluentMutationTracker>();
 		}
 
 		/// <summary>
@@ -80,6 +84,15 @@ namespace FluentCassandra
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <returns></returns>
+		public CassandraColumnFamily GetColumnFamily(string familyName)
+		{
+			return _keyspace.GetColumnFamily(familyName);
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
 		public void Dispose()
 		{
 			Dispose(true);
@@ -105,6 +118,96 @@ namespace FluentCassandra
 		~CassandraContext()
 		{
 			this.Dispose(false);
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="columnFamily"></param>
+		public void Attach(IFluentColumnFamily columnFamily)
+		{
+			var tracker = new FluentMutationTracker();
+			columnFamily.SetMutationTracker(tracker);
+			_attachedRecords.Add(columnFamily, tracker);
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		protected Cassandra.Client GetClient()
+		{
+			return _connection.Client;
+		}
+
+		/*
+		 * batch_mutate(keyspace, mutation_map, consistency_level)
+		 */
+
+		/// <summary>
+		/// Saves the pending changes.
+		/// </summary>
+		public void SaveChanges()
+		{
+			var mutations = new List<FluentMutation>();
+
+			foreach (var record in _attachedRecords)
+				mutations.AddRange(record.Value.GetMutations());
+
+			BatchMutate(mutations);
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="record"></param>
+		public void BatchMutate(IEnumerable<FluentMutation> tracker)
+		{
+			var mutations = new Dictionary<string, Dictionary<string, List<Mutation>>>();
+
+			foreach (var key in tracker.GroupBy(x => x.Column.Family.Key))
+			{
+				var keyMutations = new Dictionary<string, List<Mutation>>();
+
+				foreach (var columnFamily in key.GroupBy(x => x.Column.Family.FamilyName))
+				{
+					var columnFamilyMutations = columnFamily
+						.Where(m => m.Type == MutationType.Added || m.Type == MutationType.Changed)
+						.Select(m => ObjectHelper.CreateInsertedOrChangedMutation(m))
+						.ToList();
+
+					var superColumnsNeedingDeleted = columnFamily
+						.Where(m => m.Type == MutationType.Removed && m.Column.SuperColumn != null);
+
+					foreach (var superColumn in superColumnsNeedingDeleted.GroupBy(x => x.Column.SuperColumn.Name))
+						columnFamilyMutations.Add(ObjectHelper.CreateDeletedSuperColumnMutation(superColumn));
+
+					var columnsNeedingDeleted = columnFamily
+						.Where(m => m.Type == MutationType.Removed && m.Column.SuperColumn == null);
+
+					columnFamilyMutations.Add(ObjectHelper.CreateDeletedColumnMutation(columnsNeedingDeleted));
+
+					keyMutations.Add(columnFamily.Key, columnFamilyMutations);
+				}
+
+				mutations.Add(key.Key, keyMutations);
+			}
+
+			BatchMutate(mutations);
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="mutationMap"></param>
+		protected void BatchMutate(Dictionary<string, Dictionary<string, List<Mutation>>> mutationMap)
+		{
+			// Dictionary<string : key, Dicationary<string : columnFamily, List<Mutation>>>
+			GetClient().batch_mutate(
+				Keyspace.KeyspaceName,
+				mutationMap,
+				ConsistencyLevel.ONE
+			);
 		}
 	}
 }
