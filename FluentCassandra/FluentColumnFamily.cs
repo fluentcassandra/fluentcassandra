@@ -12,10 +12,10 @@ namespace FluentCassandra
 	{
 		private FluentColumnList<FluentColumn> _columns;
 
-		public FluentColumnFamily(string key, string familyName)
+		public FluentColumnFamily(string key, string columnFamily)
 		{
 			Key = key;
-			FamilyName = familyName;
+			FamilyName = columnFamily;
 
 			_columns = new FluentColumnList<FluentColumn>(new FluentColumnParent(this, null));
 		}

@@ -94,9 +94,9 @@ namespace FluentCassandra
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		public CassandraColumnFamily GetColumnFamily(string familyName)
+		public CassandraColumnFamily GetColumnFamily(string columnFamily)
 		{
-			return _keyspace.GetColumnFamily(familyName);
+			return _keyspace.GetColumnFamily(columnFamily);
 		}
 
 		public void Attach(IFluentRecord record)

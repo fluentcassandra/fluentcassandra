@@ -44,9 +44,9 @@ namespace FluentCassandra
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		public CassandraColumnFamily GetColumnFamily(string familyName)
+		public CassandraColumnFamily GetColumnFamily(string columnFamily)
 		{
-			return new CassandraColumnFamily(this, _connection, familyName);
+			return new CassandraColumnFamily(this, _connection, columnFamily);
 		}
 
 		/// <summary>

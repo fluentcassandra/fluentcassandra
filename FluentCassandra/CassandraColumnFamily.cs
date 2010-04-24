@@ -13,18 +13,17 @@ namespace FluentCassandra
 	{
 		private CassandraKeyspace _keyspace;
 		private IConnection _connection;
-		private string _familyName;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="keyspace"></param>
 		/// <param name="connection"></param>
-		public CassandraColumnFamily(CassandraKeyspace keyspace, IConnection connection, string familyName)
+		public CassandraColumnFamily(CassandraKeyspace keyspace, IConnection connection, string columnFamily)
 		{
 			_keyspace = keyspace;
 			_connection = connection;
-			_familyName = familyName;
+			FamilyName = columnFamily;
 		}
 
 		/// <summary>
@@ -107,7 +106,7 @@ namespace FluentCassandra
 		public int ColumnCount(string key, string superColumnName)
 		{
 			var parent = new ColumnParent {
-				Column_family = _familyName
+				Column_family = FamilyName
 			};
 
 			if (!String.IsNullOrEmpty(superColumnName))
@@ -177,7 +176,7 @@ namespace FluentCassandra
 		public void Insert(string key, string superColumnName, string columnName, object value, DateTimeOffset timestamp)
 		{
 			var path = new ColumnPath {
-				Column_family = _familyName,
+				Column_family = FamilyName,
 				Column = columnName.GetBytes()
 			};
 
@@ -243,7 +242,7 @@ namespace FluentCassandra
 		public void Remove(string key, string superColumnName, string columnName)
 		{
 			var path = new ColumnPath {
-				Column_family = _familyName
+				Column_family = FamilyName
 			};
 
 			if (!String.IsNullOrWhiteSpace(superColumnName))
@@ -312,7 +311,7 @@ namespace FluentCassandra
 		public IFluentColumn Get(string key, string superColumnName, string columnName)
 		{
 			var path = new ColumnPath {
-				Column_family = _familyName
+				Column_family = FamilyName
 			};
 
 			if (!String.IsNullOrWhiteSpace(superColumnName))
@@ -414,7 +413,7 @@ namespace FluentCassandra
 		protected IFluentColumnFamily GetSlice(string key, string superColumnName, SlicePredicate predicate)
 		{
 			var parent = new ColumnParent {
-				Column_family = _familyName
+				Column_family = FamilyName
 			};
 
 			if (!String.IsNullOrWhiteSpace(superColumnName))
@@ -428,7 +427,7 @@ namespace FluentCassandra
 				ConsistencyLevel.ONE
 			);
 
-			var record = ObjectHelper.ConvertToFluentColumnFamily(key, _familyName, superColumnName, output);
+			var record = ObjectHelper.ConvertToFluentColumnFamily(key, FamilyName, superColumnName, output);
 
 			return record;
 		}

@@ -51,9 +51,9 @@ namespace FluentCassandra
 		/// </summary>
 		/// <param name="cols"></param>
 		/// <returns></returns>
-		public static FluentColumnFamily ConvertColumnListToFluentColumnFamily(string key, string familyName, List<Column> cols)
+		public static FluentColumnFamily ConvertColumnListToFluentColumnFamily(string key, string columnFamily, List<Column> cols)
 		{
-			var family = new FluentColumnFamily(key, familyName);
+			var family = new FluentColumnFamily(key, columnFamily);
 
 			foreach (var col in cols)
 				family.Columns.Add(ConvertColumnToFluentColumn(col));
@@ -66,9 +66,9 @@ namespace FluentCassandra
 		/// </summary>
 		/// <param name="cols"></param>
 		/// <returns></returns>
-		public static FluentSuperColumnFamily ConvertSuperColumnListToFluentSuperColumnFamily(string key, string familyName, List<SuperColumn> cols)
+		public static FluentSuperColumnFamily ConvertSuperColumnListToFluentSuperColumnFamily(string key, string columnFamily, List<SuperColumn> cols)
 		{
-			var family = new FluentSuperColumnFamily(key, familyName);
+			var family = new FluentSuperColumnFamily(key, columnFamily);
 
 			foreach (var col in cols)
 				family.Columns.Add(ConverSuperColumnToFluentSuperColumn(col));
