@@ -35,8 +35,8 @@ namespace FluentCassandra.Sandbox
 				string[] columns = new[] { "Name", "Street", "City", "State", "PostalCode", "Latitude", "Longitude" };
 				dynamic sameLocation = table.GetSingle("19001", columns);
 
-				sameLocation.Hint("Latitude", typeof(decimal));
-				sameLocation.Hint("Longitude", typeof(decimal));
+				sameLocation.SetHint("Latitude", typeof(decimal));
+				sameLocation.SetHint("Longitude", typeof(decimal));
 
 				Console.WriteLine("Get back");
 				Console.WriteLine("Name: {0}", sameLocation.Name);

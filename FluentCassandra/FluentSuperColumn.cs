@@ -74,51 +74,6 @@ namespace FluentCassandra
 			return new FluentColumnParent(Family, this);
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="binder"></param>
-		/// <param name="result"></param>
-		/// <returns></returns>
-		public override bool TryGetMember(GetMemberBinder binder, out object result)
-		{
-			FluentColumn col = Columns.FirstOrDefault(c => c.Name == binder.Name);
-
-			result = (col == null) ? null : col.GetValue();
-			return col != null;
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="binder"></param>
-		/// <param name="value"></param>
-		/// <returns></returns>
-		public override bool TrySetMember(SetMemberBinder binder, object value)
-		{
-			FluentColumn col = Columns.FirstOrDefault(c => c.Name == binder.Name);
-			var mutationType = MutationType.Changed;
-
-			// if column doesn't exisit create it and add it to the columns
-			if (col == null)
-			{
-				mutationType = MutationType.Added;
-
-				col = new FluentColumn();
-				col.Name = binder.Name;
-
-				Columns.Add(col);
-			}
-
-			// set the column value
-			col.SetValue(value);
-
-			// notify the tracker that the column has changed
-			OnColumnMutated(mutationType, col);
-
-			return true;
-		}
-
 		#region IFluentColumn Members
 
 		object IFluentColumn.GetValue()

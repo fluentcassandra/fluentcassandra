@@ -39,9 +39,20 @@ namespace FluentCassandra
 		/// <summary>
 		/// 
 		/// </summary>
-		public override IList<FluentSuperColumn> Columns
+		public override IList<FluentSuperColumn> Columns { get { return _columns; } }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="name"></param>
+		/// <param name="result"></param>
+		/// <returns></returns>
+		public override bool TryGetColumn(string name, out object result)
 		{
-			get { return _columns; }
+			var col = Columns.FirstOrDefault(c => c.Name == name);
+
+			result = col;
+			return col != null;
 		}
 
 		/// <summary>
@@ -50,16 +61,16 @@ namespace FluentCassandra
 		/// <param name="binder"></param>
 		/// <param name="value"></param>
 		/// <returns></returns>
-		public override bool TrySetMember(SetMemberBinder binder, object value)
+		public override bool TrySetColumn(string name, object value)
 		{
 			if (!(value is FluentSuperColumn))
 				throw new ArgumentException("Value must be of type FluentSuperColumn<string>, because this column family is of type Super.", "value");
 
-			var col = Columns.FirstOrDefault(c => c.Name == binder.Name);
+			var col = Columns.FirstOrDefault(c => c.Name == name);
 			var mutationType = col == null ? MutationType.Added : MutationType.Changed;
 
 			col = (FluentSuperColumn)value;
-			col.Name = binder.Name;
+			col.Name = name;
 
 			if (col == null)
 			{

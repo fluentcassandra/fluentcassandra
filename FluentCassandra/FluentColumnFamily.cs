@@ -42,40 +42,5 @@ namespace FluentCassandra
 		{
 			get { return _columns; }
 		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="binder"></param>
-		/// <param name="value"></param>
-		/// <returns></returns>
-		public override bool TrySetMember(SetMemberBinder binder, object value)
-		{
-			var col = Columns.FirstOrDefault(c => c.Name == binder.Name);
-			var mutationType = MutationType.Changed;
-
-			// if column doesn't exisit create it and add it to the columns
-			if (col == null)
-			{
-				mutationType = MutationType.Added;
-
-				col = new FluentColumn();
-				col.Name = binder.Name;
-
-				Columns.Add(col);
-			}
-
-			// set the column value
-			col.SetValue(value);
-
-			// notify the tracker that the column has changed
-			OnColumnMutated(mutationType, col);
-
-			// declare the hint for the member
-			if (value != null)
-				Hint(binder.Name, value.GetType());
-
-			return true;
-		}
 	}
 }
