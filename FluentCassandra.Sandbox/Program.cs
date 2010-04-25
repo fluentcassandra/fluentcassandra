@@ -31,7 +31,12 @@ namespace FluentCassandra.Sandbox
 				db.SaveChanges();
 
 				var table = db.GetColumnFamily("Standard1");
-				dynamic sameLocation = table.GetSingle("19001", new[] { "Name", "Street", "City", "State", "PostalCode", "Latitude", "Longitude" });
+
+				string[] columns = new[] { "Name", "Street", "City", "State", "PostalCode", "Latitude", "Longitude" };
+				dynamic sameLocation = table.GetSingle("19001", columns);
+
+				sameLocation.Hint("Latitude", typeof(decimal));
+				sameLocation.Hint("Longitude", typeof(decimal));
 
 				Console.WriteLine("Get back");
 				Console.WriteLine("Name: {0}", sameLocation.Name);
@@ -39,8 +44,8 @@ namespace FluentCassandra.Sandbox
 				Console.WriteLine("City: {0}", sameLocation.City);
 				Console.WriteLine("State: {0}", sameLocation.State);
 				Console.WriteLine("PostalCode: {0}", sameLocation.PostalCode);
-				Console.WriteLine("Latitude: {0}", (decimal)sameLocation.Latitude);
-				Console.WriteLine("Longitude: {0}", (decimal)sameLocation.Longitude);
+				Console.WriteLine("Latitude: {0}", sameLocation.Latitude);
+				Console.WriteLine("Longitude: {0}", sameLocation.Longitude);
 			}
 
 			Console.WriteLine("Done");

@@ -10,9 +10,12 @@ namespace FluentCassandra
 	public abstract class FluentRecord<T> : DynamicObject, IFluentRecord, IFluentRecord<T>, INotifyPropertyChanged, IEnumerable<FluentColumnPath>
 		where T : IFluentColumn
 	{
+		private Dictionary<string, Type> _memberHints;
+
 		public FluentRecord()
 		{
 			MutationTracker = new FluentMutationTracker(this);
+			_memberHints = new Dictionary<string, Type>();
 		}
 
 		/// <summary>
@@ -26,6 +29,16 @@ namespace FluentCassandra
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="member"></param>
+		/// <param name="hintType"></param>
+		public void Hint(string member, Type hintType)
+		{
+			_memberHints[member] = hintType;
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="binder"></param>
 		/// <param name="result"></param>
 		/// <returns></returns>
@@ -33,7 +46,11 @@ namespace FluentCassandra
 		{
 			IFluentColumn col = Columns.FirstOrDefault(c => String.Compare(c.Name, binder.Name, binder.IgnoreCase) == 0);
 
-			result = (col == null) ? null : col.GetValue(binder.ReturnType);
+			Type hintType;
+			if (!_memberHints.TryGetValue(binder.Name, out hintType))
+				hintType = typeof(string);
+
+			result = (col == null) ? null : col.GetValue(hintType);
 			return col != null;
 		}
 

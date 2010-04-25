@@ -71,6 +71,10 @@ namespace FluentCassandra
 			// notify the tracker that the column has changed
 			OnColumnMutated(mutationType, col);
 
+			// declare the hint for the member
+			if (value != null)
+				Hint(binder.Name, value.GetType());
+
 			return true;
 		}
 	}

@@ -17,10 +17,6 @@ namespace FluentCassandra
 		{
 			var converter = new BinaryConverter();
 
-			// by default if an object is entered then it will be considered a string
-			if (type == typeof(object))
-				type = typeof(string);
-
 			if (!converter.CanConvertTo(type))
 				throw new NotSupportedException(type + " is not supported for binary serialization.");
 
