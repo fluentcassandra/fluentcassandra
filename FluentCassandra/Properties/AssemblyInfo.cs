@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Phenomenon")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("FluentCassandra")]
+[assembly: AssemblyDescription("Cassandra wrapper around the Thrift interface. [http://managedfusion.com], [http://github.com/managedfusion/fluentcassandra]")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Microsoft")]
-[assembly: AssemblyProduct("Phenomenon")]
-[assembly: AssemblyCopyright("Copyright © Microsoft 2010")]
+[assembly: AssemblyCompany("Managed Fusion")]
+[assembly: AssemblyProduct("FluentCassandra")]
+[assembly: AssemblyCopyright("Copyright © Managed Fusion 2010")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
