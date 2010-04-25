@@ -7,6 +7,7 @@ namespace FluentCassandra
 {
 	public interface IFluentRecord
 	{
+		IList<IFluentColumn> Columns { get; }
 		IFluentMutationTracker MutationTracker { get; }
 	}
 }

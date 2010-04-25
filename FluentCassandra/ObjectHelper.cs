@@ -125,6 +125,22 @@ namespace FluentCassandra
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="keyRange"></param>
+		/// <returns></returns>
+		public static KeyRange CreateKeyRange(CassandraKeyRange keyRange)
+		{
+			return new KeyRange {
+				Start_key = keyRange.StartKey,
+				End_key = keyRange.EndKey,
+				Start_token = keyRange.StartToken,
+				End_token = keyRange.EndToken,
+				Count = keyRange.Count
+			};
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="mutation"></param>
 		/// <returns></returns>
 		public static Mutation CreateDeletedColumnMutation(IEnumerable<FluentMutation> mutation)

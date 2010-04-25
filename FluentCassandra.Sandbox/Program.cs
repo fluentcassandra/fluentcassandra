@@ -31,10 +31,16 @@ namespace FluentCassandra.Sandbox
 				db.SaveChanges();
 
 				var table = db.GetColumnFamily("Standard1");
-				var city = table.Get("19001", null, "City");
+				dynamic sameLocation = table.GetSingle("19001", new[] { "Name", "Street", "City", "State", "PostalCode", "Latitude", "Longitude" });
 
-				Console.WriteLine("Get city back");
-				Console.WriteLine("City: {0}", city);
+				Console.WriteLine("Get back");
+				Console.WriteLine("Name: {0}", sameLocation.Name);
+				Console.WriteLine("Street: {0}", sameLocation.Street);
+				Console.WriteLine("City: {0}", sameLocation.City);
+				Console.WriteLine("State: {0}", sameLocation.State);
+				Console.WriteLine("PostalCode: {0}", sameLocation.PostalCode);
+				Console.WriteLine("Latitude: {0}", (decimal)sameLocation.Latitude);
+				Console.WriteLine("Longitude: {0}", (decimal)sameLocation.Longitude);
 			}
 
 			Console.WriteLine("Done");

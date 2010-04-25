@@ -9,6 +9,6 @@ namespace FluentCassandra
 	public interface IFluentRecord<T> : IFluentRecord, INotifyPropertyChanged, IEnumerable<FluentColumnPath>
 		where T : IFluentColumn
 	{
-		IList<T> Columns { get; }
+		new IList<T> Columns { get; }
 	}
 }

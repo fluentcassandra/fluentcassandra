@@ -12,6 +12,7 @@ namespace FluentCassandra
 		string Name { get; set; }
 
 		object GetValue();
+		object GetValue(Type type);
 		T GetValue<T>();
 		void SetValue(object obj);
 

@@ -31,6 +31,20 @@ namespace FluentCassandra
 		/// <returns></returns>
 		public object GetValue()
 		{
+			if (_value == null)
+				_value = GetValue<object>();
+
+			return _value;
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="type"></param>
+		/// <returns></returns>
+		public object GetValue(Type type)
+		{
+			_value = ValueBytes.GetObject(type);
 			return _value;
 		}
 

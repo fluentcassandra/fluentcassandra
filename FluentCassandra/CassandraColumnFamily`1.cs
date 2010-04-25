@@ -79,7 +79,7 @@ namespace FluentCassandra
 		{
 			var name = GetName(exp);
 			var selection = _config.PropertyMap.FirstOrDefault(x => x.PropertyName == name);
-			var col = base.Get(key, /* superColumn */ null, selection.Alias);
+			var col = base.GetColumn(key, /* superColumn */ null, selection.Alias);
 
 			return col.GetValue<TResult>();
 		}

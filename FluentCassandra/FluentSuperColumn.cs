@@ -42,33 +42,6 @@ namespace FluentCassandra
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <returns></returns>
-		object IFluentColumn.GetValue()
-		{
-			return Columns;
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <returns></returns>
-		T IFluentColumn.GetValue<T>()
-		{
-			throw new NotSupportedException("You need to use the Columns proprety for the Super Column type.");
-		}
-
-		/// <summary>
-		/// The column value.
-		/// </summary>
-		void IFluentColumn.SetValue(object obj)
-		{
-			throw new NotSupportedException("You need to use the Columns proprety for the Super Column type.");
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
 		public FluentSuperColumnFamily Family
 		{
 			get { return _family; }
@@ -81,22 +54,6 @@ namespace FluentCassandra
 				foreach (var col in Columns)
 					((IFluentColumn)col).SetParent(parent);
 			}
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		IFluentColumnFamily IFluentColumn.Family
-		{
-			get { return Family; }
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		IFluentSuperColumn IFluentColumn.SuperColumn
-		{
-			get { return null; }
 		}
 
 		/// <summary>
@@ -115,14 +72,6 @@ namespace FluentCassandra
 		public FluentColumnParent GetParent()
 		{
 			return new FluentColumnParent(Family, this);
-		}
-
-		void IFluentColumn.SetParent(FluentColumnParent parent)
-		{
-			if (!(parent.ColumnFamily is FluentSuperColumnFamily))
-				throw new CassandraException("Only a super column family can have a child that is a super column.");
-
-			Family = (FluentSuperColumnFamily)parent.ColumnFamily;
 		}
 
 		/// <summary>
@@ -169,5 +118,47 @@ namespace FluentCassandra
 
 			return true;
 		}
+
+		#region IFluentColumn Members
+
+		object IFluentColumn.GetValue()
+		{
+			return Columns;
+		}
+
+		object IFluentColumn.GetValue(Type type)
+		{
+			throw new NotSupportedException("You need to use the Columns proprety for the Super Column type.");
+		}
+
+		T IFluentColumn.GetValue<T>()
+		{
+			throw new NotSupportedException("You need to use the Columns proprety for the Super Column type.");
+		}
+
+		void IFluentColumn.SetValue(object obj)
+		{
+			throw new NotSupportedException("You need to use the Columns proprety for the Super Column type.");
+		}
+
+		IFluentColumnFamily IFluentColumn.Family
+		{
+			get { return Family; }
+		}
+
+		IFluentSuperColumn IFluentColumn.SuperColumn
+		{
+			get { return null; }
+		}
+
+		void IFluentColumn.SetParent(FluentColumnParent parent)
+		{
+			if (!(parent.ColumnFamily is FluentSuperColumnFamily))
+				throw new CassandraException("Only a super column family can have a child that is a super column.");
+
+			Family = (FluentSuperColumnFamily)parent.ColumnFamily;
+		}
+
+		#endregion
 	}
 }

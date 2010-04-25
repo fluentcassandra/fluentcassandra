@@ -10,8 +10,6 @@ namespace FluentCassandra
 	public abstract class FluentRecord<T> : DynamicObject, IFluentRecord, IFluentRecord<T>, INotifyPropertyChanged, IEnumerable<FluentColumnPath>
 		where T : IFluentColumn
 	{
-		private  IFluentMutationTracker _mutationTracker;
-
 		public FluentRecord()
 		{
 			MutationTracker = new FluentMutationTracker(this);
@@ -33,9 +31,9 @@ namespace FluentCassandra
 		/// <returns></returns>
 		public override bool TryGetMember(GetMemberBinder binder, out object result)
 		{
-			IFluentColumn col = Columns.FirstOrDefault(c => c.Name == binder.Name);
+			IFluentColumn col = Columns.FirstOrDefault(c => String.Compare(c.Name, binder.Name, binder.IgnoreCase) == 0);
 
-			result = (col == null) ? null : col.GetValue();
+			result = (col == null) ? null : col.GetValue(binder.ReturnType);
 			return col != null;
 		}
 
@@ -72,7 +70,12 @@ namespace FluentCassandra
 
 		#endregion
 
-		#region IFluentRecordWithChangeTracker Members
+		#region IFluentRecord Members
+
+		IList<IFluentColumn> IFluentRecord.Columns
+		{
+			get { return (IList<IFluentColumn>)Columns; }
+		}
 
 		public IFluentMutationTracker MutationTracker
 		{

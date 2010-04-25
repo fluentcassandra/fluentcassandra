@@ -10,12 +10,21 @@ namespace FluentCassandra
 	{
 		public static T GetObject<T>(this byte[] bytes)
 		{
+			return (T)GetObject(bytes, typeof(T));
+		}
+
+		public static object GetObject(this byte[] bytes, Type type)
+		{
 			var converter = new BinaryConverter();
 
-			if (!converter.CanConvertTo(typeof(T)))
-				throw new NotSupportedException(typeof(T) + " is not supported for binary serialization.");
+			// by default if an object is entered then it will be considered a string
+			if (type == typeof(object))
+				type = typeof(string);
 
-			return (T)converter.ConvertTo(bytes, typeof(T));
+			if (!converter.CanConvertTo(type))
+				throw new NotSupportedException(type + " is not supported for binary serialization.");
+
+			return converter.ConvertTo(bytes, type);
 		}
 
 		public static byte[] GetBytes(this object obj)
