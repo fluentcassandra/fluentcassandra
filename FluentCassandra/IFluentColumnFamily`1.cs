@@ -7,7 +7,7 @@ namespace FluentCassandra
 	/// <summary>
 	/// This column family represents a Cassandra record.
 	/// </summary>
-	public interface IFluentColumnFamily<T> : IFluentColumnFamily, IFluentRecord<T>, IFluentRecord, INotifyPropertyChanged, IEnumerable<FluentColumnPath>
+	public interface IFluentColumnFamily<T> : IFluentColumnFamily, IFluentRecord<T>, IFluentRecord, INotifyPropertyChanged, IEnumerable<T>
 		where T : IFluentColumn
 	{
 	}

@@ -11,7 +11,7 @@ namespace FluentCassandra
 	/// 
 	/// </summary>
 	/// <typeparam name="T">A type that impliments <see cref="IFluentColumn"/>.</typeparam>
-	public abstract class FluentRecord<T> : DynamicObject, IFluentRecord, IFluentRecord<T>, INotifyPropertyChanged, IEnumerable<FluentColumnPath>
+	public abstract class FluentRecord<T> : DynamicObject, IFluentRecord, IFluentRecord<T>, INotifyPropertyChanged, IEnumerable<T>
 		where T : IFluentColumn, new()
 	{
 		private Dictionary<string, Type> _memberHints;
@@ -139,12 +139,11 @@ namespace FluentCassandra
 			return true;
 		}
 
-		#region IEnumerable<FluentColumnPath> Members
+		#region IEnumerable<T> Members
 
-		public IEnumerator<FluentColumnPath> GetEnumerator()
+		public IEnumerator<T> GetEnumerator()
 		{
-			foreach (var col in Columns)
-				yield return col.GetPath();
+			return Columns.GetEnumerator();
 		}
 
 		#endregion

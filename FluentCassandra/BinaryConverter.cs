@@ -13,6 +13,9 @@ namespace FluentCassandra
 			if (sourceType == typeof(Guid))
 				return true;
 
+			if (sourceType == typeof(DateTimeOffset))
+				return true;
+
 			switch (Type.GetTypeCode(sourceType))
 			{
 				case TypeCode.Byte:
@@ -40,6 +43,9 @@ namespace FluentCassandra
 		public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
 		{
 			if (destinationType == typeof(Guid))
+				return true;
+
+			if (destinationType == typeof(DateTimeOffset))
 				return true;
 
 			switch (Type.GetTypeCode(destinationType))
@@ -70,6 +76,9 @@ namespace FluentCassandra
 		{
 			if (value is Guid)
 				return ((Guid)value).ToByteArray();
+
+			if (value is DateTimeOffset)
+				return BitConverter.GetBytes(((DateTimeOffset)value).UtcTicks);
 
 			switch (Type.GetTypeCode(value.GetType()))
 			{
@@ -117,6 +126,9 @@ namespace FluentCassandra
 
 			if (destinationType == typeof(Guid))
 				return new Guid(bytes);
+
+			if (destinationType == typeof(DateTimeOffset))
+				return new DateTimeOffset(BitConverter.ToInt64(bytes, 0), new TimeSpan(0L));
 
 			switch (Type.GetTypeCode(destinationType))
 			{

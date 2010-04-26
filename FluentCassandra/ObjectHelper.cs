@@ -198,6 +198,15 @@ namespace FluentCassandra
 			}
 		}
 
+		public static Column CreateColumn(FluentColumn column)
+		{
+			return new Column {
+				Name = column.GetNameBytes(),
+				Value = column.GetValueBytes(),
+				Timestamp = column.GetTimestamp()
+			};
+		}
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -206,22 +215,21 @@ namespace FluentCassandra
 		public static ColumnOrSuperColumn CreateColumnOrSuperColumn(IFluentColumn column)
 		{
 			if (column is FluentColumn)
+			{
 				return new ColumnOrSuperColumn {
-					Column = new Column {
-						Name = column.GetNameBytes(),
-						Value = column.GetValueBytes(),
-						Timestamp = column.GetTimestamp()
-					}
+					Column = CreateColumn((FluentColumn)column)
 				};
+			}
 			else if (column is FluentSuperColumn)
 			{
 				var colY = (FluentSuperColumn)column;
 				var superColumn = new SuperColumn {
-					Name = colY.NameBytes
+					Name = colY.NameBytes,
+					Columns = new List<Column>(colY.Columns.Count)
 				};
 
 				foreach (var col in colY.Columns)
-					superColumn.Columns.Add(CreateColumnOrSuperColumn(col).Column);
+					superColumn.Columns.Add(CreateColumn(col));
 
 				return new ColumnOrSuperColumn {
 					Super_column = superColumn

@@ -6,7 +6,7 @@ using System.ComponentModel;
 
 namespace FluentCassandra
 {
-	public interface IFluentColumnFamily : IFluentRecord, INotifyPropertyChanged, IEnumerable<FluentColumnPath>
+	public interface IFluentColumnFamily : IFluentRecord, INotifyPropertyChanged
 	{
 		string Key { get; set; }
 		string FamilyName { get; }

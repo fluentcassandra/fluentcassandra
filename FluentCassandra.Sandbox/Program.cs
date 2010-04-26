@@ -13,39 +13,47 @@ namespace FluentCassandra.Sandbox
 	{
 		private static void Main(string[] args)
 		{
-			using (var db = new CassandraContext("Keyspace1", "localhost"))
+			using (var db = new CassandraContext("Blog", "localhost"))
 			{
-				dynamic location = new FluentColumnFamily("19001", "Standard1");
-				location.Name = "Some Location";
-				location.Latitude = 30.0M;
-				location.Longitude = -40.0M;
-				location.Street = "123 Some St.";
-				location.City = "Philadelphia";
-				location.State = "PA";
-				location.PostalCode = "19001";
+				dynamic postDetails = new FluentSuperColumn();
+				postDetails.Title = "My First Cassandra Post";
+				postDetails.Body = "Blah. Blah. Blah. about my first post on how great Cassandra is to work with.";
+				postDetails.Author = "Nick Berardi";
+				postDetails.PostedOn = DateTimeOffset.Now;
+			
+				dynamic tags = new FluentSuperColumn();
+				tags[0] = "Cassandra";
+				tags[1] = ".NET";
+				tags[2] = "Database";
+				tags[3] = "NoSQL";
+
+				dynamic post = new FluentSuperColumnFamily(
+					key: "first-post",
+					columnFamily: "Posts"
+				);
+
+				post.Post = postDetails;
+				post.Tags = tags;
 
 				Console.WriteLine("attaching record");
-				db.Attach(location);
+				db.Attach(post);
 
 				Console.WriteLine("saving changes");
 				db.SaveChanges();
 
-				var table = db.GetColumnFamily("Standard1");
+				var postsTable = db.GetColumnFamily("Posts");
 
-				string[] columns = new[] { "Name", "Street", "City", "State", "PostalCode", "Latitude", "Longitude" };
-				dynamic sameLocation = table.GetSingle("19001", columns);
+				dynamic samePost = postsTable.GetSingle("first-post", new[] { "Post", "Tags" });
 
-				sameLocation.SetHint("Latitude", typeof(decimal));
-				sameLocation.SetHint("Longitude", typeof(decimal));
+				samePost.Post.SetHint("PostedOn", typeof(DateTimeOffset));
 
-				Console.WriteLine("Get back");
-				Console.WriteLine("Name: {0}", sameLocation.Name);
-				Console.WriteLine("Street: {0}", sameLocation.Street);
-				Console.WriteLine("City: {0}", sameLocation.City);
-				Console.WriteLine("State: {0}", sameLocation.State);
-				Console.WriteLine("PostalCode: {0}", sameLocation.PostalCode);
-				Console.WriteLine("Latitude: {0}", sameLocation.Latitude);
-				Console.WriteLine("Longitude: {0}", sameLocation.Longitude);
+				Console.WriteLine("display post");
+				foreach (var col in samePost.Post)
+					Console.WriteLine("{0}: {1}", col.Name, samePost.Post[col.Name]);
+
+				Console.WriteLine("display tags");
+				foreach (var tag in samePost.Tags)
+					Console.WriteLine("{0}: {1}", tag.Name, samePost.Tags[tag.Name]);
 			}
 
 			Console.WriteLine("Done");

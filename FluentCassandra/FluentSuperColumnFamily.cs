@@ -72,15 +72,12 @@ namespace FluentCassandra
 			col = (FluentSuperColumn)value;
 			col.Name = name;
 
-			if (col == null)
-			{
+			int index = Columns.IndexOf(col);
+
+			if (index < 0)
 				Columns.Add(col);
-			}
 			else
-			{
-				int index = Columns.IndexOf(col);
 				Columns.Insert(index, col);
-			}
 
 			// notify the tracker that the column has changed
 			OnColumnMutated(mutationType, col);
