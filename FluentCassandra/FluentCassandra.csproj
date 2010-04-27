@@ -54,6 +54,7 @@
   <ItemGroup>
     <Compile Include="Actions\ColumnCount.cs" />
     <Compile Include="Actions\ColumnFamilyAction.cs" />
+    <Compile Include="Actions\GetColumn.cs" />
     <Compile Include="Actions\InsertColumn.cs" />
     <Compile Include="Actions\Remove.cs" />
     <Compile Include="Actions\Void.cs" />
@@ -116,7 +117,7 @@
     <Compile Include="IFluentRecord.cs" />
     <Compile Include="Types\CassandraType.cs" />
     <Compile Include="Types\LexicalUUIDType.cs" />
-    <Compile Include="ObjectHelper.cs" />
+    <Compile Include="Actions\ObjectHelper.cs" />
     <Compile Include="FluentRecord.cs" />
     <Compile Include="FluentSuperColumn.cs" />
     <Compile Include="FluentSuperColumnFamily.cs" />
