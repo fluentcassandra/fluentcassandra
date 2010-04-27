@@ -52,6 +52,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Actions\ColumnCount.cs" />
+    <Compile Include="Actions\ColumnFamilyAction.cs" />
+    <Compile Include="Actions\InsertColumn.cs" />
+    <Compile Include="Actions\Remove.cs" />
+    <Compile Include="Actions\Void.cs" />
     <Compile Include="Apache\Cassandra\AuthenticationException.cs" />
     <Compile Include="Apache\Cassandra\AuthenticationRequest.cs" />
     <Compile Include="Apache\Cassandra\AuthorizationException.cs" />
@@ -74,6 +79,7 @@
     <Compile Include="Apache\Cassandra\TimedOutException.cs" />
     <Compile Include="Apache\Cassandra\TokenRange.cs" />
     <Compile Include="Apache\Cassandra\UnavailableException.cs" />
+    <Compile Include="CassandraSuperColumnFamily.cs" />
     <Compile Include="Types\AsciiType.cs" />
     <Compile Include="Types\BinaryConverter.cs" />
     <Compile Include="CassandraColumnFamily.cs" />

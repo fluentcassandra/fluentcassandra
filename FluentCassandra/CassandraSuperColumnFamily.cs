@@ -2,65 +2,176 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Apache.Cassandra;
-using FluentCassandra.Configuration;
-using System.Collections;
 using FluentCassandra.Types;
+using Apache.Cassandra;
 
 namespace FluentCassandra
 {
-	/// <seealso href="http://wiki.apache.org/cassandra/API"/>
-	public class CassandraColumnFamily
+	class CassandraSuperColumnFamily<T, ST> : CassandraColumnFamily<ST>
+		where T : CassandraType
+		where ST : CassandraType
 	{
-		private CassandraContext _context;
-		private CassandraKeyspace _keyspace;
-		private IConnection _connection;
+		/*
+		 * i32 get_count(keyspace, key, column_parent, consistency_level) 
+		 */
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="keyspace"></param>
-		/// <param name="connection"></param>
-		public CassandraColumnFamily(CassandraContext context, CassandraKeyspace keyspace, IConnection connection, string columnFamily)
+		/// <param name="columnParent"></param>
+		/// <returns></returns>
+		public override int CountColumns(FluentColumnParent columnParent)
 		{
-			_context = context;
-			_keyspace = keyspace;
-			_connection = connection;
-			FamilyName = columnFamily;
+			return CountColumns(
+				columnParent.ColumnFamily.Key,
+				columnParent.SuperColumn == null ? null : columnParent.SuperColumn.GetNameBytes()
+			);
 		}
-
-		/// <summary>
-		/// The keyspace the column family belongs to.
-		/// </summary>
-		public CassandraKeyspace Keyspace { get { return _keyspace; } }
-
-		/// <summary>
-		/// The family name for this column family.
-		/// </summary>
-		public string FamilyName { get; private set; }
-
-		/// <summary>
-		/// If set contains the super column name that we are querying against.
-		/// </summary>
-		public CassandraType SuperColumnName { get; private set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="key"></param>
+		/// <param name="columnFamily"></param>
+		/// <param name="superColumnName"></param>
 		/// <returns></returns>
-		internal Cassandra.Client GetClient()
+		public int CountColumns(string key, T superColumnName)
 		{
-			return _connection.Client;
+			var parent = new ColumnParent {
+				Column_family = FamilyName
+			};
+
+			if (superColumnName != null)
+				parent.Super_column = superColumnName;
+
+			return GetClient().get_count(
+				_keyspace.KeyspaceName,
+				key,
+				parent,
+				ConsistencyLevel.ONE
+			);
+		}
+
+		/*
+		 * insert(keyspace, key, column_path, value, timestamp, consistency_level)
+		 */
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="col"></param>
+		public void InsertColumn(IFluentColumn col)
+		{
+			InsertColumn(col.GetPath());
 		}
 
 		/// <summary>
-		/// Verifies that the family passed in is part of this family.
+		/// 
 		/// </summary>
-		/// <param name="family"></param>
-		/// <returns></returns>
-		protected bool IsPartOfFamily(IFluentColumnFamily family)
+		/// <param name="path"></param>
+		public override void InsertColumn(FluentColumnPath path)
 		{
-			return String.Equals(family.FamilyName, FamilyName);
+			if (IsPartOfFamily(path.ColumnFamily))
+				throw new FluentCassandraException("The record passed in is not part of this family.");
+
+			InsertColumn(
+				path.ColumnFamily.Key,
+				path.SuperColumn == null ? null : path.SuperColumn.GetNameBytes(),
+				path.Column
+			);
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="key"></param>
+		/// <param name="columnFamily"></param>
+		/// <param name="col"></param>
+		protected void InsertColumn(string key, T superColumnName, T columnName, byte[] value, DateTimeOffset timestamp)
+		{
+			var path = new ColumnPath {
+				Column_family = FamilyName,
+				Column = columnName
+			};
+
+			if (superColumnName != null)
+				path.Super_column = superColumnName;
+
+			GetClient().insert(
+				_keyspace.KeyspaceName,
+				key,
+				path,
+				value,
+				timestamp.UtcTicks,
+				ConsistencyLevel.ONE
+			);
+		}
+
+		/*
+		 * remove(keyspace, key, column_path, timestamp, consistency_level)
+		 */
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="col"></param>
+		public void Remove(IFluentColumn col)
+		{
+			Remove(col.GetPath());
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="path"></param>
+		public void Remove(FluentColumnPath path)
+		{
+			Remove(
+				path.ColumnFamily,
+				path.SuperColumn == null ? null : path.SuperColumn.GetNameBytes(),
+				path.Column == null ? null : path.Column.GetNameBytes()
+			);
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="record"></param>
+		/// <param name="columnName"></param>
+		/// <param name="superColumnName"></param>
+		public void Remove(IFluentColumnFamily record, T superColumnName = null, T columnName = null)
+		{
+			if (IsPartOfFamily(record))
+				throw new FluentCassandraException("The record passed in is not part of this family.");
+
+			Remove(record.Key, superColumnName, columnName);
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="columnFamily"></param>
+		/// <param name="key"></param>
+		/// <param name="columnName"></param>
+		public void Remove(string key, byte[] superColumnName, T columnName)
+		{
+			var path = new ColumnPath {
+				Column_family = FamilyName
+			};
+
+			if (superColumnName != null)
+				path.Super_column = superColumnName;
+
+			if (columnName != null)
+				path.Column = columnName;
+
+			GetClient().remove(
+				_keyspace.KeyspaceName,
+				key,
+				path,
+				DateTimeOffset.UtcNow.Ticks,
+				ConsistencyLevel.ONE
+			);
 		}
 
 		/*

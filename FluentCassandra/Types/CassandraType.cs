@@ -18,5 +18,10 @@ namespace FluentCassandra.Types
 		public abstract object GetObject(byte[] bytes, Type type);
 
 		public abstract byte[] GetBytes(object obj);
+
+		public static implicit operator byte[](CassandraType type)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }
