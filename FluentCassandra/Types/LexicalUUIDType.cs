@@ -37,5 +37,22 @@ namespace FluentCassandra.Types
 
 			return (byte[])converter.ConvertFrom(obj);
 		}
+
+		private Guid _value;
+
+		public static implicit operator byte[](LexicalUUIDType type)
+		{
+			return type.GetBytes(type._value);
+		}
+
+		public static implicit operator Guid(LexicalUUIDType type)
+		{
+			return type._value;
+		}
+
+		public static implicit operator LexicalUUIDType(Guid s)
+		{
+			return new LexicalUUIDType { _value = s };
+		}
 	}
 }
