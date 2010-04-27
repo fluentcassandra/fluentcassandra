@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.ComponentModel;
 
-namespace FluentCassandra
+namespace FluentCassandra.Types
 {
 	internal class BinaryConverter : ArrayConverter
 	{

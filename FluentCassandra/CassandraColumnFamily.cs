@@ -11,6 +11,7 @@ namespace FluentCassandra
 	/// <seealso href="http://wiki.apache.org/cassandra/API"/>
 	public class CassandraColumnFamily
 	{
+		private CassandraContext _context;
 		private CassandraKeyspace _keyspace;
 		private IConnection _connection;
 
@@ -19,8 +20,9 @@ namespace FluentCassandra
 		/// </summary>
 		/// <param name="keyspace"></param>
 		/// <param name="connection"></param>
-		public CassandraColumnFamily(CassandraKeyspace keyspace, IConnection connection, string columnFamily)
+		public CassandraColumnFamily(CassandraContext context, CassandraKeyspace keyspace, IConnection connection, string columnFamily)
 		{
+			_context = context;
 			_keyspace = keyspace;
 			_connection = connection;
 			FamilyName = columnFamily;
@@ -442,7 +444,8 @@ namespace FluentCassandra
 			);
 
 			var record = ObjectHelper.ConvertToFluentColumnFamily(key, FamilyName, superColumnName, output);
-
+			_context.Attach(record);
+			record.MutationTracker.Clear();
 			return record;
 		}
 
@@ -546,7 +549,12 @@ namespace FluentCassandra
 			);
 
 			foreach (var record in output)
-				yield return ObjectHelper.ConvertToFluentColumnFamily(record.Key, FamilyName, superColumnName, record.Value);
+			{
+				var family = ObjectHelper.ConvertToFluentColumnFamily(record.Key, FamilyName, superColumnName, record.Value);
+				_context.Attach(family);
+				family.MutationTracker.Clear();
+				yield return family;
+			}
 		}
 
 		/*
@@ -655,7 +663,12 @@ namespace FluentCassandra
 			);
 
 			foreach (var record in output)
-				yield return ObjectHelper.ConvertToFluentColumnFamily(record.Key, FamilyName, superColumnName, record.Columns);
+			{
+				var family = ObjectHelper.ConvertToFluentColumnFamily(record.Key, FamilyName, superColumnName, record.Columns);
+				_context.Attach(family);
+				family.MutationTracker.Clear();
+				yield return family;
+			}
 		}
 	}
 }

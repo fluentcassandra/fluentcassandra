@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Dynamic;
 using System.ComponentModel;
+using FluentCassandra.Types;
 
 namespace FluentCassandra
 {
@@ -15,6 +16,8 @@ namespace FluentCassandra
 	{
 		private FluentSuperColumnFamily _family;
 		private FluentColumnList<FluentColumn> _columns;
+		private CassandraType _nameType;
+		private BytesType _valueType;
 
 		/// <summary>
 		/// 
@@ -24,11 +27,21 @@ namespace FluentCassandra
 			_columns = new FluentColumnList<FluentColumn>(GetParent());
 		}
 
-		public string Name { get; set; }
+		private CassandraType Type
+		{
+			get
+			{
+				if (_nameType == null)
+					_nameType = Family.CompareWith;
+				return _nameType;
+			}
+		}
+
+		public object Name { get; set; }
 
 		internal byte[] NameBytes
 		{
-			get { return Name.GetBytes(); }
+			get { return _nameType.GetBytes(Name); }
 		}
 
 		/// <summary>

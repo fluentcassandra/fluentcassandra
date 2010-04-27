@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using FluentCassandra.Types;
 
 namespace FluentCassandra
 {
@@ -12,15 +13,28 @@ namespace FluentCassandra
 	/// <seealso href="http://wiki.apache.org/cassandra/API"/>
 	public class FluentColumn : IFluentColumn
 	{
+		private CassandraType _nameType;
+		private BytesType _valueType;
+
 		public FluentColumn()
 		{
 			Timestamp = DateTimeOffset.UtcNow;
 		}
 
+		private CassandraType Type
+		{
+			get
+			{
+				if (_nameType == null)
+					_nameType = Family.CompareWith;
+				return _nameType;
+			}
+		}
+
 		/// <summary>
 		/// The column name.
 		/// </summary>
-		public string Name { get; set; }
+		public object Name { get; set; }
 
 		private object _value;
 		private byte[] _valueCache;
@@ -44,7 +58,7 @@ namespace FluentCassandra
 		/// <returns></returns>
 		public object GetValue(Type type)
 		{
-			_value = ValueBytes.GetObject(type);
+			_value = _valueType.GetObject(ValueBytes, type);
 			return _value;
 		}
 
@@ -55,7 +69,7 @@ namespace FluentCassandra
 		/// <returns></returns>
 		public T GetValue<T>()
 		{
-			_value = ValueBytes.GetObject<T>();
+			_value = _valueType.GetObject<T>(ValueBytes);
 			return (T)_value;
 		}
 
@@ -82,7 +96,7 @@ namespace FluentCassandra
 		/// </summary>
 		internal byte[] NameBytes
 		{
-			get { return Name.GetBytes(); }
+			get { return _nameType.GetBytes(Name); }
 		}
 
 		/// <summary>
@@ -93,7 +107,7 @@ namespace FluentCassandra
 			get
 			{
 				if (_valueCache == null && _value != null)
-					_valueCache = _value.GetBytes();
+					_valueCache = _valueType.GetBytes(_value);
 				return _valueCache;
 			}
 			set { _valueCache = value; }

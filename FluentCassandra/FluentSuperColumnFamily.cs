@@ -5,6 +5,7 @@ using System.Text;
 using System.Dynamic;
 using System.Linq.Expressions;
 using System.ComponentModel;
+using FluentCassandra.Types;
 
 namespace FluentCassandra
 {
@@ -16,6 +17,7 @@ namespace FluentCassandra
 		{
 			Key = key;
 			FamilyName = columnFamily;
+			CompareWith = new BytesType();
 
 			_columns = new FluentColumnList<FluentSuperColumn>(new FluentColumnParent(this, null));
 		}
@@ -35,6 +37,11 @@ namespace FluentCassandra
 		/// 
 		/// </summary>
 		public ColumnType ColumnType { get { return ColumnType.Super; } }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public CassandraType CompareWith { get; set; }
 
 		/// <summary>
 		/// 

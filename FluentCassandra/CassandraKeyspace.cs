@@ -39,24 +39,5 @@ namespace FluentCassandra
 		{
 			get { return _keyspaceName; }
 		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
-		public CassandraColumnFamily GetColumnFamily(string columnFamily)
-		{
-			return new CassandraColumnFamily(this, _connection, columnFamily);
-		}
-
-		/// <summary>
-		/// Gets a typed column family.
-		/// </summary>
-		/// <typeparam name="T">Type of column family.</typeparam>
-		/// <returns></returns>
-		public CassandraColumnFamily<T> GetColumnFamily<T>()
-		{
-			return new CassandraColumnFamily<T>(this, _connection);
-		}
 	}
 }

@@ -36,7 +36,7 @@ namespace FluentCassandra
 			{
 				var record = ConvertSuperColumnListToFluentSuperColumnFamily(
 					key,
-					superColumnName,
+					columnFamily,
 					cols.Select(x => x.Super_column).ToList()
 				);
 

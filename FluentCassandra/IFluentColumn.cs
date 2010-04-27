@@ -9,7 +9,7 @@ namespace FluentCassandra
 	/// <seealso href="http://wiki.apache.org/cassandra/API"/>
 	public interface IFluentColumn
 	{
-		string Name { get; set; }
+		object Name { get; set; }
 
 		object GetValue();
 		object GetValue(Type type);

@@ -19,8 +19,8 @@ namespace FluentCassandra
 		/// </summary>
 		/// <param name="keyspace"></param>
 		/// <param name="connection"></param>
-		public CassandraColumnFamily(CassandraKeyspace keyspace, IConnection connection)
-			: base(keyspace, connection, CassandraConfiguration.GetMapFor<T>().ColumnFamily)
+		public CassandraColumnFamily(CassandraContext context, CassandraKeyspace keyspace, IConnection connection)
+			: base(context, keyspace, connection, CassandraConfiguration.GetMapFor<T>().ColumnFamily)
 		{
 			_config = CassandraConfiguration.GetMapFor<T>();
 		}

@@ -8,31 +8,6 @@ namespace FluentCassandra
 {
 	internal static class BinaryHelper
 	{
-		public static T GetObject<T>(this byte[] bytes)
-		{
-			return (T)GetObject(bytes, typeof(T));
-		}
-
-		public static object GetObject(this byte[] bytes, Type type)
-		{
-			var converter = new BinaryConverter();
-
-			if (!converter.CanConvertTo(type))
-				throw new NotSupportedException(type + " is not supported for binary serialization.");
-
-			return converter.ConvertTo(bytes, type);
-		}
-
-		public static byte[] GetBytes(this object obj)
-		{
-			var converter = new BinaryConverter();
-
-			if (!converter.CanConvertFrom(obj.GetType()))
-				throw new NotSupportedException(obj.GetType() + " is not supported for binary serialization.");
-
-			return (byte[])converter.ConvertFrom(obj);
-		}
-
 		public static byte[] GetNameBytes(this IFluentColumn column)
 		{
 			if (column.IsSuperColumn())

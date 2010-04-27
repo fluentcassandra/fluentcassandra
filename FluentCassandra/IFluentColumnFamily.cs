@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.ComponentModel;
+using FluentCassandra.Types;
 
 namespace FluentCassandra
 {
@@ -11,5 +12,6 @@ namespace FluentCassandra
 		string Key { get; set; }
 		string FamilyName { get; }
 		ColumnType ColumnType { get; }
+		CassandraType CompareWith { get; set; }
 	}
 }

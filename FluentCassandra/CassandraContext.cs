@@ -81,22 +81,22 @@ namespace FluentCassandra
 		}
 
 		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		public CassandraColumnFamily GetColumnFamily(string columnFamily)
+		{
+			return new CassandraColumnFamily(this, _keyspace, _connection, columnFamily);
+		}
+
+		/// <summary>
 		/// Gets a typed column family.
 		/// </summary>
 		/// <typeparam name="T">Type of column family.</typeparam>
 		/// <returns></returns>
 		public CassandraColumnFamily<T> GetColumnFamily<T>()
 		{
-			return _keyspace.GetColumnFamily<T>();
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
-		public CassandraColumnFamily GetColumnFamily(string columnFamily)
-		{
-			return _keyspace.GetColumnFamily(columnFamily);
+			return new CassandraColumnFamily<T>(this, _keyspace, _connection);
 		}
 
 		public void Attach(IFluentRecord record)
