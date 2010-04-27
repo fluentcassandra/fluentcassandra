@@ -13,7 +13,7 @@ namespace FluentCassandra
 		/// </summary>
 		/// <param name="cols"></param>
 		/// <returns></returns>
-		public static IFluentColumnFamily ConvertToFluentColumnFamily(string key, string columnFamily, string superColumnName, List<ColumnOrSuperColumn> cols)
+		public static IFluentColumnFamily ConvertToFluentColumnFamily(string key, string columnFamily, object superColumnName, List<ColumnOrSuperColumn> cols)
 		{
 			var sample = cols.FirstOrDefault();
 
@@ -99,7 +99,7 @@ namespace FluentCassandra
 		public static FluentColumn ConvertColumnToFluentColumn(Column col)
 		{
 			return new FluentColumn {
-				Name = col.Name.GetObject<string>(),
+				NameBytes = col.Name,
 				ValueBytes = col.Value,
 				Timestamp = new DateTimeOffset(col.Timestamp, TimeSpan.Zero)
 			};
@@ -113,7 +113,7 @@ namespace FluentCassandra
 		public static FluentSuperColumn ConverSuperColumnToFluentSuperColumn(SuperColumn col)
 		{
 			var superCol = new FluentSuperColumn() {
-				Name = col.Name.GetObject<string>()
+				NameBytes = col.Name
 			};
 
 			foreach (var xcol in col.Columns)
@@ -145,7 +145,7 @@ namespace FluentCassandra
 		/// <returns></returns>
 		public static Mutation CreateDeletedColumnMutation(IEnumerable<FluentMutation> mutation)
 		{
-			var columnNames = mutation.Select(m => m.Column.Name).ToList();
+			var columnNames = mutation.Select(m => m.Column.GetNameBytes()).ToList();
 
 			var deletion = new Deletion {
 				Timestamp = DateTimeOffset.UtcNow.UtcTicks,
@@ -165,7 +165,7 @@ namespace FluentCassandra
 		public static Mutation CreateDeletedSuperColumnMutation(IEnumerable<FluentMutation> mutation)
 		{
 			var superColumn = mutation.Select(m => m.Column.SuperColumn.GetNameBytes()).FirstOrDefault();
-			var columnNames = mutation.Select(m => m.Column.Name).ToList();
+			var columnNames = mutation.Select(m => m.Column.GetNameBytes()).ToList();
 
 			var deletion = new Deletion {
 				Timestamp = DateTimeOffset.UtcNow.UtcTicks,
@@ -246,10 +246,10 @@ namespace FluentCassandra
 		/// </summary>
 		/// <param name="columnNames"></param>
 		/// <returns></returns>
-		public static SlicePredicate CreateSlicePredicate(IList<string> columnNames)
+		public static SlicePredicate CreateSlicePredicate(List<byte[]> columnNames)
 		{
 			return new SlicePredicate {
-				Column_names = columnNames.Select(x => x.GetBytes()).ToList()
+				Column_names = columnNames
 			};
 		}
 
@@ -261,12 +261,12 @@ namespace FluentCassandra
 		/// <param name="reversed"></param>
 		/// <param name="count"></param>
 		/// <returns></returns>
-		public static SlicePredicate CreateSlicePredicate(object start, object finish, bool reversed = false, int count = 100)
+		public static SlicePredicate CreateSlicePredicate(byte[] start, byte[] finish, bool reversed = false, int count = 100)
 		{
 			return new SlicePredicate {
 				Slice_range = new SliceRange {
-					Start = start.GetBytes(),
-					Finish = finish.GetBytes(),
+					Start = start,
+					Finish = finish,
 					Reversed = reversed,
 					Count = count
 				}

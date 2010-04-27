@@ -38,6 +38,7 @@ namespace FluentCassandra
 
 		private object _value;
 		private byte[] _valueCache;
+		private byte[] _nameCache;
 
 		/// <summary>
 		/// 
@@ -94,15 +95,21 @@ namespace FluentCassandra
 		/// <summary>
 		/// The bytes for the name column.
 		/// </summary>
-		internal byte[] NameBytes
+		public byte[] NameBytes
 		{
-			get { return _nameType.GetBytes(Name); }
+			get
+			{
+				if (_nameCache == null && Name != null)
+					_nameCache = _nameType.GetBytes(Name);
+				return _nameCache;
+			}
+			internal set { _nameCache = value; }
 		}
 
 		/// <summary>
 		/// The bytes for the value column.
 		/// </summary>
-		internal byte[] ValueBytes
+		public byte[] ValueBytes
 		{
 			get
 			{
@@ -110,7 +117,7 @@ namespace FluentCassandra
 					_valueCache = _valueType.GetBytes(_value);
 				return _valueCache;
 			}
-			set { _valueCache = value; }
+			internal set { _valueCache = value; }
 		}
 
 		/// <summary>

@@ -14,7 +14,7 @@ namespace FluentCassandra
 	public abstract class FluentRecord<T> : DynamicObject, IFluentRecord, IFluentRecord<T>, INotifyPropertyChanged, IEnumerable<T>
 		where T : IFluentColumn, new()
 	{
-		private Dictionary<string, Type> _memberHints;
+		private Dictionary<object, Type> _memberHints;
 
 		/// <summary>
 		/// 
@@ -22,7 +22,7 @@ namespace FluentCassandra
 		public FluentRecord()
 		{
 			MutationTracker = new FluentMutationTracker(this);
-			_memberHints = new Dictionary<string, Type>();
+			_memberHints = new Dictionary<object, Type>();
 		}
 
 		/// <summary>
@@ -33,7 +33,7 @@ namespace FluentCassandra
 		/// <summary>
 		/// Sets a hint at what a column members <see cref="Type"/> might be.
 		/// </summary>
-		public void SetHint(string member, Type hintType)
+		public void SetHint(object member, Type hintType)
 		{
 			_memberHints[member] = hintType;
 		}
@@ -68,7 +68,7 @@ namespace FluentCassandra
 		/// <param name="name"></param>
 		/// <param name="result"></param>
 		/// <returns></returns>
-		public virtual bool TryGetColumn(string name, out object result)
+		public virtual bool TryGetColumn(object name, out object result)
 		{
 			var col = Columns.FirstOrDefault(c => c.Name == name);
 
@@ -110,7 +110,7 @@ namespace FluentCassandra
 		/// <param name="binder"></param>
 		/// <param name="value"></param>
 		/// <returns></returns>
-		public virtual bool TrySetColumn(string name, object value)
+		public virtual bool TrySetColumn(object name, object value)
 		{
 			var col = Columns.FirstOrDefault(c => c.Name == name);
 			var mutationType = MutationType.Changed;
@@ -166,7 +166,7 @@ namespace FluentCassandra
 			MutationTracker.ColumnMutated(type, column);
 
 			if (PropertyChanged != null)
-				PropertyChanged(this, new PropertyChangedEventArgs(column.Name));
+				PropertyChanged(this, new PropertyChangedEventArgs(column.Name.ToString()));
 		}
 
 		#endregion

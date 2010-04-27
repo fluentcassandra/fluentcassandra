@@ -54,7 +54,7 @@ namespace FluentCassandra
 		/// <param name="name"></param>
 		/// <param name="result"></param>
 		/// <returns></returns>
-		public override bool TryGetColumn(string name, out object result)
+		public override bool TryGetColumn(object name, out object result)
 		{
 			var col = Columns.FirstOrDefault(c => c.Name == name);
 
@@ -68,7 +68,7 @@ namespace FluentCassandra
 		/// <param name="binder"></param>
 		/// <param name="value"></param>
 		/// <returns></returns>
-		public override bool TrySetColumn(string name, object value)
+		public override bool TrySetColumn(object name, object value)
 		{
 			if (!(value is FluentSuperColumn))
 				throw new ArgumentException("Value must be of type FluentSuperColumn<string>, because this column family is of type Super.", "value");

@@ -52,41 +52,6 @@ namespace FluentCassandra
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="obj"></param>
-		public void Add(T obj)
-		{
-			// TODO: wireup insert
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="obj"></param>
-		public void Remove(T obj)
-		{
-			// TODO: wireup remove
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <typeparam name="TResult"></typeparam>
-		/// <param name="key"></param>
-		/// <param name="exp"></param>
-		/// <returns></returns>
-		public TResult Get<TResult>(string key, Expression<Func<T, TResult>> exp)
-		{
-			var name = GetName(exp);
-			var selection = _config.PropertyMap.FirstOrDefault(x => x.PropertyName == name);
-			var col = base.GetColumn(key, /* superColumn */ null, selection.Alias);
-
-			return col.GetValue<TResult>();
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
 		/// <param name="exp"></param>
 		/// <returns></returns>
 		private string GetName(Expression exp)
