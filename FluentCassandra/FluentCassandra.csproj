@@ -52,6 +52,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FluentColumn.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="FluentColumnParent.cs">
       <SubType>Code</SubType>
     </Compile>

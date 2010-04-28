@@ -15,6 +15,7 @@ namespace FluentCassandra
 		where CompareWith : CassandraType
 	{
 		private BytesType _value;
+		private FluentColumnParent _parent;
 
 		public FluentColumn()
 		{
@@ -48,17 +49,7 @@ namespace FluentCassandra
 		/// <summary>
 		/// The column family.
 		/// </summary>
-		public IFluentColumnFamily Family
-		{
-			get;
-			internal set;
-		}
-
-		/// <summary>
-		/// The super column parent if any.
-		/// </summary>
-		/// <remarks>This column will be <see langword="null"/> if it is not a paret of a column family of type super.</remarks>
-		public IFluentSuperColumn SuperColumn
+		public IFluentColumnFamily<CompareWith> Family
 		{
 			get;
 			internal set;
@@ -70,7 +61,7 @@ namespace FluentCassandra
 		/// <returns></returns>
 		public FluentColumnPath GetPath()
 		{
-			return new FluentColumnPath(Family, SuperColumn, this);
+			return new FluentColumnPath(_parent, (IFluentColumn<CassandraType>)this);
 		}
 
 		/// <summary>
@@ -79,7 +70,7 @@ namespace FluentCassandra
 		/// <returns></returns>
 		public FluentColumnParent GetParent()
 		{
-			return new FluentColumnParent(Family, SuperColumn);
+			return _parent;
 		}
 
 		/// <summary>
@@ -92,18 +83,17 @@ namespace FluentCassandra
 			return String.Format("{0}: {1}", Name, value);
 		}
 
-		#region IFluentColumn Members
+		#region IFluentBaseColumn Members
 
-		CassandraType IFluentColumn.Name { get { return Name; } }
+		CassandraType IFluentBaseColumn.Name { get { return Name; } }
 
 		/// <summary>
 		/// Set the parent of this column.
 		/// </summary>
 		/// <param name="parent"></param>
-		void IFluentColumn.SetParent(FluentColumnParent parent)
+		void IFluentBaseColumn.SetParent(FluentColumnParent parent)
 		{
-			Family = parent.ColumnFamily;
-			SuperColumn = parent.SuperColumn;
+			_parent = parent;
 		}
 
 		#endregion

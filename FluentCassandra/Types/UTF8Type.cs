@@ -50,30 +50,11 @@ namespace FluentCassandra.Types
 			return type._value;
 		}
 
-		public static implicit operator UTF8Type(byte o) { return Convert(o); }
-		public static implicit operator UTF8Type(sbyte o) { return Convert(o); }
-		public static implicit operator UTF8Type(short o) { return Convert(o); }
-		public static implicit operator UTF8Type(ushort o) { return Convert(o); }
-		public static implicit operator UTF8Type(int o) { return Convert(o); }
-		public static implicit operator UTF8Type(uint o) { return Convert(o); }
-		public static implicit operator UTF8Type(long o) { return Convert(o); }
-		public static implicit operator UTF8Type(ulong o) { return Convert(o); }
-		public static implicit operator UTF8Type(float o) { return Convert(o); }
-		public static implicit operator UTF8Type(double o) { return Convert(o); }
-		public static implicit operator UTF8Type(decimal o) { return Convert(o); }
-		public static implicit operator UTF8Type(bool o) { return Convert(o); }
-		public static implicit operator UTF8Type(string o) { return Convert(o); }
-		public static implicit operator UTF8Type(char o) { return Convert(o); }
-		public static implicit operator UTF8Type(Guid o) { return Convert(o); }
-		public static implicit operator UTF8Type(DateTime o) { return Convert(o); }
-		public static implicit operator UTF8Type(DateTimeOffset o) { return Convert(o); }
-
-		private static UTF8Type Convert(object o)
+		public static implicit operator UTF8Type(string o)
 		{
-			var type = new UTF8Type();
-			type._value = o.ToString();
-
-			return type;
+			return new UTF8Type {
+				_value = o
+			};
 		}
 	}
 }

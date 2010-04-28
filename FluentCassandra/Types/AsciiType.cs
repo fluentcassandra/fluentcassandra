@@ -50,30 +50,11 @@ namespace FluentCassandra.Types
 			return type._value;
 		}
 
-		public static implicit operator AsciiType(byte o) { return Convert(o); }
-		public static implicit operator AsciiType(sbyte o) { return Convert(o); }
-		public static implicit operator AsciiType(short o) { return Convert(o); }
-		public static implicit operator AsciiType(ushort o) { return Convert(o); }
-		public static implicit operator AsciiType(int o) { return Convert(o); }
-		public static implicit operator AsciiType(uint o) { return Convert(o); }
-		public static implicit operator AsciiType(long o) { return Convert(o); }
-		public static implicit operator AsciiType(ulong o) { return Convert(o); }
-		public static implicit operator AsciiType(float o) { return Convert(o); }
-		public static implicit operator AsciiType(double o) { return Convert(o); }
-		public static implicit operator AsciiType(decimal o) { return Convert(o); }
-		public static implicit operator AsciiType(bool o) { return Convert(o); }
-		public static implicit operator AsciiType(string o) { return Convert(o); }
-		public static implicit operator AsciiType(char o) { return Convert(o); }
-		public static implicit operator AsciiType(Guid o) { return Convert(o); }
-		public static implicit operator AsciiType(DateTime o) { return Convert(o); }
-		public static implicit operator AsciiType(DateTimeOffset o) { return Convert(o); }
-
-		private static AsciiType Convert(object o)
+		public static implicit operator AsciiType(string o)
 		{
-			var type = new AsciiType();
-			type._value = o.ToString();
-
-			return type;
+			return new AsciiType {
+				_value = o
+			};
 		}
 	}
 }

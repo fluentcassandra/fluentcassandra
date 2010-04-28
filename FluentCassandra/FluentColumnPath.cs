@@ -8,21 +8,15 @@ namespace FluentCassandra
 {
 	public class FluentColumnPath : FluentColumnParent
 	{
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="columnFamily"></param>
-		/// <param name="superColumn"></param>
-		/// <param name="column"></param>
+		public FluentColumnPath(FluentColumnParent parent, IFluentColumn<CassandraType> column)
+			: this (parent.ColumnFamily, parent.SuperColumn, column) { }
+
 		public FluentColumnPath(IFluentBaseColumnFamily columnFamily, IFluentSuperColumn<CassandraType, CassandraType> superColumn, IFluentColumn<CassandraType> column)
 			: base(columnFamily, superColumn)
 		{
 			Column = column;
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
 		public IFluentColumn<CassandraType> Column { get; set; }
 	}
 }
