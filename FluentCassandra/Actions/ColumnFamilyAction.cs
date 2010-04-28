@@ -15,6 +15,6 @@ namespace FluentCassandra.Actions
 
 		public ConsistencyLevel ConsistencyLevel { get; set; }
 
-		public abstract bool TryExecute(CassandraColumnFamily columnFamily, out TResult result);
+		public abstract bool TryExecute(BaseCassandraColumnFamily columnFamily, out TResult result);
 	}
 }

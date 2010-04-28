@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Apache.Cassandra;
+using FluentCassandra.Types;
 
 namespace FluentCassandra
 {
@@ -81,24 +82,20 @@ namespace FluentCassandra
 		}
 
 		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
-		public CassandraColumnFamily GetColumnFamily(string columnFamily)
-		{
-			return new CassandraColumnFamily(this, _keyspace, _connection, columnFamily);
-		}
-
-		/// <summary>
 		/// Gets a typed column family.
 		/// </summary>
 		/// <typeparam name="T">Type of column family.</typeparam>
 		/// <returns></returns>
-		public CassandraColumnFamily<T> GetColumnFamily<T>()
+		public CassandraColumnFamily<T> GetColumnFamily<T>(string columnFamily)
+			where T : CassandraType
 		{
-			return new CassandraColumnFamily<T>(this, _keyspace, _connection);
+			return new CassandraColumnFamily<T>(this, _keyspace, _connection, columnFamily);
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="record"></param>
 		public void Attach(IFluentRecord record)
 		{
 			var tracker = record.MutationTracker;

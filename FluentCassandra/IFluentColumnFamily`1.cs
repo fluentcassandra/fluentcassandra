@@ -1,14 +1,14 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Collections.Generic;
+using FluentCassandra.Types;
 
 namespace FluentCassandra
 {
-	/// <summary>
-	/// This column family represents a Cassandra record.
-	/// </summary>
-	public interface IFluentColumnFamily<T> : IFluentColumnFamily, IFluentRecord<T>, IFluentRecord, INotifyPropertyChanged, IEnumerable<T>
-		where T : IFluentColumn
+	public interface IFluentColumnFamily<CompareWith>
+		:	IFluentBaseColumnFamily, 
+			IFluentRecord<IFluentColumn<CompareWith>>
+		where CompareWith : CassandraType
 	{
 	}
 }

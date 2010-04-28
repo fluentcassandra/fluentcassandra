@@ -68,6 +68,29 @@ namespace FluentCassandra.Types
 		public static implicit operator BytesType(DateTime o) { return Convert(o); }
 		public static implicit operator BytesType(DateTimeOffset o) { return Convert(o); }
 
+		public static implicit operator byte(BytesType o) { return Convert<byte>(o); }
+		public static implicit operator sbyte(BytesType o) { return Convert<sbyte>(o); }
+		public static implicit operator short(BytesType o) { return Convert<short>(o); }
+		public static implicit operator ushort(BytesType o) { return Convert<ushort>(o); }
+		public static implicit operator int(BytesType o) { return Convert<int>(o); }
+		public static implicit operator uint(BytesType o) { return Convert<uint>(o); }
+		public static implicit operator long(BytesType o) { return Convert<long>(o); }
+		public static implicit operator ulong(BytesType o) { return Convert<ulong>(o); }
+		public static implicit operator float(BytesType o) { return Convert<float>(o); }
+		public static implicit operator double(BytesType o) { return Convert<double>(o); }
+		public static implicit operator decimal(BytesType o) { return Convert<decimal>(o); }
+		public static implicit operator bool(BytesType o) { return Convert<bool>(o); }
+		public static implicit operator string(BytesType o) { return Convert<string>(o); }
+		public static implicit operator char(BytesType o) { return Convert<char>(o); }
+		public static implicit operator Guid(BytesType o) { return Convert<Guid>(o); }
+		public static implicit operator DateTime(BytesType o) { return Convert<DateTime>(o); }
+		public static implicit operator DateTimeOffset(BytesType o) { return Convert<DateTimeOffset>(o); }
+
+		private static T Convert<T>(BytesType type)
+		{
+			return type.GetObject<T>(type._value);
+		}
+
 		private static BytesType Convert(object o)
 		{
 			var type = new BytesType();

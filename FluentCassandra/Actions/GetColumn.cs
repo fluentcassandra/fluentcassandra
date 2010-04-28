@@ -13,11 +13,11 @@ namespace FluentCassandra.Actions
 		 * ColumnOrSuperColumn get(keyspace, key, column_path, consistency_level)
 		 */
 
-		public string Key { get; set; }
+		public string Key { get; private set; }
 
-		public CassandraType ColumnName { get; set; }
+		public CassandraType ColumnName { get; private set; }
 
-		public override bool TryExecute(CassandraColumnFamily columnFamily, out IFluentColumn result)
+		public override bool TryExecute(BaseCassandraColumnFamily columnFamily, out IFluentColumn result)
 		{
 			var path = new ColumnPath {
 				Column_family = columnFamily.FamilyName

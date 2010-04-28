@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using FluentCassandra.Types;
 
 namespace FluentCassandra
 {
@@ -13,7 +14,7 @@ namespace FluentCassandra
 		/// <param name="columnFamily"></param>
 		/// <param name="superColumn"></param>
 		/// <param name="column"></param>
-		public FluentColumnPath(IFluentColumnFamily columnFamily, IFluentSuperColumn superColumn, FluentColumn column)
+		public FluentColumnPath(IFluentBaseColumnFamily columnFamily, IFluentSuperColumn<CassandraType, CassandraType> superColumn, IFluentColumn<CassandraType> column)
 			: base(columnFamily, superColumn)
 		{
 			Column = column;
@@ -22,6 +23,6 @@ namespace FluentCassandra
 		/// <summary>
 		/// 
 		/// </summary>
-		public FluentColumn Column { get; set; }
+		public IFluentColumn<CassandraType> Column { get; set; }
 	}
 }

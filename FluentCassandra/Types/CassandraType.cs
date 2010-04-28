@@ -19,9 +19,8 @@ namespace FluentCassandra.Types
 
 		public abstract byte[] GetBytes(object obj);
 
-		public static implicit operator byte[](CassandraType type)
-		{
-			throw new NotImplementedException();
-		}
+		// these are put in as stubs so that implicity references against cassandra type compile
+		public static implicit operator byte[](CassandraType type) { throw new NotImplementedException(); }
+		public static implicit operator string(CassandraType type) { throw new NotImplementedException(); }
 	}
 }

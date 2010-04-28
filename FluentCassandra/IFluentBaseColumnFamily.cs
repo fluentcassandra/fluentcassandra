@@ -7,11 +7,10 @@ using FluentCassandra.Types;
 
 namespace FluentCassandra
 {
-	public interface IFluentColumnFamily : IFluentRecord, INotifyPropertyChanged
+	public interface IFluentBaseColumnFamily : IFluentRecord, INotifyPropertyChanged
 	{
 		string Key { get; set; }
 		string FamilyName { get; }
 		ColumnType ColumnType { get; }
-		CassandraType CompareWith { get; set; }
 	}
 }

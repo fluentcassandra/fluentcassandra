@@ -11,76 +11,29 @@ namespace FluentCassandra
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
 	/// <seealso href="http://wiki.apache.org/cassandra/API"/>
-	public class FluentColumn : IFluentColumn
+	public class FluentColumn<CompareWith> : IFluentColumn<CompareWith>
+		where CompareWith : CassandraType
 	{
-		private CassandraType _nameType;
-		private BytesType _valueType;
+		private BytesType _value;
 
 		public FluentColumn()
 		{
 			Timestamp = DateTimeOffset.UtcNow;
 		}
 
-		private CassandraType Type
-		{
-			get
-			{
-				if (_nameType == null)
-					_nameType = Family.CompareWith;
-				return _nameType;
-			}
-		}
-
 		/// <summary>
 		/// The column name.
 		/// </summary>
-		public object Name { get; set; }
+		public CompareWith Name { get; set; }
 
-		private object _value;
-		private byte[] _valueCache;
-		private byte[] _nameCache;
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
-		public object GetValue()
+		public BytesType Value
 		{
-			if (_value == null)
-				_value = GetValue<object>();
-
-			return _value;
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="type"></param>
-		/// <returns></returns>
-		public object GetValue(Type type)
-		{
-			_value = _valueType.GetObject(ValueBytes, type);
-			return _value;
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <returns></returns>
-		public T GetValue<T>()
-		{
-			_value = _valueType.GetObject<T>(ValueBytes);
-			return (T)_value;
-		}
-
-		/// <summary>
-		/// The column value.
-		/// </summary>
-		public void SetValue(object obj)
-		{
-			Timestamp = DateTimeOffset.UtcNow;
-			_value = obj;
+			get { return _value; }
+			set
+			{
+				_value = value;
+				Timestamp = DateTimeOffset.UtcNow;
+			}
 		}
 
 		/// <summary>
@@ -90,44 +43,6 @@ namespace FluentCassandra
 		{
 			get;
 			internal set;
-		}
-
-		/// <summary>
-		/// The bytes for the name column.
-		/// </summary>
-		public byte[] NameBytes
-		{
-			get
-			{
-				if (_nameCache == null && Name != null)
-					_nameCache = _nameType.GetBytes(Name);
-				return _nameCache;
-			}
-			internal set { _nameCache = value; }
-		}
-
-		/// <summary>
-		/// The bytes for the value column.
-		/// </summary>
-		public byte[] ValueBytes
-		{
-			get
-			{
-				if (_valueCache == null && _value != null)
-					_valueCache = _valueType.GetBytes(_value);
-				return _valueCache;
-			}
-			internal set { _valueCache = value; }
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
-		public override string ToString()
-		{
-			var value = GetValue<string>();
-			return String.Format("{0}: {1}", Name, value);
 		}
 
 		/// <summary>
@@ -168,6 +83,20 @@ namespace FluentCassandra
 		}
 
 		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		public override string ToString()
+		{
+			string value = Value;
+			return String.Format("{0}: {1}", Name, value);
+		}
+
+		#region IFluentColumn Members
+
+		CassandraType IFluentColumn.Name { get { return Name; } }
+
+		/// <summary>
 		/// Set the parent of this column.
 		/// </summary>
 		/// <param name="parent"></param>
@@ -176,5 +105,7 @@ namespace FluentCassandra
 			Family = parent.ColumnFamily;
 			SuperColumn = parent.SuperColumn;
 		}
+
+		#endregion
 	}
 }

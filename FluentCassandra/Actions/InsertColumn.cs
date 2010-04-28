@@ -13,15 +13,15 @@ namespace FluentCassandra.Actions
 		* insert(keyspace, key, column_path, value, timestamp, consistency_level)
 		*/
 
-		public string Key { get; set; }
+		public string Key { get; private set; }
 
-		public CassandraType ColumnName { get; set; }
+		public CassandraType ColumnName { get; private set; }
 
-		public CassandraType ColumnValue { get; set; }
+		public CassandraType ColumnValue { get; private set; }
 
-		public DateTime Timestamp { get; set; }
+		public DateTime Timestamp { get; private set; }
 
-		public override bool TryExecute(CassandraColumnFamily columnFamily, out Void result)
+		public override bool TryExecute(BaseCassandraColumnFamily columnFamily, out Void result)
 		{
 			var path = new ColumnPath {
 				Column_family = columnFamily.FamilyName,

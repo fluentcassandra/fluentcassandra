@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Apache.Cassandra;
 
-namespace FluentCassandra
+namespace FluentCassandra.Actions
 {
 	public class CassandraKeyRange
 	{
@@ -17,5 +18,16 @@ namespace FluentCassandra
 		public string StartToken { get; set; }
 		public string EndToken { get; set; }
 		public int Count { get; set; }
+
+		internal KeyRange CreateKeyRange()
+		{
+			return new KeyRange {
+				Start_key = StartKey,
+				End_key = EndKey,
+				Start_token = StartToken,
+				End_token = EndToken,
+				Count = Count
+			};
+		}
 	}
 }

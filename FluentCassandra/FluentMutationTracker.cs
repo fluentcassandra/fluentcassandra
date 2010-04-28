@@ -17,7 +17,7 @@ namespace FluentCassandra
 
 		public IFluentRecord ParentRecord { get; private set; }
 
-		public void ColumnMutated(MutationType type, IFluentColumn column)
+		public void ColumnMutated(MutationType type, IFluentBaseColumn column)
 		{
 			_mutation.Add(new FluentMutation {
 				Type = type,

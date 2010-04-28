@@ -22,6 +22,6 @@ namespace FluentCassandra
 		/// <summary>
 		/// 
 		/// </summary>
-		public IFluentColumn Column { get; set; }
+		public IFluentBaseColumn Column { get; set; }
 	}
 }

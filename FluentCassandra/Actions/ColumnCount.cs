@@ -12,11 +12,11 @@ namespace FluentCassandra.Actions
 		 * i32 get_count(keyspace, key, column_parent, consistency_level) 
 		 */
 
-		public string Key { get; set; }
+		public string Key { get; private set; }
 
 		#region ICassandraAction<int> Members
 
-		public override bool TryExecute(CassandraColumnFamily columnFamily, out int result)
+		public override bool TryExecute(BaseCassandraColumnFamily columnFamily, out int result)
 		{
 			var parent = new ColumnParent {
 				Column_family = columnFamily.FamilyName

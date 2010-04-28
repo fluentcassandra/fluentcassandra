@@ -7,11 +7,21 @@ using Thrift.Transport;
 using Thrift.Protocol;
 using Apache.Cassandra;
 using FluentCassandra.Configuration;
+using FluentCassandra.Types;
 
 namespace FluentCassandra
 {
-	public class CassandraColumnFamily<T> : CassandraColumnFamily
+	public class CassandraColumnFamily<T> : BaseCassandraColumnFamily
+		where T : CassandraType
 	{
+		public CassandraColumnFamily(CassandraContext context, CassandraKeyspace keyspace, IConnection connection, string columnFamily)
+			: base(context, keyspace, connection, columnFamily) { }
+
+		public Type ColumnType { get { return typeof(T); } }
+	}
+}
+
+		/*
 		private ITypeGetConfiguration<T> _config;
 
 		/// <summary>
@@ -73,4 +83,4 @@ namespace FluentCassandra
 			}
 		}
 	}
-}
+}*/

@@ -7,9 +7,9 @@ using FluentCassandra.Types;
 
 namespace FluentCassandra
 {
-	public interface IFluentSuperColumn<CompareWith, CompareSubcolumnWith>
-		:	IFluentBaseColumn<CompareWith>,
-			IFluentRecord<IFluentColumn<CompareSubcolumnWith>>
+	public interface IFluentSuperColumnFamily<CompareWith, CompareSubcolumnWith>
+		:	IFluentBaseColumnFamily,
+			IFluentRecord<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>>
 		where CompareWith : CassandraType
 		where CompareSubcolumnWith : CassandraType
 	{

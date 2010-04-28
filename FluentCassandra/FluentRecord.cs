@@ -12,7 +12,7 @@ namespace FluentCassandra
 	/// </summary>
 	/// <typeparam name="T">A type that impliments <see cref="IFluentColumn"/>.</typeparam>
 	public abstract class FluentRecord<T> : DynamicObject, IFluentRecord, IFluentRecord<T>, INotifyPropertyChanged, IEnumerable<T>
-		where T : IFluentColumn, new()
+		where T : IFluentBaseColumn, new()
 	{
 		private Dictionary<object, Type> _memberHints;
 
@@ -68,17 +68,17 @@ namespace FluentCassandra
 		/// <param name="name"></param>
 		/// <param name="result"></param>
 		/// <returns></returns>
-		public virtual bool TryGetColumn(object name, out object result)
-		{
-			var col = Columns.FirstOrDefault(c => c.Name == name);
+		public abstract bool TryGetColumn(object name, out object result);
+		//{
+		//    var col = Columns.FirstOrDefault(c => c.Name == name);
 
-			Type hintType;
-			if (!_memberHints.TryGetValue(name, out hintType))
-				hintType = typeof(string);
+		//    Type hintType;
+		//    if (!_memberHints.TryGetValue(name, out hintType))
+		//        hintType = typeof(string);
 
-			result = (col == null) ? null : col.GetValue(hintType);
-			return col != null;
-		}
+		//    result = (col == null) ? null : col.GetValue(hintType);
+		//    return col != null;
+		//}
 
 		/// <summary>
 		/// 
@@ -110,34 +110,34 @@ namespace FluentCassandra
 		/// <param name="binder"></param>
 		/// <param name="value"></param>
 		/// <returns></returns>
-		public virtual bool TrySetColumn(object name, object value)
-		{
-			var col = Columns.FirstOrDefault(c => c.Name == name);
-			var mutationType = MutationType.Changed;
+		public abstract bool TrySetColumn(object name, object value);
+		//{
+		//    var col = Columns.FirstOrDefault(c => c.Name == name);
+		//    var mutationType = MutationType.Changed;
 
-			// if column doesn't exisit create it and add it to the columns
-			if (col == null)
-			{
-				mutationType = MutationType.Added;
+		//    // if column doesn't exisit create it and add it to the columns
+		//    if (col == null)
+		//    {
+		//        mutationType = MutationType.Added;
 
-				col = new T();
-				col.Name = name;
+		//        col = new T();
+		//        col.Name = name;
 
-				Columns.Add(col);
-			}
+		//        Columns.Add(col);
+		//    }
 
-			// set the column value
-			col.SetValue(value);
+		//    // set the column value
+		//    col.SetValue(value);
 
-			// notify the tracker that the column has changed
-			OnColumnMutated(mutationType, col);
+		//    // notify the tracker that the column has changed
+		//    OnColumnMutated(mutationType, col);
 
-			// declare the hint for the member
-			if (value != null)
-				SetHint(name, value.GetType());
+		//    // declare the hint for the member
+		//    if (value != null)
+		//        SetHint(name, value.GetType());
 
-			return true;
-		}
+		//    return true;
+		//}
 
 		#region IEnumerable<T> Members
 
@@ -161,21 +161,21 @@ namespace FluentCassandra
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		protected void OnColumnMutated(MutationType type, IFluentColumn column)
+		protected void OnColumnMutated(MutationType type, IFluentBaseColumn column)
 		{
 			MutationTracker.ColumnMutated(type, column);
 
 			if (PropertyChanged != null)
-				PropertyChanged(this, new PropertyChangedEventArgs(column.Name.ToString()));
+				PropertyChanged(this, new PropertyChangedEventArgs(column.Name));
 		}
 
 		#endregion
 
 		#region IFluentRecord Members
 
-		IList<IFluentColumn> IFluentRecord.Columns
+		IList<IFluentBaseColumn> IFluentRecord.Columns
 		{
-			get { return (IList<IFluentColumn>)Columns; }
+			get { return (IList<IFluentBaseColumn>)Columns; }
 		}
 
 		public IFluentMutationTracker MutationTracker
