@@ -8,7 +8,7 @@ using System.Linq;
 namespace FluentCassandra.Test
 {
 	[TestClass]
-	public class AsciiTypeTest
+	public class UTF8TypeTest
 	{
 		public TestContext TestContext { get; set; }
 
@@ -49,7 +49,7 @@ namespace FluentCassandra.Test
 			string expected = "I am casted!";
 
 			// act
-			AsciiType actual = expected;
+			UTF8Type actual = expected;
 
 			// assert
 			Assert.AreEqual(expected, (string)actual);
@@ -60,7 +60,7 @@ namespace FluentCassandra.Test
 		{
 			// arrange
 			string expected = "I am casted!";
-			AsciiType type = expected;
+			UTF8Type type = expected;
 
 			// act
 			string actual = type;
@@ -75,7 +75,7 @@ namespace FluentCassandra.Test
 			// arrange
 			string value = "I am casted!";
 			byte[] expected = Encoding.UTF8.GetBytes(value);
-			AsciiType type = value;
+			UTF8Type type = value;
 
 			// act
 			byte[] actual = type;
