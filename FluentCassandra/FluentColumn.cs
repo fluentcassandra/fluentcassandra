@@ -10,12 +10,12 @@ namespace FluentCassandra
 	/// 
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
-	/// <seealso href="http://wiki.apache.org/cassandra/API"/>
 	public class FluentColumn<CompareWith> : IFluentColumn<CompareWith>
 		where CompareWith : CassandraType
 	{
 		private BytesType _value;
 		private FluentColumnParent _parent;
+		private IFluentColumnFamily<CompareWith> _family;
 
 		public FluentColumn()
 		{
@@ -47,12 +47,16 @@ namespace FluentCassandra
 		}
 
 		/// <summary>
-		/// The column family.
+		/// 
 		/// </summary>
 		public IFluentColumnFamily<CompareWith> Family
 		{
-			get;
-			internal set;
+			get { return _family; }
+			internal set
+			{
+				_family = value;
+				UpdateParent(GetParent());
+			}
 		}
 
 		/// <summary>
@@ -73,16 +77,6 @@ namespace FluentCassandra
 			return _parent;
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
-		public override string ToString()
-		{
-			string value = Value;
-			return String.Format("{0}: {1}", Name, value);
-		}
-
 		#region IFluentBaseColumn Members
 
 		CassandraType IFluentBaseColumn.Name { get { return Name; } }
@@ -92,6 +86,11 @@ namespace FluentCassandra
 		/// </summary>
 		/// <param name="parent"></param>
 		void IFluentBaseColumn.SetParent(FluentColumnParent parent)
+		{
+			UpdateParent(parent);
+		}
+
+		private void UpdateParent(FluentColumnParent parent)
 		{
 			_parent = parent;
 		}

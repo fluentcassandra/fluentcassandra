@@ -12,53 +12,31 @@ namespace FluentCassandra
 	/// 
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
-	public class FluentSuperColumn : FluentRecord<FluentColumn>, IFluentSuperColumn, IFluentColumn
+	public class FluentSuperColumn<CompareWith, CompareSubcolumnWith> : FluentRecord<IFluentColumn<CompareSubcolumnWith>>, IFluentSuperColumn<CompareWith, CompareSubcolumnWith>
+		where CompareWith : CassandraType
+		where CompareSubcolumnWith : CassandraType, new()
 	{
-		private FluentSuperColumnFamily _family;
-		private FluentColumnList<FluentColumn> _columns;
-		private CassandraType _nameType;
-		private BytesType _valueType;
+		private IFluentColumnFamily<CompareWith> _family;
+		private FluentColumnList<IFluentColumn<CompareSubcolumnWith>> _columns;
+		private FluentColumnParent _parent;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		public FluentSuperColumn()
 		{
-			_columns = new FluentColumnList<FluentColumn>(GetParent());
+			_columns = new FluentColumnList<IFluentColumn<CompareSubcolumnWith>>(GetParent());
 		}
-
-		private CassandraType Type
-		{
-			get
-			{
-				if (_nameType == null)
-					_nameType = Family.CompareWith;
-				return _nameType;
-			}
-		}
-
-		public object Name { get; set; }
-
-		private byte[] _nameCache;
 
 		/// <summary>
-		/// The bytes for the name column.
+		/// The column name.
 		/// </summary>
-		public byte[] NameBytes
-		{
-			get
-			{
-				if (_nameCache == null && Name != null)
-					_nameCache = _nameType.GetBytes(Name);
-				return _nameCache;
-			}
-			internal set { _nameCache = value; }
-		}
+		public CompareWith Name { get; set; }
 
 		/// <summary>
 		/// The columns in the super column.
 		/// </summary>
-		public override IList<FluentColumn> Columns
+		public override IList<IFluentColumn<CompareSubcolumnWith>> Columns
 		{
 			get { return _columns; }
 		}
@@ -66,76 +44,100 @@ namespace FluentCassandra
 		/// <summary>
 		/// 
 		/// </summary>
-		public FluentSuperColumnFamily Family
+		public IFluentColumnFamily<CompareWith> Family
 		{
 			get { return _family; }
 			internal set
 			{
 				_family = value;
-			
-				var parent = GetParent();
-				_columns.Parent = parent;
-				foreach (var col in Columns)
-					((IFluentColumn)col).SetParent(parent);
+				UpdateParent(GetParent());
 			}
 		}
 
 		/// <summary>
-		/// 
+		/// Gets the path.
 		/// </summary>
 		/// <returns></returns>
 		public FluentColumnPath GetPath()
 		{
-			return new FluentColumnPath(Family, this, null);
+			return new FluentColumnPath(_parent, (IFluentColumn<CassandraType>)this);
+		}
+
+		/// <summary>
+		/// Gets the parent.
+		/// </summary>
+		/// <returns></returns>
+		public FluentColumnParent GetParent()
+		{
+			return _parent;
 		}
 
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="name"></param>
+		/// <param name="result"></param>
 		/// <returns></returns>
-		public FluentColumnParent GetParent()
+		public override bool TryGetColumn(object name, out object result)
 		{
-			return new FluentColumnParent(Family, this);
+		    var col = Columns.FirstOrDefault(c => c.Name == name);
+
+			result = (col == null) ? null : col.Value;
+		    return col != null;
 		}
 
-		#region IFluentColumn Members
-
-		object IFluentColumn.GetValue()
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="name"></param>
+		/// <param name="value"></param>
+		/// <returns></returns>
+		public override bool TrySetColumn(object name, object value)
 		{
-			return Columns;
+			var col = Columns.FirstOrDefault(c => c.Name == name);
+			var mutationType = MutationType.Changed;
+
+			CompareSubcolumnWith nameType = new CompareSubcolumnWith();
+			BytesType valueType = new BytesType();
+
+			// if column doesn't exisit create it and add it to the columns
+			if (col == null)
+			{
+				mutationType = MutationType.Added;
+
+				col = new FluentColumn<CompareSubcolumnWith>();
+				((FluentColumn<CompareSubcolumnWith>)col).Name = (CompareSubcolumnWith)nameType.SetValue(name);
+
+				Columns.Add(col);
+			}
+
+			// set the column value
+			col.Value = (BytesType)valueType.SetValue(value);
+
+			// notify the tracker that the column has changed
+			OnColumnMutated(mutationType, col);
+
+			return true;
 		}
 
-		object IFluentColumn.GetValue(Type type)
+		#region IFluentBaseColumn Members
+
+		CassandraType IFluentBaseColumn.Name
 		{
-			throw new NotSupportedException("You need to use the Columns proprety for the Super Column type.");
+			get { throw new NotImplementedException(); }
 		}
 
-		T IFluentColumn.GetValue<T>()
+		void IFluentBaseColumn.SetParent(FluentColumnParent parent)
 		{
-			throw new NotSupportedException("You need to use the Columns proprety for the Super Column type.");
+			UpdateParent(parent);
 		}
 
-		void IFluentColumn.SetValue(object obj)
+		private void UpdateParent(FluentColumnParent parent)
 		{
-			throw new NotSupportedException("You need to use the Columns proprety for the Super Column type.");
-		}
-
-		IFluentColumnFamily IFluentColumn.Family
-		{
-			get { return Family; }
-		}
-
-		IFluentSuperColumn IFluentColumn.SuperColumn
-		{
-			get { return null; }
-		}
-
-		void IFluentColumn.SetParent(FluentColumnParent parent)
-		{
-			if (!(parent.ColumnFamily is FluentSuperColumnFamily))
-				throw new CassandraException("Only a super column family can have a child that is a super column.");
-
-			Family = (FluentSuperColumnFamily)parent.ColumnFamily;
+			_parent = parent;
+			_columns.Parent = parent;
+			foreach (var col in Columns)
+				((IFluentBaseColumn)col).SetParent(parent);
 		}
 
 		#endregion

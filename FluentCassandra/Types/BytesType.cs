@@ -8,19 +8,11 @@ namespace FluentCassandra.Types
 {
 	public class BytesType : CassandraType
 	{
-		public override TypeConverter TypeConverter
-		{
-			get { return new BinaryConverter(); }
-		}
+		private static readonly BytesTypeConverter Converter = new BytesTypeConverter();
 
-		public byte[] GetObject(byte[] bytes)
+		private static object GetObject(byte[] bytes, Type type)
 		{
-			return bytes;
-		}
-
-		public override object GetObject(byte[] bytes, Type type)
-		{
-			var converter = this.TypeConverter;
+			var converter = Converter;
 
 			if (!converter.CanConvertTo(type))
 				throw new NotSupportedException(type + " is not supported for binary serialization.");
@@ -28,14 +20,19 @@ namespace FluentCassandra.Types
 			return converter.ConvertTo(bytes, type);
 		}
 
-		public override byte[] GetBytes(object obj)
+		private static byte[] GetBytes(object obj)
 		{
-			var converter = this.TypeConverter;
+			var converter = Converter;
 
 			if (!converter.CanConvertFrom(obj.GetType()))
 				throw new NotSupportedException(obj.GetType() + " is not supported for binary serialization.");
 
 			return (byte[])converter.ConvertFrom(obj);
+		}
+
+		public override CassandraType SetValue(object obj)
+		{
+			return Convert(obj);
 		}
 
 		private byte[] _value;
@@ -88,13 +85,13 @@ namespace FluentCassandra.Types
 
 		private static T Convert<T>(BytesType type)
 		{
-			return type.GetObject<T>(type._value);
+			return (T)GetObject(type._value, typeof(T));
 		}
 
 		private static BytesType Convert(object o)
 		{
 			var type = new BytesType();
-			type._value = type.GetBytes(o);
+			type._value = GetBytes(o);
 
 			return type;
 		}

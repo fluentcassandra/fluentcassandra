@@ -7,7 +7,7 @@ using System.Collections.ObjectModel;
 namespace FluentCassandra
 {
 	internal class FluentColumnList<T> : IList<T>
-		where T : IFluentColumn
+		where T : IFluentBaseColumn
 	{
 		private List<T> _columns;
 

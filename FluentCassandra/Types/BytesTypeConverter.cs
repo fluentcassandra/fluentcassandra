@@ -6,7 +6,7 @@ using System.ComponentModel;
 
 namespace FluentCassandra.Types
 {
-	internal class BinaryConverter : ArrayConverter
+	internal class BytesTypeConverter : ArrayConverter
 	{
 		public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
 		{

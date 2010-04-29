@@ -8,66 +8,55 @@ namespace FluentCassandra.Types
 {
 	public class TimeUUIDType : CassandraType
 	{
-		public override TypeConverter TypeConverter
-		{
-			get { return new GuidConverter(); }
-		}
+		private static readonly TimeUUIDTypeConverter Converter = new TimeUUIDTypeConverter();
 
-		public Guid GetObject(byte[] bytes)
+		private static object GetObject(object obj, Type type)
 		{
-			return GetObject<Guid>(bytes);
-		}
-
-		public override object GetObject(byte[] bytes, Type type)
-		{
-			var converter = this.TypeConverter;
+			var converter = Converter;
 
 			if (!converter.CanConvertTo(type))
 				throw new NotSupportedException(type + " is not supported for Guid serialization.");
 
-			return converter.ConvertTo(bytes, type);
+			return converter.ConvertTo(obj, type);
 		}
 
-		public override byte[] GetBytes(object obj)
+		public override CassandraType SetValue(object obj)
 		{
-			var converter = this.TypeConverter;
+			var type = new TimeUUIDType();
+			var converter = Converter;
 
 			if (!converter.CanConvertFrom(obj.GetType()))
 				throw new NotSupportedException(obj.GetType() + " is not supported for Guid serialization.");
 
-			return (byte[])converter.ConvertFrom(obj);
+			type._value = (Guid)converter.ConvertFrom(obj);
+
+			return type;
 		}
 
 		private Guid _value;
-
-		public static implicit operator byte[](TimeUUIDType type)
-		{
-			return type.GetBytes(type._value);
-		}
 
 		public static implicit operator Guid(TimeUUIDType type)
 		{
 			return type._value;
 		}
 
-		public static implicit operator TimeUUIDType(long o)
+		public static implicit operator TimeUUIDType(Guid o)
 		{
-			return GuidGenerator.GenerateTimeBasedGuid(new DateTime(o));
+			return new TimeUUIDType {
+				_value = o
+			};
 		}
 
-		public static implicit operator TimeUUIDType(DateTime dt)
+		public static implicit operator byte[](TimeUUIDType type)
 		{
-			return GuidGenerator.GenerateTimeBasedGuid(dt);
+			return (byte[])GetObject(type._value, typeof(byte[]));
 		}
 
-		public static implicit operator TimeUUIDType(DateTimeOffset dt)
+		public static implicit operator TimeUUIDType(byte[] o)
 		{
-			return GuidGenerator.GenerateTimeBasedGuid(dt.UtcDateTime);
-		}
-
-		public static implicit operator TimeUUIDType(Guid s)
-		{
-			return new TimeUUIDType { _value = s };
+			return new TimeUUIDType {
+				_value = (Guid)GetObject(o, typeof(Guid))
+			};
 		}
 	}
 }

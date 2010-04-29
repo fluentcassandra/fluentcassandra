@@ -8,16 +8,7 @@ namespace FluentCassandra.Types
 {
 	public abstract class CassandraType
 	{
-		public abstract TypeConverter TypeConverter { get; }
-
-		public virtual T GetObject<T>(byte[] bytes)
-		{
-			return (T)GetObject(bytes, typeof(T));
-		}
-
-		public abstract object GetObject(byte[] bytes, Type type);
-
-		public abstract byte[] GetBytes(object obj);
+		public abstract CassandraType SetValue(object obj);
 
 		// these are put in as stubs so that implicity references against cassandra type compile
 		public static implicit operator byte[](CassandraType type) { throw new NotImplementedException(); }

@@ -8,46 +8,55 @@ namespace FluentCassandra.Types
 {
 	public class LongType : CassandraType
 	{
-		public override TypeConverter TypeConverter
-		{
-			get { return new Int64Converter(); }
-		}
+		private static readonly Int64Converter Converter = new Int64Converter();
 
-		public long GetObject(byte[] bytes)
+		private static object GetObject(object obj, Type type)
 		{
-			return GetObject<long>(bytes);
-		}
-
-		public override object GetObject(byte[] bytes, Type type)
-		{
-			var converter = this.TypeConverter;
+			var converter = Converter;
 
 			if (!converter.CanConvertTo(type))
 				throw new NotSupportedException(type + " is not supported for Int64 serialization.");
 
-			return converter.ConvertTo(bytes, type);
+			return converter.ConvertTo(obj, type);
 		}
 
-		public override byte[] GetBytes(object obj)
+		public override CassandraType SetValue(object obj)
 		{
-			var converter = this.TypeConverter;
+			var type = new LongType();
+			var converter = Converter;
 
 			if (!converter.CanConvertFrom(obj.GetType()))
 				throw new NotSupportedException(obj.GetType() + " is not supported for Int64 serialization.");
 
-			return (byte[])converter.ConvertFrom(obj);
+			type._value = (long)converter.ConvertFrom(obj);
+
+			return type;
 		}
 
 		private long _value;
 
-		public static implicit operator byte[](LongType type)
-		{
-			return type.GetBytes(type._value);
-		}
-
 		public static implicit operator long(LongType type)
 		{
 			return type._value;
+		}
+
+		public static implicit operator LongType(long o)
+		{
+			return new LongType {
+				_value = o
+			};
+		}
+
+		public static implicit operator byte[](LongType type)
+		{
+			return (byte[])GetObject(type._value, typeof(byte[]));
+		}
+
+		public static implicit operator LongType(byte[] o)
+		{
+			return new LongType {
+				_value = (long)GetObject(o, typeof(long))
+			};
 		}
 
 		public static implicit operator LongType(byte o) { return Convert(o); }
@@ -56,7 +65,6 @@ namespace FluentCassandra.Types
 		public static implicit operator LongType(ushort o) { return Convert(o); }
 		public static implicit operator LongType(int o) { return Convert(o); }
 		public static implicit operator LongType(uint o) { return Convert(o); }
-		public static implicit operator LongType(long o) { return Convert(o); }
 		public static implicit operator LongType(ulong o) { return Convert(o); }
 		public static implicit operator LongType(float o) { return Convert(o); }
 		public static implicit operator LongType(double o) { return Convert(o); }
@@ -67,15 +75,15 @@ namespace FluentCassandra.Types
 		public static implicit operator LongType(DateTime o) { return Convert(o); }
 		public static implicit operator LongType(DateTimeOffset o) { return Convert(o.UtcTicks); }
 
+		private static T Convert<T>(LongType type)
+		{
+			return (T)GetObject(type._value, typeof(T));
+		}
+
 		private static LongType Convert(object o)
 		{
 			var type = new LongType();
-			var converter = type.TypeConverter;
-
-			if (!converter.CanConvertFrom(o.GetType()))
-				throw new NotSupportedException(o.GetType() + " is not supported for Int64 serialization.");
-
-			type._value = (long)converter.ConvertFrom(o);
+			type._value = (long)GetObject(o, typeof(long));
 
 			return type;
 		}

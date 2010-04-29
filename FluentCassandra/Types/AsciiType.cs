@@ -8,42 +8,32 @@ namespace FluentCassandra.Types
 {
 	public class AsciiType : CassandraType
 	{
-		public override TypeConverter TypeConverter
-		{
-			get { return new StringConverter(); }
-		}
+		private static readonly AsciiTypeConverter Converter = new AsciiTypeConverter();
 
-		public string GetObject(byte[] bytes)
+		private static object GetObject(object obj, Type type)
 		{
-			return GetObject<string>(bytes);
-		}
-
-		public override object GetObject(byte[] bytes, Type type)
-		{
-			var converter = this.TypeConverter;
+			var converter = Converter;
 
 			if (!converter.CanConvertTo(type))
 				throw new NotSupportedException(type + " is not supported for string serialization.");
 
-			return converter.ConvertTo(bytes, type);
+			return converter.ConvertTo(obj, type);
 		}
 
-		public override byte[] GetBytes(object obj)
+		public override CassandraType SetValue(object obj)
 		{
-			var converter = this.TypeConverter;
+			var type = new AsciiType();
+			var converter = Converter;
 
 			if (!converter.CanConvertFrom(obj.GetType()))
 				throw new NotSupportedException(obj.GetType() + " is not supported for string serialization.");
 
-			return (byte[])converter.ConvertFrom(obj);
+			type._value = (string)converter.ConvertFrom(obj);
+
+			return type;
 		}
 
 		private string _value;
-
-		public static implicit operator byte[](AsciiType type)
-		{
-			return type.GetBytes(type._value);
-		}
 
 		public static implicit operator string(AsciiType type)
 		{
@@ -54,6 +44,18 @@ namespace FluentCassandra.Types
 		{
 			return new AsciiType {
 				_value = o
+			};
+		}
+
+		public static implicit operator byte[](AsciiType type)
+		{
+			return (byte[])GetObject(type._value, typeof(byte[]));
+		}
+
+		public static implicit operator AsciiType(byte[] o)
+		{
+			return new AsciiType {
+				_value = (string)GetObject(o, typeof(string))
 			};
 		}
 	}

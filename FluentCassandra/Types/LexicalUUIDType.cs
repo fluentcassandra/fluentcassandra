@@ -8,51 +8,55 @@ namespace FluentCassandra.Types
 {
 	public class LexicalUUIDType : CassandraType
 	{
-		public override TypeConverter TypeConverter
-		{
-			get { return new GuidConverter(); }
-		}
+		private static readonly LexicalUUIDTypeConverter Converter = new LexicalUUIDTypeConverter();
 
-		public Guid GetObject(byte[] bytes)
+		private static object GetObject(object obj, Type type)
 		{
-			return GetObject<Guid>(bytes);
-		}
-
-		public override object GetObject(byte[] bytes, Type type)
-		{
-			var converter = this.TypeConverter;
+			var converter = Converter;
 
 			if (!converter.CanConvertTo(type))
 				throw new NotSupportedException(type + " is not supported for Guid serialization.");
 
-			return converter.ConvertTo(bytes, type);
+			return converter.ConvertTo(obj, type);
 		}
 
-		public override byte[] GetBytes(object obj)
+		public override CassandraType SetValue(object obj)
 		{
-			var converter = this.TypeConverter;
+			var type = new LexicalUUIDType();
+			var converter = Converter;
 
 			if (!converter.CanConvertFrom(obj.GetType()))
 				throw new NotSupportedException(obj.GetType() + " is not supported for Guid serialization.");
 
-			return (byte[])converter.ConvertFrom(obj);
+			type._value = (Guid)converter.ConvertFrom(obj);
+
+			return type;
 		}
 
 		private Guid _value;
-
-		public static implicit operator byte[](LexicalUUIDType type)
-		{
-			return type.GetBytes(type._value);
-		}
 
 		public static implicit operator Guid(LexicalUUIDType type)
 		{
 			return type._value;
 		}
 
-		public static implicit operator LexicalUUIDType(Guid s)
+		public static implicit operator LexicalUUIDType(Guid o)
 		{
-			return new LexicalUUIDType { _value = s };
+			return new LexicalUUIDType {
+				_value = o
+			};
+		}
+
+		public static implicit operator byte[](LexicalUUIDType type)
+		{
+			return (byte[])GetObject(type._value, typeof(byte[]));
+		}
+
+		public static implicit operator LexicalUUIDType(byte[] o)
+		{
+			return new LexicalUUIDType {
+				_value = (Guid)GetObject(o, typeof(Guid))
+			};
 		}
 	}
 }
