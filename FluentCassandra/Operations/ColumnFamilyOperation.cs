@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using Apache.Cassandra;
 
-namespace FluentCassandra.Actions
+namespace FluentCassandra.Operations
 {
-	public abstract class ColumnFamilyAction<TResult>
+	public abstract class ColumnFamilyOperation<TResult>
 	{
-		public ColumnFamilyAction()
+		public ColumnFamilyOperation()
 		{
 			ConsistencyLevel = Apache.Cassandra.ConsistencyLevel.ONE;
 		}

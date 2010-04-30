@@ -164,13 +164,13 @@ namespace FluentCassandra
 						.ToList();
 
 					var superColumnsNeedingDeleted = columnFamily
-						.Where(m => m.Type == MutationType.Removed && m.Column.SuperColumn != null);
+						.Where(m => m.Type == MutationType.Removed && m.Column.GetParent().SuperColumn != null);
 
-					foreach (var superColumn in superColumnsNeedingDeleted.GroupBy(x => x.Column.SuperColumn.Name))
+					foreach (var superColumn in superColumnsNeedingDeleted.GroupBy(x => x.Column.GetParent().SuperColumn.Name))
 						columnFamilyMutations.Add(ObjectHelper.CreateDeletedSuperColumnMutation(superColumn));
 
 					var columnsNeedingDeleted = columnFamily
-						.Where(m => m.Type == MutationType.Removed && m.Column.SuperColumn == null);
+						.Where(m => m.Type == MutationType.Removed && m.Column.GetParent().SuperColumn == null);
 
 					columnFamilyMutations.Add(ObjectHelper.CreateDeletedColumnMutation(columnsNeedingDeleted));
 

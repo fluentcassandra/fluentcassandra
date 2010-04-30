@@ -5,7 +5,7 @@ using System.Text;
 using Apache.Cassandra;
 using FluentCassandra.Types;
 
-namespace FluentCassandra.Actions
+namespace FluentCassandra.Operations
 {
 	public abstract class CassandraSlicePredicate
 	{

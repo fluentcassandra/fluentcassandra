@@ -5,9 +5,9 @@ using System.Text;
 using FluentCassandra.Types;
 using Apache.Cassandra;
 
-namespace FluentCassandra.Actions
+namespace FluentCassandra.Operations
 {
-	public class GetColumn : ColumnFamilyAction<IFluentColumn>
+	public class GetColumn : ColumnFamilyOperation<IFluentColumn>
 	{
 		/*
 		 * ColumnOrSuperColumn get(keyspace, key, column_path, consistency_level)

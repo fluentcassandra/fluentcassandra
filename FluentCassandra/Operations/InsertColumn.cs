@@ -5,9 +5,9 @@ using System.Text;
 using FluentCassandra.Types;
 using Apache.Cassandra;
 
-namespace FluentCassandra.Actions
+namespace FluentCassandra.Operations
 {
-	public class InsertColumn : ColumnFamilyAction<Void>
+	public class InsertColumn : ColumnFamilyOperation<Void>
 	{
 		/*
 		* insert(keyspace, key, column_path, value, timestamp, consistency_level)

@@ -9,5 +9,6 @@ namespace FluentCassandra
 	public interface IFluentColumn : IFluentBaseColumn
 	{
 		BytesType Value { get; set; }
+		DateTimeOffset Timestamp { get; }
 	}
 }

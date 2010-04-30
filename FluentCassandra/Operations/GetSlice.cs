@@ -5,9 +5,9 @@ using System.Text;
 using Apache.Cassandra;
 using FluentCassandra.Types;
 
-namespace FluentCassandra.Actions
+namespace FluentCassandra.Operations
 {
-	public class GetSlice : ColumnFamilyAction<IFluentColumnFamily>
+	public class GetSlice : ColumnFamilyOperation<IFluentBaseColumnFamily>
 	{
 		/*
 		 * list<ColumnOrSuperColumn> get_slice(keyspace, key, column_parent, predicate, consistency_level)
@@ -17,7 +17,7 @@ namespace FluentCassandra.Actions
 
 		public CassandraSlicePredicate SlicePredicate { get; private set; }
 
-		public override bool TryExecute(BaseCassandraColumnFamily columnFamily, out IFluentColumnFamily result)
+		public override bool TryExecute(BaseCassandraColumnFamily columnFamily, out IFluentBaseColumnFamily result)
 		{
 			var parent = new ColumnParent {
 				Column_family = columnFamily.FamilyName

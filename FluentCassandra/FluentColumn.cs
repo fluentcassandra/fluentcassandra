@@ -81,10 +81,8 @@ namespace FluentCassandra
 
 		CassandraType IFluentBaseColumn.Name { get { return Name; } }
 
-		/// <summary>
-		/// Set the parent of this column.
-		/// </summary>
-		/// <param name="parent"></param>
+		IFluentBaseColumnFamily IFluentBaseColumn.Family { get { return Family; } }
+
 		void IFluentBaseColumn.SetParent(FluentColumnParent parent)
 		{
 			UpdateParent(parent);

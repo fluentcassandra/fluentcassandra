@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Apache.Cassandra;
 
-namespace FluentCassandra.Actions
+namespace FluentCassandra.Operations
 {
 	public class CassandraKeyRange
 	{

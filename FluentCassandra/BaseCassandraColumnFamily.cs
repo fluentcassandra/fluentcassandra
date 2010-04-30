@@ -6,7 +6,7 @@ using Apache.Cassandra;
 using FluentCassandra.Configuration;
 using System.Collections;
 using FluentCassandra.Types;
-using FluentCassandra.Actions;
+using FluentCassandra.Operations;
 
 namespace FluentCassandra
 {
@@ -64,7 +64,7 @@ namespace FluentCassandra
 		/// </summary>
 		/// <param name="family"></param>
 		/// <returns></returns>
-		public bool IsPartOfFamily(IFluentColumnFamily family)
+		public bool IsPartOfFamily(IFluentBaseColumnFamily family)
 		{
 			return String.Equals(family.FamilyName, FamilyName);
 		}
@@ -75,7 +75,7 @@ namespace FluentCassandra
 		/// <typeparam name="TResult"></typeparam>
 		/// <param name="action"></param>
 		/// <returns></returns>
-		public TResult ExecuteAction<TResult>(ColumnFamilyAction<TResult> action)
+		public TResult ExecuteAction<TResult>(ColumnFamilyOperation<TResult> action)
 		{
 			TResult result;
 			action.TryExecute(this, out result);

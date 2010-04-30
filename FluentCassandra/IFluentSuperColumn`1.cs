@@ -14,5 +14,6 @@ namespace FluentCassandra
 		where CompareWith : CassandraType
 		where CompareSubcolumnWith : CassandraType
 	{
+		new IFluentSuperColumnFamily<CompareWith, CompareSubcolumnWith> Family { get; }
 	}
 }

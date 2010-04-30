@@ -5,9 +5,9 @@ using System.Text;
 using Apache.Cassandra;
 using FluentCassandra.Types;
 
-namespace FluentCassandra.Actions
+namespace FluentCassandra.Operations
 {
-	public class Remove : ColumnFamilyAction<Void>
+	public class Remove : ColumnFamilyOperation<Void>
 	{
 		/*
 		* remove(keyspace, key, column_path, timestamp, consistency_level)

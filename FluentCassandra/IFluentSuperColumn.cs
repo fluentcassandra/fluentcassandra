@@ -7,5 +7,6 @@ namespace FluentCassandra
 {
 	public interface IFluentSuperColumn : IFluentBaseColumn, IFluentRecord
 	{
+		new IList<IFluentColumn> Columns { get; }
 	}
 }

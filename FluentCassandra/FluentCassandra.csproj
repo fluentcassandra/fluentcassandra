@@ -74,7 +74,11 @@
     <Compile Include="Apache\Cassandra\TimedOutException.cs" />
     <Compile Include="Apache\Cassandra\TokenRange.cs" />
     <Compile Include="Apache\Cassandra\UnavailableException.cs" />
+    <Compile Include="BaseCassandraColumnFamily.cs" />
+    <Compile Include="CassandraColumnFamily`1.cs" />
+    <Compile Include="CassandraContext.cs" />
     <Compile Include="CassandraException.cs" />
+    <Compile Include="CassandraKeyspace.cs" />
     <Compile Include="Configuration\CassandraConfiguration.cs" />
     <Compile Include="Configuration\CassandraConfigurationContainer.cs" />
     <Compile Include="Configuration\CassandraConfigurationMap.cs" />
@@ -124,6 +128,12 @@
     <Compile Include="IFluentColumn.cs" />
     <Compile Include="IFluentSuperColumn.cs" />
     <Compile Include="IFluentSuperColumnFamily`1.cs" />
+    <Compile Include="Operations\ColumnFamilyOperation.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Operations\ObjectHelper.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Thrift\Collections\THashSet.cs" />
     <Compile Include="Thrift\Protocol\TBase.cs" />
     <Compile Include="Thrift\Protocol\TBinaryProtocol.cs" />

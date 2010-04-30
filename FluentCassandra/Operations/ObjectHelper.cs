@@ -3,124 +3,125 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Apache.Cassandra;
+using FluentCassandra.Types;
 
 namespace FluentCassandra
 {
 	internal static class ObjectHelper
 	{
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="cols"></param>
-		/// <returns></returns>
-		public static IFluentColumnFamily ConvertToFluentColumnFamily(string key, string columnFamily, object superColumnName, List<ColumnOrSuperColumn> cols)
-		{
-			var sample = cols.FirstOrDefault();
+		///// <summary>
+		///// 
+		///// </summary>
+		///// <param name="cols"></param>
+		///// <returns></returns>
+		//public static IFluentBaseColumnFamily ConvertToFluentColumnFamily(string key, string columnFamily, object superColumnName, List<ColumnOrSuperColumn> cols)
+		//{
+		//    var sample = cols.FirstOrDefault();
 
-			if (sample == null)
-				return null;
+		//    if (sample == null)
+		//        return null;
 
-			var fluentSample = ConvertToFluentColumn(sample);
+		//    var fluentSample = ConvertToFluentColumn(sample);
 
-			if (fluentSample is FluentColumn)
-			{
-				var record = ConvertColumnListToFluentColumnFamily(
-					key,
-					columnFamily,
-					cols.Select(x => x.Column).ToList()
-				);
+		//    if (fluentSample is IFluentColumn)
+		//    {
+		//        var record = ConvertColumnListToFluentColumnFamily(
+		//            key,
+		//            columnFamily,
+		//            cols.Select(x => x.Column).ToList()
+		//        );
 
-				return record;
-			}
-			else if (fluentSample is FluentSuperColumn)
-			{
-				var record = ConvertSuperColumnListToFluentSuperColumnFamily(
-					key,
-					columnFamily,
-					cols.Select(x => x.Super_column).ToList()
-				);
+		//        return record;
+		//    }
+		//    else if (fluentSample is IFluentSuperColumn)
+		//    {
+		//        var record = ConvertSuperColumnListToFluentSuperColumnFamily(
+		//            key,
+		//            columnFamily,
+		//            cols.Select(x => x.Super_column).ToList()
+		//        );
 
-				return record;
-			}
-			else
-				return null;
-		}
+		//        return record;
+		//    }
+		//    else
+		//        return null;
+		//}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="cols"></param>
-		/// <returns></returns>
-		public static FluentColumnFamily ConvertColumnListToFluentColumnFamily(string key, string columnFamily, List<Column> cols)
-		{
-			var family = new FluentColumnFamily(key, columnFamily);
+		///// <summary>
+		///// 
+		///// </summary>
+		///// <param name="cols"></param>
+		///// <returns></returns>
+		//public static IFluentBaseColumnFamily ConvertColumnListToFluentColumnFamily(string key, string columnFamily, List<Column> cols)
+		//{
+		//    var family = new FluentColumnFamily(key, columnFamily);
 
-			foreach (var col in cols)
-				family.Columns.Add(ConvertColumnToFluentColumn(col));
+		//    foreach (var col in cols)
+		//        family.Columns.Add(ConvertColumnToFluentColumn(col));
 
-			return family;
-		}
+		//    return family;
+		//}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="cols"></param>
-		/// <returns></returns>
-		public static FluentSuperColumnFamily ConvertSuperColumnListToFluentSuperColumnFamily(string key, string columnFamily, List<SuperColumn> cols)
-		{
-			var family = new FluentSuperColumnFamily(key, columnFamily);
+		///// <summary>
+		///// 
+		///// </summary>
+		///// <param name="cols"></param>
+		///// <returns></returns>
+		//public static FluentSuperColumnFamily ConvertSuperColumnListToFluentSuperColumnFamily(string key, string columnFamily, List<SuperColumn> cols)
+		//{
+		//    var family = new FluentSuperColumnFamily(key, columnFamily);
 
-			foreach (var col in cols)
-				family.Columns.Add(ConverSuperColumnToFluentSuperColumn(col));
+		//    foreach (var col in cols)
+		//        family.Columns.Add(ConverSuperColumnToFluentSuperColumn(col));
 
-			return family;
-		}
+		//    return family;
+		//}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="col"></param>
-		/// <returns></returns>
-		public static IFluentColumn ConvertToFluentColumn(ColumnOrSuperColumn col)
-		{
-			if (col.Super_column != null)
-				return ConverSuperColumnToFluentSuperColumn(col.Super_column);
-			else if (col.Column != null)
-				return ConvertColumnToFluentColumn(col.Column);
-			else
-				return null;
-		}
+		///// <summary>
+		///// 
+		///// </summary>
+		///// <param name="col"></param>
+		///// <returns></returns>
+		//public static IFluentColumn ConvertToFluentColumn(ColumnOrSuperColumn col)
+		//{
+		//    if (col.Super_column != null)
+		//        return ConverSuperColumnToFluentSuperColumn(col.Super_column);
+		//    else if (col.Column != null)
+		//        return ConvertColumnToFluentColumn(col.Column);
+		//    else
+		//        return null;
+		//}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="col"></param>
-		/// <returns></returns>
-		public static FluentColumn ConvertColumnToFluentColumn(Column col)
-		{
-			return new FluentColumn {
-				NameBytes = col.Name,
-				ValueBytes = col.Value,
-				Timestamp = new DateTimeOffset(col.Timestamp, TimeSpan.Zero)
-			};
-		}
+		///// <summary>
+		///// 
+		///// </summary>
+		///// <param name="col"></param>
+		///// <returns></returns>
+		//public static FluentColumn ConvertColumnToFluentColumn(Column col)
+		//{
+		//    return new FluentColumn {
+		//        NameBytes = col.Name,
+		//        ValueBytes = col.Value,
+		//        Timestamp = new DateTimeOffset(col.Timestamp, TimeSpan.Zero)
+		//    };
+		//}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="col"></param>
-		/// <returns></returns>
-		public static FluentSuperColumn ConverSuperColumnToFluentSuperColumn(SuperColumn col)
-		{
-			var superCol = new FluentSuperColumn() {
-				NameBytes = col.Name
-			};
+		///// <summary>
+		///// 
+		///// </summary>
+		///// <param name="col"></param>
+		///// <returns></returns>
+		//public static FluentSuperColumn ConverSuperColumnToFluentSuperColumn(SuperColumn col)
+		//{
+		//    var superCol = new FluentSuperColumn() {
+		//        NameBytes = col.Name
+		//    };
 
-			foreach (var xcol in col.Columns)
-				superCol.Columns.Add(ConvertColumnToFluentColumn(xcol));
+		//    foreach (var xcol in col.Columns)
+		//        superCol.Columns.Add(ConvertColumnToFluentColumn(xcol));
 
-			return superCol;
-		}
+		//    return superCol;
+		//}
 
 		/// <summary>
 		/// 
@@ -129,7 +130,7 @@ namespace FluentCassandra
 		/// <returns></returns>
 		public static Mutation CreateDeletedColumnMutation(IEnumerable<FluentMutation> mutation)
 		{
-			var columnNames = mutation.Select(m => m.Column.GetNameBytes()).ToList();
+			var columnNames = mutation.Select(m => m.Column.Name).ToList();
 
 			var deletion = new Deletion {
 				Timestamp = DateTimeOffset.UtcNow.UtcTicks,
@@ -148,8 +149,8 @@ namespace FluentCassandra
 		/// <returns></returns>
 		public static Mutation CreateDeletedSuperColumnMutation(IEnumerable<FluentMutation> mutation)
 		{
-			var superColumn = mutation.Select(m => m.Column.SuperColumn.GetNameBytes()).FirstOrDefault();
-			var columnNames = mutation.Select(m => m.Column.GetNameBytes()).ToList();
+			var superColumn = mutation.Select(m => m.Column.GetParent().SuperColumn.Name).FirstOrDefault();
+			var columnNames = mutation.Select(m => m.Column.Name).ToList();
 
 			var deletion = new Deletion {
 				Timestamp = DateTimeOffset.UtcNow.UtcTicks,
@@ -182,12 +183,12 @@ namespace FluentCassandra
 			}
 		}
 
-		public static Column CreateColumn(FluentColumn column)
+		public static Column CreateColumn(IFluentColumn column)
 		{
 			return new Column {
-				Name = column.GetNameBytes(),
-				Value = column.GetValueBytes(),
-				Timestamp = column.GetTimestamp()
+				Name = column.Name,
+				Value = column.Value,
+				Timestamp = column.Timestamp.UtcTicks
 			};
 		}
 
@@ -196,19 +197,19 @@ namespace FluentCassandra
 		/// </summary>
 		/// <param name="column"></param>
 		/// <returns></returns>
-		public static ColumnOrSuperColumn CreateColumnOrSuperColumn(IFluentColumn column)
+		public static ColumnOrSuperColumn CreateColumnOrSuperColumn(IFluentBaseColumn column)
 		{
-			if (column is FluentColumn)
+			if (column is IFluentColumn)
 			{
 				return new ColumnOrSuperColumn {
-					Column = CreateColumn((FluentColumn)column)
+					Column = CreateColumn((IFluentColumn)column)
 				};
 			}
-			else if (column is FluentSuperColumn)
+			else if (column is IFluentSuperColumn)
 			{
-				var colY = (FluentSuperColumn)column;
+				var colY = (IFluentSuperColumn)column;
 				var superColumn = new SuperColumn {
-					Name = colY.NameBytes,
+					Name = colY.Name,
 					Columns = new List<Column>(colY.Columns.Count)
 				};
 
@@ -230,10 +231,10 @@ namespace FluentCassandra
 		/// </summary>
 		/// <param name="columnNames"></param>
 		/// <returns></returns>
-		public static SlicePredicate CreateSlicePredicate(List<byte[]> columnNames)
+		public static SlicePredicate CreateSlicePredicate(List<CassandraType> columnNames)
 		{
 			return new SlicePredicate {
-				Column_names = columnNames
+				Column_names = columnNames.Cast<byte[]>().ToList()
 			};
 		}
 

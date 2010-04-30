@@ -16,7 +16,7 @@ namespace FluentCassandra
 		where CompareWith : CassandraType
 		where CompareSubcolumnWith : CassandraType, new()
 	{
-		private IFluentColumnFamily<CompareWith> _family;
+		private IFluentSuperColumnFamily<CompareWith, CompareSubcolumnWith> _family;
 		private FluentColumnList<IFluentColumn<CompareSubcolumnWith>> _columns;
 		private FluentColumnParent _parent;
 
@@ -45,7 +45,7 @@ namespace FluentCassandra
 		/// <summary>
 		/// 
 		/// </summary>
-		public IFluentColumnFamily<CompareWith> Family
+		public IFluentSuperColumnFamily<CompareWith, CompareSubcolumnWith> Family
 		{
 			get { return _family; }
 			internal set
@@ -123,12 +123,17 @@ namespace FluentCassandra
 			return true;
 		}
 
+		#region IFluentSuperColumn Members 
+
+		IList<IFluentColumn> IFluentSuperColumn.Columns { get { return (IList<IFluentColumn>)Columns; } }
+
+		#endregion
+
 		#region IFluentBaseColumn Members
 
-		CassandraType IFluentBaseColumn.Name
-		{
-			get { return Name; }
-		}
+		CassandraType IFluentBaseColumn.Name { get { return Name; } }
+
+		IFluentBaseColumnFamily IFluentBaseColumn.Family { get { return Family; } }
 
 		void IFluentBaseColumn.SetParent(FluentColumnParent parent)
 		{

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using Apache.Cassandra;
 
-namespace FluentCassandra.Actions
+namespace FluentCassandra.Operations
 {
-	public class ColumnCount : ColumnFamilyAction<int>
+	public class ColumnCount : ColumnFamilyOperation<int>
 	{
 		/*
 		 * i32 get_count(keyspace, key, column_parent, consistency_level) 

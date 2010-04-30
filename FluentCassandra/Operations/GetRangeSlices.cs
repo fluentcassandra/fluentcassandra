@@ -5,9 +5,9 @@ using System.Text;
 using Apache.Cassandra;
 using FluentCassandra.Types;
 
-namespace FluentCassandra.Actions
+namespace FluentCassandra.Operations
 {
-	public class GetRangeSlices : ColumnFamilyAction<IEnumerable<IFluentColumnFamily>>
+	public class GetRangeSlices : ColumnFamilyOperation<IEnumerable<IFluentColumnFamily>>
 	{
 		/*
 		 * list<KeySlice> get_range_slices(keyspace, column_parent, predicate, range, consistency_level)

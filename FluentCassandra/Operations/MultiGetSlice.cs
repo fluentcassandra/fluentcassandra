@@ -5,9 +5,9 @@ using System.Text;
 using Apache.Cassandra;
 using FluentCassandra.Types;
 
-namespace FluentCassandra.Actions
+namespace FluentCassandra.Operations
 {
-	public class MultiGetSlice : ColumnFamilyAction<IEnumerable<IFluentColumnFamily>>
+	public class MultiGetSlice : ColumnFamilyOperation<IEnumerable<IFluentColumnFamily>>
 	{
 		/*
 		 * map<string,list<ColumnOrSuperColumn>> multiget_slice(keyspace, keys, column_parent, predicate, consistency_level)

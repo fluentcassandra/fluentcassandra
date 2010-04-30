@@ -10,6 +10,8 @@ namespace FluentCassandra
 	{
 		CassandraType Name { get; }
 
+		IFluentBaseColumnFamily Family { get; }
+
 		FluentColumnPath GetPath();
 		FluentColumnParent GetParent();
 
