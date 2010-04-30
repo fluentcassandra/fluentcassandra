@@ -11,13 +11,13 @@ using FluentCassandra.Types;
 
 namespace FluentCassandra
 {
-	public class CassandraColumnFamily<T> : BaseCassandraColumnFamily
-		where T : CassandraType
+	public class CassandraColumnFamily<CompareWith> : BaseCassandraColumnFamily
+		where CompareWith : CassandraType
 	{
 		public CassandraColumnFamily(CassandraContext context, CassandraKeyspace keyspace, IConnection connection, string columnFamily)
 			: base(context, keyspace, connection, columnFamily) { }
 
-		public Type ColumnType { get { return typeof(T); } }
+		public Type CompareWithType { get { return typeof(CompareWith); } }
 	}
 }
 

@@ -46,11 +46,6 @@ namespace FluentCassandra
 		public string FamilyName { get; private set; }
 
 		/// <summary>
-		/// If set contains the super column name that we are querying against.
-		/// </summary>
-		protected internal CassandraType SuperColumnName { get; protected set; }
-
-		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
@@ -75,7 +70,7 @@ namespace FluentCassandra
 		/// <typeparam name="TResult"></typeparam>
 		/// <param name="action"></param>
 		/// <returns></returns>
-		public TResult ExecuteAction<TResult>(ColumnFamilyOperation<TResult> action)
+		public TResult ExecuteOperation<TResult>(ColumnFamilyOperation<TResult> action)
 		{
 			TResult result;
 			action.TryExecute(this, out result);

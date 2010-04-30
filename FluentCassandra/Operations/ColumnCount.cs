@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Apache.Cassandra;
+using FluentCassandra.Types;
 
 namespace FluentCassandra.Operations
 {
@@ -14,27 +15,40 @@ namespace FluentCassandra.Operations
 
 		public string Key { get; private set; }
 
+		public CassandraType SuperColumnName { get; private set; }
+
 		#region ICassandraAction<int> Members
 
-		public override bool TryExecute(BaseCassandraColumnFamily columnFamily, out int result)
+		public override int Execute(BaseCassandraColumnFamily columnFamily)
 		{
 			var parent = new ColumnParent {
 				Column_family = columnFamily.FamilyName
 			};
 
-			if (columnFamily.SuperColumnName != null)
-				parent.Super_column = columnFamily.SuperColumnName;
+			if (SuperColumnName != null)
+				parent.Super_column = SuperColumnName;
 
-			result = columnFamily.GetClient().get_count(
+			var result = columnFamily.GetClient().get_count(
 				columnFamily.Keyspace.KeyspaceName,
 				Key,
 				parent,
 				ConsistencyLevel
 			);
 
-			return true;
+			return result;
 		}
 
 		#endregion
+
+		public ColumnCount(string key)
+		{
+			this.Key = key;
+		}
+
+		public ColumnCount(string key, CassandraType superColumnName)
+		{
+			this.Key = key;
+			this.SuperColumnName = superColumnName;
+		}
 	}
 }
