@@ -35,6 +35,19 @@ namespace FluentCassandra.Types
 
 		private Guid _value;
 
+		public override bool Equals(object obj)
+		{
+			if (obj is LexicalUUIDType)
+				return _value == ((LexicalUUIDType)obj)._value;
+
+			return _value == (Guid)GetObject(obj, typeof(Guid));
+		}
+
+		public override int GetHashCode()
+		{
+			return _value.GetHashCode();
+		}
+
 		public static implicit operator Guid(LexicalUUIDType type)
 		{
 			return type._value;

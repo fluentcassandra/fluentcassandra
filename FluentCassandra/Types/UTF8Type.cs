@@ -35,6 +35,19 @@ namespace FluentCassandra.Types
 
 		private string _value;
 
+		public override bool Equals(object obj)
+		{
+			if (obj is UTF8Type)
+				return _value == ((UTF8Type)obj)._value;
+
+			return _value == (string)GetObject(obj, typeof(string));
+		}
+
+		public override int GetHashCode()
+		{
+			return _value.GetHashCode();
+		}
+
 		public static implicit operator string(UTF8Type type)
 		{
 			return type._value;

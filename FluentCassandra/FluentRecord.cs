@@ -91,7 +91,6 @@ namespace FluentCassandra
 		/// <returns></returns>
 		public abstract bool TrySetColumn(object name, object value);
 
-
 		#region IEnumerable<T> Members
 
 		public IEnumerator<T> GetEnumerator()

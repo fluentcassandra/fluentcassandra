@@ -37,6 +37,19 @@ namespace FluentCassandra.Types
 
 		private byte[] _value;
 
+		public override bool Equals(object obj)
+		{
+			if (obj is BytesType)
+				return _value.SequenceEqual(((BytesType)obj)._value);
+
+			return _value.SequenceEqual(GetBytes(obj));
+		}
+
+		public override int GetHashCode()
+		{
+			return _value.GetHashCode();
+		}
+
 		public static implicit operator byte[](BytesType type)
 		{
 			return type._value;

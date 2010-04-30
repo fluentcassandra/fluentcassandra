@@ -10,6 +10,19 @@ namespace FluentCassandra.Types
 	{
 		public abstract CassandraType SetValue(object obj);
 
+		public override bool Equals(object obj)
+		{
+			return base.Equals(obj);
+		}
+
+		public override int GetHashCode()
+		{
+			return base.GetHashCode();
+		}
+
+		public static bool operator ==(CassandraType type, object obj) { return type.Equals(obj); }
+		public static bool operator !=(CassandraType type, object obj) { return !type.Equals(obj); }
+
 		// these are put in as stubs so that implicity references against cassandra type compile
 		public static implicit operator byte[](CassandraType type) { throw new NotImplementedException(); }
 		public static implicit operator string(CassandraType type) { throw new NotImplementedException(); }

@@ -83,5 +83,33 @@ namespace FluentCassandra.Test
 			// assert
 			Assert.IsTrue(actual.SequenceEqual(expected));
 		}
+
+		[TestMethod]
+		public void Operator_EqualTo()
+		{
+			// arrange
+			var value = "I am equal.";
+			AsciiType type = value;
+
+			// act
+			bool actual = type == value;
+
+			// assert
+			Assert.IsTrue(actual);
+		}
+
+		[TestMethod]
+		public void Operator_NotEqualTo()
+		{
+			// arrange
+			var value = "I am equal.";
+			AsciiType type = value;
+
+			// act
+			bool actual = type != value;
+
+			// assert
+			Assert.IsFalse(actual);
+		}
 	}
 }
