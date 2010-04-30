@@ -13,7 +13,7 @@ namespace FluentCassandra.Configuration
 
 		public CassandraTypeConfiguration()
 		{
-			ColumnType = ColumnType.Normal;
+			ColumnType = ColumnType.Standard;
 		}
 
 		/// <summary>

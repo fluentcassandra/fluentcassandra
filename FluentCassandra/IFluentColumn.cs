@@ -1,12 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using FluentCassandra.Types;
 
 namespace FluentCassandra
 {
-	public interface IFluentColumn<CompareWith> : IFluentBaseColumn<CompareWith>
-		where CompareWith : CassandraType
+	public interface IFluentColumn : IFluentBaseColumn
 	{
 		BytesType Value { get; set; }
-		IFluentColumnFamily<CompareWith> Family { get; }
 	}
 }

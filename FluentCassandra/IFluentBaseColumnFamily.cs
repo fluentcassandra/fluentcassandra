@@ -12,5 +12,8 @@ namespace FluentCassandra
 		string Key { get; set; }
 		string FamilyName { get; }
 		ColumnType ColumnType { get; }
+
+		FluentColumnPath GetPath();
+		FluentColumnParent GetSelf();
 	}
 }

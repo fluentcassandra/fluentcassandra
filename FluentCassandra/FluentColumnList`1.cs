@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 
 namespace FluentCassandra
 {
-	internal class FluentColumnList<T> : IList<T>
+	internal class FluentColumnList<T> : IList<T>, INotifyCollectionChanged
 		where T : IFluentBaseColumn
 	{
 		private List<T> _columns;
@@ -19,12 +20,20 @@ namespace FluentCassandra
 		{
 			Parent = parent;
 			_columns = new List<T>();
+			SupressChangeNotification = false;
 		}
+
+		/// <summary>
+		/// Makes it so the notification change will not fire.
+		/// </summary>
+		internal bool SupressChangeNotification { get; set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
 		public virtual FluentColumnParent Parent { get; internal set; }
+
+		#region IList<T> Members
 
 		/// <summary>
 		/// 
@@ -45,6 +54,8 @@ namespace FluentCassandra
 		{
 			item.SetParent(Parent);	
 			_columns.Insert(index, item);
+
+			OnColumnMutated(MutationType.Changed, item);
 		}
 
 		/// <summary>
@@ -53,7 +64,10 @@ namespace FluentCassandra
 		/// <param name="index"></param>
 		public void RemoveAt(int index)
 		{
+			var col = this[index];
 			_columns.RemoveAt(index);
+
+			OnColumnMutated(MutationType.Removed, col);
 		}
 
 		/// <summary>
@@ -75,6 +89,8 @@ namespace FluentCassandra
 		{
 			item.SetParent(Parent);
 			_columns.Add(item);
+
+			OnColumnMutated(MutationType.Added, item);
 		}
 
 		/// <summary>
@@ -82,6 +98,9 @@ namespace FluentCassandra
 		/// </summary>
 		public void Clear()
 		{
+			foreach (var col in this)
+				OnColumnMutated(MutationType.Removed, col);
+
 			_columns.Clear();
 		}
 
@@ -128,6 +147,7 @@ namespace FluentCassandra
 		/// <returns></returns>
 		public bool Remove(T item)
 		{
+			OnColumnMutated(MutationType.Removed, item);
 			return _columns.Remove(item);
 		}
 
@@ -148,5 +168,28 @@ namespace FluentCassandra
 		{
 			return _columns.GetEnumerator();
 		}
+
+		#endregion
+
+		#region INotifyCollectionChanged Members
+
+		public event NotifyCollectionChangedEventHandler CollectionChanged;
+
+		protected void OnColumnMutated(MutationType type, IFluentBaseColumn column)
+		{
+			if (SupressChangeNotification)
+				return;
+
+			IFluentRecord record = Parent.SuperColumn == null ? (IFluentRecord)Parent.ColumnFamily : (IFluentRecord)Parent.SuperColumn;
+			record.MutationTracker.ColumnMutated(type, column);
+
+			if (CollectionChanged != null)
+			{
+				var action = type == MutationType.Added ? NotifyCollectionChangedAction.Add : (type == MutationType.Removed ? NotifyCollectionChangedAction.Remove : NotifyCollectionChangedAction.Replace);
+				CollectionChanged(this, new NotifyCollectionChangedEventArgs(action, column));
+			}
+		}
+
+		#endregion
 	}
 }

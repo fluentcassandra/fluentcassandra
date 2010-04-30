@@ -7,7 +7,7 @@ namespace FluentCassandra
 {
 	public enum ColumnType
 	{
-		Normal,
+		Standard,
 		Super
 	}
 }

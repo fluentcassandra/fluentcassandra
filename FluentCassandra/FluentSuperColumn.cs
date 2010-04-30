@@ -25,6 +25,7 @@ namespace FluentCassandra
 		/// </summary>
 		public FluentSuperColumn()
 		{
+			_parent = new FluentColumnParent(null, this);
 			_columns = new FluentColumnList<IFluentColumn<CompareSubcolumnWith>>(GetParent());
 		}
 
@@ -60,7 +61,7 @@ namespace FluentCassandra
 		/// <returns></returns>
 		public FluentColumnPath GetPath()
 		{
-			return new FluentColumnPath(_parent, (IFluentColumn<CassandraType>)this);
+			return new FluentColumnPath(_parent, null);
 		}
 
 		/// <summary>
@@ -108,7 +109,9 @@ namespace FluentCassandra
 				col = new FluentColumn<CompareSubcolumnWith>();
 				((FluentColumn<CompareSubcolumnWith>)col).Name = (CompareSubcolumnWith)nameType.SetValue(name);
 
-				Columns.Add(col);
+				_columns.SupressChangeNotification = true;
+				_columns.Add(col);
+				_columns.SupressChangeNotification = false;
 			}
 
 			// set the column value
@@ -124,7 +127,7 @@ namespace FluentCassandra
 
 		CassandraType IFluentBaseColumn.Name
 		{
-			get { throw new NotImplementedException(); }
+			get { return Name; }
 		}
 
 		void IFluentBaseColumn.SetParent(FluentColumnParent parent)

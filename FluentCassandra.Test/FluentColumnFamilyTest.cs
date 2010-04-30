@@ -8,18 +8,18 @@ using FluentCassandra.Types;
 namespace FluentCassandra.Test
 {
 	[TestClass]
-	public class FluentSuperColumnTest
+	public class FluentColumnFamilyTest
 	{
 		[TestMethod]
-		public void Parent_Set()
+		public void Self_Set()
 		{
 			// arrange
 
 			// act
-			var actual = new FluentSuperColumn<AsciiType, AsciiType>();
+			var actual = new FluentColumnFamily<AsciiType>("Keyspace1", "Standard1");
 
 			// assert
-			Assert.AreSame(actual, actual.GetParent().SuperColumn);
+			Assert.AreSame(actual, actual.GetSelf().ColumnFamily);
 		}
 
 		[TestMethod]
@@ -28,28 +28,25 @@ namespace FluentCassandra.Test
 			// arrange
 
 			// act
-			var actual = new FluentSuperColumn<AsciiType, AsciiType>();
+			var actual = new FluentColumnFamily<AsciiType>("Keyspace1", "Standard1");
 
 			// assert
-			Assert.AreSame(actual, actual.GetPath().SuperColumn);
+			Assert.AreSame(actual, actual.GetPath().ColumnFamily);
 		}
 
 		[TestMethod]
 		public void Constructor_Test()
 		{
 			// arrange
-			var colName = "This is a test name";
 			var col1 = new FluentColumn<AsciiType> { Name = "Test1", Value = 300M };
 			var col2 = new FluentColumn<AsciiType> { Name = "Test2", Value = "Hello" };
 
 			// act
-			var actual = new FluentSuperColumn<AsciiType, AsciiType>();
-			actual.Name = colName;
+			var actual = new FluentColumnFamily<AsciiType>("Keyspace1", "Standard1");
 			actual.Columns.Add(col1);
 			actual.Columns.Add(col2);
 
 			// assert
-			Assert.AreEqual(colName, (string)actual.Name);
 			Assert.AreEqual(2, actual.Columns.Count);
 		}
 
@@ -57,21 +54,17 @@ namespace FluentCassandra.Test
 		public void Constructor_Dynamic_Test()
 		{
 			// arrange
-			var colName = "This is a test name";
 			var col1 = "Test1";
 			var colValue1 = 300M;
 			var col2 = "Test2";
 			var colValue2 = "Hello";
 
 			// act
-			dynamic actual = new FluentSuperColumn<AsciiType, AsciiType>();
-			actual.Name = colName;
+			dynamic actual = new FluentColumnFamily<AsciiType>("Keyspace1", "Standard1");
 			actual.Test1 = colValue1;
 			actual.Test2 = colValue2;
 
 			// assert
-			Assert.AreEqual(colName, (string)actual.Name);
-			//Assert.AreEqual(2, actual.Columns.Count);
 			Assert.AreEqual(colValue1, (decimal)actual.Test1);
 			Assert.AreEqual(colValue1, (decimal)actual[col1]);
 			Assert.AreEqual(colValue2, (string)actual.Test2);
@@ -82,13 +75,11 @@ namespace FluentCassandra.Test
 		public void Mutation()
 		{
 			// arrange
-			var colName = "This is a test name";
 			var col1 = new FluentColumn<AsciiType> { Name = "Test1", Value = 300M };
 			var col2 = new FluentColumn<AsciiType> { Name = "Test2", Value = "Hello" };
 
 			// act
-			var actual = new FluentSuperColumn<AsciiType, AsciiType>();
-			actual.Name = colName;
+			var actual = new FluentColumnFamily<AsciiType>("Keyspace1", "Standard1");
 			actual.Columns.Add(col1);
 			actual.Columns.Add(col2);
 
@@ -104,23 +95,21 @@ namespace FluentCassandra.Test
 			Assert.AreSame(col1, mut1.Column);
 			Assert.AreSame(col2, mut2.Column);
 
-			Assert.AreSame(actual, mut1.Column.GetParent().SuperColumn);
-			Assert.AreSame(actual, mut2.Column.GetParent().SuperColumn);
+			Assert.AreSame(actual, mut1.Column.GetParent().ColumnFamily);
+			Assert.AreSame(actual, mut2.Column.GetParent().ColumnFamily);
 		}
 
 		[TestMethod]
 		public void Dynamic_Mutation()
 		{
 			// arrange
-			var colName = "This is a test name";
 			var col1 = "Test1";
 			var colValue1 = 300M;
 			var col2 = "Test2";
 			var colValue2 = "Hello";
 
 			// act
-			dynamic actual = new FluentSuperColumn<AsciiType, AsciiType>();
-			actual.Name = colName;
+			dynamic actual = new FluentColumnFamily<AsciiType>("Keyspace1", "Standard1");
 			actual.Test1 = colValue1;
 			actual.Test2 = colValue2;
 
@@ -136,8 +125,8 @@ namespace FluentCassandra.Test
 			Assert.IsNotNull(mut1);
 			Assert.IsNotNull(mut2);
 
-			Assert.AreSame(actual, mut1.Column.GetParent().SuperColumn);
-			Assert.AreSame(actual, mut2.Column.GetParent().SuperColumn);
+			Assert.AreSame(actual, mut1.Column.GetParent().ColumnFamily);
+			Assert.AreSame(actual, mut2.Column.GetParent().ColumnFamily);
 		}
 	}
 }

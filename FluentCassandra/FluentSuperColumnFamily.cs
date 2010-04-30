@@ -9,19 +9,22 @@ using FluentCassandra.Types;
 
 namespace FluentCassandra
 {
-	public class FluentSuperColumnFamily : FluentRecord<FluentSuperColumn>, IFluentColumnFamily<FluentSuperColumn>, IFluentColumnFamily
+	public class FluentSuperColumnFamily<CompareWith, CompareSubcolumnWith> : FluentRecord<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>>, IFluentSuperColumnFamily<CompareWith, CompareSubcolumnWith>
+		where CompareWith : CassandraType, new()
+		where CompareSubcolumnWith : CassandraType, new()
 	{
-		private FluentColumnList<FluentSuperColumn> _columns;
+		private FluentColumnList<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>> _columns;
+		private FluentColumnParent _self;
 
 		public FluentSuperColumnFamily(string key, string columnFamily)
 		{
 			Key = key;
 			FamilyName = columnFamily;
-			CompareWith = new BytesType();
 
-			_columns = new FluentColumnList<FluentSuperColumn>(new FluentColumnParent(this, null));
+			_self = new FluentColumnParent(this, null);
+			_columns = new FluentColumnList<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>>(_self);
+
 		}
-
 
 		/// <summary>
 		/// 
@@ -36,18 +39,33 @@ namespace FluentCassandra
 		/// <summary>
 		/// 
 		/// </summary>
-		public ColumnType ColumnType { get { return ColumnType.Super; } }
+		public ColumnType ColumnType { get { return ColumnType.Standard; } }
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public CassandraType CompareWith { get; set; }
+		public override IList<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>> Columns
+		{
+			get { return _columns; }
+		}
 
 		/// <summary>
-		/// 
+		/// Gets the path.
 		/// </summary>
-		public override IList<FluentSuperColumn> Columns { get { return _columns; } }
+		/// <returns></returns>
+		public FluentColumnPath GetPath()
+		{
+			return new FluentColumnPath(_self, null);
+		}
 
+		/// <summary>
+		/// Gets the parent.
+		/// </summary>
+		/// <returns></returns>
+		public FluentColumnParent GetSelf()
+		{
+			return _self;
+		}
 		/// <summary>
 		/// 
 		/// </summary>
@@ -70,21 +88,25 @@ namespace FluentCassandra
 		/// <returns></returns>
 		public override bool TrySetColumn(object name, object value)
 		{
-			if (!(value is FluentSuperColumn))
-				throw new ArgumentException("Value must be of type FluentSuperColumn<string>, because this column family is of type Super.", "value");
+			if (!(value is FluentSuperColumn<CompareWith, CompareSubcolumnWith>))
+				throw new ArgumentException("Value must be of type " + typeof(FluentSuperColumn<CompareWith, CompareSubcolumnWith>) + ", because this column family is of type Super.", "value");
 
 			var col = Columns.FirstOrDefault(c => c.Name == name);
 			var mutationType = col == null ? MutationType.Added : MutationType.Changed;
 
-			col = (FluentSuperColumn)value;
-			col.Name = name;
+			CompareWith nameType = new CompareWith();
+
+			col = (FluentSuperColumn<CompareWith, CompareSubcolumnWith>)value;
+			((FluentSuperColumn<CompareWith, CompareSubcolumnWith>)col).Name = (CompareWith)nameType.SetValue(name);
 
 			int index = Columns.IndexOf(col);
 
+			_columns.SupressChangeNotification = true;
 			if (index < 0)
 				Columns.Add(col);
 			else
 				Columns.Insert(index, col);
+			_columns.SupressChangeNotification = false;
 
 			// notify the tracker that the column has changed
 			OnColumnMutated(mutationType, col);
