@@ -108,5 +108,58 @@ namespace FluentCassandra
 		}
 
 		#endregion
+
+		#region RemoveColumn
+
+		public static void RemoveColumn<CompareWith, CompareSubcolumnWith>(this CassandraSuperColumnFamily<CompareWith, CompareSubcolumnWith> family, string key, FluentColumnPath path)
+			where CompareWith : CassandraType
+			where CompareSubcolumnWith : CassandraType
+		{
+			var columnName = (CompareSubcolumnWith)path.Column.Name;
+			var superColumnName = (CompareWith)path.SuperColumn.Name;
+			RemoveColumn<CompareWith, CompareSubcolumnWith>(family, key, superColumnName, columnName);
+		}
+
+		public static void RemoveColumn<CompareWith, CompareSubcolumnWith>(this CassandraSuperColumnFamily<CompareWith, CompareSubcolumnWith> family, string key, CompareWith superColumnName, CompareSubcolumnWith columnName)
+			where CompareWith : CassandraType
+			where CompareSubcolumnWith : CassandraType
+		{
+			var op = new RemoveColumn(key, superColumnName, columnName);
+			family.ExecuteOperation(op);
+		}
+
+		#endregion
+
+		#region RemoveSuperColumn
+
+		public static void RemoveSuperColumn<CompareWith, CompareSubcolumnWith>(this CassandraSuperColumnFamily<CompareWith, CompareSubcolumnWith> family, string key, FluentColumnParent parent)
+			where CompareWith : CassandraType
+			where CompareSubcolumnWith : CassandraType
+		{
+			var superColumnName = (CompareWith)parent.SuperColumn.Name;
+			RemoveSuperColumn<CompareWith, CompareSubcolumnWith>(family, key, superColumnName);
+		}
+
+		public static void RemoveSuperColumn<CompareWith, CompareSubcolumnWith>(this CassandraSuperColumnFamily<CompareWith, CompareSubcolumnWith> family, string key, CompareWith superColumnName)
+			where CompareWith : CassandraType
+			where CompareSubcolumnWith : CassandraType
+		{
+			var op = new RemoveSuperColumn(key, superColumnName);
+			family.ExecuteOperation(op);
+		}
+
+		#endregion
+
+		#region RemoveColumn
+
+		public static void RemoveKey<CompareWith, CompareSubcolumnWith>(this CassandraSuperColumnFamily<CompareWith, CompareSubcolumnWith> family, string key)
+			where CompareWith : CassandraType
+			where CompareSubcolumnWith : CassandraType
+		{
+			var op = new RemoveKey(key);
+			family.ExecuteOperation(op);
+		}
+
+		#endregion
 	}
 }

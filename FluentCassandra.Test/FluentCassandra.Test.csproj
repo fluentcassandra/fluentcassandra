@@ -57,6 +57,7 @@
     <Compile Include="Operations\ColumnCountTest.cs" />
     <Compile Include="Operations\GetColumnTest.cs" />
     <Compile Include="Operations\InsertColumnTest.cs" />
+    <Compile Include="Operations\RemoveColumnTest.cs" />
     <Compile Include="Types\AsciiTypeTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Types\BytesTypeTest.cs" />

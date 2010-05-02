@@ -11,13 +11,13 @@ namespace FluentCassandra
 	{
 		#region ColumnCount
 
-		public static int ColumnCount<CompareWith>(this CassandraColumnFamily<CompareWith> family, string key) 
+		public static int ColumnCount<CompareWith>(this CassandraColumnFamily<CompareWith> family, string key)
 			where CompareWith : CassandraType
 		{
 			var op = new ColumnCount(key);
 			return family.ExecuteOperation(op);
 		}
-		
+
 		#endregion
 
 		#region InsertColumn
@@ -56,7 +56,7 @@ namespace FluentCassandra
 
 		#region GetColumn
 
-		public static IFluentColumn<CompareWith>  GetColumn<CompareWith>(this CassandraColumnFamily<CompareWith> family, string key, FluentColumnPath path)
+		public static IFluentColumn<CompareWith> GetColumn<CompareWith>(this CassandraColumnFamily<CompareWith> family, string key, FluentColumnPath path)
 			where CompareWith : CassandraType
 		{
 			var columnName = (CompareWith)path.Column.Name;
@@ -68,6 +68,35 @@ namespace FluentCassandra
 		{
 			var op = new GetColumn<CompareWith>(key, columnName);
 			return family.ExecuteOperation(op);
+		}
+
+		#endregion
+
+		#region RemoveColumn
+
+		public static void RemoveColumn<CompareWith>(this CassandraColumnFamily<CompareWith> family, string key, FluentColumnPath path)
+			where CompareWith : CassandraType
+		{
+			var columnName = (CompareWith)path.Column.Name;
+			RemoveColumn<CompareWith>(family, key, columnName);
+		}
+
+		public static void RemoveColumn<CompareWith>(this CassandraColumnFamily<CompareWith> family, string key, CompareWith columnName)
+			where CompareWith : CassandraType
+		{
+			var op = new RemoveColumn(key, columnName);
+			family.ExecuteOperation(op);
+		}
+
+		#endregion
+
+		#region RemoveColumn
+
+		public static void RemoveKey<CompareWith>(this CassandraColumnFamily<CompareWith> family, string key)
+			where CompareWith : CassandraType
+		{
+			var op = new RemoveKey(key);
+			family.ExecuteOperation(op);
 		}
 
 		#endregion

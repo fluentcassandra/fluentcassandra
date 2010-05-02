@@ -140,6 +140,7 @@
     <Compile Include="Operations\ObjectHelper.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Operations\Remove.cs" />
     <Compile Include="Operations\Void.cs">
       <SubType>Code</SubType>
     </Compile>
