@@ -10,19 +10,16 @@ namespace FluentCassandra.Types
 	{
 		private static readonly AsciiTypeConverter Converter = new AsciiTypeConverter();
 
-		private static object GetObject(object obj, Type type)
+		#region Implimentation
+
+		public override object GetValue(Type type)
 		{
 			var converter = Converter;
 
 			if (!converter.CanConvertTo(type))
-				throw new NotSupportedException(type + " is not supported for string serialization.");
+				throw new InvalidCastException(type + " cannot be cast to " + TypeCode);
 
-			return converter.ConvertTo(obj, type);
-		}
-
-		public override T ConvertTo<T>()
-		{
-			return (T)GetObject(this._value, typeof(T));
+			return converter.ConvertTo(this._value, type);
 		}
 
 		public override CassandraType SetValue(object obj)
@@ -31,16 +28,21 @@ namespace FluentCassandra.Types
 			var converter = Converter;
 
 			if (!converter.CanConvertFrom(obj.GetType()))
-				throw new NotSupportedException(obj.GetType() + " is not supported for string serialization.");
+				throw new InvalidCastException(type + " cannot be cast to " + TypeCode);
 
 			type._value = (string)converter.ConvertFrom(obj);
 
 			return type;
 		}
 
+		protected override TypeCode TypeCode
+		{
+			get { return TypeCode.String; }
+		}
+
 		public override byte[] ToByteArray()
 		{
-			return (byte[])GetObject(_value, typeof(byte[]));
+			return GetValue<byte[]>();
 		}
 
 		public override string ToString()
@@ -48,20 +50,28 @@ namespace FluentCassandra.Types
 			return _value;
 		}
 
+		#endregion
+
 		private string _value;
+
+		#region Equality
 
 		public override bool Equals(object obj)
 		{
 			if (obj is AsciiType)
 				return _value == ((AsciiType)obj)._value;
 
-			return _value == (string)GetObject(obj, typeof(string));
+			return _value == GetValue<string>();
 		}
 
 		public override int GetHashCode()
 		{
 			return _value.GetHashCode();
 		}
+
+		#endregion
+
+		#region Conversion
 
 		public static implicit operator string(AsciiType type)
 		{
@@ -80,11 +90,6 @@ namespace FluentCassandra.Types
 			return type.ToByteArray();
 		}
 
-		public static implicit operator AsciiType(byte[] o)
-		{
-			return new AsciiType {
-				_value = (string)GetObject(o, typeof(string))
-			};
-		}
+		#endregion
 	}
 }

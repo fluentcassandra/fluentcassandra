@@ -10,19 +10,16 @@ namespace FluentCassandra.Types
 	{
 		private static readonly LexicalUUIDTypeConverter Converter = new LexicalUUIDTypeConverter();
 
-		private static object GetObject(object obj, Type type)
+		#region Implimentation
+
+		public override object GetValue(Type type)
 		{
 			var converter = Converter;
 
 			if (!converter.CanConvertTo(type))
-				throw new NotSupportedException(type + " is not supported for Guid serialization.");
+				throw new InvalidCastException(type + " cannot be cast to " + TypeCode);
 
-			return converter.ConvertTo(obj, type);
-		}
-
-		public override T ConvertTo<T>()
-		{
-			return (T)GetObject(this._value, typeof(T));
+			return converter.ConvertTo(this._value, type);
 		}
 
 		public override CassandraType SetValue(object obj)
@@ -31,37 +28,50 @@ namespace FluentCassandra.Types
 			var converter = Converter;
 
 			if (!converter.CanConvertFrom(obj.GetType()))
-				throw new NotSupportedException(obj.GetType() + " is not supported for Guid serialization.");
+				throw new InvalidCastException(type + " cannot be cast to " + TypeCode);
 
 			type._value = (Guid)converter.ConvertFrom(obj);
 
 			return type;
 		}
 
+		protected override TypeCode TypeCode
+		{
+			get { return TypeCode.Object; }
+		}
+
 		public override byte[] ToByteArray()
 		{
-			return _value.ToByteArray();
+			return GetValue<byte[]>();
 		}
 
 		public override string ToString()
 		{
-			return _value.ToString("N");
+			return _value.ToString("D");
 		}
 
+		#endregion
+
 		private Guid _value;
+
+		#region Equality
 
 		public override bool Equals(object obj)
 		{
 			if (obj is LexicalUUIDType)
 				return _value == ((LexicalUUIDType)obj)._value;
 
-			return _value == (Guid)GetObject(obj, typeof(Guid));
+			return _value == GetValue<Guid>();
 		}
 
 		public override int GetHashCode()
 		{
 			return _value.GetHashCode();
 		}
+
+		#endregion
+
+		#region Conversion
 
 		public static implicit operator Guid(LexicalUUIDType type)
 		{
@@ -77,14 +87,9 @@ namespace FluentCassandra.Types
 
 		public static implicit operator byte[](LexicalUUIDType type)
 		{
-			return (byte[])GetObject(type._value, typeof(byte[]));
+			return type.ToByteArray();
 		}
 
-		public static implicit operator LexicalUUIDType(byte[] o)
-		{
-			return new LexicalUUIDType {
-				_value = (Guid)GetObject(o, typeof(Guid))
-			};
-		}
+		#endregion
 	}
 }

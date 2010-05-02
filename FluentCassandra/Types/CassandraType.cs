@@ -6,11 +6,20 @@ using System.ComponentModel;
 
 namespace FluentCassandra.Types
 {
-	public abstract class CassandraType
+	public abstract class CassandraType : IConvertible
 	{
+		public T GetValue<T>()
+		{
+			return (T)GetValue(typeof(T));
+		}
+
 		public abstract CassandraType SetValue(object obj);
-		public abstract T ConvertTo<T>();
+		public abstract object GetValue(Type type);
 		public abstract byte[] ToByteArray();
+
+		protected abstract TypeCode TypeCode { get; }
+
+		#region Equality
 
 		public override bool Equals(object obj)
 		{
@@ -24,24 +33,36 @@ namespace FluentCassandra.Types
 
 		public static bool operator ==(CassandraType type, object obj)
 		{
-			if (obj == null && Object.Equals(type, null))
-				return true;
+			if (Object.Equals(type, null))
+				return obj == null;
 
-			if (obj != null && Object.Equals(type, null))
-				return false;
+			if (obj == null)
+				return Object.Equals(type, null);
 
 			return type.Equals(obj);
 		}
 
 		public static bool operator !=(CassandraType type, object obj)
 		{
-			if (obj == null && Object.Equals(type, null))
-				return false;
+			if (Object.Equals(type, null))
+				return obj != null;
 
-			if (obj != null && Object.Equals(type, null))
-				return true;
+			if (obj == null)
+				return !Object.Equals(type, null);
 
 			return !type.Equals(obj);
+		}
+
+		#endregion
+
+		#region Conversion
+
+		private static T Convert<T>(CassandraType type)
+		{
+			if (type == null)
+				return default(T);
+
+			return type.GetValue<T>();
 		}
 
 		public static implicit operator byte[](CassandraType o) { return Convert<byte[]>(o); }
@@ -63,9 +84,36 @@ namespace FluentCassandra.Types
 		public static implicit operator DateTime(CassandraType o) { return Convert<DateTime>(o); }
 		public static implicit operator DateTimeOffset(CassandraType o) { return Convert<DateTimeOffset>(o); }
 
-		private static T Convert<T>(CassandraType type)
+		#endregion
+
+		#region IConvertible Members
+
+		TypeCode IConvertible.GetTypeCode()
 		{
-			return type.ConvertTo<T>();
+			return TypeCode;
 		}
+
+		object IConvertible.ToType(Type conversionType, IFormatProvider provider)
+		{
+			return GetValue(conversionType);
+		}
+
+		bool IConvertible.ToBoolean(IFormatProvider provider) { return GetValue<bool>(); }
+		byte IConvertible.ToByte(IFormatProvider provider) { return GetValue<byte>(); }
+		char IConvertible.ToChar(IFormatProvider provider) { return GetValue<char>(); }
+		DateTime IConvertible.ToDateTime(IFormatProvider provider) { return GetValue<DateTime>(); }
+		decimal IConvertible.ToDecimal(IFormatProvider provider) { return GetValue<decimal>(); }
+		double IConvertible.ToDouble(IFormatProvider provider) { return GetValue<double>(); }
+		short IConvertible.ToInt16(IFormatProvider provider) { return GetValue<short>(); }
+		int IConvertible.ToInt32(IFormatProvider provider) { return GetValue<int>(); }
+		long IConvertible.ToInt64(IFormatProvider provider) { return GetValue<long>(); }
+		sbyte IConvertible.ToSByte(IFormatProvider provider) { return GetValue<sbyte>(); }
+		float IConvertible.ToSingle(IFormatProvider provider) { return GetValue<float>(); }
+		string IConvertible.ToString(IFormatProvider provider) { return GetValue<string>(); }
+		ushort IConvertible.ToUInt16(IFormatProvider provider) { return GetValue<ushort>(); }
+		uint IConvertible.ToUInt32(IFormatProvider provider) { return GetValue<uint>(); }
+		ulong IConvertible.ToUInt64(IFormatProvider provider) { return GetValue<ulong>(); }
+
+		#endregion
 	}
 }

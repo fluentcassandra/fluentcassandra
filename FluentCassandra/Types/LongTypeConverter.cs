@@ -31,7 +31,7 @@ namespace FluentCassandra.Types
 
 		public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType)
 		{
-			if (!(value is string))
+			if (!(value is long))
 				return null;
 
 			if (destinationType == typeof(byte[]))

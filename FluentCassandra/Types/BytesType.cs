@@ -10,60 +10,68 @@ namespace FluentCassandra.Types
 	{
 		private static readonly BytesTypeConverter Converter = new BytesTypeConverter();
 
-		private static object GetObject(byte[] bytes, Type type)
+		#region Implimentation
+
+		public override object GetValue(Type type)
 		{
 			var converter = Converter;
 
 			if (!converter.CanConvertTo(type))
-				throw new NotSupportedException(type + " is not supported for binary serialization.");
+				throw new InvalidCastException(type + " cannot be cast to " + TypeCode);
 
-			return converter.ConvertTo(bytes, type);
-		}
-
-		public override T ConvertTo<T>()
-		{
-			return (T)GetObject(this._value, typeof(T));
-		}
-
-		private static byte[] GetBytes(object obj)
-		{
-			var converter = Converter;
-
-			if (!converter.CanConvertFrom(obj.GetType()))
-				throw new NotSupportedException(obj.GetType() + " is not supported for binary serialization.");
-
-			return (byte[])converter.ConvertFrom(obj);
+			return converter.ConvertTo(this._value, type);
 		}
 
 		public override CassandraType SetValue(object obj)
 		{
-			return Convert(obj);
+			var type = new BytesType();
+			var converter = Converter;
+
+			if (!converter.CanConvertFrom(obj.GetType()))
+				throw new InvalidCastException(type + " cannot be cast to " + TypeCode);
+
+			type._value = (byte[])converter.ConvertFrom(obj);
+
+			return type;
+		}
+
+		protected override TypeCode TypeCode
+		{
+			get { return TypeCode.Object; }
 		}
 
 		public override byte[] ToByteArray()
 		{
-			return _value;
+			return GetValue<byte[]>();
 		}
 
 		public override string ToString()
 		{
-			return Convert<string>(this);
+			return GetValue<string>();
 		}
 
+		#endregion
+
 		private byte[] _value;
+
+		#region Equality
 
 		public override bool Equals(object obj)
 		{
 			if (obj is BytesType)
 				return _value.SequenceEqual(((BytesType)obj)._value);
 
-			return _value.SequenceEqual(GetBytes(obj));
+			return _value.SequenceEqual(ToByteArray());
 		}
 
 		public override int GetHashCode()
 		{
-			return _value.GetHashCode();
+			return BitConverter.ToInt32(_value, 0);
 		}
+
+		#endregion
+
+		#region Conversion
 
 		public static implicit operator byte[](BytesType type)
 		{
@@ -75,53 +83,57 @@ namespace FluentCassandra.Types
 			return new BytesType { _value = s };
 		}
 
-		public static implicit operator BytesType(byte o) { return Convert(o); }
-		public static implicit operator BytesType(sbyte o) { return Convert(o); }
-		public static implicit operator BytesType(short o) { return Convert(o); }
-		public static implicit operator BytesType(ushort o) { return Convert(o); }
-		public static implicit operator BytesType(int o) { return Convert(o); }
-		public static implicit operator BytesType(uint o) { return Convert(o); }
-		public static implicit operator BytesType(long o) { return Convert(o); }
-		public static implicit operator BytesType(ulong o) { return Convert(o); }
-		public static implicit operator BytesType(float o) { return Convert(o); }
-		public static implicit operator BytesType(double o) { return Convert(o); }
-		public static implicit operator BytesType(decimal o) { return Convert(o); }
-		public static implicit operator BytesType(bool o) { return Convert(o); }
-		public static implicit operator BytesType(string o) { return Convert(o); }
-		public static implicit operator BytesType(char o) { return Convert(o); }
-		public static implicit operator BytesType(Guid o) { return Convert(o); }
-		public static implicit operator BytesType(DateTime o) { return Convert(o); }
-		public static implicit operator BytesType(DateTimeOffset o) { return Convert(o); }
+		public static implicit operator BytesType(byte o) { return ConvertFrom(o); }
+		public static implicit operator BytesType(sbyte o) { return ConvertFrom(o); }
+		public static implicit operator BytesType(short o) { return ConvertFrom(o); }
+		public static implicit operator BytesType(ushort o) { return ConvertFrom(o); }
+		public static implicit operator BytesType(int o) { return ConvertFrom(o); }
+		public static implicit operator BytesType(uint o) { return ConvertFrom(o); }
+		public static implicit operator BytesType(long o) { return ConvertFrom(o); }
+		public static implicit operator BytesType(ulong o) { return ConvertFrom(o); }
+		public static implicit operator BytesType(float o) { return ConvertFrom(o); }
+		public static implicit operator BytesType(double o) { return ConvertFrom(o); }
+		public static implicit operator BytesType(decimal o) { return ConvertFrom(o); }
+		public static implicit operator BytesType(bool o) { return ConvertFrom(o); }
+		public static implicit operator BytesType(string o) { return ConvertFrom(o); }
+		public static implicit operator BytesType(char o) { return ConvertFrom(o); }
+		public static implicit operator BytesType(Guid o) { return ConvertFrom(o); }
+		public static implicit operator BytesType(DateTime o) { return ConvertFrom(o); }
+		public static implicit operator BytesType(DateTimeOffset o) { return ConvertFrom(o); }
 
-		public static implicit operator byte(BytesType o) { return Convert<byte>(o); }
-		public static implicit operator sbyte(BytesType o) { return Convert<sbyte>(o); }
-		public static implicit operator short(BytesType o) { return Convert<short>(o); }
-		public static implicit operator ushort(BytesType o) { return Convert<ushort>(o); }
-		public static implicit operator int(BytesType o) { return Convert<int>(o); }
-		public static implicit operator uint(BytesType o) { return Convert<uint>(o); }
-		public static implicit operator long(BytesType o) { return Convert<long>(o); }
-		public static implicit operator ulong(BytesType o) { return Convert<ulong>(o); }
-		public static implicit operator float(BytesType o) { return Convert<float>(o); }
-		public static implicit operator double(BytesType o) { return Convert<double>(o); }
-		public static implicit operator decimal(BytesType o) { return Convert<decimal>(o); }
-		public static implicit operator bool(BytesType o) { return Convert<bool>(o); }
-		public static implicit operator string(BytesType o) { return Convert<string>(o); }
-		public static implicit operator char(BytesType o) { return Convert<char>(o); }
-		public static implicit operator Guid(BytesType o) { return Convert<Guid>(o); }
-		public static implicit operator DateTime(BytesType o) { return Convert<DateTime>(o); }
-		public static implicit operator DateTimeOffset(BytesType o) { return Convert<DateTimeOffset>(o); }
+		public static implicit operator byte(BytesType o) { return ConvertTo<byte>(o); }
+		public static implicit operator sbyte(BytesType o) { return ConvertTo<sbyte>(o); }
+		public static implicit operator short(BytesType o) { return ConvertTo<short>(o); }
+		public static implicit operator ushort(BytesType o) { return ConvertTo<ushort>(o); }
+		public static implicit operator int(BytesType o) { return ConvertTo<int>(o); }
+		public static implicit operator uint(BytesType o) { return ConvertTo<uint>(o); }
+		public static implicit operator long(BytesType o) { return ConvertTo<long>(o); }
+		public static implicit operator ulong(BytesType o) { return ConvertTo<ulong>(o); }
+		public static implicit operator float(BytesType o) { return ConvertTo<float>(o); }
+		public static implicit operator double(BytesType o) { return ConvertTo<double>(o); }
+		public static implicit operator decimal(BytesType o) { return ConvertTo<decimal>(o); }
+		public static implicit operator bool(BytesType o) { return ConvertTo<bool>(o); }
+		public static implicit operator string(BytesType o) { return ConvertTo<string>(o); }
+		public static implicit operator char(BytesType o) { return ConvertTo<char>(o); }
+		public static implicit operator Guid(BytesType o) { return ConvertTo<Guid>(o); }
+		public static implicit operator DateTime(BytesType o) { return ConvertTo<DateTime>(o); }
+		public static implicit operator DateTimeOffset(BytesType o) { return ConvertTo<DateTimeOffset>(o); }
 
-		private static T Convert<T>(BytesType type)
+		private static T ConvertTo<T>(BytesType type)
 		{
-			return (T)GetObject(type._value, typeof(T));
+			if (type == null)
+				return default(T);
+
+			return type.GetValue<T>();
 		}
 
-		private static BytesType Convert(object o)
+		private static BytesType ConvertFrom(object o)
 		{
 			var type = new BytesType();
-			type._value = GetBytes(o);
-
+			type.SetValue(o);
 			return type;
 		}
+
+		#endregion
 	}
 }

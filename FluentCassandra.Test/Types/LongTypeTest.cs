@@ -43,7 +43,7 @@ namespace FluentCassandra.Test
 		#endregion
 
 		[TestMethod]
-		public void CassandraType_Cast_String()
+		public void CassandraType_Cast_Int64()
 		{
 			// arranage
 			long expected = 300L;
@@ -57,7 +57,7 @@ namespace FluentCassandra.Test
 		}
 
 		[TestMethod]
-		public void Implicit_Cast_From_Long()
+		public void Implicit_Cast_From_Int64()
 		{
 			// arrange
 			long expected = 300L;
@@ -70,7 +70,7 @@ namespace FluentCassandra.Test
 		}
 
 		[TestMethod]
-		public void Implicit_Cast_To_Long()
+		public void Implicit_Cast_To_Int64()
 		{
 			// arrange
 			long expected = 300L;
