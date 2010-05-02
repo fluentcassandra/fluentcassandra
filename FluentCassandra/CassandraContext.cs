@@ -84,12 +84,26 @@ namespace FluentCassandra
 		/// <summary>
 		/// Gets a typed column family.
 		/// </summary>
-		/// <typeparam name="T">Type of column family.</typeparam>
+		/// <typeparam name="CompareWith"></typeparam>
 		/// <returns></returns>
-		public CassandraColumnFamily<T> GetColumnFamily<T>(string columnFamily)
-			where T : CassandraType
+		public CassandraColumnFamily<CompareWith> GetColumnFamily<CompareWith>(string columnFamily)
+			where CompareWith : CassandraType
 		{
-			return new CassandraColumnFamily<T>(this, _keyspace, _connection, columnFamily);
+			return new CassandraColumnFamily<CompareWith>(this, _keyspace, _connection, columnFamily);
+		}
+
+		/// <summary>
+		/// Gets a typed super column family.
+		/// </summary>
+		/// <typeparam name="CompareWith"></typeparam>
+		/// <typeparam name="CompareSubcolumnWith"></typeparam>
+		/// <param name="columnFamily"></param>
+		/// <returns></returns>
+		public CassandraSuperColumnFamily<CompareWith, CompareSubcolumnWith> GetColumnFamily<CompareWith, CompareSubcolumnWith>(string columnFamily)
+			where CompareWith : CassandraType
+			where CompareSubcolumnWith : CassandraType
+		{
+			return new CassandraSuperColumnFamily<CompareWith, CompareSubcolumnWith>(this, _keyspace, _connection, columnFamily);
 		}
 
 		/// <summary>
