@@ -24,15 +24,14 @@ namespace FluentCassandra.Types
 
 		public override CassandraType SetValue(object obj)
 		{
-			var type = new AsciiType();
 			var converter = Converter;
 
 			if (!converter.CanConvertFrom(obj.GetType()))
-				throw new InvalidCastException(type + " cannot be cast to " + TypeCode);
+				throw new InvalidCastException(GetType() + " cannot be cast to " + TypeCode);
 
-			type._value = (string)converter.ConvertFrom(obj);
+			_value = (string)converter.ConvertFrom(obj);
 
-			return type;
+			return this;
 		}
 
 		protected override TypeCode TypeCode
@@ -61,7 +60,7 @@ namespace FluentCassandra.Types
 			if (obj is AsciiType)
 				return _value == ((AsciiType)obj)._value;
 
-			return _value == GetValue<string>();
+			return _value == CassandraType.GetValue<string>(obj, Converter);
 		}
 
 		public override int GetHashCode()

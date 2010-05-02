@@ -24,15 +24,14 @@ namespace FluentCassandra.Types
 
 		public override CassandraType SetValue(object obj)
 		{
-			var type = new LongType();
 			var converter = Converter;
 
 			if (!converter.CanConvertFrom(obj.GetType()))
-				throw new InvalidCastException(type + " cannot be cast to " + TypeCode);
+				throw new InvalidCastException(GetType() + " cannot be cast to " + TypeCode);
 
-			type._value = (long)converter.ConvertFrom(obj);
+			_value = (long)converter.ConvertFrom(obj);
 
-			return type;
+			return this;
 		}
 
 		protected override TypeCode TypeCode
@@ -61,7 +60,7 @@ namespace FluentCassandra.Types
 			if (obj is LongType)
 				return _value == ((LongType)obj)._value;
 
-			return _value == GetValue<long>();
+			return _value == CassandraType.GetValue<long>(obj, Converter);
 		}
 
 		public override int GetHashCode()

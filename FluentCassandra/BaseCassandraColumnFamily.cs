@@ -46,6 +46,11 @@ namespace FluentCassandra
 		public string FamilyName { get; private set; }
 
 		/// <summary>
+		/// The last error that occured during the execution of an operation.
+		/// </summary>
+		public CassandraException LastError { get; private set; }
+
+		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
@@ -72,8 +77,14 @@ namespace FluentCassandra
 		/// <returns></returns>
 		public TResult ExecuteOperation<TResult>(ColumnFamilyOperation<TResult> action)
 		{
+			LastError = null;
+
 			TResult result;
-			action.TryExecute(this, out result);
+			bool success = action.TryExecute(this, out result);
+
+			if (!success)
+				LastError = action.Error;
+
 			return result;
 		}
 	}

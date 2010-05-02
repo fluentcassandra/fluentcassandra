@@ -115,5 +115,20 @@ namespace FluentCassandra.Types
 		ulong IConvertible.ToUInt64(IFormatProvider provider) { return GetValue<ulong>(); }
 
 		#endregion
+
+		internal static T GetValue<T>(object obj, TypeConverter converter)
+		{
+			return (T)GetValue(obj, converter, typeof(T));
+		}
+
+		internal static object GetValue(object obj, TypeConverter converter, Type destinationType)
+		{
+			var objType = obj.GetType();
+
+			if (!converter.CanConvertFrom(objType))
+				throw new InvalidCastException(objType + " cannot be cast to " + destinationType);
+
+			return converter.ConvertFrom(obj);
+		}
 	}
 }
