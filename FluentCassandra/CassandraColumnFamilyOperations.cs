@@ -31,25 +31,43 @@ namespace FluentCassandra
 		public static void InsertColumn<CompareWith>(this CassandraColumnFamily<CompareWith> family, string key, FluentColumnPath path)
 			where CompareWith : CassandraType
 		{
-			var name = path.Column.Name;
-			var value = path.Column.Value;
+			var columnName = path.Column.Name;
+			var columnValue = path.Column.Value;
 			var timestamp = path.Column.Timestamp;
 
-			var op = new InsertColumn(key, name, value, timestamp);
+			var op = new InsertColumn(key, columnName, columnValue, timestamp);
 			family.ExecuteOperation(op);
 		}
 
-		public static void InsertColumn<CompareWith>(this CassandraColumnFamily<CompareWith> family, string key, CompareWith name, BytesType value)
+		public static void InsertColumn<CompareWith>(this CassandraColumnFamily<CompareWith> family, string key, CompareWith columnName, BytesType columnValue)
 			where CompareWith : CassandraType
 		{
-			InsertColumn<CompareWith>(family, key, name, value, DateTimeOffset.UtcNow);
+			InsertColumn<CompareWith>(family, key, columnName, columnValue, DateTimeOffset.UtcNow);
 		}
 
-		public static void InsertColumn<CompareWith>(this CassandraColumnFamily<CompareWith> family, string key, CompareWith name, BytesType value, DateTimeOffset timestamp)
+		public static void InsertColumn<CompareWith>(this CassandraColumnFamily<CompareWith> family, string key, CompareWith columnName, BytesType columnValue, DateTimeOffset timestamp)
 			where CompareWith : CassandraType
 		{
-			var op = new InsertColumn(key, name, value, timestamp);
+			var op = new InsertColumn(key, columnName, columnValue, timestamp);
 			family.ExecuteOperation(op);
+		}
+
+		#endregion
+
+		#region GetColumn
+
+		public static IFluentColumn<CompareWith>  GetColumn<CompareWith>(this CassandraColumnFamily<CompareWith> family, string key, FluentColumnPath path)
+			where CompareWith : CassandraType
+		{
+			var columnName = (CompareWith)path.Column.Name;
+			return GetColumn<CompareWith>(family, key, columnName);
+		}
+
+		public static IFluentColumn<CompareWith> GetColumn<CompareWith>(this CassandraColumnFamily<CompareWith> family, string key, CompareWith columnName)
+			where CompareWith : CassandraType
+		{
+			var op = new GetColumn<CompareWith>(key, columnName);
+			return family.ExecuteOperation(op);
 		}
 
 		#endregion

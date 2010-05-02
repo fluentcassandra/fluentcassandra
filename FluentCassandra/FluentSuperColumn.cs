@@ -14,7 +14,7 @@ namespace FluentCassandra
 	/// <typeparam name="T"></typeparam>
 	public class FluentSuperColumn<CompareWith, CompareSubcolumnWith> : FluentRecord<IFluentColumn<CompareSubcolumnWith>>, IFluentSuperColumn<CompareWith, CompareSubcolumnWith>
 		where CompareWith : CassandraType
-		where CompareSubcolumnWith : CassandraType, new()
+		where CompareSubcolumnWith : CassandraType
 	{
 		private IFluentSuperColumnFamily<CompareWith, CompareSubcolumnWith> _family;
 		private FluentColumnList<IFluentColumn<CompareSubcolumnWith>> _columns;
@@ -98,16 +98,13 @@ namespace FluentCassandra
 			var col = Columns.FirstOrDefault(c => c.Name == name);
 			var mutationType = MutationType.Changed;
 
-			CompareSubcolumnWith nameType = new CompareSubcolumnWith();
-			BytesType valueType = new BytesType();
-
 			// if column doesn't exisit create it and add it to the columns
 			if (col == null)
 			{
 				mutationType = MutationType.Added;
 
 				col = new FluentColumn<CompareSubcolumnWith>();
-				((FluentColumn<CompareSubcolumnWith>)col).Name = (CompareSubcolumnWith)nameType.SetValue(name);
+				((FluentColumn<CompareSubcolumnWith>)col).Name = CassandraType.GetType<CompareSubcolumnWith>(name);
 
 				_columns.SupressChangeNotification = true;
 				_columns.Add(col);
@@ -115,7 +112,7 @@ namespace FluentCassandra
 			}
 
 			// set the column value
-			col.Value = (BytesType)valueType.SetValue(value);
+			col.Value = CassandraType.GetType<BytesType>(value);
 
 			// notify the tracker that the column has changed
 			OnColumnMutated(mutationType, col);

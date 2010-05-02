@@ -70,12 +70,24 @@ namespace FluentCassandra
 		}
 
 		/// <summary>
-		/// Execute the column family action against the server.
+		/// Execute the column family operation against the connection to the server.
 		/// </summary>
 		/// <typeparam name="TResult"></typeparam>
 		/// <param name="action"></param>
 		/// <returns></returns>
 		public TResult ExecuteOperation<TResult>(ColumnFamilyOperation<TResult> action)
+		{
+			return ExecuteOperation<TResult>(action, false);
+		}
+
+		/// <summary>
+		/// Execute the column family operation against the connection to the server.
+		/// </summary>
+		/// <typeparam name="TResult"></typeparam>
+		/// <param name="action"></param>
+		/// <param name="throwOnError"></param>
+		/// <returns></returns>
+		public TResult ExecuteOperation<TResult>(ColumnFamilyOperation<TResult> action, bool throwOnError)
 		{
 			LastError = null;
 
@@ -84,6 +96,9 @@ namespace FluentCassandra
 
 			if (!success)
 				LastError = action.Error;
+
+			if (!success && throwOnError)
+				throw action.Error;
 
 			return result;
 		}

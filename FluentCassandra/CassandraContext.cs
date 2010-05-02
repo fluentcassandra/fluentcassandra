@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Apache.Cassandra;
 using FluentCassandra.Types;
+using FluentCassandra.Operations;
 
 namespace FluentCassandra
 {

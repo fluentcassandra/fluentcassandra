@@ -10,7 +10,7 @@ using FluentCassandra.Types;
 namespace FluentCassandra
 {
 	public class FluentColumnFamily<CompareWith> : FluentRecord<IFluentColumn<CompareWith>>, IFluentColumnFamily<CompareWith>
-		where CompareWith : CassandraType, new()
+		where CompareWith : CassandraType
 	{
 		private FluentColumnList<IFluentColumn<CompareWith>> _columns;
 		private FluentColumnParent _self;
@@ -91,16 +91,13 @@ namespace FluentCassandra
 			var col = Columns.FirstOrDefault(c => c.Name == name);
 			var mutationType = MutationType.Changed;
 
-			CompareWith nameType = new CompareWith();
-			BytesType valueType = new BytesType();
-
 			// if column doesn't exisit create it and add it to the columns
 			if (col == null)
 			{
 				mutationType = MutationType.Added;
 
 				col = new FluentColumn<CompareWith>();
-				((FluentColumn<CompareWith>)col).Name = (CompareWith)nameType.SetValue(name);
+				((FluentColumn<CompareWith>)col).Name = CassandraType.GetType<CompareWith>(col.Name);
 
 				_columns.SupressChangeNotification = true;
 				_columns.Add(col);
@@ -108,7 +105,7 @@ namespace FluentCassandra
 			}
 
 			// set the column value
-			col.Value = (BytesType)valueType.SetValue(value);
+			col.Value = CassandraType.GetType<BytesType>(value);
 
 			// notify the tracker that the column has changed
 			OnColumnMutated(mutationType, col);

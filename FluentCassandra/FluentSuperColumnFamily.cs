@@ -10,8 +10,8 @@ using FluentCassandra.Types;
 namespace FluentCassandra
 {
 	public class FluentSuperColumnFamily<CompareWith, CompareSubcolumnWith> : FluentRecord<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>>, IFluentSuperColumnFamily<CompareWith, CompareSubcolumnWith>
-		where CompareWith : CassandraType, new()
-		where CompareSubcolumnWith : CassandraType, new()
+		where CompareWith : CassandraType
+		where CompareSubcolumnWith : CassandraType
 	{
 		private FluentColumnList<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>> _columns;
 		private FluentColumnParent _self;
@@ -94,10 +94,8 @@ namespace FluentCassandra
 			var col = Columns.FirstOrDefault(c => c.Name == name);
 			var mutationType = col == null ? MutationType.Added : MutationType.Changed;
 
-			CompareWith nameType = new CompareWith();
-
 			col = (FluentSuperColumn<CompareWith, CompareSubcolumnWith>)value;
-			((FluentSuperColumn<CompareWith, CompareSubcolumnWith>)col).Name = (CompareWith)nameType.SetValue(name);
+			((FluentSuperColumn<CompareWith, CompareSubcolumnWith>)col).Name = CassandraType.GetType<CompareWith>(name);
 
 			int index = Columns.IndexOf(col);
 

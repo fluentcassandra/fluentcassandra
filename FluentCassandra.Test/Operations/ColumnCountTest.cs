@@ -14,6 +14,7 @@ namespace FluentCassandra.Test.Operations
 		private CassandraColumnFamily<AsciiType> _family;
 		private CassandraSuperColumnFamily<AsciiType, AsciiType> _superFamily;
 		private const string _testKey = "Test1";
+		private const string _testName = "Test1";
 		private const string _testSuperName = "SubTest1";
 
 		[TestInitialize]

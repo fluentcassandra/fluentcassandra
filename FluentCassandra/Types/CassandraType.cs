@@ -8,6 +8,10 @@ namespace FluentCassandra.Types
 {
 	public abstract class CassandraType : IConvertible
 	{
+		public CassandraType()
+		{
+		}
+
 		public T GetValue<T>()
 		{
 			return (T)GetValue(typeof(T));
@@ -115,6 +119,14 @@ namespace FluentCassandra.Types
 		ulong IConvertible.ToUInt64(IFormatProvider provider) { return GetValue<ulong>(); }
 
 		#endregion
+
+		internal static T GetType<T>(object obj)
+			where T : CassandraType
+		{
+			T type = Activator.CreateInstance<T>();
+			type.SetValue(obj);
+			return type;
+		}
 
 		internal static T GetValue<T>(object obj, TypeConverter converter)
 		{

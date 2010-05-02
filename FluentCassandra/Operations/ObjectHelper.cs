@@ -5,7 +5,7 @@ using System.Text;
 using Apache.Cassandra;
 using FluentCassandra.Types;
 
-namespace FluentCassandra
+namespace FluentCassandra.Operations
 {
 	internal static class ObjectHelper
 	{
@@ -77,51 +77,56 @@ namespace FluentCassandra
 		//    return family;
 		//}
 
-		///// <summary>
-		///// 
-		///// </summary>
-		///// <param name="col"></param>
-		///// <returns></returns>
-		//public static IFluentColumn ConvertToFluentColumn(ColumnOrSuperColumn col)
-		//{
-		//    if (col.Super_column != null)
-		//        return ConverSuperColumnToFluentSuperColumn(col.Super_column);
-		//    else if (col.Column != null)
-		//        return ConvertColumnToFluentColumn(col.Column);
-		//    else
-		//        return null;
-		//}
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="col"></param>
+		/// <returns></returns>
+		public static IFluentBaseColumn<CompareWith> ConvertToFluentBaseColumn<CompareWith, CompareSubcolumWith>(ColumnOrSuperColumn col)
+			where CompareWith : CassandraType
+			where CompareSubcolumWith : CassandraType
+		{
+			if (col.Super_column != null)
+				return ConverSuperColumnToFluentSuperColumn<CompareWith, CompareSubcolumWith>(col.Super_column);
+			else if (col.Column != null)
+				return ConvertColumnToFluentColumn<CompareWith>(col.Column);
+			else
+				return null;
+		}
 
-		///// <summary>
-		///// 
-		///// </summary>
-		///// <param name="col"></param>
-		///// <returns></returns>
-		//public static FluentColumn ConvertColumnToFluentColumn(Column col)
-		//{
-		//    return new FluentColumn {
-		//        NameBytes = col.Name,
-		//        ValueBytes = col.Value,
-		//        Timestamp = new DateTimeOffset(col.Timestamp, TimeSpan.Zero)
-		//    };
-		//}
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="col"></param>
+		/// <returns></returns>
+		public static FluentColumn<CompareWith> ConvertColumnToFluentColumn<CompareWith>(Column col)
+			where CompareWith : CassandraType
+		{
+			return new FluentColumn<CompareWith> {
+				Name = CassandraType.GetType<CompareWith>(col.Name),
+				Value = col.Value,
+				Timestamp = new DateTimeOffset(col.Timestamp, TimeSpan.Zero)
+			};
+		}
 
-		///// <summary>
-		///// 
-		///// </summary>
-		///// <param name="col"></param>
-		///// <returns></returns>
-		//public static FluentSuperColumn ConverSuperColumnToFluentSuperColumn(SuperColumn col)
-		//{
-		//    var superCol = new FluentSuperColumn() {
-		//        NameBytes = col.Name
-		//    };
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="col"></param>
+		/// <returns></returns>
+		public static FluentSuperColumn<CompareWith, CompareSubcolumWith> ConverSuperColumnToFluentSuperColumn<CompareWith, CompareSubcolumWith>(SuperColumn col)
+			where CompareWith : CassandraType
+			where CompareSubcolumWith : CassandraType
+		{
+			var superCol = new FluentSuperColumn<CompareWith, CompareSubcolumWith> {
+				Name = CassandraType.GetType<CompareWith>(col.Name)
+			};
 
-		//    foreach (var xcol in col.Columns)
-		//        superCol.Columns.Add(ConvertColumnToFluentColumn(xcol));
+			foreach (var xcol in col.Columns)
+				superCol.Columns.Add(ConvertColumnToFluentColumn<CompareSubcolumWith>(xcol));
 
-		//    return superCol;
-		//}
+			return superCol;
+		}
 
 		/// <summary>
 		/// 
