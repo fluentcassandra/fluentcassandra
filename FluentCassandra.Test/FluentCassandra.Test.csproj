@@ -55,8 +55,10 @@
     <Compile Include="FluentColumnTest.cs" />
     <Compile Include="FluentSuperColumnTest.cs" />
     <Compile Include="Operations\ColumnCountTest.cs" />
+    <Compile Include="Operations\InsertColumnTest.cs" />
     <Compile Include="Types\AsciiTypeTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Types\LongTypeTest.cs" />
     <Compile Include="Types\UTF8TypeTest.cs" />
   </ItemGroup>
   <ItemGroup>

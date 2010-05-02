@@ -43,6 +43,20 @@ namespace FluentCassandra.Test
 		#endregion
 
 		[TestMethod]
+		public void CassandraType_Cast_String()
+		{
+			// arranage
+			string expected = "I am casted!";
+			UTF8Type type = expected;
+
+			// act
+			CassandraType actual = type;
+
+			// assert
+			Assert.AreEqual(expected, (string)actual);
+		}
+
+		[TestMethod]
 		public void Implicit_Cast_From_String()
 		{
 			// arrange

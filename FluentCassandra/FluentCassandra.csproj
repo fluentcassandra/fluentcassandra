@@ -135,6 +135,7 @@
     <Compile Include="Operations\ColumnFamilyOperation.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Operations\InsertColumn.cs" />
     <Compile Include="Operations\ObjectHelper.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -178,6 +179,7 @@
     <Compile Include="IFluentRecord.cs" />
     <Compile Include="Types\CassandraType.cs" />
     <Compile Include="Types\LexicalUUIDTypeConverter.cs" />
+    <Compile Include="Types\LongTypeConverter.cs" />
     <Compile Include="Types\TimeUUIDTypeConverter.cs" />
     <Compile Include="Types\UTF8TypeConverter.cs" />
     <Compile Include="Types\LexicalUUIDType.cs" />

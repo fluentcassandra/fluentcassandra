@@ -20,6 +20,11 @@ namespace FluentCassandra.Types
 			return converter.ConvertTo(obj, type);
 		}
 
+		public override T ConvertTo<T>()
+		{
+			return (T)GetObject(this._value, typeof(T));
+		}
+
 		public override CassandraType SetValue(object obj)
 		{
 			var type = new AsciiType();
@@ -31,6 +36,16 @@ namespace FluentCassandra.Types
 			type._value = (string)converter.ConvertFrom(obj);
 
 			return type;
+		}
+
+		public override byte[] ToByteArray()
+		{
+			return (byte[])GetObject(_value, typeof(byte[]));
+		}
+
+		public override string ToString()
+		{
+			return _value;
 		}
 
 		private string _value;
@@ -62,7 +77,7 @@ namespace FluentCassandra.Types
 
 		public static implicit operator byte[](AsciiType type)
 		{
-			return (byte[])GetObject(type._value, typeof(byte[]));
+			return type.ToByteArray();
 		}
 
 		public static implicit operator AsciiType(byte[] o)

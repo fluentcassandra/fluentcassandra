@@ -8,7 +8,7 @@ namespace FluentCassandra.Types
 {
 	public class LongType : CassandraType
 	{
-		private static readonly Int64Converter Converter = new Int64Converter();
+		private static readonly LongTypeConverter Converter = new LongTypeConverter();
 
 		private static object GetObject(object obj, Type type)
 		{
@@ -18,6 +18,11 @@ namespace FluentCassandra.Types
 				throw new NotSupportedException(type + " is not supported for Int64 serialization.");
 
 			return converter.ConvertTo(obj, type);
+		}
+
+		public override T ConvertTo<T>()
+		{
+			return (T)GetObject(this._value, typeof(T));
 		}
 
 		public override CassandraType SetValue(object obj)
@@ -33,7 +38,30 @@ namespace FluentCassandra.Types
 			return type;
 		}
 
+		public override byte[] ToByteArray()
+		{
+			return (byte[])GetObject(_value, typeof(byte[]));
+		}
+
+		public override string ToString()
+		{
+			return _value.ToString("N");
+		}
+
 		private long _value;
+
+		public override bool Equals(object obj)
+		{
+			if (obj is LongType)
+				return _value == ((LongType)obj)._value;
+
+			return _value == (long)GetObject(obj, typeof(long));
+		}
+
+		public override int GetHashCode()
+		{
+			return _value.GetHashCode();
+		}
 
 		public static implicit operator long(LongType type)
 		{
@@ -49,7 +77,7 @@ namespace FluentCassandra.Types
 
 		public static implicit operator byte[](LongType type)
 		{
-			return (byte[])GetObject(type._value, typeof(byte[]));
+			return type.ToByteArray();
 		}
 
 		public static implicit operator LongType(byte[] o)

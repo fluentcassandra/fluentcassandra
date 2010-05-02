@@ -14,6 +14,7 @@ namespace FluentCassandra.Test.Operations
 		private CassandraColumnFamily<AsciiType> _family;
 		private CassandraSuperColumnFamily<AsciiType, AsciiType> _superFamily;
 		private const string _testKey = "Test1";
+		private const string _testSuperName = "SubTest1";
 
 		[TestInitialize]
 		public void TestInit()
@@ -33,7 +34,10 @@ namespace FluentCassandra.Test.Operations
 		public void ColumnFamily_Key()
 		{
 			// arrange
-			int expected = 0;
+			int expected = 3;
+			_family.InsertColumn(_testKey, "Test1", Math.PI);
+			_family.InsertColumn(_testKey, "Test2", Math.PI);
+			_family.InsertColumn(_testKey, "Test3", Math.PI);
 
 			// act
 			int actual = _family.ColumnCount(_testKey);
@@ -46,7 +50,10 @@ namespace FluentCassandra.Test.Operations
 		public void SuperColumnFamily_Key()
 		{
 			// arrange
-			int expected = 0;
+			int expected = 1;
+			_superFamily.InsertColumn(_testKey, _testSuperName, "Test1", Math.PI);
+			_superFamily.InsertColumn(_testKey, _testSuperName, "Test2", Math.PI);
+			_superFamily.InsertColumn(_testKey, _testSuperName, "Test3", Math.PI);
 
 			// act
 			int actual = _superFamily.ColumnCount(_testKey);
@@ -59,11 +66,13 @@ namespace FluentCassandra.Test.Operations
 		public void SuperColumnFamily_Key_And_SuperColumnName()
 		{
 			// arrange
-			int expected = 0;
-			string subColumnName = "SubTest";
+			int expected = 3;
+			_superFamily.InsertColumn(_testKey, _testSuperName, "Test1", Math.PI);
+			_superFamily.InsertColumn(_testKey, _testSuperName, "Test2", Math.PI);
+			_superFamily.InsertColumn(_testKey, _testSuperName, "Test3", Math.PI);
 
 			// act
-			int actual = _superFamily.ColumnCount(_testKey, subColumnName);
+			int actual = _superFamily.ColumnCount(_testKey, _testSuperName);
 
 			// assert
 			Assert.AreEqual(expected, actual);

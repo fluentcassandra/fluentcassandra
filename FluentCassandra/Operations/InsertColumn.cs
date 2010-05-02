@@ -15,32 +15,55 @@ namespace FluentCassandra.Operations
 
 		public string Key { get; private set; }
 
+		public CassandraType SuperColumnName { get; private set; }
+
 		public CassandraType ColumnName { get; private set; }
 
-		public CassandraType ColumnValue { get; private set; }
+		public BytesType ColumnValue { get; private set; }
 
-		public DateTime Timestamp { get; private set; }
+		public DateTimeOffset Timestamp { get; private set; }
 
-		public override bool TryExecute(BaseCassandraColumnFamily columnFamily, out Void result)
+		#region ICassandraAction<Void> Members
+
+		public override Void Execute(BaseCassandraColumnFamily columnFamily)
 		{
 			var path = new ColumnPath {
 				Column_family = columnFamily.FamilyName,
 				Column = ColumnName
 			};
 
-			if (columnFamily.SuperColumnName != null)
-				path.Super_column = columnFamily.SuperColumnName;
+			if (SuperColumnName != null)
+				path.Super_column = SuperColumnName;
 
 			columnFamily.GetClient().insert(
 				columnFamily.Keyspace.KeyspaceName,
 				Key,
 				path,
 				ColumnValue,
-				Timestamp.Ticks,
+				Timestamp.UtcTicks,
 				ConsistencyLevel
 			);
 
-			return true;
+			return new Void();
+		}
+
+		#endregion
+
+		public InsertColumn(string key, CassandraType name, BytesType value, DateTimeOffset timestamp)
+		{
+			this.Key = key;
+			this.ColumnName = name;
+			this.ColumnValue = value;
+			this.Timestamp = timestamp;
+		}
+
+		public InsertColumn(string key, CassandraType superColumnName, CassandraType name, BytesType value, DateTimeOffset timestamp)
+		{
+			this.Key = key;
+			this.SuperColumnName = superColumnName;
+			this.ColumnName = name;
+			this.ColumnValue = value;
+			this.Timestamp = timestamp;
 		}
 	}
 }

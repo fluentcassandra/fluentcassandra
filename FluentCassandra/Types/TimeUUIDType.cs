@@ -20,6 +20,11 @@ namespace FluentCassandra.Types
 			return converter.ConvertTo(obj, type);
 		}
 
+		public override T ConvertTo<T>()
+		{
+			return (T)GetObject(this._value, typeof(T));
+		}
+
 		public override CassandraType SetValue(object obj)
 		{
 			var type = new TimeUUIDType();
@@ -31,6 +36,16 @@ namespace FluentCassandra.Types
 			type._value = (Guid)converter.ConvertFrom(obj);
 
 			return type;
+		}
+
+		public override byte[] ToByteArray()
+		{
+			return _value.ToByteArray();
+		}
+
+		public override string ToString()
+		{
+			return _value.ToString("N");
 		}
 
 		private Guid _value;

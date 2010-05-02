@@ -20,6 +20,11 @@ namespace FluentCassandra.Types
 			return converter.ConvertTo(bytes, type);
 		}
 
+		public override T ConvertTo<T>()
+		{
+			return (T)GetObject(this._value, typeof(T));
+		}
+
 		private static byte[] GetBytes(object obj)
 		{
 			var converter = Converter;
@@ -33,6 +38,16 @@ namespace FluentCassandra.Types
 		public override CassandraType SetValue(object obj)
 		{
 			return Convert(obj);
+		}
+
+		public override byte[] ToByteArray()
+		{
+			return _value;
+		}
+
+		public override string ToString()
+		{
+			return Convert<string>(this);
 		}
 
 		private byte[] _value;

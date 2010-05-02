@@ -8,7 +8,7 @@ using System.Linq;
 namespace FluentCassandra.Test
 {
 	[TestClass]
-	public class AsciiTypeTest
+	public class LongTypeTest
 	{
 		public TestContext TestContext { get; set; }
 
@@ -46,38 +46,38 @@ namespace FluentCassandra.Test
 		public void CassandraType_Cast_String()
 		{
 			// arranage
-			string expected = "I am casted!";
-			AsciiType type = expected;
+			long expected = 300L;
+			LongType type = expected;
 
 			// act
 			CassandraType actual = type;
 
 			// assert
-			Assert.AreEqual(expected, (string)actual);
+			Assert.AreEqual(expected, (long)actual);
 		}
 
 		[TestMethod]
-		public void Implicit_Cast_From_String()
+		public void Implicit_Cast_From_Long()
 		{
 			// arrange
-			string expected = "I am casted!";
+			long expected = 300L;
 
 			// act
-			AsciiType actual = expected;
+			LongType actual = expected;
 
 			// assert
-			Assert.AreEqual(expected, (string)actual);
+			Assert.AreEqual(expected, (long)actual);
 		}
 
 		[TestMethod]
-		public void Implicit_Cast_To_String()
+		public void Implicit_Cast_To_Long()
 		{
 			// arrange
-			string expected = "I am casted!";
-			AsciiType type = expected;
+			long expected = 300L;
+			LongType type = expected;
 
 			// act
-			string actual = type;
+			long actual = type;
 
 			// assert
 			Assert.AreEqual(expected, actual);
@@ -87,9 +87,9 @@ namespace FluentCassandra.Test
 		public void Implicity_Cast_To_ByteArray()
 		{
 			// arrange
-			string value = "I am casted!";
-			byte[] expected = Encoding.UTF8.GetBytes(value);
-			AsciiType type = value;
+			long value = 300L;
+			byte[] expected = BitConverter.GetBytes(value);
+			LongType type = value;
 
 			// act
 			byte[] actual = type;
@@ -102,8 +102,8 @@ namespace FluentCassandra.Test
 		public void Operator_EqualTo()
 		{
 			// arrange
-			var value = "I am equal.";
-			AsciiType type = value;
+			long value = 300L;
+			LongType type = value;
 
 			// act
 			bool actual = type == value;
@@ -116,8 +116,8 @@ namespace FluentCassandra.Test
 		public void Operator_NotEqualTo()
 		{
 			// arrange
-			var value = "I am equal.";
-			AsciiType type = value;
+			long value = 300L;
+			LongType type = value;
 
 			// act
 			bool actual = type != value;
