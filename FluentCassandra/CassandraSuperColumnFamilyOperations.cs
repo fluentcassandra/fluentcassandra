@@ -164,7 +164,7 @@ namespace FluentCassandra
 
 		#region GetColumns
 
-		public static IEnumerable<IFluentColumn<CompareSubcolumnWith>> GetColumns<CompareWith, CompareSubcolumnWith>(this CassandraSuperColumnFamily<CompareWith, CompareSubcolumnWith> family, CompareWith superColumnName, string key, IList<CompareSubcolumnWith> columnNames)
+		public static IEnumerable<IFluentColumn<CompareSubcolumnWith>> GetColumns<CompareWith, CompareSubcolumnWith>(this CassandraSuperColumnFamily<CompareWith, CompareSubcolumnWith> family, string key, CompareWith superColumnName, IEnumerable<CompareSubcolumnWith> columnNames)
 			where CompareWith : CassandraType
 			where CompareSubcolumnWith : CassandraType
 		{
@@ -172,7 +172,7 @@ namespace FluentCassandra
 			return family.ExecuteOperation(op);
 		}
 
-		public static IEnumerable<IFluentColumn<CompareSubcolumnWith>> GetColumns<CompareWith, CompareSubcolumnWith>(this CassandraSuperColumnFamily<CompareWith, CompareSubcolumnWith> family, CompareWith superColumnName, string key, CompareSubcolumnWith columnStart, CompareSubcolumnWith columnEnd, bool reversed = false, int count = 100)
+		public static IEnumerable<IFluentColumn<CompareSubcolumnWith>> GetColumns<CompareWith, CompareSubcolumnWith>(this CassandraSuperColumnFamily<CompareWith, CompareSubcolumnWith> family, string key, CompareWith superColumnName, CompareSubcolumnWith columnStart, CompareSubcolumnWith columnEnd, bool reversed = false, int count = 100)
 			where CompareWith : CassandraType
 			where CompareSubcolumnWith : CassandraType
 		{
@@ -184,7 +184,7 @@ namespace FluentCassandra
 
 		#region GetSuperColumns
 
-		public static IEnumerable<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>> GetColumns<CompareWith, CompareSubcolumnWith>(this CassandraSuperColumnFamily<CompareWith, CompareSubcolumnWith> family, string key, IList<CompareWith> columnNames)
+		public static IEnumerable<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>> GetSuperColumns<CompareWith, CompareSubcolumnWith>(this CassandraSuperColumnFamily<CompareWith, CompareSubcolumnWith> family, string key, IEnumerable<CompareWith> columnNames)
 			where CompareWith : CassandraType
 			where CompareSubcolumnWith : CassandraType
 		{
@@ -192,7 +192,7 @@ namespace FluentCassandra
 			return family.ExecuteOperation(op);
 		}
 
-		public static IEnumerable<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>> GetColumns<CompareWith, CompareSubcolumnWith>(this CassandraSuperColumnFamily<CompareWith, CompareSubcolumnWith> family, string key, CompareWith columnStart, CompareWith columnEnd, bool reversed = false, int count = 100)
+		public static IEnumerable<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>> GetSuperColumns<CompareWith, CompareSubcolumnWith>(this CassandraSuperColumnFamily<CompareWith, CompareSubcolumnWith> family, string key, CompareWith columnStart, CompareWith columnEnd, bool reversed = false, int count = 100)
 			where CompareWith : CassandraType
 			where CompareSubcolumnWith : CassandraType
 		{

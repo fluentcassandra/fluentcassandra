@@ -24,7 +24,7 @@ namespace FluentCassandra.Operations
 		internal override SlicePredicate CreateSlicePredicate()
 		{
 			return new SlicePredicate {
-				Column_names = Columns.Cast<byte[]>().ToList()
+				Column_names = Columns.Select(x => (byte[])x).ToList()
 			};
 		}
 	}
@@ -51,8 +51,8 @@ namespace FluentCassandra.Operations
 		{
 			return new SlicePredicate {
 				Slice_range = new SliceRange {
-					Start = Start,
-					Finish = Finish,
+					Start = (Start == null ? new byte[0] : Start),
+					Finish = (Finish == null ? new byte[0] : Finish),
 					Reversed = Reversed,
 					Count = Count
 				}

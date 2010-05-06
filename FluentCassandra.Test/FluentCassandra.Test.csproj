@@ -55,6 +55,7 @@
     <Compile Include="FluentColumnTest.cs" />
     <Compile Include="FluentSuperColumnTest.cs" />
     <Compile Include="Operations\ColumnCountTest.cs" />
+    <Compile Include="Operations\GetSliceTest.cs" />
     <Compile Include="Operations\GetColumnTest.cs" />
     <Compile Include="Operations\InsertColumnTest.cs" />
     <Compile Include="Operations\RemoveColumnTest.cs" />

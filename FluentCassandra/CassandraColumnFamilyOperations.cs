@@ -103,7 +103,7 @@ namespace FluentCassandra
 
 		#region GetColumns
 
-		public static IEnumerable<IFluentColumn<CompareWith>> GetColumns<CompareWith>(this CassandraColumnFamily<CompareWith> family, string key, IList<CompareWith> columnNames)
+		public static IEnumerable<IFluentColumn<CompareWith>> GetColumns<CompareWith>(this CassandraColumnFamily<CompareWith> family, string key, IEnumerable<CompareWith> columnNames)
 			where CompareWith : CassandraType
 		{
 			var op = new GetSlice<CompareWith>(key, new ColumnSlicePredicate(columnNames));
