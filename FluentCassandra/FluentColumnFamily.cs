@@ -97,7 +97,7 @@ namespace FluentCassandra
 				mutationType = MutationType.Added;
 
 				col = new FluentColumn<CompareWith>();
-				((FluentColumn<CompareWith>)col).Name = CassandraType.GetType<CompareWith>(col.Name);
+				((FluentColumn<CompareWith>)col).Name = CassandraType.GetType<CompareWith>(name);
 
 				_columns.SupressChangeNotification = true;
 				_columns.Add(col);

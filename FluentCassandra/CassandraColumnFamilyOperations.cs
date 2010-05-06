@@ -90,13 +90,31 @@ namespace FluentCassandra
 
 		#endregion
 
-		#region RemoveColumn
+		#region RemoveKey
 
 		public static void RemoveKey<CompareWith>(this CassandraColumnFamily<CompareWith> family, string key)
 			where CompareWith : CassandraType
 		{
 			var op = new RemoveKey(key);
 			family.ExecuteOperation(op);
+		}
+
+		#endregion
+
+		#region GetColumns
+
+		public static IEnumerable<IFluentColumn<CompareWith>> GetColumns<CompareWith>(this CassandraColumnFamily<CompareWith> family, string key, IList<CompareWith> columnNames)
+			where CompareWith : CassandraType
+		{
+			var op = new GetSlice<CompareWith>(key, new ColumnSlicePredicate(columnNames));
+			return family.ExecuteOperation(op);
+		}
+
+		public static IEnumerable<IFluentColumn<CompareWith>> GetColumns<CompareWith>(this CassandraColumnFamily<CompareWith> family, string key, CompareWith columnStart, CompareWith columnEnd, bool reversed = false, int count = 100)
+			where CompareWith : CassandraType
+		{
+			var op = new GetSlice<CompareWith>(key, new RangeSlicePredicate(columnStart, columnEnd, reversed, count));
+			return family.ExecuteOperation(op);
 		}
 
 		#endregion

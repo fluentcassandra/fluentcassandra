@@ -14,12 +14,12 @@ namespace FluentCassandra.Operations
 
 	public class ColumnSlicePredicate : CassandraSlicePredicate
 	{
-		public ColumnSlicePredicate(List<CassandraType> columns)
+		public ColumnSlicePredicate(IEnumerable<CassandraType> columns)
 		{
 			Columns = columns;
 		}
 
-		public List<CassandraType> Columns { get; private set; }
+		public IEnumerable<CassandraType> Columns { get; private set; }
 
 		internal override SlicePredicate CreateSlicePredicate()
 		{

@@ -23,6 +23,14 @@ namespace FluentCassandra.Test.Operations
 			_db = new CassandraContext("Testing", "localhost");
 			_family = _db.GetColumnFamily<AsciiType>("Standard");
 			_superFamily = _db.GetColumnFamily<AsciiType, AsciiType>("Super");
+
+			_family.InsertColumn(_testKey, "Test1", Math.PI);
+			_family.InsertColumn(_testKey, "Test2", Math.PI);
+			_family.InsertColumn(_testKey, "Test3", Math.PI);
+
+			_superFamily.InsertColumn(_testKey, _testSuperName, "Test1", Math.PI);
+			_superFamily.InsertColumn(_testKey, _testSuperName, "Test2", Math.PI);
+			_superFamily.InsertColumn(_testKey, _testSuperName, "Test3", Math.PI);
 		}
 
 		[TestCleanup]

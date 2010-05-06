@@ -9,85 +9,17 @@ namespace FluentCassandra.Operations
 {
 	internal static class ObjectHelper
 	{
-		///// <summary>
-		///// 
-		///// </summary>
-		///// <param name="cols"></param>
-		///// <returns></returns>
-		//public static IFluentBaseColumnFamily ConvertToFluentColumnFamily(string key, string columnFamily, object superColumnName, List<ColumnOrSuperColumn> cols)
-		//{
-		//    var sample = cols.FirstOrDefault();
-
-		//    if (sample == null)
-		//        return null;
-
-		//    var fluentSample = ConvertToFluentColumn(sample);
-
-		//    if (fluentSample is IFluentColumn)
-		//    {
-		//        var record = ConvertColumnListToFluentColumnFamily(
-		//            key,
-		//            columnFamily,
-		//            cols.Select(x => x.Column).ToList()
-		//        );
-
-		//        return record;
-		//    }
-		//    else if (fluentSample is IFluentSuperColumn)
-		//    {
-		//        var record = ConvertSuperColumnListToFluentSuperColumnFamily(
-		//            key,
-		//            columnFamily,
-		//            cols.Select(x => x.Super_column).ToList()
-		//        );
-
-		//        return record;
-		//    }
-		//    else
-		//        return null;
-		//}
-
-		///// <summary>
-		///// 
-		///// </summary>
-		///// <param name="cols"></param>
-		///// <returns></returns>
-		//public static IFluentBaseColumnFamily ConvertColumnListToFluentColumnFamily(string key, string columnFamily, List<Column> cols)
-		//{
-		//    var family = new FluentColumnFamily(key, columnFamily);
-
-		//    foreach (var col in cols)
-		//        family.Columns.Add(ConvertColumnToFluentColumn(col));
-
-		//    return family;
-		//}
-
-		///// <summary>
-		///// 
-		///// </summary>
-		///// <param name="cols"></param>
-		///// <returns></returns>
-		//public static FluentSuperColumnFamily ConvertSuperColumnListToFluentSuperColumnFamily(string key, string columnFamily, List<SuperColumn> cols)
-		//{
-		//    var family = new FluentSuperColumnFamily(key, columnFamily);
-
-		//    foreach (var col in cols)
-		//        family.Columns.Add(ConverSuperColumnToFluentSuperColumn(col));
-
-		//    return family;
-		//}
-
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="col"></param>
 		/// <returns></returns>
-		public static IFluentBaseColumn<CompareWith> ConvertToFluentBaseColumn<CompareWith, CompareSubcolumWith>(ColumnOrSuperColumn col)
+		public static IFluentBaseColumn<CompareWith> ConvertToFluentBaseColumn<CompareWith, CompareSubcolumnWith>(ColumnOrSuperColumn col)
 			where CompareWith : CassandraType
-			where CompareSubcolumWith : CassandraType
+			where CompareSubcolumnWith : CassandraType
 		{
 			if (col.Super_column != null)
-				return ConverSuperColumnToFluentSuperColumn<CompareWith, CompareSubcolumWith>(col.Super_column);
+				return ConvertSuperColumnToFluentSuperColumn<CompareWith, CompareSubcolumnWith>(col.Super_column);
 			else if (col.Column != null)
 				return ConvertColumnToFluentColumn<CompareWith>(col.Column);
 			else
@@ -114,16 +46,16 @@ namespace FluentCassandra.Operations
 		/// </summary>
 		/// <param name="col"></param>
 		/// <returns></returns>
-		public static FluentSuperColumn<CompareWith, CompareSubcolumWith> ConverSuperColumnToFluentSuperColumn<CompareWith, CompareSubcolumWith>(SuperColumn col)
+		public static FluentSuperColumn<CompareWith, CompareSubcolumnWith> ConvertSuperColumnToFluentSuperColumn<CompareWith, CompareSubcolumnWith>(SuperColumn col)
 			where CompareWith : CassandraType
-			where CompareSubcolumWith : CassandraType
+			where CompareSubcolumnWith : CassandraType
 		{
-			var superCol = new FluentSuperColumn<CompareWith, CompareSubcolumWith> {
+			var superCol = new FluentSuperColumn<CompareWith, CompareSubcolumnWith> {
 				Name = CassandraType.GetType<CompareWith>(col.Name)
 			};
 
 			foreach (var xcol in col.Columns)
-				superCol.Columns.Add(ConvertColumnToFluentColumn<CompareSubcolumWith>(xcol));
+				superCol.Columns.Add(ConvertColumnToFluentColumn<CompareSubcolumnWith>(xcol));
 
 			return superCol;
 		}
