@@ -46,7 +46,7 @@ namespace FluentCassandra.Test.Operations
 			int expectedCount = 2;
 
 			// act
-			var columns = _family.GetColumns(_testKey, new AsciiType[] { "Test1", "Test2" });
+			var columns = _family.GetSingle(_testKey, new AsciiType[] { "Test1", "Test2" });
 
 			// assert
 			Assert.AreEqual(expectedCount, columns.Count());
@@ -59,7 +59,7 @@ namespace FluentCassandra.Test.Operations
 			int expectedCount = 2;
 
 			// act
-			var columns = _superFamily.GetColumns(_testKey, _testSuperName, new AsciiType[] { "Test1", "Test2" });
+			var columns = _superFamily.GetSuperColumn(_testKey, _testSuperName, new AsciiType[] { "Test1", "Test2" });
 
 			// assert
 			Assert.AreEqual(expectedCount, columns.Count());
@@ -72,7 +72,7 @@ namespace FluentCassandra.Test.Operations
 			int expectedCount = 1;
 
 			// act
-			var columns = _superFamily.GetSuperColumns(_testKey, new AsciiType[] { _testSuperName });
+			var columns = _superFamily.GetSingle(_testKey, new AsciiType[] { _testSuperName });
 
 			// assert
 			Assert.AreEqual(expectedCount, columns.Count());
@@ -85,7 +85,7 @@ namespace FluentCassandra.Test.Operations
 			int expectedCount = 2;
 
 			// act
-			var columns = _family.GetColumns(_testKey, _testName, null, count: 2);
+			var columns = _family.GetSingle(_testKey, _testName, null, count: 2);
 
 			// assert
 			Assert.AreEqual(expectedCount, columns.Count());
@@ -98,7 +98,7 @@ namespace FluentCassandra.Test.Operations
 			int expectedCount = 2;
 
 			// act
-			var columns = _superFamily.GetColumns(_testKey, _testSuperName, _testName, null, count: 2);
+			var columns = _superFamily.GetSuperColumn(_testKey, _testSuperName, _testName, null, count: 2);
 
 			// assert
 			Assert.AreEqual(expectedCount, columns.Count());
@@ -111,7 +111,7 @@ namespace FluentCassandra.Test.Operations
 			int expectedCount = 1;
 
 			// act
-			var columns = _superFamily.GetSuperColumns(_testKey, _testSuperName, null, count: 1);
+			var columns = _superFamily.GetSingle(_testKey, _testSuperName, null, count: 1);
 
 			// assert
 			Assert.AreEqual(expectedCount, columns.Count());

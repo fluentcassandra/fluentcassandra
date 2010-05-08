@@ -101,19 +101,19 @@ namespace FluentCassandra
 
 		#endregion
 
-		#region GetColumns
+		#region GetSingle
 
-		public static IEnumerable<IFluentColumn<CompareWith>> GetColumns<CompareWith>(this CassandraColumnFamily<CompareWith> family, string key, IEnumerable<CompareWith> columnNames)
+		public static IEnumerable<IFluentColumn<CompareWith>> GetSingle<CompareWith>(this CassandraColumnFamily<CompareWith> family, string key, IEnumerable<CompareWith> columnNames)
 			where CompareWith : CassandraType
 		{
-			var op = new GetSlice<CompareWith>(key, new ColumnSlicePredicate(columnNames));
+			var op = new GetColumnFamilySlice<CompareWith>(key, new ColumnSlicePredicate(columnNames));
 			return family.ExecuteOperation(op);
 		}
 
-		public static IEnumerable<IFluentColumn<CompareWith>> GetColumns<CompareWith>(this CassandraColumnFamily<CompareWith> family, string key, CompareWith columnStart, CompareWith columnEnd, bool reversed = false, int count = 100)
+		public static IEnumerable<IFluentColumn<CompareWith>> GetSingle<CompareWith>(this CassandraColumnFamily<CompareWith> family, string key, CompareWith columnStart, CompareWith columnEnd, bool reversed = false, int count = 100)
 			where CompareWith : CassandraType
 		{
-			var op = new GetSlice<CompareWith>(key, new RangeSlicePredicate(columnStart, columnEnd, reversed, count));
+			var op = new GetColumnFamilySlice<CompareWith>(key, new RangeSlicePredicate(columnStart, columnEnd, reversed, count));
 			return family.ExecuteOperation(op);
 		}
 

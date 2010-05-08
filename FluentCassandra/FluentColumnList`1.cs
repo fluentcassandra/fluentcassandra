@@ -11,16 +11,44 @@ namespace FluentCassandra
 		where T : IFluentBaseColumn
 	{
 		private List<T> _columns;
+		private IEnumerable<T> _query;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="columnFamily"></param>
+		/// <param name="parent"></param>
 		public FluentColumnList(FluentColumnParent parent)
 		{
 			Parent = parent;
 			_columns = new List<T>();
+			_query = _columns;
 			SupressChangeNotification = false;
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="parent"></param>
+		/// <param name="columns"></param>
+		public FluentColumnList(FluentColumnParent parent, IEnumerable<T> columns)
+		{
+			Parent = parent;
+			_query = columns;
+			SupressChangeNotification = false;
+		}
+
+		/// <summary>
+		/// Lazy loaded columns.
+		/// </summary>
+		private IList<T> Columns
+		{
+			get
+			{
+				if (_columns == null)
+					_columns = _query.ToList();
+
+				return _columns;
+			}
 		}
 
 		/// <summary>
@@ -42,7 +70,7 @@ namespace FluentCassandra
 		/// <returns></returns>
 		public int IndexOf(T item)
 		{
-			return _columns.IndexOf(item);
+			return Columns.IndexOf(item);
 		}
 
 		/// <summary>
@@ -53,7 +81,7 @@ namespace FluentCassandra
 		public void Insert(int index, T item)
 		{
 			item.SetParent(Parent);	
-			_columns.Insert(index, item);
+			Columns.Insert(index, item);
 
 			OnColumnMutated(MutationType.Changed, item);
 		}
@@ -65,7 +93,7 @@ namespace FluentCassandra
 		public void RemoveAt(int index)
 		{
 			var col = this[index];
-			_columns.RemoveAt(index);
+			Columns.RemoveAt(index);
 
 			OnColumnMutated(MutationType.Removed, col);
 		}
@@ -77,8 +105,8 @@ namespace FluentCassandra
 		/// <returns></returns>
 		public T this[int index]
 		{
-			get { return _columns[index]; }
-			set { _columns.Insert(index, value); }
+			get { return Columns[index]; }
+			set { Columns.Insert(index, value); }
 		}
 
 		/// <summary>
@@ -88,7 +116,7 @@ namespace FluentCassandra
 		public void Add(T item)
 		{
 			item.SetParent(Parent);
-			_columns.Add(item);
+			Columns.Add(item);
 
 			OnColumnMutated(MutationType.Added, item);
 		}
@@ -101,7 +129,7 @@ namespace FluentCassandra
 			foreach (var col in this)
 				OnColumnMutated(MutationType.Removed, col);
 
-			_columns.Clear();
+			Columns.Clear();
 		}
 
 		/// <summary>
@@ -111,7 +139,7 @@ namespace FluentCassandra
 		/// <returns></returns>
 		public bool Contains(T item)
 		{
-			return _columns.Contains(item);
+			return Columns.Contains(item);
 		}
 
 		/// <summary>
@@ -121,7 +149,7 @@ namespace FluentCassandra
 		/// <param name="arrayIndex"></param>
 		public void CopyTo(T[] array, int arrayIndex)
 		{
-			_columns.CopyTo(array, arrayIndex);
+			Columns.CopyTo(array, arrayIndex);
 		}
 
 		/// <summary>
@@ -129,7 +157,7 @@ namespace FluentCassandra
 		/// </summary>
 		public int Count
 		{
-			get { return _columns.Count; }
+			get { return Columns.Count; }
 		}
 
 		/// <summary>
@@ -137,7 +165,7 @@ namespace FluentCassandra
 		/// </summary>
 		public bool IsReadOnly
 		{
-			get { return ((IList<T>)_columns).IsReadOnly; }
+			get { return ((IList<T>)Columns).IsReadOnly; }
 		}
 
 		/// <summary>
@@ -148,7 +176,7 @@ namespace FluentCassandra
 		public bool Remove(T item)
 		{
 			OnColumnMutated(MutationType.Removed, item);
-			return _columns.Remove(item);
+			return Columns.Remove(item);
 		}
 
 		/// <summary>
@@ -157,7 +185,7 @@ namespace FluentCassandra
 		/// <returns></returns>
 		public IEnumerator<T> GetEnumerator()
 		{
-			return _columns.GetEnumerator();
+			return Columns.GetEnumerator();
 		}
 
 		/// <summary>
@@ -166,7 +194,7 @@ namespace FluentCassandra
 		/// <returns></returns>
 		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
 		{
-			return _columns.GetEnumerator();
+			return Columns.GetEnumerator();
 		}
 
 		#endregion

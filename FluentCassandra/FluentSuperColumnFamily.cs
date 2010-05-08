@@ -16,6 +16,11 @@ namespace FluentCassandra
 		private FluentColumnList<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>> _columns;
 		private FluentColumnParent _self;
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="key"></param>
+		/// <param name="columnFamily"></param>
 		public FluentSuperColumnFamily(string key, string columnFamily)
 		{
 			Key = key;
@@ -24,6 +29,21 @@ namespace FluentCassandra
 			_self = new FluentColumnParent(this, null);
 			_columns = new FluentColumnList<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>>(_self);
 
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="key"></param>
+		/// <param name="columnFamily"></param>
+		/// <param name="columns"></param>
+		internal FluentSuperColumnFamily(string key, string columnFamily, IEnumerable<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>> columns)
+		{
+			Key = key;
+			FamilyName = columnFamily;
+
+			_self = new FluentColumnParent(this, null);
+			_columns = new FluentColumnList<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>>(_self, columns);
 		}
 
 		/// <summary>

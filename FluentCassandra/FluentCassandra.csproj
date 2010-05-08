@@ -138,7 +138,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Operations\GetColumn.cs" />
-    <Compile Include="Operations\GetSlice.cs" />
+    <Compile Include="Operations\GetColumnFamilySlice.cs" />
+    <Compile Include="Operations\GetSuperColumnFamilySlice.cs" />
+    <Compile Include="Operations\GetSuperColumnSlice.cs" />
+    <Compile Include="Operations\Helpers\LazyGetSuperSlice.cs" />
     <Compile Include="Operations\InsertColumn.cs" />
     <Compile Include="Operations\ObjectHelper.cs">
       <SubType>Code</SubType>

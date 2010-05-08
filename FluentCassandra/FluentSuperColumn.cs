@@ -26,7 +26,17 @@ namespace FluentCassandra
 		public FluentSuperColumn()
 		{
 			_parent = new FluentColumnParent(null, this);
-			_columns = new FluentColumnList<IFluentColumn<CompareSubcolumnWith>>(GetParent());
+			_columns = new FluentColumnList<IFluentColumn<CompareSubcolumnWith>>(_parent);
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="columns"></param>
+		internal FluentSuperColumn(IEnumerable<IFluentColumn<CompareSubcolumnWith>> columns)
+		{
+			_parent = new FluentColumnParent(null, this);
+			_columns = new FluentColumnList<IFluentColumn<CompareSubcolumnWith>>(_parent, columns);
 		}
 
 		/// <summary>
