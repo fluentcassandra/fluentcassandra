@@ -8,12 +8,13 @@ using FluentCassandra.Types;
 namespace FluentCassandra.Test.Operations
 {
 	[TestClass]
-	public class GetSliceTest
+	public class MultiGetSliceTest
 	{
 		private CassandraContext _db;
 		private CassandraColumnFamily<AsciiType> _family;
 		private CassandraSuperColumnFamily<AsciiType, AsciiType> _superFamily;
 		private const string _testKey = "Test1";
+		private const string _testKey2 = "Test2";
 		private const string _testName = "Test1";
 		private const string _testSuperName = "SubTest1";
 
@@ -31,6 +32,14 @@ namespace FluentCassandra.Test.Operations
 			_superFamily.InsertColumn(_testKey, _testSuperName, "Test1", Math.PI);
 			_superFamily.InsertColumn(_testKey, _testSuperName, "Test2", Math.PI);
 			_superFamily.InsertColumn(_testKey, _testSuperName, "Test3", Math.PI);
+
+			_family.InsertColumn(_testKey2, "Test1", Math.PI);
+			_family.InsertColumn(_testKey2, "Test2", Math.PI);
+			_family.InsertColumn(_testKey2, "Test3", Math.PI);
+
+			_superFamily.InsertColumn(_testKey2, _testSuperName, "Test1", Math.PI);
+			_superFamily.InsertColumn(_testKey2, _testSuperName, "Test2", Math.PI);
+			_superFamily.InsertColumn(_testKey2, _testSuperName, "Test3", Math.PI);
 		}
 
 		[TestCleanup]
@@ -46,7 +55,7 @@ namespace FluentCassandra.Test.Operations
 			int expectedCount = 2;
 
 			// act
-			var columns = _family.GetSingle(_testKey, new AsciiType[] { "Test1", "Test2" });
+			var columns = _family.Get(new[] { _testKey, _testKey2 }, new AsciiType[] { "Test1", "Test2" });
 
 			// assert
 			Assert.AreEqual(expectedCount, columns.Count());
@@ -59,7 +68,7 @@ namespace FluentCassandra.Test.Operations
 			int expectedCount = 2;
 
 			// act
-			var columns = _superFamily.GetSingleSuperColumn(_testKey, _testSuperName, new AsciiType[] { "Test1", "Test2" });
+			var columns = _superFamily.GetSuperColumns(new[] { _testKey, _testKey2 }, _testSuperName, new AsciiType[] { "Test1", "Test2" });
 
 			// assert
 			Assert.AreEqual(expectedCount, columns.Count());
@@ -69,10 +78,10 @@ namespace FluentCassandra.Test.Operations
 		public void Super_GetSuperSlice_Columns()
 		{
 			// arrange
-			int expectedCount = 1;
+			int expectedCount = 2;
 
 			// act
-			var columns = _superFamily.GetSingle(_testKey, new AsciiType[] { _testSuperName });
+			var columns = _superFamily.Get(new[] { _testKey, _testKey2 }, new AsciiType[] { _testSuperName });
 
 			// assert
 			Assert.AreEqual(expectedCount, columns.Count());
@@ -85,7 +94,7 @@ namespace FluentCassandra.Test.Operations
 			int expectedCount = 2;
 
 			// act
-			var columns = _family.GetSingle(_testKey, _testName, null, count: 2);
+			var columns = _family.Get(new[] { _testKey, _testKey2 }, _testName, null, count: 2);
 
 			// assert
 			Assert.AreEqual(expectedCount, columns.Count());
@@ -98,7 +107,7 @@ namespace FluentCassandra.Test.Operations
 			int expectedCount = 2;
 
 			// act
-			var columns = _superFamily.GetSingleSuperColumn(_testKey, _testSuperName, _testName, null, count: 2);
+			var columns = _superFamily.GetSuperColumns(new[] { _testKey, _testKey2 }, _testSuperName, _testName, null, count: 2);
 
 			// assert
 			Assert.AreEqual(expectedCount, columns.Count());
@@ -108,10 +117,10 @@ namespace FluentCassandra.Test.Operations
 		public void Super_GetSuperSlice_Range()
 		{
 			// arrange
-			int expectedCount = 1;
+			int expectedCount = 2;
 
 			// act
-			var columns = _superFamily.GetSingle(_testKey, _testSuperName, null, count: 1);
+			var columns = _superFamily.Get(new[] { _testKey, _testKey2 }, _testSuperName, null, count: 1);
 
 			// assert
 			Assert.AreEqual(expectedCount, columns.Count());

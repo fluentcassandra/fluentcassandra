@@ -137,12 +137,17 @@
     <Compile Include="Operations\ColumnFamilyOperation.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Operations\GetColumnFamilyRangeSlice.cs" />
+    <Compile Include="Operations\GetSuperColumnFamilyRangeSlice.cs" />
+    <Compile Include="Operations\GetSuperColumnRangeSlice.cs" />
+    <Compile Include="Operations\MultiGetSuperColumnFamilySlice.cs" />
+    <Compile Include="Operations\MultiGetSuperColumnSlice.cs" />
     <Compile Include="Operations\GetColumn.cs" />
     <Compile Include="Operations\GetColumnFamilySlice.cs" />
     <Compile Include="Operations\GetSuperColumnFamilySlice.cs" />
     <Compile Include="Operations\GetSuperColumnSlice.cs" />
-    <Compile Include="Operations\Helpers\LazyGetSuperSlice.cs" />
     <Compile Include="Operations\InsertColumn.cs" />
+    <Compile Include="Operations\MultiGetColumnFamilySlice.cs" />
     <Compile Include="Operations\ObjectHelper.cs">
       <SubType>Code</SubType>
     </Compile>
