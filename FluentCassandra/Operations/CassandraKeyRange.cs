@@ -8,16 +8,20 @@ namespace FluentCassandra.Operations
 {
 	public class CassandraKeyRange
 	{
-		public CassandraKeyRange()
+		public CassandraKeyRange(string startKey, string endKey, string startToken, string endToken, int count)
 		{
-			Count = 100;
+			StartKey = startKey;
+			EndKey = endKey;
+			StartToken = startToken;
+			EndToken = endToken;
+			Count = count;
 		}
 
-		public string StartKey { get; set; }
-		public string EndKey { get; set; }
-		public string StartToken { get; set; }
-		public string EndToken { get; set; }
-		public int Count { get; set; }
+		public string StartKey { get; private set; }
+		public string EndKey { get; private set; }
+		public string StartToken { get; private set; }
+		public string EndToken { get; private set; }
+		public int Count { get; private set; }
 
 		internal KeyRange CreateKeyRange()
 		{

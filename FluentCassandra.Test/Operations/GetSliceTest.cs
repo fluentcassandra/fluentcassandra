@@ -85,7 +85,7 @@ namespace FluentCassandra.Test.Operations
 			int expectedCount = 2;
 
 			// act
-			var columns = _family.GetSingle(_testKey, _testName, null, count: 2);
+			var columns = _family.GetSingle(_testKey, _testName, null, columnCount: 2);
 
 			// assert
 			Assert.AreEqual(expectedCount, columns.Count());

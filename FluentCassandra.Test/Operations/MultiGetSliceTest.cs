@@ -94,7 +94,7 @@ namespace FluentCassandra.Test.Operations
 			int expectedCount = 2;
 
 			// act
-			var columns = _family.Get(new[] { _testKey, _testKey2 }, _testName, null, count: 2);
+			var columns = _family.Get(new[] { _testKey, _testKey2 }, _testName, null, columnCount: 2);
 
 			// assert
 			Assert.AreEqual(expectedCount, columns.Count());
@@ -107,7 +107,7 @@ namespace FluentCassandra.Test.Operations
 			int expectedCount = 2;
 
 			// act
-			var columns = _superFamily.GetSuperColumns(new[] { _testKey, _testKey2 }, _testSuperName, _testName, null, count: 2);
+			var columns = _superFamily.GetSuperColumns(new[] { _testKey, _testKey2 }, _testSuperName, _testName, null, columnCount: 2);
 
 			// assert
 			Assert.AreEqual(expectedCount, columns.Count());
@@ -120,7 +120,7 @@ namespace FluentCassandra.Test.Operations
 			int expectedCount = 2;
 
 			// act
-			var columns = _superFamily.Get(new[] { _testKey, _testKey2 }, _testSuperName, null, count: 1);
+			var columns = _superFamily.Get(new[] { _testKey, _testKey2 }, _testSuperName, null, columnCount: 1);
 
 			// assert
 			Assert.AreEqual(expectedCount, columns.Count());

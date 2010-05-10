@@ -110,16 +110,18 @@ namespace FluentCassandra
 			return family.ExecuteOperation(op);
 		}
 
-		public static IFluentColumnFamily<CompareWith> GetSingle<CompareWith>(this CassandraColumnFamily<CompareWith> family, string key, CompareWith columnStart, CompareWith columnEnd, bool reversed = false, int count = 100)
+		public static IFluentColumnFamily<CompareWith> GetSingle<CompareWith>(this CassandraColumnFamily<CompareWith> family, string key, CompareWith columnStart, CompareWith columnEnd, bool columnsReversed = false, int columnCount = 100)
 			where CompareWith : CassandraType
 		{
-			var op = new GetColumnFamilySlice<CompareWith>(key, new RangeSlicePredicate(columnStart, columnEnd, reversed, count));
+			var op = new GetColumnFamilySlice<CompareWith>(key, new RangeSlicePredicate(columnStart, columnEnd, columnsReversed, columnCount));
 			return family.ExecuteOperation(op);
 		}
 
 		#endregion
 
 		#region Get
+
+		// multi_get_slice
 
 		public static IEnumerable<IFluentColumnFamily<CompareWith>> Get<CompareWith>(this CassandraColumnFamily<CompareWith> family, IEnumerable<string> keys, IEnumerable<CompareWith> columnNames)
 			where CompareWith : CassandraType
@@ -128,10 +130,26 @@ namespace FluentCassandra
 			return family.ExecuteOperation(op);
 		}
 
-		public static IEnumerable<IFluentColumnFamily<CompareWith>> Get<CompareWith>(this CassandraColumnFamily<CompareWith> family, IEnumerable<string> keys, CompareWith columnStart, CompareWith columnEnd, bool reversed = false, int count = 100)
+		public static IEnumerable<IFluentColumnFamily<CompareWith>> Get<CompareWith>(this CassandraColumnFamily<CompareWith> family, IEnumerable<string> keys, CompareWith columnStart, CompareWith columnEnd, bool columnsReversed = false, int columnCount = 100)
 			where CompareWith : CassandraType
 		{
-			var op = new MultiGetColumnFamilySlice<CompareWith>(keys, new RangeSlicePredicate(columnStart, columnEnd, reversed, count));
+			var op = new MultiGetColumnFamilySlice<CompareWith>(keys, new RangeSlicePredicate(columnStart, columnEnd, columnsReversed, columnCount));
+			return family.ExecuteOperation(op);
+		}
+
+		// get_range_slice
+
+		public static IEnumerable<IFluentColumnFamily<CompareWith>> Get<CompareWith>(this CassandraColumnFamily<CompareWith> family, string startKey, string endKey, string startToken, string endToken, int keyCount, IEnumerable<CompareWith> columnNames)
+			where CompareWith : CassandraType
+		{
+			var op = new GetColumnFamilyRangeSlice<CompareWith>(new CassandraKeyRange(startKey, endKey, startToken, endToken, keyCount), new ColumnSlicePredicate(columnNames));
+			return family.ExecuteOperation(op);
+		}
+
+		public static IEnumerable<IFluentColumnFamily<CompareWith>> Get<CompareWith>(this CassandraColumnFamily<CompareWith> family, string startKey, string endKey, string startToken, string endToken, int keyCount, CompareWith columnStart, CompareWith columnEnd, bool columnsReversed = false, int columnCount = 100)
+			where CompareWith : CassandraType
+		{
+			var op = new GetColumnFamilyRangeSlice<CompareWith>(new CassandraKeyRange(startKey, endKey, startToken, endToken, keyCount), new RangeSlicePredicate(columnStart, columnEnd, columnsReversed, columnCount));
 			return family.ExecuteOperation(op);
 		}
 
