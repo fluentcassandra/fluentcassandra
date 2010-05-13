@@ -48,6 +48,8 @@ namespace FluentCassandra.Test
 
 			// assert
 			Assert.AreEqual(2, actual.Columns.Count);
+			Assert.AreSame(col1.Family, actual);
+			Assert.AreSame(col2.Family, actual);
 		}
 
 		[TestMethod]
@@ -67,6 +69,8 @@ namespace FluentCassandra.Test
 			Assert.AreEqual(col1, actual["Test1"]);
 			Assert.AreEqual(col2, actual.Test2);
 			Assert.AreEqual(col2, actual["Test2"]);
+			Assert.AreSame(col1.Family, actual);
+			Assert.AreSame(col2.Family, actual);
 		}
 
 		[TestMethod]

@@ -147,10 +147,10 @@ namespace FluentCassandra.Operations
 				var colY = (IFluentSuperColumn)column;
 				var superColumn = new SuperColumn {
 					Name = colY.Name,
-					Columns = new List<Column>(colY.Columns.Count)
+					Columns = new List<Column>()
 				};
 
-				foreach (var col in colY.Columns)
+				foreach (var col in colY.Columns.OfType<IFluentColumn>())
 					superColumn.Columns.Add(CreateColumn(col));
 
 				return new ColumnOrSuperColumn {

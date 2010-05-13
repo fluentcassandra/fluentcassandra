@@ -47,7 +47,7 @@ namespace FluentCassandra
 		/// <returns></returns>
 		public override bool TryGetIndex(GetIndexBinder binder, object[] indexes, out object result)
 		{
-			string index0 = indexes[0].ToString();
+			object index0 = indexes[0];
 			return TryGetColumn(index0, out result);
 		}
 
@@ -79,7 +79,7 @@ namespace FluentCassandra
 		/// <returns></returns>
 		public override bool TrySetIndex(SetIndexBinder binder, object[] indexes, object value)
 		{
-			string index0 = indexes[0].ToString();
+			object index0 = indexes[0];
 			return TrySetColumn(index0, value);
 		}
 
@@ -125,9 +125,9 @@ namespace FluentCassandra
 
 		#region IFluentRecord Members
 
-		IList<IFluentBaseColumn> IFluentRecord.Columns
+		IEnumerable<IFluentBaseColumn> IFluentRecord.Columns
 		{
-			get { return (IList<IFluentBaseColumn>)Columns; }
+			get { return Columns.OfType<IFluentBaseColumn>(); }
 		}
 
 		public IFluentMutationTracker MutationTracker

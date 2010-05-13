@@ -27,7 +27,7 @@ namespace FluentCassandra.Types
 			var converter = Converter;
 
 			if (!converter.CanConvertFrom(obj.GetType()))
-				throw new InvalidCastException(GetType() + " cannot be cast to " + TypeCode);
+				throw new InvalidCastException(obj.GetType() + " cannot be cast to " + TypeCode);
 
 			_value = (byte[])converter.ConvertFrom(obj);
 

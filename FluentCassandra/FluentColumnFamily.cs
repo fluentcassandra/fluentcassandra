@@ -62,6 +62,15 @@ namespace FluentCassandra
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <returns></returns>
+		public IFluentColumn<CompareWith> CreateColumn()
+		{
+			return new FluentColumn<CompareWith>();
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
 		public override IList<IFluentColumn<CompareWith>> Columns
 		{
 			get { return _columns; }

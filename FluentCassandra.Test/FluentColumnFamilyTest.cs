@@ -48,6 +48,8 @@ namespace FluentCassandra.Test
 
 			// assert
 			Assert.AreEqual(2, actual.Columns.Count);
+			Assert.AreSame(col1.Family, actual);
+			Assert.AreSame(col2.Family, actual);
 		}
 
 		[TestMethod]

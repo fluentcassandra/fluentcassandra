@@ -10,12 +10,18 @@ namespace FluentCassandra.Types
 	{
 		public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
 		{
-			return sourceType == typeof(byte[]) || sourceType == typeof(string);
+			if (Type.GetTypeCode(sourceType) != TypeCode.Object)
+				return true;
+
+			return sourceType == typeof(byte[]);
 		}
 
 		public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
 		{
-			return destinationType == typeof(byte[]) || destinationType == typeof(string);
+			if (Type.GetTypeCode(destinationType) != TypeCode.Object)
+				return true;
+
+			return destinationType == typeof(byte[]);
 		}
 
 		public override object ConvertFrom(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value)
@@ -23,10 +29,7 @@ namespace FluentCassandra.Types
 			if (value is byte[])
 				return Encoding.ASCII.GetString((byte[])value);
 
-			if (value is string)
-				return (string)value;
-
-			return null;
+			return Convert.ChangeType(value, typeof(string));
 		}
 
 		public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType)
@@ -37,10 +40,7 @@ namespace FluentCassandra.Types
 			if (destinationType == typeof(byte[]))
 				return Encoding.ASCII.GetBytes((string)value);
 
-			if (destinationType == typeof(string))
-				return (string)value;
-
-			return null;
+			return Convert.ChangeType(value, destinationType);
 		}
 	}
 }

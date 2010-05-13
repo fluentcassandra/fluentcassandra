@@ -51,7 +51,13 @@ namespace FluentCassandra
 		/// </summary>
 		public IFluentColumnFamily<CompareWith> Family
 		{
-			get { return _family; }
+			get
+			{
+				if (_family == null && _parent != null)
+					_family = _parent.ColumnFamily as IFluentColumnFamily<CompareWith>;
+
+				return _family;
+			}
 			internal set
 			{
 				_family = value;

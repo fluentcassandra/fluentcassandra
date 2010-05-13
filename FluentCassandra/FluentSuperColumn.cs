@@ -45,6 +45,15 @@ namespace FluentCassandra
 		public CompareWith Name { get; set; }
 
 		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		public IFluentColumn<CompareSubcolumnWith> CreateColumn()
+		{
+			return new FluentColumn<CompareSubcolumnWith>();
+		}
+
+		/// <summary>
 		/// The columns in the super column.
 		/// </summary>
 		public override IList<IFluentColumn<CompareSubcolumnWith>> Columns
@@ -57,7 +66,13 @@ namespace FluentCassandra
 		/// </summary>
 		public IFluentSuperColumnFamily<CompareWith, CompareSubcolumnWith> Family
 		{
-			get { return _family; }
+			get
+			{
+				if (_family == null && _parent != null)
+					_family = _parent.ColumnFamily as IFluentSuperColumnFamily<CompareWith, CompareSubcolumnWith>;
+
+				return _family;
+			}
 			internal set
 			{
 				_family = value;
@@ -130,9 +145,9 @@ namespace FluentCassandra
 			return true;
 		}
 
-		#region IFluentSuperColumn Members 
+		#region IFluentSuperColumn Members
 
-		IList<IFluentColumn> IFluentSuperColumn.Columns { get { return (IList<IFluentColumn>)Columns; } }
+		IEnumerable<IFluentColumn> IFluentSuperColumn.Columns { get { return _columns.OfType<IFluentColumn>(); } }
 
 		#endregion
 
@@ -151,8 +166,10 @@ namespace FluentCassandra
 		{
 			_parent = parent;
 			_columns.Parent = parent;
+
+			var columnParent = new FluentColumnParent(Family, this);
 			foreach (var col in Columns)
-				((IFluentBaseColumn)col).SetParent(parent);
+				col.SetParent(columnParent);
 		}
 
 		#endregion

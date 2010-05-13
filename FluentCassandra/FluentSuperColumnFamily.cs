@@ -64,6 +64,15 @@ namespace FluentCassandra
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <returns></returns>
+		public IFluentSuperColumn<CompareWith, CompareSubcolumnWith> CreateSuperColumn()
+		{
+			return new FluentSuperColumn<CompareWith, CompareSubcolumnWith>();
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
 		public override IList<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>> Columns
 		{
 			get { return _columns; }
