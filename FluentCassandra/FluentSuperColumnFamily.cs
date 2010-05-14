@@ -14,7 +14,6 @@ namespace FluentCassandra
 		where CompareSubcolumnWith : CassandraType
 	{
 		private FluentColumnList<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>> _columns;
-		private FluentColumnParent _self;
 
 		/// <summary>
 		/// 
@@ -26,8 +25,7 @@ namespace FluentCassandra
 			Key = key;
 			FamilyName = columnFamily;
 
-			_self = new FluentColumnParent(this, null);
-			_columns = new FluentColumnList<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>>(_self);
+			_columns = new FluentColumnList<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>>(GetSelf());
 
 		}
 
@@ -42,8 +40,7 @@ namespace FluentCassandra
 			Key = key;
 			FamilyName = columnFamily;
 
-			_self = new FluentColumnParent(this, null);
-			_columns = new FluentColumnList<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>>(_self, columns);
+			_columns = new FluentColumnList<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>>(GetSelf(), columns);
 		}
 
 		/// <summary>
@@ -84,7 +81,7 @@ namespace FluentCassandra
 		/// <returns></returns>
 		public FluentColumnPath GetPath()
 		{
-			return new FluentColumnPath(_self, null);
+			return new FluentColumnPath(this, null, null);
 		}
 
 		/// <summary>
@@ -93,8 +90,9 @@ namespace FluentCassandra
 		/// <returns></returns>
 		public FluentColumnParent GetSelf()
 		{
-			return _self;
+			return new FluentColumnParent(this, null);
 		}
+
 		/// <summary>
 		/// 
 		/// </summary>

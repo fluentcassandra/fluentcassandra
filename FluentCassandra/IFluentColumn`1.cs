@@ -6,6 +6,5 @@ namespace FluentCassandra
 	public interface IFluentColumn<CompareWith> : IFluentColumn, IFluentBaseColumn<CompareWith>
 		where CompareWith : CassandraType
 	{
-		new IFluentColumnFamily<CompareWith> Family { get; }
 	}
 }

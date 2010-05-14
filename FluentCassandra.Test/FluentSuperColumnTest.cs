@@ -19,7 +19,7 @@ namespace FluentCassandra.Test
 			var actual = new FluentSuperColumn<AsciiType, AsciiType>();
 
 			// assert
-			Assert.AreSame(actual, actual.GetParent().SuperColumn);
+			Assert.AreSame(actual, actual.GetPath().SuperColumn);
 		}
 
 		[TestMethod]

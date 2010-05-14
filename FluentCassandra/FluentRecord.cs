@@ -136,6 +136,18 @@ namespace FluentCassandra
 			private set;
 		}
 
+		protected void ResetMutation()
+		{
+			MutationTracker.Clear();
+		}
+
+		protected void ResetMutationAndAddAllColumns()
+		{
+			ResetMutation();
+			foreach (var col in Columns)
+				MutationTracker.ColumnMutated(MutationType.Added, col);
+		}
+
 		#endregion
 	}
 }

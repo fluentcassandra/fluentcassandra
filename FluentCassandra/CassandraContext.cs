@@ -187,7 +187,8 @@ namespace FluentCassandra
 					var columnsNeedingDeleted = columnFamily
 						.Where(m => m.Type == MutationType.Removed && m.Column.GetParent().SuperColumn == null);
 
-					columnFamilyMutations.Add(ObjectHelper.CreateDeletedColumnMutation(columnsNeedingDeleted));
+					if (columnsNeedingDeleted.Count() > 0)
+						columnFamilyMutations.Add(ObjectHelper.CreateDeletedColumnMutation(columnsNeedingDeleted));
 
 					keyMutations.Add(columnFamily.Key, columnFamilyMutations);
 				}

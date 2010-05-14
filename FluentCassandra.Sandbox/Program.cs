@@ -84,8 +84,7 @@ namespace FluentCassandra.Sandbox
 				comments[GuidGenerator.GenerateTimeBasedGuid()] = comment;
 				comments[GuidGenerator.GenerateTimeBasedGuid()] = comment2;
 
-				db.Attach(comment);
-				db.Attach(comment2);
+				db.Attach(comments);
 
 				db.SaveChanges();
 			}

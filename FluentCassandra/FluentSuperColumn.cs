@@ -16,17 +16,14 @@ namespace FluentCassandra
 		where CompareWith : CassandraType
 		where CompareSubcolumnWith : CassandraType
 	{
-		private IFluentSuperColumnFamily<CompareWith, CompareSubcolumnWith> _family;
 		private FluentColumnList<IFluentColumn<CompareSubcolumnWith>> _columns;
-		private FluentColumnParent _parent;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		public FluentSuperColumn()
 		{
-			_parent = new FluentColumnParent(null, this);
-			_columns = new FluentColumnList<IFluentColumn<CompareSubcolumnWith>>(_parent);
+			_columns = new FluentColumnList<IFluentColumn<CompareSubcolumnWith>>(GetPath());
 		}
 
 		/// <summary>
@@ -35,8 +32,7 @@ namespace FluentCassandra
 		/// <param name="columns"></param>
 		internal FluentSuperColumn(IEnumerable<IFluentColumn<CompareSubcolumnWith>> columns)
 		{
-			_parent = new FluentColumnParent(null, this);
-			_columns = new FluentColumnList<IFluentColumn<CompareSubcolumnWith>>(_parent, columns);
+			_columns = new FluentColumnList<IFluentColumn<CompareSubcolumnWith>>(GetPath(), columns);
 		}
 
 		/// <summary>
@@ -66,18 +62,8 @@ namespace FluentCassandra
 		/// </summary>
 		public IFluentSuperColumnFamily<CompareWith, CompareSubcolumnWith> Family
 		{
-			get
-			{
-				if (_family == null && _parent != null)
-					_family = _parent.ColumnFamily as IFluentSuperColumnFamily<CompareWith, CompareSubcolumnWith>;
-
-				return _family;
-			}
-			internal set
-			{
-				_family = value;
-				UpdateParent(GetParent());
-			}
+			get;
+			internal set;
 		}
 
 		/// <summary>
@@ -86,7 +72,7 @@ namespace FluentCassandra
 		/// <returns></returns>
 		public FluentColumnPath GetPath()
 		{
-			return new FluentColumnPath(_parent, null);
+			return new FluentColumnPath(Family, this, null);
 		}
 
 		/// <summary>
@@ -95,7 +81,7 @@ namespace FluentCassandra
 		/// <returns></returns>
 		public FluentColumnParent GetParent()
 		{
-			return _parent;
+			return new FluentColumnParent(Family, null);
 		}
 
 		/// <summary>
@@ -164,12 +150,15 @@ namespace FluentCassandra
 
 		private void UpdateParent(FluentColumnParent parent)
 		{
-			_parent = parent;
-			_columns.Parent = parent;
+			Family = parent.ColumnFamily as IFluentSuperColumnFamily<CompareWith, CompareSubcolumnWith>;
 
-			var columnParent = new FluentColumnParent(Family, this);
+			var columnParent = GetPath();
+			_columns.Parent = columnParent;
+
 			foreach (var col in Columns)
 				col.SetParent(columnParent);
+
+			ResetMutationAndAddAllColumns();
 		}
 
 		#endregion

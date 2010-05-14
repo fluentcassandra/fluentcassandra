@@ -15,7 +15,7 @@ namespace FluentCassandra
 	{
 		private BytesType _value;
 		private FluentColumnParent _parent;
-		private IFluentColumnFamily<CompareWith> _family;
+		private IFluentBaseColumnFamily _family;
 
 		public FluentColumn()
 		{
@@ -49,7 +49,7 @@ namespace FluentCassandra
 		/// <summary>
 		/// 
 		/// </summary>
-		public IFluentColumnFamily<CompareWith> Family
+		public IFluentBaseColumnFamily Family
 		{
 			get
 			{
@@ -86,8 +86,6 @@ namespace FluentCassandra
 		#region IFluentBaseColumn Members
 
 		CassandraType IFluentBaseColumn.Name { get { return Name; } }
-
-		IFluentBaseColumnFamily IFluentBaseColumn.Family { get { return Family; } }
 
 		void IFluentBaseColumn.SetParent(FluentColumnParent parent)
 		{

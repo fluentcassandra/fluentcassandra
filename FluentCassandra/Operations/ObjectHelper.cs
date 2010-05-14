@@ -86,7 +86,7 @@ namespace FluentCassandra.Operations
 		/// <returns></returns>
 		public static Mutation CreateDeletedSuperColumnMutation(IEnumerable<FluentMutation> mutation)
 		{
-			var superColumn = mutation.Select(m => m.Column.GetParent().SuperColumn.Name).FirstOrDefault();
+			var superColumn = mutation.Select(m => m.Column.GetPath().SuperColumn.Name).FirstOrDefault();
 			var columnNames = mutation.Select(m => m.Column.Name).ToList();
 
 			var deletion = new Deletion {
