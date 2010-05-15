@@ -54,6 +54,7 @@
     <Compile Include="FluentColumnFamilyTest.cs" />
     <Compile Include="FluentColumnTest.cs" />
     <Compile Include="FluentSuperColumnTest.cs" />
+    <Compile Include="GuidGeneratorTest.cs" />
     <Compile Include="Operations\ColumnCountTest.cs" />
     <Compile Include="Operations\GetRangeSliceTest.cs" />
     <Compile Include="Operations\MultiGetSliceTest.cs" />

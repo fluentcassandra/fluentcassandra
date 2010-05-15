@@ -49,6 +49,13 @@ namespace FluentCassandra
 			_random.NextBytes(RandomNode);
 		}
 
+		public static int GetGuidVersion(Guid guid)
+		{
+			byte[] bytes = guid.ToByteArray();
+
+			return (bytes[VersionByte] & 0xFF) >> 4;
+		}
+
 		public static Guid GenerateTimeBasedGuid()
 		{
 			return GenerateTimeBasedGuid(DateTime.UtcNow, RandomNode);
