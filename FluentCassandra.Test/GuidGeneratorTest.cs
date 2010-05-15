@@ -13,11 +13,11 @@ namespace FluentCassandra.Test
 		public void Type1Check()
 		{
 			// arrange
-			var expected = 1;
+			var expected = GuidVersion.TimeBased;
 			var guid = GuidGenerator.GenerateTimeBasedGuid();
 
 			// act
-			var actual = GuidGenerator.GetGuidVersion(guid);
+			var actual = guid.GetVersion();
 
 			// assert
 			Assert.AreEqual(expected, actual);
@@ -27,11 +27,11 @@ namespace FluentCassandra.Test
 		public void SanityType1Check()
 		{
 			// arrange
-			var expected = 1;
+			var expected = GuidVersion.TimeBased;
 			var guid = Guid.NewGuid();
 
 			// act
-			var actual = GuidGenerator.GetGuidVersion(guid);
+			var actual = guid.GetVersion();
 
 			// assert
 			Assert.AreNotEqual(expected, actual);

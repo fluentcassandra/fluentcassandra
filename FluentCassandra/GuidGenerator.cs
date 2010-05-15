@@ -6,17 +6,17 @@ using System.Net.NetworkInformation;
 
 namespace FluentCassandra
 {
+	// guid version types
+	public enum GuidVersion
+	{
+		TimeBased = 0x01,
+		Reserved = 0x02,
+		NameBased = 0x03,
+		Random = 0x04
+	}
+	
 	public static class GuidGenerator
 	{
-		// guid version types
-		private enum GuidVersion : byte
-		{
-			TimeBased = 0x01,
-			Reserved = 0x02,
-			NameBased = 0x03,
-			Random = 0x04
-		}
-
 		// number of bytes in guid
 		public const int ByteArraySize = 16;
 
@@ -49,11 +49,10 @@ namespace FluentCassandra
 			_random.NextBytes(RandomNode);
 		}
 
-		public static int GetGuidVersion(Guid guid)
+		public static GuidVersion GetVersion(this Guid guid)
 		{
 			byte[] bytes = guid.ToByteArray();
-
-			return (bytes[VersionByte] & 0xFF) >> 4;
+			return (GuidVersion)((bytes[VersionByte] & 0xFF) >> VersionByteShift);
 		}
 
 		public static Guid GenerateTimeBasedGuid()
