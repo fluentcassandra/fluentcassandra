@@ -18,6 +18,21 @@ namespace FluentCassandra.Types
 			return destinationType == typeof(byte[]) || destinationType == typeof(Guid);
 		}
 
+		private byte[] ReverseLowFieldTimestamp(byte[] guid)
+		{
+			return guid.Skip(0).Take(4).Reverse().ToArray();
+		}
+
+		private byte[] ReverseMiddleFieldTimestamp(byte[] guid)
+		{
+			return guid.Skip(4).Take(2).Reverse().ToArray();
+		}
+
+		private byte[] ReverseHighFieldTimestamp(byte[] guid)
+		{
+			return guid.Skip(6).Take(2).Reverse().ToArray();
+		}
+
 		public override object ConvertFrom(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value)
 		{
 			if (value is byte[])
@@ -35,21 +50,6 @@ namespace FluentCassandra.Types
 				return (Guid)value;
 
 			return null;
-		}
-
-		private byte[] ReverseLowFieldTimestamp(byte[] guid)
-		{
-			return guid.Skip(0).Take(4).Reverse().ToArray();
-		}
-
-		private byte[] ReverseMiddleFieldTimestamp(byte[] guid)
-		{
-			return guid.Skip(4).Take(2).Reverse().ToArray();
-		}
-
-		private byte[] ReverseHighFieldTimestamp(byte[] guid)
-		{
-			return guid.Skip(6).Take(2).Reverse().ToArray();
 		}
 
 		public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType)
