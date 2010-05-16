@@ -21,12 +21,35 @@ namespace FluentCassandra.Types
 		public override object ConvertFrom(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value)
 		{
 			if (value is byte[])
-				return new Guid((byte[])value);
+			{
+				var oldArray = (byte[])value;
+				var newArray = new byte[16];
+				Array.Copy(ReverseLowFieldTimestamp(oldArray), 0, newArray, 0, 4);
+				Array.Copy(ReverseMiddleFieldTimestamp(oldArray), 0, newArray, 4, 2);
+				Array.Copy(ReverseHighFieldTimestamp(oldArray), 0, newArray, 6, 2);
+				Array.Copy(oldArray, 8, newArray, 8, 8);
+				return new Guid(newArray);
+			}
 
 			if (value is Guid)
 				return (Guid)value;
 
 			return null;
+		}
+
+		private byte[] ReverseLowFieldTimestamp(byte[] guid)
+		{
+			return guid.Skip(0).Take(4).Reverse().ToArray();
+		}
+
+		private byte[] ReverseMiddleFieldTimestamp(byte[] guid)
+		{
+			return guid.Skip(4).Take(2).Reverse().ToArray();
+		}
+
+		private byte[] ReverseHighFieldTimestamp(byte[] guid)
+		{
+			return guid.Skip(6).Take(2).Reverse().ToArray();
 		}
 
 		public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType)
@@ -35,7 +58,15 @@ namespace FluentCassandra.Types
 				return null;
 
 			if (destinationType == typeof(byte[]))
-				return ((Guid)value).ToByteArray();
+			{
+				var oldArray = ((Guid)value).ToByteArray();
+				var newArray = new byte[16];
+				Array.Copy(ReverseLowFieldTimestamp(oldArray), 0, newArray, 0, 4);
+				Array.Copy(ReverseMiddleFieldTimestamp(oldArray), 0, newArray, 4, 2);
+				Array.Copy(ReverseHighFieldTimestamp(oldArray), 0, newArray, 6, 2);
+				Array.Copy(oldArray, 8, newArray, 8, 8);
+				return newArray;
+			}
 
 			if (destinationType == typeof(Guid))
 				return (Guid)value;
