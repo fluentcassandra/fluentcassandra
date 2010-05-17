@@ -7,7 +7,7 @@ using FluentCassandra.Types;
 
 namespace FluentCassandra.Operations
 {
-	public class GetSuperColumnRangeSlice<CompareWith, CompareSubcolumnWith> : ColumnFamilyOperation<IEnumerable<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>>>
+	public class GetSuperColumnRangeSlice<CompareWith, CompareSubcolumnWith> : QueryableColumnFamilyOperation<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>>
 		where CompareWith : CassandraType
 		where CompareSubcolumnWith : CassandraType
 	{
@@ -18,8 +18,6 @@ namespace FluentCassandra.Operations
 		public CassandraKeyRange KeyRange { get; private set; }
 
 		public CassandraType SuperColumnName { get; private set; }
-
-		public CassandraSlicePredicate SlicePredicate { get; private set; }
 
 		public override IEnumerable<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>> Execute(BaseCassandraColumnFamily columnFamily)
 		{

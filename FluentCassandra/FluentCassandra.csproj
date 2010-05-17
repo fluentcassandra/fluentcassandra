@@ -131,6 +131,8 @@
     <Compile Include="IFluentSuperColumn.cs" />
     <Compile Include="IFluentSuperColumnFamily`1.cs" />
     <Compile Include="CassandraColumnFamilyOperations.cs" />
+    <Compile Include="Operations\QueryableExtensions.cs" />
+    <Compile Include="Linq\SliceQuery.cs" />
     <Compile Include="Operations\CassandraKeyRange.cs" />
     <Compile Include="Operations\CassandraSlicePredicate.cs" />
     <Compile Include="Operations\ColumnCount.cs" />
@@ -151,6 +153,7 @@
     <Compile Include="Operations\ObjectHelper.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Operations\QueryableColumnFamilyOperation.cs" />
     <Compile Include="Operations\Remove.cs" />
     <Compile Include="Operations\Void.cs">
       <SubType>Code</SubType>

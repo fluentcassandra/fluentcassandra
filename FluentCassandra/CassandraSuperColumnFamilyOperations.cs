@@ -204,6 +204,24 @@ namespace FluentCassandra
 
 		#region GetSuperColumns
 
+		// queryable
+
+		public static IQueryable<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>> GetSuperColumns<CompareWith, CompareSubcolumnWith>(this CassandraSuperColumnFamily<CompareWith, CompareSubcolumnWith> family, string[] keys, CompareWith superColumnName)
+			where CompareWith : CassandraType
+			where CompareSubcolumnWith : CassandraType
+		{
+			var op = new MultiGetSuperColumnSlice<CompareWith, CompareSubcolumnWith>(keys, superColumnName, null);
+			return op.AsQueryable(family);
+		}
+
+		public static IQueryable<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>> GetSuperColumns<CompareWith, CompareSubcolumnWith>(this CassandraSuperColumnFamily<CompareWith, CompareSubcolumnWith> family, string startKey, string endKey, string startToken, string endToken, int keyCount, CompareWith superColumnName)
+			where CompareWith : CassandraType
+			where CompareSubcolumnWith : CassandraType
+		{
+			var op = new GetSuperColumnRangeSlice<CompareWith, CompareSubcolumnWith>(new CassandraKeyRange(startKey, endKey, startToken, endToken, keyCount), superColumnName, null);
+			return op.AsQueryable(family);
+		}
+
 		// multi_get_slice
 
 		public static IEnumerable<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>> GetSuperColumns<CompareWith, CompareSubcolumnWith>(this CassandraSuperColumnFamily<CompareWith, CompareSubcolumnWith> family, IEnumerable<string> keys, CompareWith superColumnName, IEnumerable<CompareSubcolumnWith> columnNames)
@@ -243,6 +261,24 @@ namespace FluentCassandra
 		#endregion
 
 		#region Get
+
+		// queryable
+
+		public static IQueryable<IFluentSuperColumnFamily<CompareWith, CompareSubcolumnWith>> Get<CompareWith, CompareSubcolumnWith>(this CassandraSuperColumnFamily<CompareWith, CompareSubcolumnWith> family, params string[] keys)
+			where CompareWith : CassandraType
+			where CompareSubcolumnWith : CassandraType
+		{
+			var op = new MultiGetSuperColumnFamilySlice<CompareWith, CompareSubcolumnWith>(keys, null);
+			return op.AsQueryable(family);
+		}
+
+		public static IQueryable<IFluentSuperColumnFamily<CompareWith, CompareSubcolumnWith>> Get<CompareWith, CompareSubcolumnWith>(this CassandraSuperColumnFamily<CompareWith, CompareSubcolumnWith> family, string startKey, string endKey, string startToken, string endToken, int keyCount)
+			where CompareWith : CassandraType
+			where CompareSubcolumnWith : CassandraType
+		{
+			var op = new GetSuperColumnFamilyRangeSlice<CompareWith, CompareSubcolumnWith>(new CassandraKeyRange(startKey, endKey, startToken, endToken, keyCount), null);
+			return op.AsQueryable(family);
+		}
 
 		// multi_get_slice
 

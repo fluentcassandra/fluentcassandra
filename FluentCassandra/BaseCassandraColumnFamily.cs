@@ -7,6 +7,8 @@ using FluentCassandra.Configuration;
 using System.Collections;
 using FluentCassandra.Types;
 using FluentCassandra.Operations;
+using System.Linq.Expressions;
+using FluentCassandra.Linq;
 
 namespace FluentCassandra
 {
