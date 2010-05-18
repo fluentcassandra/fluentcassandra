@@ -206,7 +206,7 @@ namespace FluentCassandra
 
 		// queryable
 
-		public static IQueryable<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>> GetSuperColumns<CompareWith, CompareSubcolumnWith>(this CassandraSuperColumnFamily<CompareWith, CompareSubcolumnWith> family, string[] keys, CompareWith superColumnName)
+		public static ICassandraQueryable<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>, CompareSubcolumnWith> GetSuperColumns<CompareWith, CompareSubcolumnWith>(this CassandraSuperColumnFamily<CompareWith, CompareSubcolumnWith> family, string[] keys, CompareWith superColumnName)
 			where CompareWith : CassandraType
 			where CompareSubcolumnWith : CassandraType
 		{
@@ -214,7 +214,7 @@ namespace FluentCassandra
 			return op.AsQueryable(family);
 		}
 
-		public static IQueryable<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>> GetSuperColumns<CompareWith, CompareSubcolumnWith>(this CassandraSuperColumnFamily<CompareWith, CompareSubcolumnWith> family, string startKey, string endKey, string startToken, string endToken, int keyCount, CompareWith superColumnName)
+		public static ICassandraQueryable<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>, CompareSubcolumnWith> GetSuperColumns<CompareWith, CompareSubcolumnWith>(this CassandraSuperColumnFamily<CompareWith, CompareSubcolumnWith> family, string startKey, string endKey, string startToken, string endToken, int keyCount, CompareWith superColumnName)
 			where CompareWith : CassandraType
 			where CompareSubcolumnWith : CassandraType
 		{
@@ -264,7 +264,7 @@ namespace FluentCassandra
 
 		// queryable
 
-		public static IQueryable<IFluentSuperColumnFamily<CompareWith, CompareSubcolumnWith>> Get<CompareWith, CompareSubcolumnWith>(this CassandraSuperColumnFamily<CompareWith, CompareSubcolumnWith> family, params string[] keys)
+		public static ICassandraQueryable<IFluentSuperColumnFamily<CompareWith, CompareSubcolumnWith>, CompareWith> Get<CompareWith, CompareSubcolumnWith>(this CassandraSuperColumnFamily<CompareWith, CompareSubcolumnWith> family, params string[] keys)
 			where CompareWith : CassandraType
 			where CompareSubcolumnWith : CassandraType
 		{
@@ -272,7 +272,7 @@ namespace FluentCassandra
 			return op.AsQueryable(family);
 		}
 
-		public static IQueryable<IFluentSuperColumnFamily<CompareWith, CompareSubcolumnWith>> Get<CompareWith, CompareSubcolumnWith>(this CassandraSuperColumnFamily<CompareWith, CompareSubcolumnWith> family, string startKey, string endKey, string startToken, string endToken, int keyCount)
+		public static ICassandraQueryable<IFluentSuperColumnFamily<CompareWith, CompareSubcolumnWith>, CompareWith> Get<CompareWith, CompareSubcolumnWith>(this CassandraSuperColumnFamily<CompareWith, CompareSubcolumnWith> family, string startKey, string endKey, string startToken, string endToken, int keyCount)
 			where CompareWith : CassandraType
 			where CompareSubcolumnWith : CassandraType
 		{

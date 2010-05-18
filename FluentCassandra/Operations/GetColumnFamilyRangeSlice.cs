@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using Apache.Cassandra;
 using FluentCassandra.Types;
-using FluentCassandra.Linq;
 
 namespace FluentCassandra.Operations
 {
-	public class GetColumnFamilyRangeSlice<CompareWith> : QueryableColumnFamilyOperation<IFluentColumnFamily<CompareWith>>
+	public class GetColumnFamilyRangeSlice<CompareWith> : QueryableColumnFamilyOperation<IFluentColumnFamily<CompareWith>, CompareWith>
 		where CompareWith : CassandraType
 	{
 		/*
