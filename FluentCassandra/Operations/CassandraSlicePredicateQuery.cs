@@ -12,17 +12,21 @@ namespace FluentCassandra.Operations
 	internal class CassandraSlicePredicateQuery<TResult, CompareWith> : ICassandraQueryable<TResult, CompareWith>
 		where CompareWith : CassandraType
 	{
-		internal CassandraSlicePredicateQuery(QueryableColumnFamilyOperation<TResult, CompareWith> op, BaseCassandraColumnFamily family)
+		internal CassandraSlicePredicateQuery(QueryableColumnFamilyOperation<TResult, CompareWith> op, BaseCassandraColumnFamily family, Expression expression)
 		{
 			Operation = op;
 			Family = family;
+			Expression = expression;
+
+			if (Expression == null)
+				Expression = Expression.Constant(this);
 		}
 
 		#region IEnumerable<TResult> Members
 
 		public IEnumerator<TResult> GetEnumerator()
 		{
-			return (Execute(Expression)).GetEnumerator();
+			return Provider.ExecuteQuery(this).GetEnumerator();
 		}
 
 		#endregion
@@ -38,6 +42,11 @@ namespace FluentCassandra.Operations
 
 		#region ICassandraQueryable<TResult> Members
 
+		public ICassandraQueryProvider Provider
+		{
+			get { return Family; }
+		}
+
 		public BaseCassandraColumnFamily Family
 		{
 			get;
@@ -52,26 +61,8 @@ namespace FluentCassandra.Operations
 
 		public Expression Expression
 		{
-			get { throw new NotImplementedException(); }
-		}
-
-		public ICassandraQueryable<TResult, CompareWith> CreateQuery(Expression expression)
-		{
-			throw new NotImplementedException();
-		}
-
-		public IEnumerable<TResult> Execute(Expression expression)
-		{
-			throw new NotImplementedException();
-		}
-
-		#endregion
-
-		#region IEnumerable<TResult> Members
-
-		IEnumerator<TResult> IEnumerable<TResult>.GetEnumerator()
-		{
-			throw new NotImplementedException();
+			get;
+			private set;
 		}
 
 		#endregion

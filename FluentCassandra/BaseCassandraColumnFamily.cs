@@ -12,7 +12,7 @@ using System.Linq.Expressions;
 namespace FluentCassandra
 {
 	/// <seealso href="http://wiki.apache.org/cassandra/API"/>
-	public abstract class BaseCassandraColumnFamily
+	public abstract class BaseCassandraColumnFamily : ICassandraQueryProvider
 	{
 		private CassandraContext _context;
 		private CassandraKeyspace _keyspace;
@@ -103,5 +103,20 @@ namespace FluentCassandra
 
 			return result;
 		}
+
+		#region ICassandraQueryProvider Members
+
+		ICassandraQueryable<TResult, CompareWith> ICassandraQueryProvider.CreateQuery<TResult, CompareWith>(QueryableColumnFamilyOperation<TResult, CompareWith> op, Expression expression)
+		{
+			return new CassandraSlicePredicateQuery<TResult, CompareWith>(op, this, expression);
+		}
+
+		IEnumerable<TResult> ICassandraQueryProvider.ExecuteQuery<TResult, CompareWith>(ICassandraQueryable<TResult, CompareWith> query)
+		{
+			query.BuildPredicate();
+			return ExecuteOperation(query.Operation, true);
+		}
+
+		#endregion
 	}
 }

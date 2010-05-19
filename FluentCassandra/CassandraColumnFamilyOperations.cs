@@ -127,14 +127,14 @@ namespace FluentCassandra
 			where CompareWith : CassandraType
 		{
 			var op = new MultiGetColumnFamilySlice<CompareWith>(keys, null);
-			return op.AsQueryable(family);
+			return ((ICassandraQueryProvider)family).CreateQuery(op, null);
 		}
 
 		public static ICassandraQueryable<IFluentColumnFamily<CompareWith>, CompareWith> Get<CompareWith>(this CassandraColumnFamily<CompareWith> family, string startKey, string endKey, string startToken, string endToken, int keyCount)
 			where CompareWith : CassandraType
 		{
 			var op = new GetColumnFamilyRangeSlice<CompareWith>(new CassandraKeyRange(startKey, endKey, startToken, endToken, keyCount), null);
-			return op.AsQueryable(family);
+			return ((ICassandraQueryProvider)family).CreateQuery(op, null);
 		}
 
 		// multi_get_slice

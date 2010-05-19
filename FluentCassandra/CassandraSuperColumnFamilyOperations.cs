@@ -211,7 +211,7 @@ namespace FluentCassandra
 			where CompareSubcolumnWith : CassandraType
 		{
 			var op = new MultiGetSuperColumnSlice<CompareWith, CompareSubcolumnWith>(keys, superColumnName, null);
-			return op.AsQueryable(family);
+			return ((ICassandraQueryProvider)family).CreateQuery(op, null);
 		}
 
 		public static ICassandraQueryable<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>, CompareSubcolumnWith> GetSuperColumns<CompareWith, CompareSubcolumnWith>(this CassandraSuperColumnFamily<CompareWith, CompareSubcolumnWith> family, string startKey, string endKey, string startToken, string endToken, int keyCount, CompareWith superColumnName)
@@ -219,7 +219,7 @@ namespace FluentCassandra
 			where CompareSubcolumnWith : CassandraType
 		{
 			var op = new GetSuperColumnRangeSlice<CompareWith, CompareSubcolumnWith>(new CassandraKeyRange(startKey, endKey, startToken, endToken, keyCount), superColumnName, null);
-			return op.AsQueryable(family);
+			return ((ICassandraQueryProvider)family).CreateQuery(op, null);
 		}
 
 		// multi_get_slice
@@ -269,7 +269,7 @@ namespace FluentCassandra
 			where CompareSubcolumnWith : CassandraType
 		{
 			var op = new MultiGetSuperColumnFamilySlice<CompareWith, CompareSubcolumnWith>(keys, null);
-			return op.AsQueryable(family);
+			return ((ICassandraQueryProvider)family).CreateQuery(op, null);
 		}
 
 		public static ICassandraQueryable<IFluentSuperColumnFamily<CompareWith, CompareSubcolumnWith>, CompareWith> Get<CompareWith, CompareSubcolumnWith>(this CassandraSuperColumnFamily<CompareWith, CompareSubcolumnWith> family, string startKey, string endKey, string startToken, string endToken, int keyCount)
@@ -277,7 +277,7 @@ namespace FluentCassandra
 			where CompareSubcolumnWith : CassandraType
 		{
 			var op = new GetSuperColumnFamilyRangeSlice<CompareWith, CompareSubcolumnWith>(new CassandraKeyRange(startKey, endKey, startToken, endToken, keyCount), null);
-			return op.AsQueryable(family);
+			return ((ICassandraQueryProvider)family).CreateQuery(op, null);
 		}
 
 		// multi_get_slice
