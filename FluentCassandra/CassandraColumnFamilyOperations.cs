@@ -121,6 +121,22 @@ namespace FluentCassandra
 
 		#region Get
 
+		// queryable
+
+		public static ICassandraQueryable<IFluentColumnFamily<CompareWith>, CompareWith> Get<CompareWith>(this CassandraColumnFamily<CompareWith> family, params string[] keys)
+			where CompareWith : CassandraType
+		{
+			var op = new MultiGetColumnFamilySlice<CompareWith>(keys, null);
+			return ((ICassandraQueryProvider)family).CreateQuery(op, null);
+		}
+
+		public static ICassandraQueryable<IFluentColumnFamily<CompareWith>, CompareWith> Get<CompareWith>(this CassandraColumnFamily<CompareWith> family, string startKey, string endKey, string startToken, string endToken, int keyCount)
+			where CompareWith : CassandraType
+		{
+			var op = new GetColumnFamilyRangeSlice<CompareWith>(new CassandraKeyRange(startKey, endKey, startToken, endToken, keyCount), null);
+			return ((ICassandraQueryProvider)family).CreateQuery(op, null);
+		}
+
 		// multi_get_slice
 
 		public static IEnumerable<IFluentColumnFamily<CompareWith>> Get<CompareWith>(this CassandraColumnFamily<CompareWith> family, IEnumerable<string> keys, IEnumerable<CompareWith> columnNames)

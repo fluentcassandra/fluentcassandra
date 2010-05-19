@@ -41,11 +41,11 @@ namespace FluentCassandra.Operations
 
 		public CassandraType Start { get; private set; }
 
-		public CassandraType Finish { get; private set; }
+		public CassandraType Finish { get; internal set; }
 
-		public bool Reversed { get; private set; }
+		public bool Reversed { get; internal set; }
 
-		public int Count { get; private set; }
+		public int Count { get; internal set; }
 
 		internal override SlicePredicate CreateSlicePredicate()
 		{
