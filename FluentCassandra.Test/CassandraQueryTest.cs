@@ -51,5 +51,98 @@ namespace FluentCassandra.Test
 			// assert
 			Assert.AreEqual(expected, (double)actual);
 		}
+
+		[TestMethod]
+		public void Query_Multi_Columns()
+		{
+			// arrange
+			var expected = Math.PI;
+
+			// act
+			var actual = _family.Get(_testKey).Fetch("Test1", "Test2").FirstOrDefault().AsDynamic();
+
+			// assert
+			Assert.AreEqual(expected, (double)actual.Test1);
+			Assert.AreEqual(expected, (double)actual.Test2);
+		}
+
+		[TestMethod]
+		public void Query_Get_Two_Columns()
+		{
+			// arrange
+			var expected = Math.PI;
+
+			// act
+			var actual = _family.Get(_testKey).Fetch("Test1").Take(2).FirstOrDefault().AsDynamic();
+
+			// assert
+			Assert.AreEqual(expected, (double)actual.Test1);
+			Assert.AreEqual(expected, (double)actual.Test2);
+		}
+
+		[TestMethod]
+		public void Query_Get_Until_Test2_Column()
+		{
+			// arrange
+			var expected = Math.PI;
+
+			// act
+			var actual = _family.Get(_testKey).Fetch("Test1").TakeUntil("Test2").FirstOrDefault().AsDynamic();
+
+			// assert
+			Assert.AreEqual(expected, (double)actual.Test1);
+			Assert.AreEqual(expected, (double)actual.Test2);
+		}
+
+		[TestMethod]
+		public void Query_Get_All_Columns()
+		{
+			// arrange
+			var expectedCount = 3;
+
+			// act
+			var actual = _family.Get(_testKey).FirstOrDefault();
+
+			// assert
+			Assert.AreEqual(expectedCount, actual.Columns.Count);
+			Assert.AreEqual("Test1", (string)actual.Columns[0].Name);
+			Assert.AreEqual("Test2", (string)actual.Columns[1].Name);
+			Assert.AreEqual("Test3", (string)actual.Columns[2].Name);
+		}
+
+		[TestMethod]
+		public void Query_Get_All_Columns_Reversed()
+		{
+			// arrange
+			var expectedCount = 3;
+
+			// act
+			var actual = _family.Get(_testKey).Reverse().FirstOrDefault();
+
+			// assert
+			Assert.AreEqual(expectedCount, actual.Columns.Count);
+			Assert.AreEqual("Test3", (string)actual.Columns[0].Name);
+			Assert.AreEqual("Test2", (string)actual.Columns[1].Name);
+			Assert.AreEqual("Test1", (string)actual.Columns[2].Name);
+		}
+
+		[TestMethod]
+		public void Query_Get_All_Columns_DelayedLoading()
+		{
+			// arrange
+			var expectedCount = 3;
+
+			// act
+			var actualNotLoaded = _family.Get(_testKey);
+
+			// assert
+			foreach (var actual in actualNotLoaded)
+			{
+				Assert.AreEqual(expectedCount, actual.Columns.Count);
+				Assert.AreEqual("Test1", (string)actual.Columns[0].Name);
+				Assert.AreEqual("Test2", (string)actual.Columns[1].Name);
+				Assert.AreEqual("Test3", (string)actual.Columns[2].Name);
+			}
+		}
 	}
 }

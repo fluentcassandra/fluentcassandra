@@ -27,7 +27,7 @@ namespace FluentCassandra.Operations
 			object fetch, take, takeUntil;
 
 			if (!calls.TryGetValue("Fetch", out fetch))
-				throw new MissingMethodException("Fetch is a required call.", "Fetch");
+				fetch = new CassandraType[0];
 
 			var columns = (CassandraType[])fetch;
 			RangeSlicePredicate predicate;
@@ -76,6 +76,9 @@ namespace FluentCassandra.Operations
 				case ExpressionType.Call:
 					return VisitMethodCall(calls, (MethodCallExpression)exp);
 
+				case ExpressionType.Constant:
+					return calls;
+
 				default:
 					throw new NotSupportedException(exp.NodeType + " is not a supported expression.");
 			}
@@ -83,13 +86,18 @@ namespace FluentCassandra.Operations
 
 		private static IDictionary<string, object> VisitMethodCall(IDictionary<string, object> calls, MethodCallExpression exp)
 		{
+			calls = BuildCallDictionary(calls, exp.Arguments[0]);
+
 			switch (exp.Method.Name)
 			{
 				case "Fetch":
 				case "Take":
 				case "TakeUntil":
-				case "Reverse":
 					calls.Add(exp.Method.Name, ((ConstantExpression)exp.Arguments[1]).Value);
+					break;
+
+				case "Reverse":
+					calls.Add(exp.Method.Name, null);
 					break;
 
 				default:
