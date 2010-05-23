@@ -18,32 +18,30 @@ namespace FluentCassandra.Types
 			return destinationType == typeof(byte[]) || destinationType == typeof(Guid);
 		}
 
-		private byte[] ReverseLowFieldTimestamp(byte[] guid)
+		private void ReverseLowFieldTimestamp(byte[] guid)
 		{
-			return guid.Skip(0).Take(4).Reverse().ToArray();
+			Array.Reverse(guid, 0, 4);
 		}
 
-		private byte[] ReverseMiddleFieldTimestamp(byte[] guid)
+		private void ReverseMiddleFieldTimestamp(byte[] guid)
 		{
-			return guid.Skip(4).Take(2).Reverse().ToArray();
+			Array.Reverse(guid, 4, 2);
 		}
 
-		private byte[] ReverseHighFieldTimestamp(byte[] guid)
+		private void ReverseHighFieldTimestamp(byte[] guid)
 		{
-			return guid.Skip(6).Take(2).Reverse().ToArray();
+			Array.Reverse(guid, 6, 2);
 		}
 
 		public override object ConvertFrom(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value)
 		{
-			if (value is byte[])
+			if (value is byte[] && ((byte[])value).Length == 16)
 			{
-				var oldArray = (byte[])value;
-				var newArray = new byte[16];
-				Array.Copy(ReverseLowFieldTimestamp(oldArray), 0, newArray, 0, 4);
-				Array.Copy(ReverseMiddleFieldTimestamp(oldArray), 0, newArray, 4, 2);
-				Array.Copy(ReverseHighFieldTimestamp(oldArray), 0, newArray, 6, 2);
-				Array.Copy(oldArray, 8, newArray, 8, 8);
-				return new Guid(newArray);
+				var bytes = (byte[])value;
+				ReverseLowFieldTimestamp(bytes);
+				ReverseMiddleFieldTimestamp(bytes);
+				ReverseHighFieldTimestamp(bytes);
+				return new Guid(bytes);
 			}
 
 			if (value is Guid)
@@ -59,13 +57,11 @@ namespace FluentCassandra.Types
 
 			if (destinationType == typeof(byte[]))
 			{
-				var oldArray = ((Guid)value).ToByteArray();
-				var newArray = new byte[16];
-				Array.Copy(ReverseLowFieldTimestamp(oldArray), 0, newArray, 0, 4);
-				Array.Copy(ReverseMiddleFieldTimestamp(oldArray), 0, newArray, 4, 2);
-				Array.Copy(ReverseHighFieldTimestamp(oldArray), 0, newArray, 6, 2);
-				Array.Copy(oldArray, 8, newArray, 8, 8);
-				return newArray;
+				var bytes = ((Guid)value).ToByteArray();
+				ReverseLowFieldTimestamp(bytes);
+				ReverseMiddleFieldTimestamp(bytes);
+				ReverseHighFieldTimestamp(bytes);
+				return bytes;
 			}
 
 			if (destinationType == typeof(Guid))
