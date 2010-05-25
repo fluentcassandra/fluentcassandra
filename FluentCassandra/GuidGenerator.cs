@@ -55,14 +55,46 @@ namespace FluentCassandra
 			return (GuidVersion)((bytes[VersionByte] & 0xFF) >> VersionByteShift);
 		}
 
+		public static DateTime GetDateTime(Guid guid)
+		{
+			byte[] bytes = guid.ToByteArray();
+
+			// reverse the version
+			bytes[VersionByte] &= (byte)VersionByteMask;
+			bytes[VersionByte] |= (byte)((byte)GuidVersion.TimeBased >> VersionByteShift);
+
+			byte[] timestampBytes = new byte[8];
+			Array.Copy(bytes, TimestampByte, timestampBytes, 0, 8);
+
+			long timestamp = BitConverter.ToInt64(timestampBytes, 0);
+			long ticks = timestamp + GregorianCalendarStart.Ticks;
+
+			return new DateTime(ticks);
+		}
+
+		public static DateTimeOffset GetDateTimeOffset(Guid guid)
+		{
+			return new DateTimeOffset(GetDateTime(guid), TimeSpan.Zero);
+		}
+
 		public static Guid GenerateTimeBasedGuid()
 		{
 			return GenerateTimeBasedGuid(DateTime.UtcNow, RandomNode);
 		}
 
+		public static Guid GenerateTimeBasedGuid(DateTimeOffset dateTime)
+		{
+			return GenerateTimeBasedGuid(dateTime, RandomNode);
+		}
+
 		public static Guid GenerateTimeBasedGuid(DateTime dateTime)
 		{
 			return GenerateTimeBasedGuid(dateTime, RandomNode);
+		}
+
+		public static Guid GenerateTimeBasedGuid(DateTimeOffset dateTime, byte[] node)
+		{
+			return GenerateTimeBasedGuid(dateTime.UtcDateTime, node);
 		}
 
 		public static Guid GenerateTimeBasedGuid(DateTime dateTime, byte[] node)
@@ -74,13 +106,13 @@ namespace FluentCassandra
 			byte[] timestamp = BitConverter.GetBytes(ticks);
 
 			// copy node
-			Array.Copy(node, 0, guid, NodeByte, node.Length);
+			Array.Copy(node, 0, guid, NodeByte, Math.Min(6, node.Length));
 
 			// copy clock sequence
-			Array.Copy(clockSequenceBytes, 0, guid, GuidClockSequenceByte, clockSequenceBytes.Length);
+			Array.Copy(clockSequenceBytes, 0, guid, GuidClockSequenceByte, Math.Min(2, clockSequenceBytes.Length));
 
 			// copy timestamp
-			Array.Copy(timestamp, 0, guid, TimestampByte, timestamp.Length);
+			Array.Copy(timestamp, 0, guid, TimestampByte, Math.Min(8, timestamp.Length));
 
 			// set the variant
 			guid[VariantByte] &= (byte)VariantByteMask;

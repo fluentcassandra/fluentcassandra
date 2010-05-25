@@ -77,6 +77,20 @@ namespace FluentCassandra.Types
 			return type._value;
 		}
 
+		public static implicit operator TimeUUIDType(DateTime o)
+		{
+			return new TimeUUIDType {
+				_value = GuidGenerator.GenerateTimeBasedGuid(o)
+			};
+		}
+
+		public static implicit operator TimeUUIDType(DateTimeOffset o)
+		{
+			return new TimeUUIDType {
+				_value = GuidGenerator.GenerateTimeBasedGuid(o)
+			};
+		}
+
 		public static implicit operator TimeUUIDType(Guid o)
 		{
 			return new TimeUUIDType {
