@@ -77,7 +77,7 @@ namespace FluentCassandra
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		protected Cassandra.Client GetClient()
+		internal Cassandra.Client GetClient()
 		{
 			return _connection.Client;
 		}
@@ -131,7 +131,8 @@ namespace FluentCassandra
 			foreach (var tracker in _trackers)
 				mutations.AddRange(tracker.GetMutations());
 
-			BatchMutate(mutations);
+			var op = new BatchMutate(mutations);
+			ExecuteOperation(op);
 
 			foreach (var tracker in _trackers)
 				tracker.Clear();
@@ -143,74 +144,48 @@ namespace FluentCassandra
 		/// <param name="record"></param>
 		public void SaveChanges(IFluentRecord record)
 		{
-			BatchMutate(record);
-		}
-
-		/*
-		 * batch_mutate(keyspace, mutation_map, consistency_level)
-		 */
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="record"></param>
-		public void BatchMutate(IFluentRecord record)
-		{
-			BatchMutate(record.MutationTracker.GetMutations());
+			var mutations = record.MutationTracker.GetMutations();
+			var op = new BatchMutate(mutations);
+			ExecuteOperation(op);
 		}
 
 		/// <summary>
-		/// 
+		/// The last error that occured during the execution of an operation.
 		/// </summary>
-		/// <param name="record"></param>
-		public void BatchMutate(IEnumerable<FluentMutation> tracker)
+		public CassandraException LastError { get; private set; }
+
+		/// <summary>
+		/// Execute the column family operation against the connection to the server.
+		/// </summary>
+		/// <typeparam name="TResult"></typeparam>
+		/// <param name="action"></param>
+		/// <returns></returns>
+		public TResult ExecuteOperation<TResult>(ContextOperation<TResult> action)
 		{
-			var mutations = new Dictionary<string, Dictionary<string, List<Mutation>>>();
-
-			foreach (var key in tracker.GroupBy(x => x.Column.Family.Key))
-			{
-				var keyMutations = new Dictionary<string, List<Mutation>>();
-
-				foreach (var columnFamily in key.GroupBy(x => x.Column.Family.FamilyName))
-				{
-					var columnFamilyMutations = columnFamily
-						.Where(m => m.Type == MutationType.Added || m.Type == MutationType.Changed)
-						.Select(m => ObjectHelper.CreateInsertedOrChangedMutation(m))
-						.ToList();
-
-					var superColumnsNeedingDeleted = columnFamily
-						.Where(m => m.Type == MutationType.Removed && m.Column.GetParent().SuperColumn != null);
-
-					foreach (var superColumn in superColumnsNeedingDeleted.GroupBy(x => x.Column.GetParent().SuperColumn.Name))
-						columnFamilyMutations.Add(ObjectHelper.CreateDeletedSuperColumnMutation(superColumn));
-
-					var columnsNeedingDeleted = columnFamily
-						.Where(m => m.Type == MutationType.Removed && m.Column.GetParent().SuperColumn == null);
-
-					if (columnsNeedingDeleted.Count() > 0)
-						columnFamilyMutations.Add(ObjectHelper.CreateDeletedColumnMutation(columnsNeedingDeleted));
-
-					keyMutations.Add(columnFamily.Key, columnFamilyMutations);
-				}
-
-				mutations.Add(key.Key, keyMutations);
-			}
-
-			BatchMutate(mutations);
+			return ExecuteOperation<TResult>(action, false);
 		}
 
 		/// <summary>
-		/// 
+		/// Execute the column family operation against the connection to the server.
 		/// </summary>
-		/// <param name="mutationMap"></param>
-		protected void BatchMutate(Dictionary<string, Dictionary<string, List<Mutation>>> mutationMap)
+		/// <typeparam name="TResult"></typeparam>
+		/// <param name="action"></param>
+		/// <param name="throwOnError"></param>
+		/// <returns></returns>
+		public TResult ExecuteOperation<TResult>(ContextOperation<TResult> action, bool throwOnError)
 		{
-			// Dictionary<string : key, Dicationary<string : columnFamily, List<Mutation>>>
-			GetClient().batch_mutate(
-				Keyspace.KeyspaceName,
-				mutationMap,
-				ConsistencyLevel.ONE
-			);
+			LastError = null;
+
+			TResult result;
+			bool success = action.TryExecute(this, out result);
+
+			if (!success)
+				LastError = action.Error;
+
+			if (!success && throwOnError)
+				throw action.Error;
+
+			return result;
 		}
 
 		#region IDisposable Members

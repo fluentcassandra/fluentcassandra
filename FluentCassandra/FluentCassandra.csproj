@@ -131,8 +131,10 @@
     <Compile Include="IFluentSuperColumn.cs" />
     <Compile Include="IFluentSuperColumnFamily`1.cs" />
     <Compile Include="CassandraColumnFamilyOperations.cs" />
+    <Compile Include="Operations\BatchMutate.cs" />
     <Compile Include="Operations\CassandraQueryable.cs" />
     <Compile Include="Operations\CassandraSlicePredicateBuilder.cs" />
+    <Compile Include="Operations\ContextOperation.cs" />
     <Compile Include="Operations\ICassandraQueryable.cs" />
     <Compile Include="Operations\CassandraSlicePredicateQuery.cs" />
     <Compile Include="Operations\CassandraKeyRange.cs" />
