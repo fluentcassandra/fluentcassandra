@@ -9,7 +9,9 @@ namespace FluentCassandra
 {
 	public class Server
 	{
-		public Server(string host = "127.0.0.1", int port = 9160)
+		public const int DefaultPort = 9160;
+
+		public Server(string host = "127.0.0.1", int port = DefaultPort)
 		{
 			Host = host;
 			Port = port;
