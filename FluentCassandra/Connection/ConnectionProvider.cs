@@ -7,9 +7,6 @@ namespace FluentCassandra
 {
 	public abstract class ConnectionProvider : IConnectionProvider
 	{
-		public abstract IConnection Open();
-		public abstract bool Close(IConnection connection);
-
 		/// <summary>
 		/// 
 		/// </summary>
@@ -28,10 +25,30 @@ namespace FluentCassandra
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		public IConnection CreateNewConnection()
+		public abstract IConnection CreateNewConnection();
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		public virtual IConnection Open()
 		{
-			var conn = new Connection(Builder);
+			var conn = CreateNewConnection();
+			conn.Open();
 			return conn;
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="connection"></param>
+		/// <returns></returns>
+		public virtual bool Close(IConnection connection)
+		{
+			if (connection.IsOpen)
+				connection.Dispose();
+
+			return true;
 		}
 	}
 }

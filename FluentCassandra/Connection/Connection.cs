@@ -15,7 +15,6 @@ namespace FluentCassandra
 	/// <see href="http://github.com/robconery/NoRM/tree/master/NoRM/Connections/"/>
 	public class Connection : IConnection, IDisposable
 	{
-		private ConnectionBuilder _builder;
 		private bool _disposed;
 
 		private TTransport _transport;
@@ -26,23 +25,20 @@ namespace FluentCassandra
 		/// 
 		/// </summary>
 		/// <param name="builder"></param>
-		internal Connection(ConnectionBuilder builder)
+		internal Connection(Server server, int timeout = 0)
 		{
-			_builder = builder;
+			Server = server;
+			Timeout = timeout;
 
-			Server = _builder.Servers.FirstOrDefault();
-
-			_transport = new TSocket(Server.Host, Server.Port, _builder.Timeout);
+			_transport = new TSocket(Server.Host, Server.Port, Timeout);
 			_protocol = new TBinaryProtocol(_transport);
 			_client = new Cassandra.Client(_protocol);
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		public string Keyspace
+		public int Timeout
 		{
-			get { return _builder.Keyspace; }
+			get;
+			private set;
 		}
 
 		/// <summary>

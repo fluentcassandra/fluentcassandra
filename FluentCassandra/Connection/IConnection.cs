@@ -8,7 +8,6 @@ namespace FluentCassandra
 {
 	public interface IConnection : IDisposable
 	{
-		string Keyspace { get; }
 		Server Server { get; }
 
 		Cassandra.Client Client { get; }

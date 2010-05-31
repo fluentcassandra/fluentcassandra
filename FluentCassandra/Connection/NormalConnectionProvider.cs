@@ -18,24 +18,15 @@ namespace FluentCassandra
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		public override IConnection Open()
+		public override IConnection CreateNewConnection()
 		{
-			var conn = CreateNewConnection();
-			conn.Open();
+			var server = Builder.Servers.FirstOrDefault();
+
+			if (server == null)
+				throw new CassandraException("No connection could be made because no servers were defined.");
+
+			var conn = new Connection(server, Builder.Timeout);
 			return conn;
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="connection"></param>
-		/// <returns></returns>
-		public override bool Close(IConnection connection)
-		{
-			if (connection.IsOpen)
-				connection.Dispose();
-
-			return true;
 		}
 	}
 }

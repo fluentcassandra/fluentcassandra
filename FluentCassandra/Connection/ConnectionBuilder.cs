@@ -69,8 +69,13 @@ namespace FluentCassandra
 			else
 			{
 				int timeout;
+
 				if (!Int32.TryParse(pairs["Timeout"], out timeout))
 					throw new CassandraException("Timeout is not valid.");
+
+				if (timeout < 0)
+					timeout = 0;
+				
 				Timeout = timeout;
 			}
 
@@ -111,6 +116,8 @@ namespace FluentCassandra
 
 			if (!pairs.ContainsKey("Provider"))
 				Provider = GetConnectionProvider("Normal");
+			else
+				Provider = GetConnectionProvider(pairs["Provider"]);
 
 			#endregion
 		}
@@ -125,6 +132,7 @@ namespace FluentCassandra
 			switch (name.ToLower())
 			{
 				case "normal": return new NormalConnectionProvider(this);
+				case "failover" : return new FailoverConnectionProvider(this);
 			}
 
 			throw new CassandraException("Cannot determine which connection provider should be used for " + name);
