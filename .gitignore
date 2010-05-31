@@ -5,3 +5,6 @@
 /TestResults
 *.vspscc
 *.vssscc
+*.vsmdi
+*.vs*
+*.testsettings
