@@ -23,18 +23,27 @@ namespace FluentCassandra
 			Reset();
 		}
 
+		/// <summary>
+		/// The last error that occured.
+		/// </summary>
 		public Exception LastError
 		{
 			get;
 			private set;
 		}
 
+		/// <summary>
+		/// Reset the failover connection list.
+		/// </summary>
 		public void Reset()
 		{
 			_currentIndex = -1;
 			LastError = null;
 		}
 
+		/// <summary>
+		/// Gets if there are any more connections left to try.
+		/// </summary>
 		public bool HasNext
 		{
 			get { return _currentIndex < Builder.Servers.Count; }
