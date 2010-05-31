@@ -15,15 +15,15 @@ namespace FluentCassandra
 		/// <param name="port"></param>
 		/// <param name="timeout"></param>
 		/// <param name="provider"></param>
-		public ConnectionBuilder(string keyspace, string host, int port = 9160, int timeout = 0, bool pooled = false, int poolSize = 25, int lifetime = 5000)
+		public ConnectionBuilder(string keyspace, string host, int port = 9160, int timeout = 0, bool pooled = false, int poolSize = 25, int lifetime = 0)
 		{
 			Keyspace = keyspace;
 			Servers = new List<Server>() { new Server(host, port) };
 			Timeout = timeout;
+			Pooled = pooled;
 			PoolSize = poolSize;
 			Lifetime = lifetime;
-
-			Provider = GetPooledConnection(pooled);
+			ConnectionString = GetConnectionString();
 		}
 
 		/// <summary>
@@ -33,6 +33,7 @@ namespace FluentCassandra
 		public ConnectionBuilder(string connectionString)
 		{
 			InitializeConnectionString(connectionString);
+			ConnectionString = GetConnectionString();
 		}
 
 		/// <summary>
@@ -117,7 +118,7 @@ namespace FluentCassandra
 
 			if (!pairs.ContainsKey("Pooled"))
 			{
-				Provider = GetPooledConnection(false);
+				Pooled = false;
 			}
 			else
 			{
@@ -126,7 +127,7 @@ namespace FluentCassandra
 				if (!Boolean.TryParse(pairs["Pooled"], out pooled))
 					pooled = false;
 
-				Provider = GetPooledConnection(pooled);
+				Pooled = pooled;
 			}
 
 			#endregion
@@ -171,17 +172,19 @@ namespace FluentCassandra
 			#endregion
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="name"></param>
-		/// <returns></returns>
-		private IConnectionProvider GetPooledConnection(bool pooled)
+		private string GetConnectionString()
 		{
-			if (pooled)
-				return new PooledConnectionProvider(this);
-			else
-				return new NormalConnectionProvider(this);
+			StringBuilder b = new StringBuilder();
+			string format = "{0}={1};";
+
+			b.AppendFormat(format, "Keyspace", Keyspace);
+			b.AppendFormat(format, "Server", String.Join(",", Servers));
+			b.AppendFormat(format, "Timeout", Timeout);
+			b.AppendFormat(format, "Pooled", Pooled);
+			b.AppendFormat(format, "PoolSize", PoolSize);
+			b.AppendFormat(format, "Lifetime", Lifetime);
+
+			return b.ToString();
 		}
 
 		/// <summary>
@@ -207,11 +210,16 @@ namespace FluentCassandra
 		/// <summary>
 		/// 
 		/// </summary>
+		public bool Pooled { get; private set; }
+
+		/// <summary>
+		/// 
+		/// </summary>
 		public IList<Server> Servers { get; private set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public IConnectionProvider Provider { get; private set; }
+		public string ConnectionString { get; private set; }
 	}
 }

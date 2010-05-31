@@ -20,5 +20,10 @@ namespace FluentCassandra
 		public int Port { get; private set; }
 
 		public string Host { get; private set; }
+
+		public override string ToString()
+		{
+			return String.Concat(Host, ":", Port);
+		}
 	}
 }

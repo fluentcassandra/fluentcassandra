@@ -23,7 +23,7 @@ namespace FluentCassandra.Test.Connection
 
 			// act
 			var result = new ConnectionBuilder(FailoverConnectionString);
-			var provider = result.Provider;
+			var provider = ConnectionProviderFactory.Get(result);
 			var conn = provider.Open();
 			var actualHost = conn.Server.Host;
 			var actualPort = conn.Server.Port;

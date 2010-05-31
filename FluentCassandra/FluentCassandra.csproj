@@ -95,6 +95,7 @@
     <Compile Include="Connection\Connection.cs" />
     <Compile Include="Connection\ConnectionBuilder.cs" />
     <Compile Include="Connection\ConnectionProvider.cs" />
+    <Compile Include="Connection\ConnectionProviderFactory.cs" />
     <Compile Include="Connection\NormalConnectionProvider.cs" />
     <Compile Include="Connection\IConnection.cs" />
     <Compile Include="Connection\IConnectionProvider.cs" />

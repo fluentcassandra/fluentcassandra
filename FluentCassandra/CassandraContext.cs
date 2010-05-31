@@ -10,7 +10,6 @@ namespace FluentCassandra
 {
 	public class CassandraContext : IDisposable
 	{
-		private readonly ConnectionBuilder _connectionBuilder;
 		private readonly IConnectionProvider _connectionProvider;
 		private readonly CassandraKeyspace _keyspace;
 
@@ -50,15 +49,19 @@ namespace FluentCassandra
 		/// <param name="keyspace"></param>
 		/// <param name="connectionBuilder"></param>
 		public CassandraContext(string keyspace, ConnectionBuilder connectionBuilder)
-		{
-			if (keyspace == null)
-				keyspace = connectionBuilder.Keyspace;
+			: this(keyspace, ConnectionProviderFactory.Get(connectionBuilder)) { }
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="keyspace"></param>
+		/// <param name="connectionBuilder"></param>
+		public CassandraContext(string keyspace, IConnectionProvider connectionProvider)
+		{
 			if (String.IsNullOrEmpty(keyspace))
 				throw new ArgumentNullException("keyspace");
 
-			_connectionBuilder = connectionBuilder;
-			_connectionProvider = connectionBuilder.Provider;
+			_connectionProvider = connectionProvider;
 			_keyspace = new CassandraKeyspace(keyspace, _connection);
 			_trackers = new List<IFluentMutationTracker>();
 		}

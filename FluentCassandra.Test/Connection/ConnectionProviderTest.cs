@@ -18,7 +18,7 @@ namespace FluentCassandra.Connection.Test
 
 			// act
 			var result = new ConnectionBuilder(connectionString);
-			var actual = result.Provider.GetType();
+			var actual = ConnectionProviderFactory.Get(result).GetType();
 
 			// assert
 			Assert.AreEqual(expected, actual);
@@ -33,7 +33,7 @@ namespace FluentCassandra.Connection.Test
 
 			// act
 			var result = new ConnectionBuilder(connectionString);
-			var actual = result.Provider.GetType();
+			var actual = ConnectionProviderFactory.Get(result).GetType();
 
 			// assert
 			Assert.AreEqual(expected, actual);
