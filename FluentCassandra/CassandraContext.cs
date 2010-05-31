@@ -12,8 +12,9 @@ namespace FluentCassandra
 	{
 		private readonly ConnectionBuilder _connectionBuilder;
 		private readonly IConnectionProvider _connectionProvider;
-		private readonly IConnection _connection;
 		private readonly CassandraKeyspace _keyspace;
+
+		private IConnection _connection;
 
 		private IList<IFluentMutationTracker> _trackers;
 		private bool _disposed;
@@ -26,8 +27,8 @@ namespace FluentCassandra
 		/// <param name="port"></param>
 		/// <param name="timeout"></param>
 		/// <param name="provider"></param>
-		public CassandraContext(string keyspace, string host, int port = 9160, int timeout = 0, string provider = "Normal")
-			: this(new ConnectionBuilder(keyspace, host, port, timeout, provider)) { }
+		public CassandraContext(string keyspace, string host, int port = 9160, int timeout = 0)
+			: this(new ConnectionBuilder(keyspace, host, port, timeout)) { }
 
 		/// <summary>
 		/// 
@@ -41,11 +42,24 @@ namespace FluentCassandra
 		/// </summary>
 		/// <param name="connectionBuilder"></param>
 		public CassandraContext(ConnectionBuilder connectionBuilder)
+			: this(connectionBuilder.Keyspace, connectionBuilder) { }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="keyspace"></param>
+		/// <param name="connectionBuilder"></param>
+		public CassandraContext(string keyspace, ConnectionBuilder connectionBuilder)
 		{
+			if (keyspace == null)
+				keyspace = connectionBuilder.Keyspace;
+
+			if (String.IsNullOrEmpty(keyspace))
+				throw new ArgumentNullException("keyspace");
+
 			_connectionBuilder = connectionBuilder;
 			_connectionProvider = connectionBuilder.Provider;
-			_connection = _connectionProvider.Open();
-			_keyspace = new CassandraKeyspace(_connectionBuilder.Keyspace, _connection);
+			_keyspace = new CassandraKeyspace(keyspace, _connection);
 			_trackers = new List<IFluentMutationTracker>();
 		}
 
@@ -68,17 +82,12 @@ namespace FluentCassandra
 		/// <summary>
 		/// 
 		/// </summary>
-		public IConnection Connection
-		{
-			get { return this._connection; }
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
 		/// <returns></returns>
 		internal Cassandra.Client GetClient()
 		{
+			if (_connection == null || !_connection.IsOpen)
+				_connection = _connectionProvider.Open();
+
 			return _connection.Client;
 		}
 
@@ -90,7 +99,7 @@ namespace FluentCassandra
 		public CassandraColumnFamily<CompareWith> GetColumnFamily<CompareWith>(string columnFamily)
 			where CompareWith : CassandraType
 		{
-			return new CassandraColumnFamily<CompareWith>(this, _keyspace, _connection, columnFamily);
+			return new CassandraColumnFamily<CompareWith>(this, columnFamily);
 		}
 
 		/// <summary>
@@ -104,7 +113,7 @@ namespace FluentCassandra
 			where CompareWith : CassandraType
 			where CompareSubcolumnWith : CassandraType
 		{
-			return new CassandraSuperColumnFamily<CompareWith, CompareSubcolumnWith>(this, _keyspace, _connection, columnFamily);
+			return new CassandraSuperColumnFamily<CompareWith, CompareSubcolumnWith>(this, columnFamily);
 		}
 
 		/// <summary>

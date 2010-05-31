@@ -25,7 +25,7 @@ namespace FluentCassandra
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		public abstract IConnection CreateNewConnection();
+		public abstract IConnection CreateConnection();
 
 		/// <summary>
 		/// 
@@ -33,7 +33,7 @@ namespace FluentCassandra
 		/// <returns></returns>
 		public virtual IConnection Open()
 		{
-			var conn = CreateNewConnection();
+			var conn = CreateConnection();
 			conn.Open();
 			return conn;
 		}

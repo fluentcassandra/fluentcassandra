@@ -10,8 +10,8 @@ namespace FluentCassandra
 		where CompareWith : CassandraType
 		where CompareSubcolumnWith : CassandraType
 	{
-		public CassandraSuperColumnFamily(CassandraContext context, CassandraKeyspace keyspace, IConnection connection, string columnFamily)
-			: base(context, keyspace, connection, columnFamily) { }
+		public CassandraSuperColumnFamily(CassandraContext context, string columnFamily)
+			: base(context, columnFamily) { }
 
 		public Type CompareWithType { get { return typeof(CompareWith); } }
 		public Type CompareSubcolumnWithType { get { return typeof(CompareSubcolumnWith); } }

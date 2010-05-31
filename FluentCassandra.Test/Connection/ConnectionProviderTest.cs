@@ -14,7 +14,7 @@ namespace FluentCassandra.Connection.Test
 		{
 			// arrange
 			var expected = typeof(NormalConnectionProvider);
-			var connectionString = "Keyspace=Testing;Provider=Normal";
+			var connectionString = "";
 
 			// act
 			var result = new ConnectionBuilder(connectionString);
@@ -25,11 +25,11 @@ namespace FluentCassandra.Connection.Test
 		}
 
 		[TestMethod]
-		public void FailoverConnectionProvider()
+		public void PooledConnectionProvider()
 		{
 			// arrange
-			var expected = typeof(FailoverConnectionProvider);
-			var connectionString = "Keyspace=Testing;Provider=Failover;Timeout=1";
+			var expected = typeof(PooledConnectionProvider);
+			var connectionString = "Pooled=True";
 
 			// act
 			var result = new ConnectionBuilder(connectionString);

@@ -27,6 +27,7 @@ namespace FluentCassandra
 		/// <param name="builder"></param>
 		internal Connection(Server server, int timeout = 0)
 		{
+			Created = DateTime.Now;
 			Server = server;
 			Timeout = timeout;
 
@@ -35,6 +36,18 @@ namespace FluentCassandra
 			_client = new Cassandra.Client(_protocol);
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		public DateTime Created
+		{
+			get;
+			private set;
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
 		public int Timeout
 		{
 			get;

@@ -52,7 +52,7 @@
   <ItemGroup>
     <Compile Include="CassandraQueryTest.cs" />
     <Compile Include="Connection\ConnectionProviderTest.cs" />
-    <Compile Include="Connection\FailoverConnectionProviderTest.cs" />
+    <Compile Include="Connection\NormalConnectionProviderTest.cs" />
     <Compile Include="FluentSuperColumnFamilyTest.cs" />
     <Compile Include="FluentColumnFamilyTest.cs" />
     <Compile Include="FluentColumnTest.cs" />

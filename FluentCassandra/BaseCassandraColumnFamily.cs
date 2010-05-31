@@ -15,19 +15,15 @@ namespace FluentCassandra
 	public abstract class BaseCassandraColumnFamily : ICassandraQueryProvider
 	{
 		private CassandraContext _context;
-		private CassandraKeyspace _keyspace;
-		private IConnection _connection;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="keyspace"></param>
 		/// <param name="connection"></param>
-		public BaseCassandraColumnFamily(CassandraContext context, CassandraKeyspace keyspace, IConnection connection, string columnFamily)
+		public BaseCassandraColumnFamily(CassandraContext context, string columnFamily)
 		{
 			_context = context;
-			_keyspace = keyspace;
-			_connection = connection;
 			FamilyName = columnFamily;
 		}
 
@@ -39,7 +35,7 @@ namespace FluentCassandra
 		/// <summary>
 		/// The keyspace the column family belongs to.
 		/// </summary>
-		public CassandraKeyspace Keyspace { get { return _keyspace; } }
+		public CassandraKeyspace Keyspace { get { return _context.Keyspace; } }
 
 		/// <summary>
 		/// The family name for this column family.
@@ -57,7 +53,7 @@ namespace FluentCassandra
 		/// <returns></returns>
 		internal Cassandra.Client GetClient()
 		{
-			return _connection.Client;
+			return _context.GetClient();
 		}
 
 		/// <summary>

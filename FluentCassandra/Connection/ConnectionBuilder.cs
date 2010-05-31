@@ -15,12 +15,15 @@ namespace FluentCassandra
 		/// <param name="port"></param>
 		/// <param name="timeout"></param>
 		/// <param name="provider"></param>
-		public ConnectionBuilder(string keyspace, string host, int port = 9160, int timeout = 0, string provider = "Normal")
+		public ConnectionBuilder(string keyspace, string host, int port = 9160, int timeout = 0, bool pooled = false, int poolSize = 25, int lifetime = 5000)
 		{
 			Keyspace = keyspace;
 			Servers = new List<Server>() { new Server(host, port) };
 			Timeout = timeout;
-			Provider = GetConnectionProvider(provider);
+			PoolSize = poolSize;
+			Lifetime = lifetime;
+
+			Provider = GetPooledConnection(pooled);
 		}
 
 		/// <summary>
@@ -53,10 +56,8 @@ namespace FluentCassandra
 
 			#region Keyspace
 
-			if (!pairs.ContainsKey("Keyspace"))
-				throw new CassandraException("Keyspace is required to create a connection");
-
-			Keyspace = pairs["Keyspace"];
+			if (pairs.ContainsKey("Keyspace"))
+				Keyspace = pairs["Keyspace"];
 
 			#endregion
 
@@ -112,12 +113,60 @@ namespace FluentCassandra
 
 			#endregion
 
-			#region Provider
+			#region Pooled
 
-			if (!pairs.ContainsKey("Provider"))
-				Provider = GetConnectionProvider("Normal");
+			if (!pairs.ContainsKey("Pooled"))
+			{
+				Provider = GetPooledConnection(false);
+			}
 			else
-				Provider = GetConnectionProvider(pairs["Provider"]);
+			{
+				bool pooled;
+
+				if (!Boolean.TryParse(pairs["Pooled"], out pooled))
+					pooled = false;
+
+				Provider = GetPooledConnection(pooled);
+			}
+
+			#endregion
+
+			#region PoolSize
+
+			if (!pairs.ContainsKey("PoolSize"))
+			{
+				PoolSize = 25;
+			}
+			else
+			{
+				int poolSize;
+
+				if (!Int32.TryParse(pairs["PoolSize"], out poolSize))
+					poolSize = 25;
+
+				if (poolSize < 0)
+					poolSize = 25;
+
+				PoolSize = poolSize;
+			}
+
+			#endregion
+
+			#region Lifetime
+
+			if (!pairs.ContainsKey("Lifetime"))
+			{
+				Lifetime = 0;
+			}
+			else
+			{
+				int lifetime;
+
+				if (!Int32.TryParse(pairs["Lifetime"], out lifetime))
+					lifetime = 0;
+
+				Lifetime = lifetime;
+			}
 
 			#endregion
 		}
@@ -127,15 +176,12 @@ namespace FluentCassandra
 		/// </summary>
 		/// <param name="name"></param>
 		/// <returns></returns>
-		private IConnectionProvider GetConnectionProvider(string name)
+		private IConnectionProvider GetPooledConnection(bool pooled)
 		{
-			switch (name.ToLower())
-			{
-				case "normal": return new NormalConnectionProvider(this);
-				case "failover" : return new FailoverConnectionProvider(this);
-			}
-
-			throw new CassandraException("Cannot determine which connection provider should be used for " + name);
+			if (pooled)
+				return new PooledConnectionProvider(this);
+			else
+				return new NormalConnectionProvider(this);
 		}
 
 		/// <summary>
@@ -147,6 +193,16 @@ namespace FluentCassandra
 		/// 
 		/// </summary>
 		public int Timeout { get; private set; }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public int PoolSize { get; private set; }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public int Lifetime { get; private set; }
 
 		/// <summary>
 		/// 

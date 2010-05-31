@@ -95,11 +95,12 @@
     <Compile Include="Connection\Connection.cs" />
     <Compile Include="Connection\ConnectionBuilder.cs" />
     <Compile Include="Connection\ConnectionProvider.cs" />
-    <Compile Include="Connection\FailoverConnectionProvider.cs" />
+    <Compile Include="Connection\NormalConnectionProvider.cs" />
     <Compile Include="Connection\IConnection.cs" />
     <Compile Include="Connection\IConnectionProvider.cs" />
-    <Compile Include="Connection\NormalConnectionProvider.cs" />
+    <Compile Include="Connection\PooledConnectionProvider.cs" />
     <Compile Include="Connection\Server.cs" />
+    <Compile Include="Connection\TimedLock.cs" />
     <Compile Include="FluentCassandraException.cs" />
     <Compile Include="FluentColumn.cs">
       <SubType>Code</SubType>

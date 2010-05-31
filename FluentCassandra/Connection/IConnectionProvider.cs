@@ -9,7 +9,7 @@ namespace FluentCassandra
 	{
 		ConnectionBuilder Builder { get; }
 
-		IConnection CreateNewConnection();
+		IConnection CreateConnection();
 
 		IConnection Open();
 

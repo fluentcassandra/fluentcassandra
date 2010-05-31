@@ -8,11 +8,12 @@ namespace FluentCassandra
 {
 	public interface IConnection : IDisposable
 	{
-		Server Server { get; }
+		DateTime Created { get; }
+		bool IsOpen { get; }
 
+		Server Server { get; }
 		Cassandra.Client Client { get; }
 
-		bool IsOpen { get; }
 		void Open();
 		void Close();
 	}
