@@ -19,7 +19,7 @@ namespace FluentCassandra
 
 		public Type CompareWithType { get { return typeof(CompareWith); } }
 
-		public FluentColumnFamily<CompareWith> CreateFluentFamily(string key)
+		public FluentColumnFamily<CompareWith> CreateRecord(string key)
 		{
 			return new FluentColumnFamily<CompareWith>(key, FamilyName);
 		}

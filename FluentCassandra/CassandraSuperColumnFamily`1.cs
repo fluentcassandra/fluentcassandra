@@ -16,7 +16,7 @@ namespace FluentCassandra
 		public Type CompareWithType { get { return typeof(CompareWith); } }
 		public Type CompareSubcolumnWithType { get { return typeof(CompareSubcolumnWith); } }
 
-		public FluentSuperColumnFamily<CompareWith, CompareSubcolumnWith> CreateFluentFamily(string key)
+		public FluentSuperColumnFamily<CompareWith, CompareSubcolumnWith> CreateRecord(string key)
 		{
 			return new FluentSuperColumnFamily<CompareWith, CompareSubcolumnWith>(key, FamilyName);
 		}

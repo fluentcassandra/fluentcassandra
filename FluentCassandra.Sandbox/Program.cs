@@ -14,13 +14,12 @@ namespace FluentCassandra.Sandbox
 	{
 		private static void Main(string[] args)
 		{
-			using (var db = new CassandraContext("Blog", "localhost"))
+			using (var db = new CassandraContext(keyspace: "Blog", host: "localhost"))
 			{
+				var family = db.GetColumnFamily<UTF8Type, UTF8Type>("Posts");
+
 				// create post
-				dynamic post = new FluentSuperColumnFamily<AsciiType, AsciiType>(
-					key: "first-post",
-					columnFamily: "Posts"
-				);
+				dynamic post = family.CreateRecord(key: "first-blog-post");
 
 				// create post details
 				dynamic postDetails = post.CreateSuperColumn();
@@ -37,7 +36,7 @@ namespace FluentCassandra.Sandbox
 				tags[3] = "NoSQL";
 
 				// add properties to post
-				post.Post = postDetails;
+				post.Details = postDetails;
 				post.Tags = tags;
 
 				// attach the post to the database
@@ -48,48 +47,25 @@ namespace FluentCassandra.Sandbox
 				Console.WriteLine("saving changes");
 				db.SaveChanges();
 
-				// get the table/column family to pull back the post
-				var postsTable = db.GetColumnFamily<AsciiType, AsciiType>("Posts");
+				// get the post back from the database
+				Console.WriteLine("getting 'first-blog-post'");
+				dynamic getPost = family.Get("first-blog-post").FirstOrDefault();
 
-				// we want to pull back the post we just saved, and we want the Post and Tags columns that we added
-				dynamic samePost = postsTable.GetSingle("first-post", new AsciiType[] { "Post", "Tags" });
-
-				// display all the fields in the Post property
-				Console.WriteLine("display post");
-				foreach (var col in samePost.Post)
-					Console.WriteLine("{0}: {1}", col.Name, samePost.Post[col.Name]);
-
-				// display all the fields in the Tags property
-				Console.WriteLine("display tags");
-				foreach (var tag in samePost.Tags)
-					Console.WriteLine("{0}: {1}", tag.Name, samePost.Tags[tag.Name]);
-
-				dynamic comments = new FluentSuperColumnFamily<TimeUUIDType, AsciiType>(
-					key: "first-post",
-					columnFamily: "Comments"
-				);
-
-				// now lets add some comments
-				dynamic comment = comments.CreateSuperColumn();
-				comment.Author = "Nick Berardi";
-				comment.CommentedOn = DateTime.Now;
-				comment.Text = "Wow this is great.";
-
-				dynamic comment2 = comments.CreateSuperColumn();
-				comment2.Author = "Joe Somebody";
-				comment2.CommentedOn = DateTime.Now;
-				comment2.Text = "I agree with you Nick. -- Joe";
-
-				// the comments are stored by time based Guid under the same key
-				comments[GuidGenerator.GenerateTimeBasedGuid()] = comment;
-				comments[GuidGenerator.GenerateTimeBasedGuid()] = comment2;
-
-				db.Attach(comments);
-
-				db.SaveChanges();
+				// show details
+				dynamic getPostDetails = getPost.Details;
+				Console.WriteLine(
+					String.Format("=={0} by {1}==\n{2}", 
+						getPostDetails.Title, 
+						getPostDetails.Author, 
+						getPostDetails.Body
+					));
+				
+				// show tags
+				Console.Write("tags:");
+				foreach (var tag in getPost.Tags)
+					Console.Write(String.Format("{0}:{1},", tag.Name, tag.Value));
 			}
 
-			Console.WriteLine("Done");
 			Console.Read();
 		}
 	}
