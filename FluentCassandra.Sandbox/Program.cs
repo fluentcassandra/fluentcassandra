@@ -7,6 +7,7 @@ using Thrift.Protocol;
 
 using FluentCassandra.Configuration;
 using FluentCassandra.Types;
+using System.Threading;
 
 namespace FluentCassandra.Sandbox
 {
@@ -63,7 +64,64 @@ namespace FluentCassandra.Sandbox
 				// show tags
 				Console.Write("tags:");
 				foreach (var tag in getPost.Tags)
-					Console.Write(String.Format("{0}:{1},", tag.Name, tag.Value));
+					Console.Write(String.Format("{0}:{1},", tag.ColumnName, tag.ColumnValue));
+				Console.WriteLine();
+
+				// get the comments family
+				var commentsFamily = db.GetColumnFamily<TimeUUIDType, UTF8Type>("Comments");
+
+				dynamic postComments = commentsFamily.CreateRecord(key: "first-blog-post");
+
+				// lets attach it to the database before we add the comments
+				db.Attach(postComments);
+
+				// add 5 comments
+				for (int i = 0; i < 5; i++)
+				{
+					dynamic comment = postComments.CreateSuperColumn();
+					comment.Name = i + " Nick Berardi";
+					comment.Email = i + " nick@coderjournal.com";
+					comment.Website = i + " www.coderjournal.com";
+					comment.Comment = i + " Wow fluent cassandra is really great and easy to use.";
+
+					postComments[GuidGenerator.GenerateTimeBasedGuid()] = comment;
+
+					Console.WriteLine("Comment " + i + " Done");
+					Thread.Sleep(TimeSpan.FromSeconds(5));
+				}
+
+				// save the comments
+				db.SaveChanges();
+
+				DateTime lastDate = DateTime.Now;
+
+				for (int page = 0; page < 2; page++)
+				{
+					// lets back the date off by a millisecond so we don't get paging overlaps
+					lastDate = lastDate.AddMilliseconds(-1D);
+
+					Console.WriteLine("Showing page " + page + " starting at " + lastDate.ToLocalTime());
+
+					var comments = commentsFamily.Get("first-blog-post")
+						.Reverse()
+						.Fetch(lastDate)
+						.Take(4)
+						.FirstOrDefault();
+
+					foreach (dynamic comment in comments)
+					{
+						var dateTime = GuidGenerator.GetDateTime((Guid)comment.ColumnName);
+
+						Console.WriteLine(String.Format("{0:T} : {1} ({2} - {3})",
+							dateTime.ToLocalTime(),
+							comment.Name,
+							comment.Email,
+							comment.Website
+						));
+
+						lastDate = dateTime;
+					}
+				}
 			}
 
 			Console.Read();

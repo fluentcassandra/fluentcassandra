@@ -69,7 +69,7 @@ namespace FluentCassandra
 			long timestamp = BitConverter.ToInt64(timestampBytes, 0);
 			long ticks = timestamp + GregorianCalendarStart.Ticks;
 
-			return new DateTime(ticks);
+			return new DateTime(ticks, DateTimeKind.Utc);
 		}
 
 		public static DateTimeOffset GetDateTimeOffset(Guid guid)
@@ -99,7 +99,8 @@ namespace FluentCassandra
 
 		public static Guid GenerateTimeBasedGuid(DateTime dateTime, byte[] node)
 		{
-			long ticks = dateTime.Ticks - GregorianCalendarStart.Ticks;
+			dateTime = dateTime.ToUniversalTime();
+			long ticks = (dateTime - GregorianCalendarStart).Ticks;
 
 			byte[] guid = new byte[ByteArraySize];
 			byte[] clockSequenceBytes = BitConverter.GetBytes(Convert.ToInt16(Environment.TickCount % Int16.MaxValue));

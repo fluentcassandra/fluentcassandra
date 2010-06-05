@@ -42,10 +42,10 @@ namespace FluentCassandra
 			where CompareWith : CassandraType
 			where CompareSubcolumnWith : CassandraType
 		{
-			var superColumnName = path.SuperColumn.Name;
-			var name = path.Column.Name;
-			var value = path.Column.Value;
-			var timestamp = path.Column.Timestamp;
+			var superColumnName = path.SuperColumn.ColumnName;
+			var name = path.Column.ColumnName;
+			var value = path.Column.ColumnValue;
+			var timestamp = path.Column.ColumnTimestamp;
 
 			var op = new InsertColumn(key, superColumnName, name, value, timestamp);
 			family.ExecuteOperation(op);
@@ -74,8 +74,8 @@ namespace FluentCassandra
 			where CompareWith : CassandraType
 			where CompareSubcolumnWith : CassandraType
 		{
-			var columnName = (CompareSubcolumnWith)path.Column.Name;
-			var superColumnName = (CompareWith)path.SuperColumn.Name;
+			var columnName = (CompareSubcolumnWith)path.Column.ColumnName;
+			var superColumnName = (CompareWith)path.SuperColumn.ColumnName;
 			return GetColumn<CompareWith, CompareSubcolumnWith>(family, key, superColumnName, columnName);
 		}
 
@@ -95,7 +95,7 @@ namespace FluentCassandra
 			where CompareWith : CassandraType
 			where CompareSubcolumnWith : CassandraType
 		{
-			var superColumnName = (CompareWith)parent.SuperColumn.Name;
+			var superColumnName = (CompareWith)parent.SuperColumn.ColumnName;
 			return GetSuperColumn<CompareWith, CompareSubcolumnWith>(family, key, superColumnName);
 		}
 
@@ -115,8 +115,8 @@ namespace FluentCassandra
 			where CompareWith : CassandraType
 			where CompareSubcolumnWith : CassandraType
 		{
-			var columnName = (CompareSubcolumnWith)path.Column.Name;
-			var superColumnName = (CompareWith)path.SuperColumn.Name;
+			var columnName = (CompareSubcolumnWith)path.Column.ColumnName;
+			var superColumnName = (CompareWith)path.SuperColumn.ColumnName;
 			RemoveColumn<CompareWith, CompareSubcolumnWith>(family, key, superColumnName, columnName);
 		}
 
@@ -136,7 +136,7 @@ namespace FluentCassandra
 			where CompareWith : CassandraType
 			where CompareSubcolumnWith : CassandraType
 		{
-			var superColumnName = (CompareWith)parent.SuperColumn.Name;
+			var superColumnName = (CompareWith)parent.SuperColumn.ColumnName;
 			RemoveSuperColumn<CompareWith, CompareSubcolumnWith>(family, key, superColumnName);
 		}
 

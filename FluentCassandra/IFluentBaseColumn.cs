@@ -8,7 +8,7 @@ namespace FluentCassandra
 {
 	public interface IFluentBaseColumn
 	{
-		CassandraType Name { get; }
+		CassandraType ColumnName { get; }
 
 		IFluentBaseColumnFamily Family { get; }
 

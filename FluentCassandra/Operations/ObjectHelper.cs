@@ -35,9 +35,9 @@ namespace FluentCassandra.Operations
 			where CompareWith : CassandraType
 		{
 			return new FluentColumn<CompareWith> {
-				Name = CassandraType.GetType<CompareWith>(col.Name),
-				Value = col.Value,
-				Timestamp = new DateTimeOffset(col.Timestamp, TimeSpan.Zero)
+				ColumnName = CassandraType.GetType<CompareWith>(col.Name),
+				ColumnValue = col.Value,
+				ColumnTimestamp = new DateTimeOffset(col.Timestamp, TimeSpan.Zero)
 			};
 		}
 
@@ -51,7 +51,7 @@ namespace FluentCassandra.Operations
 			where CompareSubcolumnWith : CassandraType
 		{
 			var superCol = new FluentSuperColumn<CompareWith, CompareSubcolumnWith> {
-				Name = CassandraType.GetType<CompareWith>(col.Name)
+				ColumnName = CassandraType.GetType<CompareWith>(col.Name)
 			};
 
 			foreach (var xcol in col.Columns)
@@ -67,7 +67,7 @@ namespace FluentCassandra.Operations
 		/// <returns></returns>
 		public static Mutation CreateDeletedColumnMutation(IEnumerable<FluentMutation> mutation)
 		{
-			var columnNames = mutation.Select(m => m.Column.Name).ToList();
+			var columnNames = mutation.Select(m => m.Column.ColumnName).ToList();
 
 			var deletion = new Deletion {
 				Timestamp = DateTimeOffset.UtcNow.UtcTicks,
@@ -86,8 +86,8 @@ namespace FluentCassandra.Operations
 		/// <returns></returns>
 		public static Mutation CreateDeletedSuperColumnMutation(IEnumerable<FluentMutation> mutation)
 		{
-			var superColumn = mutation.Select(m => m.Column.GetPath().SuperColumn.Name).FirstOrDefault();
-			var columnNames = mutation.Select(m => m.Column.Name).ToList();
+			var superColumn = mutation.Select(m => m.Column.GetPath().SuperColumn.ColumnName).FirstOrDefault();
+			var columnNames = mutation.Select(m => m.Column.ColumnName).ToList();
 
 			var deletion = new Deletion {
 				Timestamp = DateTimeOffset.UtcNow.UtcTicks,
@@ -123,9 +123,9 @@ namespace FluentCassandra.Operations
 		public static Column CreateColumn(IFluentColumn column)
 		{
 			return new Column {
-				Name = column.Name,
-				Value = column.Value,
-				Timestamp = column.Timestamp.UtcTicks
+				Name = column.ColumnName,
+				Value = column.ColumnValue,
+				Timestamp = column.ColumnTimestamp.UtcTicks
 			};
 		}
 
@@ -146,7 +146,7 @@ namespace FluentCassandra.Operations
 			{
 				var colY = (IFluentSuperColumn)column;
 				var superColumn = new SuperColumn {
-					Name = colY.Name,
+					Name = colY.ColumnName,
 					Columns = new List<Column>()
 				};
 

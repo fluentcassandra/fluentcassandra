@@ -31,9 +31,9 @@ namespace FluentCassandra
 		public static void InsertColumn<CompareWith>(this CassandraColumnFamily<CompareWith> family, string key, FluentColumnPath path)
 			where CompareWith : CassandraType
 		{
-			var columnName = path.Column.Name;
-			var columnValue = path.Column.Value;
-			var timestamp = path.Column.Timestamp;
+			var columnName = path.Column.ColumnName;
+			var columnValue = path.Column.ColumnValue;
+			var timestamp = path.Column.ColumnTimestamp;
 
 			var op = new InsertColumn(key, columnName, columnValue, timestamp);
 			family.ExecuteOperation(op);
@@ -59,7 +59,7 @@ namespace FluentCassandra
 		public static IFluentColumn<CompareWith> GetColumn<CompareWith>(this CassandraColumnFamily<CompareWith> family, string key, FluentColumnPath path)
 			where CompareWith : CassandraType
 		{
-			var columnName = (CompareWith)path.Column.Name;
+			var columnName = (CompareWith)path.Column.ColumnName;
 			return GetColumn<CompareWith>(family, key, columnName);
 		}
 
@@ -77,7 +77,7 @@ namespace FluentCassandra
 		public static void RemoveColumn<CompareWith>(this CassandraColumnFamily<CompareWith> family, string key, FluentColumnPath path)
 			where CompareWith : CassandraType
 		{
-			var columnName = (CompareWith)path.Column.Name;
+			var columnName = (CompareWith)path.Column.ColumnName;
 			RemoveColumn<CompareWith>(family, key, columnName);
 		}
 

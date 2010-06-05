@@ -20,14 +20,14 @@ namespace FluentCassandra.Test
 
 			// act
 			var actual = new FluentColumn<AsciiType> {
-				Name = nameExpected,
-				Value = valueExpected
+				ColumnName = nameExpected,
+				ColumnValue = valueExpected
 			};
 
 			// assert
-			Assert.AreEqual(nameExpected, (string)actual.Name);
-			Assert.AreEqual(valueExpected, (double)actual.Value);
-			Assert.AreEqual(timestampExpected, actual.Timestamp.LocalDateTime.Date);
+			Assert.AreEqual(nameExpected, (string)actual.ColumnName);
+			Assert.AreEqual(valueExpected, (double)actual.ColumnValue);
+			Assert.AreEqual(timestampExpected, actual.ColumnTimestamp.LocalDateTime.Date);
 		}
 	}
 }

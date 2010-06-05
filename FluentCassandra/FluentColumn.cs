@@ -19,28 +19,28 @@ namespace FluentCassandra
 
 		public FluentColumn()
 		{
-			Timestamp = DateTimeOffset.UtcNow;
+			ColumnTimestamp = DateTimeOffset.UtcNow;
 		}
 
 		/// <summary>
 		/// The column name.
 		/// </summary>
-		public CompareWith Name { get; set; }
+		public CompareWith ColumnName { get; set; }
 
-		public BytesType Value
+		public BytesType ColumnValue
 		{
 			get { return _value; }
 			set
 			{
 				_value = value;
-				Timestamp = DateTimeOffset.UtcNow;
+				ColumnTimestamp = DateTimeOffset.UtcNow;
 			}
 		}
 
 		/// <summary>
 		/// The column timestamp.
 		/// </summary>
-		public DateTimeOffset Timestamp
+		public DateTimeOffset ColumnTimestamp
 		{
 			get;
 			internal set;
@@ -85,7 +85,7 @@ namespace FluentCassandra
 
 		#region IFluentBaseColumn Members
 
-		CassandraType IFluentBaseColumn.Name { get { return Name; } }
+		CassandraType IFluentBaseColumn.ColumnName { get { return ColumnName; } }
 
 		void IFluentBaseColumn.SetParent(FluentColumnParent parent)
 		{

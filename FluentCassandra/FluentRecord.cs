@@ -118,7 +118,7 @@ namespace FluentCassandra
 			MutationTracker.ColumnMutated(type, column);
 
 			if (PropertyChanged != null)
-				PropertyChanged(this, new PropertyChangedEventArgs(column.Name));
+				PropertyChanged(this, new PropertyChangedEventArgs(column.ColumnName));
 		}
 
 		#endregion

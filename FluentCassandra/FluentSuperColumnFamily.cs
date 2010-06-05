@@ -101,7 +101,7 @@ namespace FluentCassandra
 		/// <returns></returns>
 		public override bool TryGetColumn(object name, out object result)
 		{
-			var col = Columns.FirstOrDefault(c => c.Name == name);
+			var col = Columns.FirstOrDefault(c => c.ColumnName == name);
 
 			result = col;
 			return col != null;
@@ -118,11 +118,11 @@ namespace FluentCassandra
 			if (!(value is FluentSuperColumn<CompareWith, CompareSubcolumnWith>))
 				throw new ArgumentException("Value must be of type " + typeof(FluentSuperColumn<CompareWith, CompareSubcolumnWith>) + ", because this column family is of type Super.", "value");
 
-			var col = Columns.FirstOrDefault(c => c.Name == name);
+			var col = Columns.FirstOrDefault(c => c.ColumnName == name);
 			var mutationType = col == null ? MutationType.Added : MutationType.Changed;
 
 			col = (FluentSuperColumn<CompareWith, CompareSubcolumnWith>)value;
-			((FluentSuperColumn<CompareWith, CompareSubcolumnWith>)col).Name = CassandraType.GetType<CompareWith>(name);
+			((FluentSuperColumn<CompareWith, CompareSubcolumnWith>)col).ColumnName = CassandraType.GetType<CompareWith>(name);
 
 			int index = Columns.IndexOf(col);
 

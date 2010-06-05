@@ -39,17 +39,17 @@ namespace FluentCassandra.Test
 		{
 			// arrange
 			var colName = "This is a test name";
-			var col1 = new FluentColumn<AsciiType> { Name = "Test1", Value = 300M };
-			var col2 = new FluentColumn<AsciiType> { Name = "Test2", Value = "Hello" };
+			var col1 = new FluentColumn<AsciiType> { ColumnName = "Test1", ColumnValue = 300M };
+			var col2 = new FluentColumn<AsciiType> { ColumnName = "Test2", ColumnValue = "Hello" };
 
 			// act
 			var actual = new FluentSuperColumn<AsciiType, AsciiType>();
-			actual.Name = colName;
+			actual.ColumnName = colName;
 			actual.Columns.Add(col1);
 			actual.Columns.Add(col2);
 
 			// assert
-			Assert.AreEqual(colName, (string)actual.Name);
+			Assert.AreEqual(colName, (string)actual.ColumnName);
 			Assert.AreEqual(2, actual.Columns.Count);
 		}
 
@@ -83,12 +83,12 @@ namespace FluentCassandra.Test
 		{
 			// arrange
 			var colName = "This is a test name";
-			var col1 = new FluentColumn<AsciiType> { Name = "Test1", Value = 300M };
-			var col2 = new FluentColumn<AsciiType> { Name = "Test2", Value = "Hello" };
+			var col1 = new FluentColumn<AsciiType> { ColumnName = "Test1", ColumnValue = 300M };
+			var col2 = new FluentColumn<AsciiType> { ColumnName = "Test2", ColumnValue = "Hello" };
 
 			// act
 			var actual = new FluentSuperColumn<AsciiType, AsciiType>();
-			actual.Name = colName;
+			actual.ColumnName = colName;
 			actual.Columns.Add(col1);
 			actual.Columns.Add(col2);
 
@@ -98,8 +98,8 @@ namespace FluentCassandra.Test
 			Assert.AreEqual(2, mutations.Count());
 			Assert.AreEqual(2, mutations.Count(x => x.Type == MutationType.Added));
 
-			var mut1 = mutations.FirstOrDefault(x => x.Column.Name == "Test1");
-			var mut2 = mutations.FirstOrDefault(x => x.Column.Name == "Test2");
+			var mut1 = mutations.FirstOrDefault(x => x.Column.ColumnName == "Test1");
+			var mut2 = mutations.FirstOrDefault(x => x.Column.ColumnName == "Test2");
 
 			Assert.AreSame(col1, mut1.Column);
 			Assert.AreSame(col2, mut2.Column);
@@ -120,7 +120,7 @@ namespace FluentCassandra.Test
 
 			// act
 			dynamic actual = new FluentSuperColumn<AsciiType, AsciiType>();
-			actual.Name = colName;
+			actual.ColumnName = colName;
 			actual.Test1 = colValue1;
 			actual.Test2 = colValue2;
 
@@ -130,8 +130,8 @@ namespace FluentCassandra.Test
 			Assert.AreEqual(2, mutations.Count());
 			Assert.AreEqual(2, mutations.Count(x => x.Type == MutationType.Added));
 
-			var mut1 = mutations.FirstOrDefault(x => x.Column.Name == col1);
-			var mut2 = mutations.FirstOrDefault(x => x.Column.Name == col2);
+			var mut1 = mutations.FirstOrDefault(x => x.Column.ColumnName == col1);
+			var mut2 = mutations.FirstOrDefault(x => x.Column.ColumnName == col2);
 
 			Assert.IsNotNull(mut1);
 			Assert.IsNotNull(mut2);

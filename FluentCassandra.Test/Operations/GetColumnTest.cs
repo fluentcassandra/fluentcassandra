@@ -49,8 +49,8 @@ namespace FluentCassandra.Test.Operations
 			var column = _family.GetColumn(_testKey, _testName);
 
 			// assert
-			Assert.AreEqual(_testName, (string)column.Name);
-			Assert.AreEqual(expected, (double)column.Value);
+			Assert.AreEqual(_testName, (string)column.ColumnName);
+			Assert.AreEqual(expected, (double)column.ColumnValue);
 		}
 
 		[TestMethod]
@@ -63,8 +63,8 @@ namespace FluentCassandra.Test.Operations
 			var column = _superFamily.GetColumn(_testKey, _testSuperName, _testName);
 
 			// assert
-			Assert.AreEqual(_testName, (string)column.Name);
-			Assert.AreEqual(expected, (double)column.Value);
+			Assert.AreEqual(_testName, (string)column.ColumnName);
+			Assert.AreEqual(expected, (double)column.ColumnValue);
 		}
 
 		[TestMethod]
@@ -76,7 +76,7 @@ namespace FluentCassandra.Test.Operations
 			var column = _superFamily.GetSuperColumn(_testKey, _testSuperName);
 
 			// assert
-			Assert.AreEqual(_testSuperName, (string)column.Name);
+			Assert.AreEqual(_testSuperName, (string)column.ColumnName);
 		}
 	}
 }

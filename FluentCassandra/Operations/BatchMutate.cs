@@ -32,7 +32,7 @@ namespace FluentCassandra.Operations
 					var superColumnsNeedingDeleted = columnFamily
 						.Where(m => m.Type == MutationType.Removed && m.Column.GetParent().SuperColumn != null);
 
-					foreach (var superColumn in superColumnsNeedingDeleted.GroupBy(x => x.Column.GetParent().SuperColumn.Name))
+					foreach (var superColumn in superColumnsNeedingDeleted.GroupBy(x => x.Column.GetParent().SuperColumn.ColumnName))
 						columnFamilyMutations.Add(ObjectHelper.CreateDeletedSuperColumnMutation(superColumn));
 
 					var columnsNeedingDeleted = columnFamily

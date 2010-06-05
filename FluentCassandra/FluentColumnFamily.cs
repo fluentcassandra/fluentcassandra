@@ -99,9 +99,9 @@ namespace FluentCassandra
 		/// <returns></returns>
 		public override bool TryGetColumn(object name, out object result)
 		{
-			var col = Columns.FirstOrDefault(c => c.Name == name);
+			var col = Columns.FirstOrDefault(c => c.ColumnName == name);
 
-			result = (col == null) ? null : col.Value;
+			result = (col == null) ? null : col.ColumnValue;
 			return col != null;
 		}
 
@@ -113,7 +113,7 @@ namespace FluentCassandra
 		/// <returns></returns>
 		public override bool TrySetColumn(object name, object value)
 		{
-			var col = Columns.FirstOrDefault(c => c.Name == name);
+			var col = Columns.FirstOrDefault(c => c.ColumnName == name);
 			var mutationType = MutationType.Changed;
 
 			// if column doesn't exisit create it and add it to the columns
@@ -122,7 +122,7 @@ namespace FluentCassandra
 				mutationType = MutationType.Added;
 
 				col = new FluentColumn<CompareWith>();
-				((FluentColumn<CompareWith>)col).Name = CassandraType.GetType<CompareWith>(name);
+				((FluentColumn<CompareWith>)col).ColumnName = CassandraType.GetType<CompareWith>(name);
 
 				_columns.SupressChangeNotification = true;
 				_columns.Add(col);
@@ -130,7 +130,7 @@ namespace FluentCassandra
 			}
 
 			// set the column value
-			col.Value = CassandraType.GetType<BytesType>(value);
+			col.ColumnValue = CassandraType.GetType<BytesType>(value);
 
 			// notify the tracker that the column has changed
 			OnColumnMutated(mutationType, col);

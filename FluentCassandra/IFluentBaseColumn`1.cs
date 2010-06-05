@@ -9,6 +9,6 @@ namespace FluentCassandra
 	public interface IFluentBaseColumn<CompareWith> : IFluentBaseColumn
 		where CompareWith : CassandraType
 	{
-		new CompareWith Name { get; }
+		new CompareWith ColumnName { get; }
 	}
 }

@@ -38,8 +38,8 @@ namespace FluentCassandra.Test
 		public void Constructor_Test()
 		{
 			// arrange
-			var col1 = new FluentColumn<AsciiType> { Name = "Test1", Value = 300M };
-			var col2 = new FluentColumn<AsciiType> { Name = "Test2", Value = "Hello" };
+			var col1 = new FluentColumn<AsciiType> { ColumnName = "Test1", ColumnValue = 300M };
+			var col2 = new FluentColumn<AsciiType> { ColumnName = "Test2", ColumnValue = "Hello" };
 
 			// act
 			var actual = new FluentColumnFamily<AsciiType>("Keyspace1", "Standard1");
@@ -77,8 +77,8 @@ namespace FluentCassandra.Test
 		public void Mutation()
 		{
 			// arrange
-			var col1 = new FluentColumn<AsciiType> { Name = "Test1", Value = 300M };
-			var col2 = new FluentColumn<AsciiType> { Name = "Test2", Value = "Hello" };
+			var col1 = new FluentColumn<AsciiType> { ColumnName = "Test1", ColumnValue = 300M };
+			var col2 = new FluentColumn<AsciiType> { ColumnName = "Test2", ColumnValue = "Hello" };
 
 			// act
 			var actual = new FluentColumnFamily<AsciiType>("Keyspace1", "Standard1");
@@ -91,8 +91,8 @@ namespace FluentCassandra.Test
 			Assert.AreEqual(2, mutations.Count());
 			Assert.AreEqual(2, mutations.Count(x => x.Type == MutationType.Added));
 
-			var mut1 = mutations.FirstOrDefault(x => x.Column.Name == "Test1");
-			var mut2 = mutations.FirstOrDefault(x => x.Column.Name == "Test2");
+			var mut1 = mutations.FirstOrDefault(x => x.Column.ColumnName == "Test1");
+			var mut2 = mutations.FirstOrDefault(x => x.Column.ColumnName == "Test2");
 
 			Assert.AreSame(col1, mut1.Column);
 			Assert.AreSame(col2, mut2.Column);
@@ -121,8 +121,8 @@ namespace FluentCassandra.Test
 			Assert.AreEqual(2, mutations.Count());
 			Assert.AreEqual(2, mutations.Count(x => x.Type == MutationType.Added));
 
-			var mut1 = mutations.FirstOrDefault(x => x.Column.Name == col1);
-			var mut2 = mutations.FirstOrDefault(x => x.Column.Name == col2);
+			var mut1 = mutations.FirstOrDefault(x => x.Column.ColumnName == col1);
+			var mut2 = mutations.FirstOrDefault(x => x.Column.ColumnName == col2);
 
 			Assert.IsNotNull(mut1);
 			Assert.IsNotNull(mut2);

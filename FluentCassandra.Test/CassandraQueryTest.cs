@@ -105,9 +105,9 @@ namespace FluentCassandra.Test
 
 			// assert
 			Assert.AreEqual(expectedCount, actual.Columns.Count);
-			Assert.AreEqual("Test1", (string)actual.Columns[0].Name);
-			Assert.AreEqual("Test2", (string)actual.Columns[1].Name);
-			Assert.AreEqual("Test3", (string)actual.Columns[2].Name);
+			Assert.AreEqual("Test1", (string)actual.Columns[0].ColumnName);
+			Assert.AreEqual("Test2", (string)actual.Columns[1].ColumnName);
+			Assert.AreEqual("Test3", (string)actual.Columns[2].ColumnName);
 		}
 
 		[TestMethod]
@@ -121,9 +121,9 @@ namespace FluentCassandra.Test
 
 			// assert
 			Assert.AreEqual(expectedCount, actual.Columns.Count);
-			Assert.AreEqual("Test3", (string)actual.Columns[0].Name);
-			Assert.AreEqual("Test2", (string)actual.Columns[1].Name);
-			Assert.AreEqual("Test1", (string)actual.Columns[2].Name);
+			Assert.AreEqual("Test3", (string)actual.Columns[0].ColumnName);
+			Assert.AreEqual("Test2", (string)actual.Columns[1].ColumnName);
+			Assert.AreEqual("Test1", (string)actual.Columns[2].ColumnName);
 		}
 
 		[TestMethod]
@@ -139,9 +139,9 @@ namespace FluentCassandra.Test
 			foreach (var actual in actualNotLoaded)
 			{
 				Assert.AreEqual(expectedCount, actual.Columns.Count);
-				Assert.AreEqual("Test1", (string)actual.Columns[0].Name);
-				Assert.AreEqual("Test2", (string)actual.Columns[1].Name);
-				Assert.AreEqual("Test3", (string)actual.Columns[2].Name);
+				Assert.AreEqual("Test1", (string)actual.Columns[0].ColumnName);
+				Assert.AreEqual("Test2", (string)actual.Columns[1].ColumnName);
+				Assert.AreEqual("Test3", (string)actual.Columns[2].ColumnName);
 			}
 		}
 	}
