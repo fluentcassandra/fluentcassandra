@@ -105,7 +105,7 @@ namespace FluentCassandra.Sandbox
 					var comments = commentsFamily.Get("first-blog-post")
 						.Reverse()
 						.Fetch(lastDate)
-						.Take(4)
+						.Take(3)
 						.FirstOrDefault();
 
 					foreach (dynamic comment in comments)
