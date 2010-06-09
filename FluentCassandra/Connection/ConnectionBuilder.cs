@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Apache.Cassandra;
 
 namespace FluentCassandra
 {
@@ -170,6 +171,42 @@ namespace FluentCassandra
 			}
 
 			#endregion
+
+			#region Read
+
+			if (!pairs.ContainsKey("Read"))
+			{
+				ReadConsistency = ConsistencyLevel.QUORUM;
+			}
+			else
+			{
+				ConsistencyLevel read;
+
+				if (!Enum.TryParse(pairs["Read"], out read))
+					ReadConsistency = ConsistencyLevel.QUORUM;
+
+				ReadConsistency = read;
+			}
+
+			#endregion
+
+			#region Write
+
+			if (!pairs.ContainsKey("Write"))
+			{
+				WriteConsistency = ConsistencyLevel.QUORUM;
+			}
+			else
+			{
+				ConsistencyLevel write;
+
+				if (!Enum.TryParse(pairs["Write"], out write))
+					WriteConsistency = ConsistencyLevel.QUORUM;
+
+				WriteConsistency = write;
+			}
+
+			#endregion
 		}
 
 		private string GetConnectionString()
@@ -183,6 +220,8 @@ namespace FluentCassandra
 			b.AppendFormat(format, "Pooled", Pooled);
 			b.AppendFormat(format, "PoolSize", PoolSize);
 			b.AppendFormat(format, "Lifetime", Lifetime);
+			b.AppendFormat(format, "Read", ReadConsistency);
+			b.AppendFormat(format, "Write", WriteConsistency);
 
 			return b.ToString();
 		}
@@ -211,6 +250,16 @@ namespace FluentCassandra
 		/// 
 		/// </summary>
 		public bool Pooled { get; private set; }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public ConsistencyLevel ReadConsistency { get; private set; }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public ConsistencyLevel WriteConsistency { get; private set; }
 
 		/// <summary>
 		/// 

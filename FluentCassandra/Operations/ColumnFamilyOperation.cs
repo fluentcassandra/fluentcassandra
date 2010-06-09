@@ -10,11 +10,8 @@ namespace FluentCassandra.Operations
 	{
 		public ColumnFamilyOperation()
 		{
-			ConsistencyLevel = Apache.Cassandra.ConsistencyLevel.ONE;
 			HasError = false;
 		}
-
-		public ConsistencyLevel ConsistencyLevel { get; set; }
 
 		public bool HasError { get; protected set; }
 

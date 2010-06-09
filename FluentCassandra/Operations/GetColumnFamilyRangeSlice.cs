@@ -32,7 +32,7 @@ namespace FluentCassandra.Operations
 				parent,
 				SlicePredicate.CreateSlicePredicate(),
 				KeyRange.CreateKeyRange(),
-				ConsistencyLevel
+				columnFamily.Context.ReadConsistency
 			);
 
 			foreach (var result in output)

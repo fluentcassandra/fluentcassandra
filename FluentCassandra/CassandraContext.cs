@@ -10,9 +10,6 @@ namespace FluentCassandra
 {
 	public class CassandraContext : IDisposable
 	{
-		private readonly IConnectionProvider _connectionProvider;
-		private readonly CassandraKeyspace _keyspace;
-
 		private IConnection _connection;
 
 		private IList<IFluentMutationTracker> _trackers;
@@ -49,38 +46,45 @@ namespace FluentCassandra
 		/// <param name="keyspace"></param>
 		/// <param name="connectionBuilder"></param>
 		public CassandraContext(string keyspace, ConnectionBuilder connectionBuilder)
-			: this(keyspace, ConnectionProviderFactory.Get(connectionBuilder)) { }
+			: this(keyspace, ConnectionProviderFactory.Get(connectionBuilder), connectionBuilder.ReadConsistency, connectionBuilder.WriteConsistency) { }
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="keyspace"></param>
 		/// <param name="connectionBuilder"></param>
-		public CassandraContext(string keyspace, IConnectionProvider connectionProvider)
+		public CassandraContext(string keyspace, IConnectionProvider connectionProvider, ConsistencyLevel read, ConsistencyLevel write)
 		{
 			if (String.IsNullOrEmpty(keyspace))
 				throw new ArgumentNullException("keyspace");
 
-			_connectionProvider = connectionProvider;
-			_keyspace = new CassandraKeyspace(keyspace, _connection);
+			ConnectionProvider = connectionProvider;
+			Keyspace = new CassandraKeyspace(keyspace, _connection);
+			ReadConsistency = read;
+			WriteConsistency = write;
+
 			_trackers = new List<IFluentMutationTracker>();
 		}
 
 		/// <summary>
 		/// Gets the database.
 		/// </summary>
-		public CassandraKeyspace Keyspace
-		{
-			get { return this._keyspace; }
-		}
+		public CassandraKeyspace Keyspace { get; private set; }
 
 		/// <summary>
 		/// Gets ConnectionProvider.
 		/// </summary>
-		public IConnectionProvider ConnectionProvider
-		{
-			get { return this._connectionProvider; }
-		}
+		public IConnectionProvider ConnectionProvider { get; private set; }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		internal ConsistencyLevel ReadConsistency { get; private set; }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		internal ConsistencyLevel WriteConsistency { get; private set; }
 
 		/// <summary>
 		/// 
@@ -89,7 +93,7 @@ namespace FluentCassandra
 		internal Cassandra.Client GetClient()
 		{
 			if (_connection == null || !_connection.IsOpen)
-				_connection = _connectionProvider.Open();
+				_connection = ConnectionProvider.Open();
 
 			return _connection.Client;
 		}
@@ -219,7 +223,7 @@ namespace FluentCassandra
 		protected virtual void Dispose(bool disposing)
 		{
 			if (!this._disposed && disposing && this._connection != null)
-				this._connectionProvider.Close(this._connection);
+				this.ConnectionProvider.Close(this._connection);
 
 			this._disposed = true;
 		}

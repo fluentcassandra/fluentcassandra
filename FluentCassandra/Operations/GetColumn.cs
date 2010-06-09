@@ -36,7 +36,7 @@ namespace FluentCassandra.Operations
 				columnFamily.Keyspace.KeyspaceName,
 				Key,
 				path,
-				ConsistencyLevel
+				columnFamily.Context.ReadConsistency
 			);
 
 			return (IFluentColumn<CompareWith>)ObjectHelper.ConvertToFluentBaseColumn<CompareWith, VoidType>(output);
@@ -81,7 +81,7 @@ namespace FluentCassandra.Operations
 				columnFamily.Keyspace.KeyspaceName,
 				Key,
 				path,
-				ConsistencyLevel
+				columnFamily.Context.ReadConsistency
 			);
 
 			return (IFluentSuperColumn<CompareWith, CompareSubcolumnWith>)ObjectHelper.ConvertToFluentBaseColumn<CompareWith, CompareSubcolumnWith>(output);

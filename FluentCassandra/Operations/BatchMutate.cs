@@ -51,7 +51,7 @@ namespace FluentCassandra.Operations
 			context.GetClient().batch_mutate(
 				context.Keyspace.KeyspaceName,
 				mutationMap,
-				ConsistencyLevel
+				context.WriteConsistency
 			);
 
 			return new Void();

@@ -41,7 +41,7 @@ namespace FluentCassandra.Operations
 				path,
 				ColumnValue,
 				Timestamp.UtcTicks,
-				ConsistencyLevel
+				columnFamily.Context.WriteConsistency
 			);
 
 			return new Void();

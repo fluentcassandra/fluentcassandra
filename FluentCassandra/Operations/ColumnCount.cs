@@ -32,7 +32,7 @@ namespace FluentCassandra.Operations
 				columnFamily.Keyspace.KeyspaceName,
 				Key,
 				parent,
-				ConsistencyLevel
+				columnFamily.Context.ReadConsistency
 			);
 
 			return result;

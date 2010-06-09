@@ -36,7 +36,7 @@ namespace FluentCassandra.Operations
 				Key,
 				path,
 				DateTimeOffset.Now.UtcTicks,
-				ConsistencyLevel
+				columnFamily.Context.WriteConsistency
 			);
 
 			return new Void();
@@ -80,7 +80,7 @@ namespace FluentCassandra.Operations
 				Key,
 				path,
 				DateTimeOffset.Now.UtcTicks,
-				ConsistencyLevel
+				columnFamily.Context.WriteConsistency
 			);
 
 			return new Void();
@@ -112,7 +112,7 @@ namespace FluentCassandra.Operations
 				Key,
 				path,
 				DateTimeOffset.UtcNow.Ticks,
-				ConsistencyLevel
+				columnFamily.Context.WriteConsistency
 			);
 
 			return new Void();
