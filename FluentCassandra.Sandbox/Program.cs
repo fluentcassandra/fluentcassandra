@@ -15,7 +15,7 @@ namespace FluentCassandra.Sandbox
 	{
 		private static void Main(string[] args)
 		{
-			using (var db = new CassandraContext(keyspace: "Blog", host: "localhost"))
+			using (var db = new CassandraContext(keyspace: "Blog", host: "192.168.1.155"))
 			{
 				var family = db.GetColumnFamily<UTF8Type, UTF8Type>("Posts");
 

@@ -60,7 +60,7 @@ namespace FluentCassandra
 					conn.Open();
 					break;
 				}
-				catch (SocketException)
+				catch (SocketException exc)
 				{
 					using (TimedLock.Lock(ActiveServers))
 					{

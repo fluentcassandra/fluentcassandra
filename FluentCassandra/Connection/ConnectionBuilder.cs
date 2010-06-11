@@ -25,6 +25,8 @@ namespace FluentCassandra
 			PoolSize = poolSize;
 			Lifetime = lifetime;
 			ConnectionString = GetConnectionString();
+			ReadConsistency = ConsistencyLevel.QUORUM;
+			WriteConsistency = ConsistencyLevel.QUORUM;
 		}
 
 		/// <summary>
