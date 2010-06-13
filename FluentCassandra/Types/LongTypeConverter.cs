@@ -10,7 +10,7 @@ namespace FluentCassandra.Types
 	{
 		public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
 		{
-			return sourceType == typeof(byte[]) || sourceType == typeof(long);
+			return sourceType == typeof(byte[]) || sourceType == typeof(long) || sourceType == typeof(int);
 		}
 
 		public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
@@ -21,7 +21,14 @@ namespace FluentCassandra.Types
 		public override object ConvertFrom(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value)
 		{
 			if (value is byte[])
-				return BitConverter.GetBytes((long)value);
+			{
+				var buffer = (byte[])value;
+				Array.Reverse(buffer);
+				return BitConverter.ToInt64(buffer, 0);
+			}
+
+			if (value is int)
+				return Convert.ToInt64((int)value);
 
 			if (value is long)
 				return (long)value;
@@ -35,7 +42,11 @@ namespace FluentCassandra.Types
 				return null;
 
 			if (destinationType == typeof(byte[]))
-				return BitConverter.GetBytes((long)value);
+			{
+				var buffer = BitConverter.GetBytes((long)value);
+				Array.Reverse(buffer);
+				return buffer;
+			}
 
 			if (destinationType == typeof(long))
 				return (long)value;

@@ -77,16 +77,21 @@ namespace FluentCassandra.Types
 			return type._value;
 		}
 
+		public static implicit operator byte[](LongType type)
+		{
+			return type.ToByteArray();
+		}
+
+		public static implicit operator LongType(int o)
+		{
+			return CassandraType.GetType<LongType>(o);
+		}
+
 		public static implicit operator LongType(long o)
 		{
 			return new LongType {
 				_value = o
 			};
-		}
-
-		public static implicit operator byte[](LongType type)
-		{
-			return type.ToByteArray();
 		}
 
 		#endregion

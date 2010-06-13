@@ -84,6 +84,35 @@ namespace FluentCassandra.Test
 		}
 
 		[TestMethod]
+		public void Implicit_Cast_From_Int32()
+		{
+			// arrange
+			int value = 300;
+			long expected = 300L;
+
+			// act
+			LongType actual = value;
+
+			// assert
+			Assert.AreEqual(expected, (long)actual);
+		}
+
+		[TestMethod]
+		public void Implicit_Cast_From_ByteArray()
+		{
+			// arrange
+			long expected = 300L;
+			byte[] value = BitConverter.GetBytes(expected);
+
+			// act
+			LongType actual = new LongType();
+			actual.SetValue(value);
+
+			// assert
+			Assert.AreEqual(expected, (long)actual);
+		}
+
+		[TestMethod]
 		public void Implicity_Cast_To_ByteArray()
 		{
 			// arrange
