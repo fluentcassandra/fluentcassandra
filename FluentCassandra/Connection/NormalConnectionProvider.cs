@@ -66,6 +66,7 @@ namespace FluentCassandra
 					{
 						Close(conn);
 						ActiveServers.Remove(conn.Server);
+						conn = null;
 					}
 				}
 			}
