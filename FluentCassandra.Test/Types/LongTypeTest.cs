@@ -103,6 +103,7 @@ namespace FluentCassandra.Test
 			// arrange
 			long expected = 300L;
 			byte[] value = BitConverter.GetBytes(expected);
+			Array.Reverse(value); // put them to Java byte format
 
 			// act
 			LongType actual = new LongType();
@@ -118,6 +119,7 @@ namespace FluentCassandra.Test
 			// arrange
 			long value = 300L;
 			byte[] expected = BitConverter.GetBytes(value);
+			Array.Reverse(expected); // put them to Java byte format
 			LongType type = value;
 
 			// act

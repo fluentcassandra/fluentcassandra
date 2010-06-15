@@ -10,7 +10,14 @@ namespace FluentCassandra
 {
 	public class CassandraContext : IDisposable
 	{
-		private IConnection _connection;
+		[ThreadStatic]
+		private static ConnectionBuilder _currentConnectionBuilder;
+
+		public static ConnectionBuilder CurrentConnectionBuilder
+		{
+			get { return _currentConnectionBuilder; }
+			internal set { _currentConnectionBuilder = value; }
+		}
 
 		private IList<IFluentMutationTracker> _trackers;
 		private bool _disposed;
@@ -46,23 +53,13 @@ namespace FluentCassandra
 		/// <param name="keyspace"></param>
 		/// <param name="connectionBuilder"></param>
 		public CassandraContext(string keyspace, ConnectionBuilder connectionBuilder)
-			: this(keyspace, ConnectionProviderFactory.Get(connectionBuilder), connectionBuilder.ReadConsistency, connectionBuilder.WriteConsistency) { }
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="keyspace"></param>
-		/// <param name="connectionBuilder"></param>
-		public CassandraContext(string keyspace, IConnectionProvider connectionProvider, ConsistencyLevel read, ConsistencyLevel write)
 		{
 			if (String.IsNullOrEmpty(keyspace))
 				throw new ArgumentNullException("keyspace");
 
-			ConnectionProvider = connectionProvider;
-			Keyspace = new CassandraKeyspace(keyspace, _connection);
-			ReadConsistency = read;
-			WriteConsistency = write;
-
+			Keyspace = new CassandraKeyspace(keyspace);
+			CurrentConnectionBuilder = connectionBuilder;
+			
 			_trackers = new List<IFluentMutationTracker>();
 		}
 
@@ -70,33 +67,6 @@ namespace FluentCassandra
 		/// Gets the database.
 		/// </summary>
 		public CassandraKeyspace Keyspace { get; private set; }
-
-		/// <summary>
-		/// Gets ConnectionProvider.
-		/// </summary>
-		public IConnectionProvider ConnectionProvider { get; private set; }
-
-		/// <summary>
-		/// 
-		/// </summary>
-		internal ConsistencyLevel ReadConsistency { get; private set; }
-
-		/// <summary>
-		/// 
-		/// </summary>
-		internal ConsistencyLevel WriteConsistency { get; private set; }
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
-		internal Cassandra.Client GetClient()
-		{
-			if (_connection == null || !_connection.IsOpen)
-				_connection = ConnectionProvider.Open();
-
-			return _connection.Client;
-		}
 
 		/// <summary>
 		/// Gets a typed column family.
@@ -190,18 +160,30 @@ namespace FluentCassandra
 		/// <returns></returns>
 		public TResult ExecuteOperation<TResult>(ContextOperation<TResult> action, bool throwOnError)
 		{
-			LastError = null;
+			CassandraSession _localSession = null;
+			if (CassandraSession.Current == null)
+				_localSession = new CassandraSession();
 
-			TResult result;
-			bool success = action.TryExecute(this, out result);
+			try
+			{
+				LastError = null;
+	
+				TResult result;
+				bool success = action.TryExecute(this, out result);
 
-			if (!success)
-				LastError = action.Error;
+				if (!success)
+					LastError = action.Error;
 
-			if (!success && throwOnError)
-				throw action.Error;
+				if (!success && throwOnError)
+					throw action.Error;
 
-			return result;
+				return result;
+			}
+			finally
+			{
+				if (_localSession != null)
+					_localSession.Dispose();
+			}
 		}
 
 		#region IDisposable Members
@@ -222,8 +204,8 @@ namespace FluentCassandra
 		/// </param>
 		protected virtual void Dispose(bool disposing)
 		{
-			if (!this._disposed && disposing && this._connection != null)
-				this.ConnectionProvider.Close(this._connection);
+			if (!this._disposed && disposing && CassandraSession.Current != null)
+				CassandraSession.Current = null;
 
 			this._disposed = true;
 		}

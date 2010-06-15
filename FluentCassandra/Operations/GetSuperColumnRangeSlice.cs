@@ -26,30 +26,42 @@ namespace FluentCassandra.Operations
 
 		private IEnumerable<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>> GetFamilies(BaseCassandraColumnFamily columnFamily)
 		{
-			var parent = new ColumnParent {
-				Column_family = columnFamily.FamilyName
-			};
+			CassandraSession _localSession = null;
+			if (CassandraSession.Current == null)
+				_localSession = new CassandraSession();
 
-			if (SuperColumnName != null)
-				parent.Super_column = SuperColumnName;
-
-			var output = columnFamily.GetClient().get_range_slices(
-				columnFamily.Keyspace.KeyspaceName,
-				parent,
-				SlicePredicate.CreateSlicePredicate(),
-				KeyRange.CreateKeyRange(),
-				columnFamily.Context.ReadConsistency
-			);
-
-			foreach (var result in output)
+			try
 			{
-				var r = new FluentSuperColumn<CompareWith, CompareSubcolumnWith>(result.Columns.Select(col => {
-					return ObjectHelper.ConvertColumnToFluentColumn<CompareSubcolumnWith>(col.Column);
-				}));
-				columnFamily.Context.Attach(r);
-				r.MutationTracker.Clear();
+				var parent = new ColumnParent {
+					Column_family = columnFamily.FamilyName
+				};
 
-				yield return r;
+				if (SuperColumnName != null)
+					parent.Super_column = SuperColumnName;
+
+				var output = CassandraSession.Current.GetClient().get_range_slices(
+					columnFamily.Keyspace.KeyspaceName,
+					parent,
+					SlicePredicate.CreateSlicePredicate(),
+					KeyRange.CreateKeyRange(),
+					CassandraSession.Current.ReadConsistency
+				);
+
+				foreach (var result in output)
+				{
+					var r = new FluentSuperColumn<CompareWith, CompareSubcolumnWith>(result.Columns.Select(col => {
+						return ObjectHelper.ConvertColumnToFluentColumn<CompareSubcolumnWith>(col.Column);
+					}));
+					columnFamily.Context.Attach(r);
+					r.MutationTracker.Clear();
+
+					yield return r;
+				}
+			}
+			finally
+			{
+				if (_localSession != null)
+					_localSession.Dispose();
 			}
 		}
 

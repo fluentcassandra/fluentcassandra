@@ -24,31 +24,43 @@ namespace FluentCassandra.Operations
 
 		private IEnumerable<IFluentSuperColumnFamily<CompareWith, CompareSubcolumnWith>> GetFamilies(BaseCassandraColumnFamily columnFamily)
 		{
-			var parent = new ColumnParent {
-				Column_family = columnFamily.FamilyName
-			};
+			CassandraSession _localSession = null;
+			if (CassandraSession.Current == null)
+				_localSession = new CassandraSession();
 
-			var output = columnFamily.GetClient().multiget_slice(
-				columnFamily.Keyspace.KeyspaceName,
-				Keys,
-				parent,
-				SlicePredicate.CreateSlicePredicate(),
-				columnFamily.Context.ReadConsistency
-			);
-
-			foreach (var result in output)
+			try
 			{
-				var r = new FluentSuperColumnFamily<CompareWith, CompareSubcolumnWith>(result.Key, columnFamily.FamilyName, result.Value.Select(col => {
-					var superCol = ObjectHelper.ConvertSuperColumnToFluentSuperColumn<CompareWith, CompareSubcolumnWith>(col.Super_column);
-					columnFamily.Context.Attach(superCol);
-					superCol.MutationTracker.Clear();
+				var parent = new ColumnParent {
+					Column_family = columnFamily.FamilyName
+				};
 
-					return superCol;
-				}));
-				columnFamily.Context.Attach(r);
-				r.MutationTracker.Clear();
+				var output = CassandraSession.Current.GetClient().multiget_slice(
+					columnFamily.Keyspace.KeyspaceName,
+					Keys,
+					parent,
+					SlicePredicate.CreateSlicePredicate(),
+					CassandraSession.Current.ReadConsistency
+				);
 
-				yield return r;
+				foreach (var result in output)
+				{
+					var r = new FluentSuperColumnFamily<CompareWith, CompareSubcolumnWith>(result.Key, columnFamily.FamilyName, result.Value.Select(col => {
+						var superCol = ObjectHelper.ConvertSuperColumnToFluentSuperColumn<CompareWith, CompareSubcolumnWith>(col.Super_column);
+						columnFamily.Context.Attach(superCol);
+						superCol.MutationTracker.Clear();
+
+						return superCol;
+					}));
+					columnFamily.Context.Attach(r);
+					r.MutationTracker.Clear();
+
+					yield return r;
+				}
+			}
+			finally
+			{
+				if (_localSession != null)
+					_localSession.Dispose();
 			}
 		}
 

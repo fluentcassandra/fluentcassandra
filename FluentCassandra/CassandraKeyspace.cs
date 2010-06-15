@@ -11,25 +11,15 @@ namespace FluentCassandra
 	public class CassandraKeyspace
 	{
 		private readonly string _keyspaceName;
-		private readonly IConnection _connection;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="keyspaceName"></param>
 		/// <param name="connecton"></param>
-		public CassandraKeyspace(string keyspaceName, IConnection connecton)
+		public CassandraKeyspace(string keyspaceName)
 		{
 			_keyspaceName = keyspaceName;
-			_connection = connecton;
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		public IConnection Connection
-		{
-			get { return _connection; }
 		}
 
 		/// <summary>

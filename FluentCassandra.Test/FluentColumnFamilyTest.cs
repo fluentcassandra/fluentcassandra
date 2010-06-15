@@ -74,6 +74,24 @@ namespace FluentCassandra.Test
 		}
 
 		[TestMethod]
+		public void Get_NonExistent_Column()
+		{
+			// arrange
+			var colValue1 = 300M;
+			var colValue2 = "Hello";
+			string expected = null;
+
+			// act
+			dynamic family = new FluentColumnFamily<AsciiType>("Keyspace1", "Standard1");
+			family.Test1 = colValue1;
+			family.Test2 = colValue2;
+			var actual = family.Test3;
+
+			// assert
+			Assert.AreEqual(expected, actual);
+		}
+
+		[TestMethod]
 		public void Mutation()
 		{
 			// arrange

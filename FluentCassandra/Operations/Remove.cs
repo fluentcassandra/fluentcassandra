@@ -31,12 +31,12 @@ namespace FluentCassandra.Operations
 			if (ColumnName != null)
 				path.Column = ColumnName;
 
-			columnFamily.GetClient().remove(
+			CassandraSession.Current.GetClient().remove(
 				columnFamily.Keyspace.KeyspaceName,
 				Key,
 				path,
 				DateTimeOffset.Now.UtcTicks,
-				columnFamily.Context.WriteConsistency
+				CassandraSession.Current.WriteConsistency
 			);
 
 			return new Void();
@@ -75,12 +75,12 @@ namespace FluentCassandra.Operations
 			if (SuperColumnName != null)
 				path.Super_column = SuperColumnName;
 
-			columnFamily.GetClient().remove(
+			CassandraSession.Current.GetClient().remove(
 				columnFamily.Keyspace.KeyspaceName,
 				Key,
 				path,
 				DateTimeOffset.Now.UtcTicks,
-				columnFamily.Context.WriteConsistency
+				CassandraSession.Current.WriteConsistency
 			);
 
 			return new Void();
@@ -107,12 +107,12 @@ namespace FluentCassandra.Operations
 				Column_family = columnFamily.FamilyName
 			};
 
-			columnFamily.GetClient().remove(
+			CassandraSession.Current.GetClient().remove(
 				columnFamily.Keyspace.KeyspaceName,
 				Key,
 				path,
 				DateTimeOffset.UtcNow.Ticks,
-				columnFamily.Context.WriteConsistency
+				CassandraSession.Current.WriteConsistency
 			);
 
 			return new Void();

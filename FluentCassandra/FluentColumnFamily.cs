@@ -101,8 +101,9 @@ namespace FluentCassandra
 		{
 			var col = Columns.FirstOrDefault(c => c.ColumnName == name);
 
-			result = (col == null) ? null : col.ColumnValue;
-			return col != null;
+			result = (col == null) ? (CassandraType)NullType.Value : (CassandraType)col.ColumnValue;
+			//return col != null;
+			return true;
 		}
 
 		/// <summary>

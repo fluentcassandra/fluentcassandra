@@ -32,11 +32,11 @@ namespace FluentCassandra.Operations
 			if (ColumnName != null)
 				path.Column = ColumnName;
 
-			var output = columnFamily.GetClient().get(
+			var output = CassandraSession.Current.GetClient().get(
 				columnFamily.Keyspace.KeyspaceName,
 				Key,
 				path,
-				columnFamily.Context.ReadConsistency
+				CassandraSession.Current.ReadConsistency
 			);
 
 			return (IFluentColumn<CompareWith>)ObjectHelper.ConvertToFluentBaseColumn<CompareWith, VoidType>(output);
@@ -77,11 +77,11 @@ namespace FluentCassandra.Operations
 			if (SuperColumnName != null)
 				path.Super_column = SuperColumnName;
 
-			var output = columnFamily.GetClient().get(
+			var output = CassandraSession.Current.GetClient().get(
 				columnFamily.Keyspace.KeyspaceName,
 				Key,
 				path,
-				columnFamily.Context.ReadConsistency
+				CassandraSession.Current.ReadConsistency
 			);
 
 			return (IFluentSuperColumn<CompareWith, CompareSubcolumnWith>)ObjectHelper.ConvertToFluentBaseColumn<CompareWith, CompareSubcolumnWith>(output);

@@ -79,6 +79,26 @@ namespace FluentCassandra.Test
 		}
 
 		[TestMethod]
+		public void Get_NonExistent_Column()
+		{
+			// arrange
+			var colName = "This is a test name";
+			var colValue1 = 300M;
+			var colValue2 = "Hello";
+			string expected = null;
+
+			// act
+			dynamic superColumn = new FluentSuperColumn<AsciiType, AsciiType>();
+			superColumn.Name = colName;
+			superColumn.Test1 = colValue1;
+			superColumn.Test2 = colValue2;
+			var actual = superColumn.Test3;
+
+			// assert
+			Assert.AreEqual(expected, actual);
+		}
+
+		[TestMethod]
 		public void Mutation()
 		{
 			// arrange

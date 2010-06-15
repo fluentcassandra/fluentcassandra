@@ -103,8 +103,9 @@ namespace FluentCassandra
 		{
 			var col = Columns.FirstOrDefault(c => c.ColumnName == name);
 
-			result = col;
-			return col != null;
+			result = (col == null) ? CreateSuperColumn() : col;
+			//return col != null;
+			return true;
 		}
 
 		/// <summary>

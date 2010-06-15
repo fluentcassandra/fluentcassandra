@@ -48,10 +48,10 @@ namespace FluentCassandra.Operations
 			}
 
 			// Dictionary<string : key, Dicationary<string : columnFamily, List<Mutation>>>
-			context.GetClient().batch_mutate(
+			CassandraSession.Current.GetClient().batch_mutate(
 				context.Keyspace.KeyspaceName,
 				mutationMap,
-				context.WriteConsistency
+				CassandraSession.Current.WriteConsistency
 			);
 
 			return new Void();

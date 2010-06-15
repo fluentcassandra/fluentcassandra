@@ -35,13 +35,13 @@ namespace FluentCassandra.Operations
 			if (SuperColumnName != null)
 				path.Super_column = SuperColumnName;
 
-			columnFamily.GetClient().insert(
+			CassandraSession.Current.GetClient().insert(
 				columnFamily.Keyspace.KeyspaceName,
 				Key,
 				path,
 				ColumnValue,
 				Timestamp.UtcTicks,
-				columnFamily.Context.WriteConsistency
+				CassandraSession.Current.WriteConsistency
 			);
 
 			return new Void();

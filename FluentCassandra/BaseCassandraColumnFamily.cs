@@ -48,15 +48,6 @@ namespace FluentCassandra
 		public CassandraException LastError { get; private set; }
 
 		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
-		internal Cassandra.Client GetClient()
-		{
-			return _context.GetClient();
-		}
-
-		/// <summary>
 		/// Verifies that the family passed in is part of this family.
 		/// </summary>
 		/// <param name="family"></param>
@@ -86,18 +77,30 @@ namespace FluentCassandra
 		/// <returns></returns>
 		public TResult ExecuteOperation<TResult>(ColumnFamilyOperation<TResult> action, bool throwOnError)
 		{
-			LastError = null;
+			CassandraSession _localSession = null;
+			if (CassandraSession.Current == null)
+				_localSession = new CassandraSession();
 
-			TResult result;
-			bool success = action.TryExecute(this, out result);
+			try
+			{
+				LastError = null;
 
-			if (!success)
-				LastError = action.Error;
+				TResult result;
+				bool success = action.TryExecute(this, out result);
 
-			if (!success && throwOnError)
-				throw action.Error;
+				if (!success)
+					LastError = action.Error;
 
-			return result;
+				if (!success && throwOnError)
+					throw action.Error;
+
+				return result;
+			}
+			finally
+			{
+				if (_localSession != null)
+					_localSession.Dispose();
+			}
 		}
 
 		#region ICassandraQueryProvider Members

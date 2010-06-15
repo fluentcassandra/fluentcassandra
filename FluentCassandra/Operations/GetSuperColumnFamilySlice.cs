@@ -30,25 +30,37 @@ namespace FluentCassandra.Operations
 
 		private IEnumerable<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>> GetColumns(BaseCassandraColumnFamily columnFamily)
 		{
-			var parent = new ColumnParent {
-				Column_family = columnFamily.FamilyName
-			};
+			CassandraSession _localSession = null;
+			if (CassandraSession.Current == null)
+				_localSession = new CassandraSession();
 
-			var output = columnFamily.GetClient().get_slice(
-				columnFamily.Keyspace.KeyspaceName,
-				Key,
-				parent,
-				SlicePredicate.CreateSlicePredicate(),
-				columnFamily.Context.ReadConsistency
-			);
-
-			foreach (var result in output)
+			try
 			{
-				var r = ObjectHelper.ConvertSuperColumnToFluentSuperColumn<CompareWith, CompareSubcolumnWith>(result.Super_column);
-				columnFamily.Context.Attach(r);
-				r.MutationTracker.Clear();
+				var parent = new ColumnParent {
+					Column_family = columnFamily.FamilyName
+				};
 
-				yield return r;
+				var output = CassandraSession.Current.GetClient().get_slice(
+					columnFamily.Keyspace.KeyspaceName,
+					Key,
+					parent,
+					SlicePredicate.CreateSlicePredicate(),
+					CassandraSession.Current.ReadConsistency
+				);
+
+				foreach (var result in output)
+				{
+					var r = ObjectHelper.ConvertSuperColumnToFluentSuperColumn<CompareWith, CompareSubcolumnWith>(result.Super_column);
+					columnFamily.Context.Attach(r);
+					r.MutationTracker.Clear();
+
+					yield return r;
+				}
+			}
+			finally
+			{
+				if (_localSession != null)
+					_localSession.Dispose();
 			}
 		}
 

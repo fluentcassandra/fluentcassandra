@@ -74,6 +74,23 @@ namespace FluentCassandra.Test
 		}
 
 		[TestMethod]
+		public void Get_NonExistent_Column()
+		{
+			// arrange
+			var col1 = new FluentSuperColumn<AsciiType, AsciiType> { ColumnName = "Test1" };
+			var col2 = new FluentSuperColumn<AsciiType, AsciiType> { ColumnName = "Test2" };
+
+			// act
+			dynamic family = new FluentSuperColumnFamily<AsciiType, AsciiType>("Keyspace1", "Standard1");
+			family.Test1 = col1;
+			family.Test2 = col2;
+			var actual = family.Test3;
+
+			// assert
+			Assert.IsInstanceOfType(actual, typeof(IFluentSuperColumn));
+		}
+
+		[TestMethod]
 		public void Mutation()
 		{
 			// arrange

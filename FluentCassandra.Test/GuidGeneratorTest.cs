@@ -41,7 +41,7 @@ namespace FluentCassandra.Test
 		public void GetDateTime()
 		{
 			// arrange
-			var expected = new DateTime(1980, 3, 14, 12, 23, 42, 112);
+			var expected = new DateTime(1980, 3, 14, 12, 23, 42, 112, DateTimeKind.Utc);
 			var guid = GuidGenerator.GenerateTimeBasedGuid(expected);
 
 			// act

@@ -30,6 +30,15 @@ namespace FluentCassandra
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <returns></returns>
+		public override IEnumerable<string> GetDynamicMemberNames()
+		{
+			return Columns.Select(x => x.ColumnName.GetValue<string>());
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="binder"></param>
 		/// <param name="result"></param>
 		/// <returns></returns>
