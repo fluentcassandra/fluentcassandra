@@ -16,6 +16,9 @@ namespace FluentCassandra.Types
 			if (sourceType == typeof(DateTimeOffset))
 				return true;
 
+			if (sourceType == typeof(byte[]))
+				return true;
+
 			switch (Type.GetTypeCode(sourceType))
 			{
 				case TypeCode.Byte:
@@ -48,6 +51,9 @@ namespace FluentCassandra.Types
 			if (destinationType == typeof(DateTimeOffset))
 				return true;
 
+			if (destinationType == typeof(byte[]))
+				return true;
+
 			switch (Type.GetTypeCode(destinationType))
 			{
 				case TypeCode.Byte:
@@ -74,6 +80,9 @@ namespace FluentCassandra.Types
 
 		public override object ConvertFrom(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value)
 		{
+			if (value is byte[])
+				return (byte[])value;
+
 			if (value is Guid)
 				return ((Guid)value).ToByteArray();
 
@@ -123,6 +132,9 @@ namespace FluentCassandra.Types
 				return null;
 
 			byte[] bytes = (byte[])value;
+
+			if (destinationType == typeof(byte[]))
+				return bytes;
 
 			if (destinationType == typeof(Guid))
 				return new Guid(bytes);

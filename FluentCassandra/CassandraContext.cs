@@ -148,7 +148,7 @@ namespace FluentCassandra
 		/// <returns></returns>
 		public TResult ExecuteOperation<TResult>(ContextOperation<TResult> action)
 		{
-			return ExecuteOperation<TResult>(action, false);
+			return ExecuteOperation<TResult>(action, true);
 		}
 
 		/// <summary>

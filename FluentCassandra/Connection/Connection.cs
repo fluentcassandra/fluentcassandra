@@ -76,6 +76,9 @@ namespace FluentCassandra
 		/// </summary>
 		public void Open()
 		{
+			if (IsOpen)
+				return;
+
 			_transport.Open();
 		}
 
@@ -84,6 +87,9 @@ namespace FluentCassandra
 		/// </summary>
 		public void Close()
 		{
+			if (!IsOpen)
+				return;
+
 			_transport.Close();
 		}
 
