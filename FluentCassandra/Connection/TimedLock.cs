@@ -71,9 +71,7 @@ namespace FluentCassandra
 				throw new LockTimeoutException();
 #endif
 			}
-
 #if DEBUG
-
 
 			// Lock acquired. Store the stack trace.
 			var trace = new StackTrace();

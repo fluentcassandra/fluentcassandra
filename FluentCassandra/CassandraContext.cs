@@ -112,16 +112,21 @@ namespace FluentCassandra
 		/// </summary>
 		public void SaveChanges()
 		{
-			var mutations = new List<FluentMutation>();
+			using (TimedLock.Lock(_trackers))
+			{
+				var mutations = new List<FluentMutation>();
 
-			foreach (var tracker in _trackers)
-				mutations.AddRange(tracker.GetMutations());
+				foreach (var tracker in _trackers)
+					mutations.AddRange(tracker.GetMutations());
 
-			var op = new BatchMutate(mutations);
-			ExecuteOperation(op);
+				var op = new BatchMutate(mutations);
+				ExecuteOperation(op);
 
-			foreach (var tracker in _trackers)
-				tracker.Clear();
+				foreach (var tracker in _trackers)
+					tracker.Clear();
+
+				_trackers.Clear();
+			}
 		}
 
 		/// <summary>
