@@ -12,16 +12,18 @@ namespace FluentCassandra
 
 		public static IConnectionProvider Get(ConnectionBuilder connectionBuilder)
 		{
-			IConnectionProvider provider;
-
-			if (!_providers.TryGetValue(connectionBuilder.ConnectionString, out provider))
-				using (TimedLock.Lock(_lock))
+			using (TimedLock.Lock(_lock))
+			{
+				IConnectionProvider provider;
+	
+				if (!_providers.TryGetValue(connectionBuilder.ConnectionString, out provider))
 				{
 					provider = CreateProvider(connectionBuilder);
 					_providers.Add(connectionBuilder.ConnectionString, provider);
 				}
 
-			return provider;
+				return provider;
+			}
 		}
 
 		private static IConnectionProvider CreateProvider(ConnectionBuilder builder)
