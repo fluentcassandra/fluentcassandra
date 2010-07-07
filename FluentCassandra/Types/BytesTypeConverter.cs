@@ -122,7 +122,7 @@ namespace FluentCassandra.Types
 				case TypeCode.String:
 					return Encoding.UTF8.GetBytes((string)value);
 				default:
-					throw new NotSupportedException(value.GetType() + " is not supported for binary serialization.");
+					return null;
 			}
 		}
 
@@ -175,7 +175,7 @@ namespace FluentCassandra.Types
 				case TypeCode.String:
 					return Encoding.UTF8.GetString(bytes);
 				default:
-					throw new NotSupportedException(destinationType + " is not supported for binary serialization.");
+					return null;
 			}
 		}
 

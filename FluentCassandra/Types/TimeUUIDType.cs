@@ -16,6 +16,12 @@ namespace FluentCassandra.Types
 		{
 			var converter = Converter;
 
+			if (type.IsGenericType && type.GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
+			{
+				var nc = new NullableConverter(type);
+				type = nc.UnderlyingType;
+			}
+
 			if (!converter.CanConvertTo(type))
 				throw new InvalidCastException(type + " cannot be cast to " + TypeCode);
 
@@ -72,10 +78,14 @@ namespace FluentCassandra.Types
 
 		#region Conversion
 
-		public static implicit operator Guid(TimeUUIDType type)
-		{
-			return type._value;
-		}
+		public static implicit operator Guid(TimeUUIDType type) { return type._value; }
+		public static implicit operator Guid?(TimeUUIDType type) { return type._value; }
+
+		public static implicit operator DateTime(TimeUUIDType type) { return GuidGenerator.GetDateTime(type._value); }
+		public static implicit operator DateTime?(TimeUUIDType type) { return GuidGenerator.GetDateTime(type._value); }
+
+		public static implicit operator DateTimeOffset(TimeUUIDType type) { return GuidGenerator.GetDateTimeOffset(type._value); }
+		public static implicit operator DateTimeOffset?(TimeUUIDType type) { return GuidGenerator.GetDateTimeOffset(type._value); }
 
 		public static implicit operator TimeUUIDType(DateTime o)
 		{

@@ -16,6 +16,12 @@ namespace FluentCassandra.Types
 		{
 			var converter = Converter;
 
+			if (type.IsGenericType && type.GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
+			{
+				var nc = new NullableConverter(type);
+				type = nc.UnderlyingType;
+			}
+
 			if (!converter.CanConvertTo(type))
 				throw new InvalidCastException(type + " cannot be cast to " + TypeCode);
 
@@ -117,6 +123,24 @@ namespace FluentCassandra.Types
 		public static implicit operator Guid(BytesType o) { return ConvertTo<Guid>(o); }
 		public static implicit operator DateTime(BytesType o) { return ConvertTo<DateTime>(o); }
 		public static implicit operator DateTimeOffset(BytesType o) { return ConvertTo<DateTimeOffset>(o); }
+
+		public static implicit operator byte?(BytesType o) { return ConvertTo<byte>(o); }
+		public static implicit operator sbyte?(BytesType o) { return ConvertTo<sbyte>(o); }
+		public static implicit operator short?(BytesType o) { return ConvertTo<short>(o); }
+		public static implicit operator ushort?(BytesType o) { return ConvertTo<ushort>(o); }
+		public static implicit operator int?(BytesType o) { return ConvertTo<int>(o); }
+		public static implicit operator uint?(BytesType o) { return ConvertTo<uint>(o); }
+		public static implicit operator long?(BytesType o) { return ConvertTo<long>(o); }
+		public static implicit operator ulong?(BytesType o) { return ConvertTo<ulong>(o); }
+		public static implicit operator float?(BytesType o) { return ConvertTo<float>(o); }
+		public static implicit operator double?(BytesType o) { return ConvertTo<double>(o); }
+		public static implicit operator decimal?(BytesType o) { return ConvertTo<decimal>(o); }
+		public static implicit operator bool?(BytesType o) { return ConvertTo<bool>(o); }
+		//public static implicit operator string(BytesType o) { return ConvertTo<string>(o); }
+		public static implicit operator char?(BytesType o) { return ConvertTo<char>(o); }
+		public static implicit operator Guid?(BytesType o) { return ConvertTo<Guid>(o); }
+		public static implicit operator DateTime?(BytesType o) { return ConvertTo<DateTime>(o); }
+		public static implicit operator DateTimeOffset?(BytesType o) { return ConvertTo<DateTimeOffset>(o); }
 
 		private static T ConvertTo<T>(BytesType type)
 		{

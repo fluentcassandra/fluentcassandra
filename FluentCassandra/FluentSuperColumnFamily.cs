@@ -70,6 +70,17 @@ namespace FluentCassandra
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <returns></returns>
+		public IFluentSuperColumn<CompareWith, CompareSubcolumnWith> CreateSuperColumn(CompareWith name)
+		{
+			return new FluentSuperColumn<CompareWith, CompareSubcolumnWith> {
+				ColumnName = name
+			};
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
 		public override IList<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>> Columns
 		{
 			get { return _columns; }
@@ -103,7 +114,7 @@ namespace FluentCassandra
 		{
 			var col = Columns.FirstOrDefault(c => c.ColumnName == name);
 
-			result = (col == null) ? CreateSuperColumn() : col;
+			result = (col == null) ? CreateSuperColumn(CassandraType.GetType<CompareWith>(name)) : col;
 			//return col != null;
 			return true;
 		}

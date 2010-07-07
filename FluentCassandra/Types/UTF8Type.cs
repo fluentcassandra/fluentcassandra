@@ -16,6 +16,12 @@ namespace FluentCassandra.Types
 		{
 			var converter = Converter;
 
+			if (type.IsGenericType && type.GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
+			{
+				var nc = new NullableConverter(type);
+				type = nc.UnderlyingType;
+			}
+
 			if (!converter.CanConvertTo(type))
 				throw new InvalidCastException(type + " cannot be cast to " + TypeCode);
 
