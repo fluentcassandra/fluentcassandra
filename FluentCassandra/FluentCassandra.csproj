@@ -82,6 +82,7 @@
     <Compile Include="CassandraSession.cs" />
     <Compile Include="CassandraSuperColumnFamilyOperations.cs" />
     <Compile Include="CassandraSuperColumnFamily`1.cs" />
+    <Compile Include="CassandraTokenRange.cs" />
     <Compile Include="Configuration\CassandraConfiguration.cs" />
     <Compile Include="Configuration\CassandraConfigurationContainer.cs" />
     <Compile Include="Configuration\CassandraConfigurationMap.cs" />

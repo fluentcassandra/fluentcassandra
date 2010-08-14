@@ -29,5 +29,29 @@ namespace FluentCassandra
 		{
 			get { return _keyspaceName; }
 		}
+
+		#region Cassandra Descriptions For Server
+
+		public IEnumerable<CassandraTokenRange> DescribeRingFor(Server server)
+		{
+			using (var session = new CassandraSession(server))
+			{
+				var tokenRanges = session.GetClient().describe_ring(KeyspaceName);
+
+				foreach (var tokenRange in tokenRanges)
+					yield return new CassandraTokenRange(tokenRange.Start_token, tokenRange.End_token, tokenRange.Endpoints);
+			}
+		}
+
+		public IDictionary<string, Dictionary<string, string>> DescribeFor(Server server)
+		{
+			using (var session = new CassandraSession(server))
+			{
+				var desc = session.GetClient().describe_keyspace(KeyspaceName);
+				return desc;
+			}
+		}
+
+		#endregion
 	}
 }

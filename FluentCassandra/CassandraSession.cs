@@ -17,6 +17,47 @@ namespace FluentCassandra
 			internal set { _current = value; }
 		}
 
+		#region Cassandra Descriptions For Server
+
+		public static IEnumerable<CassandraKeyspace> DescribeKeyspacesFor(Server server)
+		{
+			using (var session = new CassandraSession(server))
+			{
+				IEnumerable<string> keyspaces = session.GetClient().describe_keyspaces();
+
+				foreach (var keyspace in keyspaces)
+					yield return new CassandraKeyspace(keyspace);
+			}
+		}
+
+		public static string DescribeClusterNameFor(Server server)
+		{
+			using (var session = new CassandraSession(server))
+			{
+				string response = session.GetClient().describe_cluster_name();
+				return response;
+			}
+		}
+
+		public static string DescribeVersionFor(Server server)
+		{
+			using (var session = new CassandraSession(server))
+			{
+				string response = session.GetClient().describe_version();
+				return response;
+			}
+		}
+
+		public static string DescribePartitionerFor(Server server)
+		{
+			using (var session = new CassandraSession(server))
+			{
+				string response = session.GetClient().describe_partitioner();
+				return response;
+			}
+		}
+
+		#endregion
 
 		private bool _disposed;
 		private IConnection _connection;
@@ -40,6 +81,12 @@ namespace FluentCassandra
 			WriteConsistency = write;
 
 			Current = this;
+		}
+
+		public CassandraSession(Server server)
+			: this()
+		{
+			_connection = new Connection(server);
 		}
 
 		/// <summary>
