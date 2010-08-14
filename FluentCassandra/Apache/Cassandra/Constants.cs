@@ -15,6 +15,6 @@ namespace Apache.Cassandra
 {
   public class Constants
   {
-    public static string VERSION = "2.1.0";
+    public static string VERSION = "2.2.0";
   }
 }

@@ -223,66 +223,7 @@
     <Compile Include="Types\UTF8Type.cs" />
     <Compile Include="Types\VoidType.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="Thrift\Collections\.svn\all-wcprops" />
-    <None Include="Thrift\Collections\.svn\entries" />
-    <None Include="Thrift\Collections\.svn\text-base\THashSet.cs.svn-base" />
-    <None Include="Thrift\Protocol\.svn\all-wcprops" />
-    <None Include="Thrift\Protocol\.svn\entries" />
-    <None Include="Thrift\Protocol\.svn\text-base\TBase.cs.svn-base" />
-    <None Include="Thrift\Protocol\.svn\text-base\TBinaryProtocol.cs.svn-base" />
-    <None Include="Thrift\Protocol\.svn\text-base\TField.cs.svn-base" />
-    <None Include="Thrift\Protocol\.svn\text-base\TList.cs.svn-base" />
-    <None Include="Thrift\Protocol\.svn\text-base\TMap.cs.svn-base" />
-    <None Include="Thrift\Protocol\.svn\text-base\TMessage.cs.svn-base" />
-    <None Include="Thrift\Protocol\.svn\text-base\TMessageType.cs.svn-base" />
-    <None Include="Thrift\Protocol\.svn\text-base\TProtocol.cs.svn-base" />
-    <None Include="Thrift\Protocol\.svn\text-base\TProtocolException.cs.svn-base" />
-    <None Include="Thrift\Protocol\.svn\text-base\TProtocolFactory.cs.svn-base" />
-    <None Include="Thrift\Protocol\.svn\text-base\TProtocolUtil.cs.svn-base" />
-    <None Include="Thrift\Protocol\.svn\text-base\TSet.cs.svn-base" />
-    <None Include="Thrift\Protocol\.svn\text-base\TStruct.cs.svn-base" />
-    <None Include="Thrift\Protocol\.svn\text-base\TType.cs.svn-base" />
-    <None Include="Thrift\Server\.svn\all-wcprops" />
-    <None Include="Thrift\Server\.svn\entries" />
-    <None Include="Thrift\Server\.svn\text-base\TServer.cs.svn-base" />
-    <None Include="Thrift\Server\.svn\text-base\TSimpleServer.cs.svn-base" />
-    <None Include="Thrift\Server\.svn\text-base\TThreadedServer.cs.svn-base" />
-    <None Include="Thrift\Server\.svn\text-base\TThreadPoolServer.cs.svn-base" />
-    <None Include="Thrift\Transport\.svn\all-wcprops" />
-    <None Include="Thrift\Transport\.svn\entries" />
-    <None Include="Thrift\Transport\.svn\text-base\TBufferedTransport.cs.svn-base" />
-    <None Include="Thrift\Transport\.svn\text-base\TFramedTransport.cs.svn-base" />
-    <None Include="Thrift\Transport\.svn\text-base\TServerSocket.cs.svn-base" />
-    <None Include="Thrift\Transport\.svn\text-base\TServerTransport.cs.svn-base" />
-    <None Include="Thrift\Transport\.svn\text-base\TSocket.cs.svn-base" />
-    <None Include="Thrift\Transport\.svn\text-base\TStreamTransport.cs.svn-base" />
-    <None Include="Thrift\Transport\.svn\text-base\TTransport.cs.svn-base" />
-    <None Include="Thrift\Transport\.svn\text-base\TTransportException.cs.svn-base" />
-    <None Include="Thrift\Transport\.svn\text-base\TTransportFactory.cs.svn-base" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Thrift\Collections\.svn\prop-base\" />
-    <Folder Include="Thrift\Collections\.svn\props\" />
-    <Folder Include="Thrift\Collections\.svn\tmp\prop-base\" />
-    <Folder Include="Thrift\Collections\.svn\tmp\props\" />
-    <Folder Include="Thrift\Collections\.svn\tmp\text-base\" />
-    <Folder Include="Thrift\Protocol\.svn\prop-base\" />
-    <Folder Include="Thrift\Protocol\.svn\props\" />
-    <Folder Include="Thrift\Protocol\.svn\tmp\prop-base\" />
-    <Folder Include="Thrift\Protocol\.svn\tmp\props\" />
-    <Folder Include="Thrift\Protocol\.svn\tmp\text-base\" />
-    <Folder Include="Thrift\Server\.svn\prop-base\" />
-    <Folder Include="Thrift\Server\.svn\props\" />
-    <Folder Include="Thrift\Server\.svn\tmp\prop-base\" />
-    <Folder Include="Thrift\Server\.svn\tmp\props\" />
-    <Folder Include="Thrift\Server\.svn\tmp\text-base\" />
-    <Folder Include="Thrift\Transport\.svn\prop-base\" />
-    <Folder Include="Thrift\Transport\.svn\props\" />
-    <Folder Include="Thrift\Transport\.svn\tmp\prop-base\" />
-    <Folder Include="Thrift\Transport\.svn\tmp\props\" />
-    <Folder Include="Thrift\Transport\.svn\tmp\text-base\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

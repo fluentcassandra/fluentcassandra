@@ -34,6 +34,7 @@ namespace Apache.Cassandra
       string describe_cluster_name();
       string describe_version();
       List<TokenRange> describe_ring(string keyspace);
+      string describe_partitioner();
       Dictionary<string, Dictionary<string, string>> describe_keyspace(string keyspace);
       List<string> describe_splits(string start_token, string end_token, int keys_per_split);
     }
@@ -786,7 +787,42 @@ namespace Apache.Cassandra
         if (result.__isset.success) {
           return result.Success;
         }
+        if (result.__isset.ire) {
+          throw result.Ire;
+        }
         throw new TApplicationException(TApplicationException.ExceptionType.MissingResult, "describe_ring failed: unknown result");
+      }
+
+      public string describe_partitioner()
+      {
+        send_describe_partitioner();
+        return recv_describe_partitioner();
+      }
+
+      public void send_describe_partitioner()
+      {
+        oprot_.WriteMessageBegin(new TMessage("describe_partitioner", TMessageType.Call, seqid_));
+        describe_partitioner_args args = new describe_partitioner_args();
+        args.Write(oprot_);
+        oprot_.WriteMessageEnd();
+        oprot_.Transport.Flush();
+      }
+
+      public string recv_describe_partitioner()
+      {
+        TMessage msg = iprot_.ReadMessageBegin();
+        if (msg.Type == TMessageType.Exception) {
+          TApplicationException x = TApplicationException.Read(iprot_);
+          iprot_.ReadMessageEnd();
+          throw x;
+        }
+        describe_partitioner_result result = new describe_partitioner_result();
+        result.Read(iprot_);
+        iprot_.ReadMessageEnd();
+        if (result.__isset.success) {
+          return result.Success;
+        }
+        throw new TApplicationException(TApplicationException.ExceptionType.MissingResult, "describe_partitioner failed: unknown result");
       }
 
       public Dictionary<string, Dictionary<string, string>> describe_keyspace(string keyspace)
@@ -883,6 +919,7 @@ namespace Apache.Cassandra
         processMap_["describe_cluster_name"] = describe_cluster_name_Process;
         processMap_["describe_version"] = describe_version_Process;
         processMap_["describe_ring"] = describe_ring_Process;
+        processMap_["describe_partitioner"] = describe_partitioner_Process;
         processMap_["describe_keyspace"] = describe_keyspace_Process;
         processMap_["describe_splits"] = describe_splits_Process;
       }
@@ -1240,8 +1277,25 @@ namespace Apache.Cassandra
         args.Read(iprot);
         iprot.ReadMessageEnd();
         describe_ring_result result = new describe_ring_result();
-        result.Success = iface_.describe_ring(args.Keyspace);
+        try {
+          result.Success = iface_.describe_ring(args.Keyspace);
+        } catch (InvalidRequestException ire) {
+          result.Ire = ire;
+        }
         oprot.WriteMessageBegin(new TMessage("describe_ring", TMessageType.Reply, seqid)); 
+        result.Write(oprot);
+        oprot.WriteMessageEnd();
+        oprot.Transport.Flush();
+      }
+
+      public void describe_partitioner_Process(int seqid, TProtocol iprot, TProtocol oprot)
+      {
+        describe_partitioner_args args = new describe_partitioner_args();
+        args.Read(iprot);
+        iprot.ReadMessageEnd();
+        describe_partitioner_result result = new describe_partitioner_result();
+        result.Success = iface_.describe_partitioner();
+        oprot.WriteMessageBegin(new TMessage("describe_partitioner", TMessageType.Reply, seqid)); 
         result.Write(oprot);
         oprot.WriteMessageEnd();
         oprot.Transport.Flush();
@@ -6936,6 +6990,7 @@ namespace Apache.Cassandra
     public partial class describe_ring_result : TBase
     {
       private List<TokenRange> success;
+      private InvalidRequestException ire;
 
       public List<TokenRange> Success
       {
@@ -6950,11 +7005,25 @@ namespace Apache.Cassandra
         }
       }
 
+      public InvalidRequestException Ire
+      {
+        get
+        {
+          return ire;
+        }
+        set
+        {
+          __isset.ire = true;
+          this.ire = value;
+        }
+      }
+
 
       public Isset __isset;
       [Serializable]
       public struct Isset {
         public bool success;
+        public bool ire;
       }
 
       public describe_ring_result() {
@@ -6991,6 +7060,15 @@ namespace Apache.Cassandra
                 TProtocolUtil.Skip(iprot, field.Type);
               }
               break;
+            case 1:
+              if (field.Type == TType.Struct) {
+                this.ire = new InvalidRequestException();
+                this.ire.Read(iprot);
+                this.__isset.ire = true;
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
             default: 
               TProtocolUtil.Skip(iprot, field.Type);
               break;
@@ -7021,6 +7099,15 @@ namespace Apache.Cassandra
             }
             oprot.WriteFieldEnd();
           }
+        } else if (this.__isset.ire) {
+          if (this.ire != null) {
+            field.Name = "ire";
+            field.Type = TType.Struct;
+            field.ID = 1;
+            oprot.WriteFieldBegin(field);
+            this.ire.Write(oprot);
+            oprot.WriteFieldEnd();
+          }
         }
         oprot.WriteFieldStop();
         oprot.WriteStructEnd();
@@ -7028,6 +7115,139 @@ namespace Apache.Cassandra
 
       public override string ToString() {
         StringBuilder sb = new StringBuilder("describe_ring_result(");
+        sb.Append("success: ");
+        sb.Append(this.success);
+        sb.Append(",ire: ");
+        sb.Append(this.ire== null ? "<null>" : this.ire.ToString());
+        sb.Append(")");
+        return sb.ToString();
+      }
+
+    }
+
+
+    [Serializable]
+    public partial class describe_partitioner_args : TBase
+    {
+
+      public describe_partitioner_args() {
+      }
+
+      public void Read (TProtocol iprot)
+      {
+        TField field;
+        iprot.ReadStructBegin();
+        while (true)
+        {
+          field = iprot.ReadFieldBegin();
+          if (field.Type == TType.Stop) { 
+            break;
+          }
+          switch (field.ID)
+          {
+            default: 
+              TProtocolUtil.Skip(iprot, field.Type);
+              break;
+          }
+          iprot.ReadFieldEnd();
+        }
+        iprot.ReadStructEnd();
+      }
+
+      public void Write(TProtocol oprot) {
+        TStruct struc = new TStruct("describe_partitioner_args");
+        oprot.WriteStructBegin(struc);
+        oprot.WriteFieldStop();
+        oprot.WriteStructEnd();
+      }
+
+      public override string ToString() {
+        StringBuilder sb = new StringBuilder("describe_partitioner_args(");
+        sb.Append(")");
+        return sb.ToString();
+      }
+
+    }
+
+
+    [Serializable]
+    public partial class describe_partitioner_result : TBase
+    {
+      private string success;
+
+      public string Success
+      {
+        get
+        {
+          return success;
+        }
+        set
+        {
+          __isset.success = true;
+          this.success = value;
+        }
+      }
+
+
+      public Isset __isset;
+      [Serializable]
+      public struct Isset {
+        public bool success;
+      }
+
+      public describe_partitioner_result() {
+      }
+
+      public void Read (TProtocol iprot)
+      {
+        TField field;
+        iprot.ReadStructBegin();
+        while (true)
+        {
+          field = iprot.ReadFieldBegin();
+          if (field.Type == TType.Stop) { 
+            break;
+          }
+          switch (field.ID)
+          {
+            case 0:
+              if (field.Type == TType.String) {
+                this.success = iprot.ReadString();
+                this.__isset.success = true;
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            default: 
+              TProtocolUtil.Skip(iprot, field.Type);
+              break;
+          }
+          iprot.ReadFieldEnd();
+        }
+        iprot.ReadStructEnd();
+      }
+
+      public void Write(TProtocol oprot) {
+        TStruct struc = new TStruct("describe_partitioner_result");
+        oprot.WriteStructBegin(struc);
+        TField field = new TField();
+
+        if (this.__isset.success) {
+          if (this.success != null) {
+            field.Name = "success";
+            field.Type = TType.String;
+            field.ID = 0;
+            oprot.WriteFieldBegin(field);
+            oprot.WriteString(this.success);
+            oprot.WriteFieldEnd();
+          }
+        }
+        oprot.WriteFieldStop();
+        oprot.WriteStructEnd();
+      }
+
+      public override string ToString() {
+        StringBuilder sb = new StringBuilder("describe_partitioner_result(");
         sb.Append("success: ");
         sb.Append(this.success);
         sb.Append(")");
