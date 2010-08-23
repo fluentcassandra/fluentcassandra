@@ -16,48 +16,48 @@ namespace Apache.Cassandra
 {
 
   [Serializable]
-  public partial class Deletion : TBase
+  public partial class IndexExpression : TBase
   {
-    private Clock clock;
-    private byte[] super_column;
-    private SlicePredicate predicate;
+    private byte[] column_name;
+    private IndexOperator op;
+    private byte[] value;
 
-    public Clock Clock
+    public byte[] Column_name
     {
       get
       {
-        return clock;
+        return column_name;
       }
       set
       {
-        __isset.clock = true;
-        this.clock = value;
+        __isset.column_name = true;
+        this.column_name = value;
       }
     }
 
-    public byte[] Super_column
+    public IndexOperator Op
     {
       get
       {
-        return super_column;
+        return op;
       }
       set
       {
-        __isset.super_column = true;
-        this.super_column = value;
+        __isset.op = true;
+        this.op = value;
       }
     }
 
-    public SlicePredicate Predicate
+    public byte[] Value
     {
       get
       {
-        return predicate;
+        return value;
       }
       set
       {
-        __isset.predicate = true;
-        this.predicate = value;
+        __isset.value = true;
+        this.value = value;
       }
     }
 
@@ -65,12 +65,12 @@ namespace Apache.Cassandra
     public Isset __isset;
     [Serializable]
     public struct Isset {
-      public bool clock;
-      public bool super_column;
-      public bool predicate;
+      public bool column_name;
+      public bool op;
+      public bool value;
     }
 
-    public Deletion() {
+    public IndexExpression() {
     }
 
     public void Read (TProtocol iprot)
@@ -86,27 +86,25 @@ namespace Apache.Cassandra
         switch (field.ID)
         {
           case 1:
-            if (field.Type == TType.Struct) {
-              this.clock = new Clock();
-              this.clock.Read(iprot);
-              this.__isset.clock = true;
+            if (field.Type == TType.String) {
+              this.column_name = iprot.ReadBinary();
+              this.__isset.column_name = true;
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
             break;
           case 2:
-            if (field.Type == TType.String) {
-              this.super_column = iprot.ReadBinary();
-              this.__isset.super_column = true;
+            if (field.Type == TType.I32) {
+              this.op = (IndexOperator)iprot.ReadI32();
+              this.__isset.op = true;
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
             break;
           case 3:
-            if (field.Type == TType.Struct) {
-              this.predicate = new SlicePredicate();
-              this.predicate.Read(iprot);
-              this.__isset.predicate = true;
+            if (field.Type == TType.String) {
+              this.value = iprot.ReadBinary();
+              this.__isset.value = true;
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
@@ -121,31 +119,31 @@ namespace Apache.Cassandra
     }
 
     public void Write(TProtocol oprot) {
-      TStruct struc = new TStruct("Deletion");
+      TStruct struc = new TStruct("IndexExpression");
       oprot.WriteStructBegin(struc);
       TField field = new TField();
-      if (this.clock != null && __isset.clock) {
-        field.Name = "clock";
-        field.Type = TType.Struct;
+      if (this.column_name != null && __isset.column_name) {
+        field.Name = "column_name";
+        field.Type = TType.String;
         field.ID = 1;
         oprot.WriteFieldBegin(field);
-        this.clock.Write(oprot);
+        oprot.WriteBinary(this.column_name);
         oprot.WriteFieldEnd();
       }
-      if (this.super_column != null && __isset.super_column) {
-        field.Name = "super_column";
-        field.Type = TType.String;
+      if (__isset.op) {
+        field.Name = "op";
+        field.Type = TType.I32;
         field.ID = 2;
         oprot.WriteFieldBegin(field);
-        oprot.WriteBinary(this.super_column);
+        oprot.WriteI32((int)this.op);
         oprot.WriteFieldEnd();
       }
-      if (this.predicate != null && __isset.predicate) {
-        field.Name = "predicate";
-        field.Type = TType.Struct;
+      if (this.value != null && __isset.value) {
+        field.Name = "value";
+        field.Type = TType.String;
         field.ID = 3;
         oprot.WriteFieldBegin(field);
-        this.predicate.Write(oprot);
+        oprot.WriteBinary(this.value);
         oprot.WriteFieldEnd();
       }
       oprot.WriteFieldStop();
@@ -153,13 +151,13 @@ namespace Apache.Cassandra
     }
 
     public override string ToString() {
-      StringBuilder sb = new StringBuilder("Deletion(");
-      sb.Append("clock: ");
-      sb.Append(this.clock== null ? "<null>" : this.clock.ToString());
-      sb.Append(",super_column: ");
-      sb.Append(this.super_column);
-      sb.Append(",predicate: ");
-      sb.Append(this.predicate== null ? "<null>" : this.predicate.ToString());
+      StringBuilder sb = new StringBuilder("IndexExpression(");
+      sb.Append("column_name: ");
+      sb.Append(this.column_name);
+      sb.Append(",op: ");
+      sb.Append(this.op);
+      sb.Append(",value: ");
+      sb.Append(this.value);
       sb.Append(")");
       return sb.ToString();
     }

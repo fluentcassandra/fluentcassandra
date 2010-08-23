@@ -16,12 +16,12 @@ namespace Apache.Cassandra
 {
 
   [Serializable]
-  public partial class Column : TBase
+  public partial class ColumnDef : TBase
   {
     private byte[] name;
-    private byte[] value;
-    private Clock clock;
-    private int ttl;
+    private string validation_class;
+    private IndexType index_type;
+    private string index_name;
 
     public byte[] Name
     {
@@ -36,42 +36,42 @@ namespace Apache.Cassandra
       }
     }
 
-    public byte[] Value
+    public string Validation_class
     {
       get
       {
-        return value;
+        return validation_class;
       }
       set
       {
-        __isset.value = true;
-        this.value = value;
+        __isset.validation_class = true;
+        this.validation_class = value;
       }
     }
 
-    public Clock Clock
+    public IndexType Index_type
     {
       get
       {
-        return clock;
+        return index_type;
       }
       set
       {
-        __isset.clock = true;
-        this.clock = value;
+        __isset.index_type = true;
+        this.index_type = value;
       }
     }
 
-    public int Ttl
+    public string Index_name
     {
       get
       {
-        return ttl;
+        return index_name;
       }
       set
       {
-        __isset.ttl = true;
-        this.ttl = value;
+        __isset.index_name = true;
+        this.index_name = value;
       }
     }
 
@@ -80,12 +80,12 @@ namespace Apache.Cassandra
     [Serializable]
     public struct Isset {
       public bool name;
-      public bool value;
-      public bool clock;
-      public bool ttl;
+      public bool validation_class;
+      public bool index_type;
+      public bool index_name;
     }
 
-    public Column() {
+    public ColumnDef() {
     }
 
     public void Read (TProtocol iprot)
@@ -110,25 +110,24 @@ namespace Apache.Cassandra
             break;
           case 2:
             if (field.Type == TType.String) {
-              this.value = iprot.ReadBinary();
-              this.__isset.value = true;
+              this.validation_class = iprot.ReadString();
+              this.__isset.validation_class = true;
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
             break;
           case 3:
-            if (field.Type == TType.Struct) {
-              this.clock = new Clock();
-              this.clock.Read(iprot);
-              this.__isset.clock = true;
+            if (field.Type == TType.I32) {
+              this.index_type = (IndexType)iprot.ReadI32();
+              this.__isset.index_type = true;
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
             break;
           case 4:
-            if (field.Type == TType.I32) {
-              this.ttl = iprot.ReadI32();
-              this.__isset.ttl = true;
+            if (field.Type == TType.String) {
+              this.index_name = iprot.ReadString();
+              this.__isset.index_name = true;
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
@@ -143,7 +142,7 @@ namespace Apache.Cassandra
     }
 
     public void Write(TProtocol oprot) {
-      TStruct struc = new TStruct("Column");
+      TStruct struc = new TStruct("ColumnDef");
       oprot.WriteStructBegin(struc);
       TField field = new TField();
       if (this.name != null && __isset.name) {
@@ -154,28 +153,28 @@ namespace Apache.Cassandra
         oprot.WriteBinary(this.name);
         oprot.WriteFieldEnd();
       }
-      if (this.value != null && __isset.value) {
-        field.Name = "value";
+      if (this.validation_class != null && __isset.validation_class) {
+        field.Name = "validation_class";
         field.Type = TType.String;
         field.ID = 2;
         oprot.WriteFieldBegin(field);
-        oprot.WriteBinary(this.value);
+        oprot.WriteString(this.validation_class);
         oprot.WriteFieldEnd();
       }
-      if (this.clock != null && __isset.clock) {
-        field.Name = "clock";
-        field.Type = TType.Struct;
+      if (__isset.index_type) {
+        field.Name = "index_type";
+        field.Type = TType.I32;
         field.ID = 3;
         oprot.WriteFieldBegin(field);
-        this.clock.Write(oprot);
+        oprot.WriteI32((int)this.index_type);
         oprot.WriteFieldEnd();
       }
-      if (__isset.ttl) {
-        field.Name = "ttl";
-        field.Type = TType.I32;
+      if (this.index_name != null && __isset.index_name) {
+        field.Name = "index_name";
+        field.Type = TType.String;
         field.ID = 4;
         oprot.WriteFieldBegin(field);
-        oprot.WriteI32(this.ttl);
+        oprot.WriteString(this.index_name);
         oprot.WriteFieldEnd();
       }
       oprot.WriteFieldStop();
@@ -183,15 +182,15 @@ namespace Apache.Cassandra
     }
 
     public override string ToString() {
-      StringBuilder sb = new StringBuilder("Column(");
+      StringBuilder sb = new StringBuilder("ColumnDef(");
       sb.Append("name: ");
       sb.Append(this.name);
-      sb.Append(",value: ");
-      sb.Append(this.value);
-      sb.Append(",clock: ");
-      sb.Append(this.clock== null ? "<null>" : this.clock.ToString());
-      sb.Append(",ttl: ");
-      sb.Append(this.ttl);
+      sb.Append(",validation_class: ");
+      sb.Append(this.validation_class);
+      sb.Append(",index_type: ");
+      sb.Append(this.index_type);
+      sb.Append(",index_name: ");
+      sb.Append(this.index_name);
       sb.Append(")");
       return sb.ToString();
     }

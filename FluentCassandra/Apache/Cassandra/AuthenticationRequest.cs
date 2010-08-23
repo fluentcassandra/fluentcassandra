@@ -59,14 +59,14 @@ namespace Apache.Cassandra
             if (field.Type == TType.Map) {
               {
                 this.credentials = new Dictionary<string, string>();
-                TMap _map16 = iprot.ReadMapBegin();
-                for( int _i17 = 0; _i17 < _map16.Count; ++_i17)
+                TMap _map20 = iprot.ReadMapBegin();
+                for( int _i21 = 0; _i21 < _map20.Count; ++_i21)
                 {
-                  string _key18;
-                  string _val19;
-                  _key18 = iprot.ReadString();
-                  _val19 = iprot.ReadString();
-                  this.credentials[_key18] = _val19;
+                  string _key22;
+                  string _val23;
+                  _key22 = iprot.ReadString();
+                  _val23 = iprot.ReadString();
+                  this.credentials[_key22] = _val23;
                 }
                 iprot.ReadMapEnd();
               }
@@ -95,10 +95,10 @@ namespace Apache.Cassandra
         oprot.WriteFieldBegin(field);
         {
           oprot.WriteMapBegin(new TMap(TType.String, TType.String, this.credentials.Count));
-          foreach (string _iter20 in this.credentials.Keys)
+          foreach (string _iter24 in this.credentials.Keys)
           {
-            oprot.WriteString(_iter20);
-            oprot.WriteString(this.credentials[_iter20]);
+            oprot.WriteString(_iter24);
+            oprot.WriteString(this.credentials[_iter24]);
             oprot.WriteMapEnd();
           }
         }

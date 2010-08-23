@@ -105,12 +105,12 @@ namespace Apache.Cassandra
             if (field.Type == TType.List) {
               {
                 this.endpoints = new List<string>();
-                TList _list12 = iprot.ReadListBegin();
-                for( int _i13 = 0; _i13 < _list12.Count; ++_i13)
+                TList _list16 = iprot.ReadListBegin();
+                for( int _i17 = 0; _i17 < _list16.Count; ++_i17)
                 {
-                  string _elem14 = null;
-                  _elem14 = iprot.ReadString();
-                  this.endpoints.Add(_elem14);
+                  string _elem18 = null;
+                  _elem18 = iprot.ReadString();
+                  this.endpoints.Add(_elem18);
                 }
                 iprot.ReadListEnd();
               }
@@ -155,9 +155,9 @@ namespace Apache.Cassandra
         oprot.WriteFieldBegin(field);
         {
           oprot.WriteListBegin(new TList(TType.String, this.endpoints.Count));
-          foreach (string _iter15 in this.endpoints)
+          foreach (string _iter19 in this.endpoints)
           {
-            oprot.WriteString(_iter15);
+            oprot.WriteString(_iter19);
             oprot.WriteListEnd();
           }
         }

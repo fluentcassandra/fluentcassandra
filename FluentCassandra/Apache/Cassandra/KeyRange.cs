@@ -18,13 +18,13 @@ namespace Apache.Cassandra
   [Serializable]
   public partial class KeyRange : TBase
   {
-    private string start_key;
-    private string end_key;
+    private byte[] start_key;
+    private byte[] end_key;
     private string start_token;
     private string end_token;
     private int count;
 
-    public string Start_key
+    public byte[] Start_key
     {
       get
       {
@@ -37,7 +37,7 @@ namespace Apache.Cassandra
       }
     }
 
-    public string End_key
+    public byte[] End_key
     {
       get
       {
@@ -118,7 +118,7 @@ namespace Apache.Cassandra
         {
           case 1:
             if (field.Type == TType.String) {
-              this.start_key = iprot.ReadString();
+              this.start_key = iprot.ReadBinary();
               this.__isset.start_key = true;
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
@@ -126,7 +126,7 @@ namespace Apache.Cassandra
             break;
           case 2:
             if (field.Type == TType.String) {
-              this.end_key = iprot.ReadString();
+              this.end_key = iprot.ReadBinary();
               this.__isset.end_key = true;
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
@@ -174,7 +174,7 @@ namespace Apache.Cassandra
         field.Type = TType.String;
         field.ID = 1;
         oprot.WriteFieldBegin(field);
-        oprot.WriteString(this.start_key);
+        oprot.WriteBinary(this.start_key);
         oprot.WriteFieldEnd();
       }
       if (this.end_key != null && __isset.end_key) {
@@ -182,7 +182,7 @@ namespace Apache.Cassandra
         field.Type = TType.String;
         field.ID = 2;
         oprot.WriteFieldBegin(field);
-        oprot.WriteString(this.end_key);
+        oprot.WriteBinary(this.end_key);
         oprot.WriteFieldEnd();
       }
       if (this.start_token != null && __isset.start_token) {

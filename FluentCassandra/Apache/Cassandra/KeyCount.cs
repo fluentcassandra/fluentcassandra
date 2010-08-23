@@ -16,10 +16,10 @@ namespace Apache.Cassandra
 {
 
   [Serializable]
-  public partial class KeySlice : TBase
+  public partial class KeyCount : TBase
   {
     private byte[] key;
-    private List<ColumnOrSuperColumn> columns;
+    private int count;
 
     public byte[] Key
     {
@@ -34,16 +34,16 @@ namespace Apache.Cassandra
       }
     }
 
-    public List<ColumnOrSuperColumn> Columns
+    public int Count
     {
       get
       {
-        return columns;
+        return count;
       }
       set
       {
-        __isset.columns = true;
-        this.columns = value;
+        __isset.count = true;
+        this.count = value;
       }
     }
 
@@ -52,10 +52,10 @@ namespace Apache.Cassandra
     [Serializable]
     public struct Isset {
       public bool key;
-      public bool columns;
+      public bool count;
     }
 
-    public KeySlice() {
+    public KeyCount() {
     }
 
     public void Read (TProtocol iprot)
@@ -79,20 +79,9 @@ namespace Apache.Cassandra
             }
             break;
           case 2:
-            if (field.Type == TType.List) {
-              {
-                this.columns = new List<ColumnOrSuperColumn>();
-                TList _list12 = iprot.ReadListBegin();
-                for( int _i13 = 0; _i13 < _list12.Count; ++_i13)
-                {
-                  ColumnOrSuperColumn _elem14 = new ColumnOrSuperColumn();
-                  _elem14 = new ColumnOrSuperColumn();
-                  _elem14.Read(iprot);
-                  this.columns.Add(_elem14);
-                }
-                iprot.ReadListEnd();
-              }
-              this.__isset.columns = true;
+            if (field.Type == TType.I32) {
+              this.count = iprot.ReadI32();
+              this.__isset.count = true;
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
@@ -107,7 +96,7 @@ namespace Apache.Cassandra
     }
 
     public void Write(TProtocol oprot) {
-      TStruct struc = new TStruct("KeySlice");
+      TStruct struc = new TStruct("KeyCount");
       oprot.WriteStructBegin(struc);
       TField field = new TField();
       if (this.key != null && __isset.key) {
@@ -118,19 +107,12 @@ namespace Apache.Cassandra
         oprot.WriteBinary(this.key);
         oprot.WriteFieldEnd();
       }
-      if (this.columns != null && __isset.columns) {
-        field.Name = "columns";
-        field.Type = TType.List;
+      if (__isset.count) {
+        field.Name = "count";
+        field.Type = TType.I32;
         field.ID = 2;
         oprot.WriteFieldBegin(field);
-        {
-          oprot.WriteListBegin(new TList(TType.Struct, this.columns.Count));
-          foreach (ColumnOrSuperColumn _iter15 in this.columns)
-          {
-            _iter15.Write(oprot);
-            oprot.WriteListEnd();
-          }
-        }
+        oprot.WriteI32(this.count);
         oprot.WriteFieldEnd();
       }
       oprot.WriteFieldStop();
@@ -138,11 +120,11 @@ namespace Apache.Cassandra
     }
 
     public override string ToString() {
-      StringBuilder sb = new StringBuilder("KeySlice(");
+      StringBuilder sb = new StringBuilder("KeyCount(");
       sb.Append("key: ");
       sb.Append(this.key);
-      sb.Append(",columns: ");
-      sb.Append(this.columns);
+      sb.Append(",count: ");
+      sb.Append(this.count);
       sb.Append(")");
       return sb.ToString();
     }
