@@ -40,7 +40,6 @@ namespace FluentCassandra.Operations
 					parent.Super_column = SuperColumnName;
 
 				var output = CassandraSession.Current.GetClient().get_range_slices(
-					columnFamily.Keyspace.KeyspaceName,
 					parent,
 					SlicePredicate.CreateSlicePredicate(),
 					KeyRange.CreateKeyRange(),

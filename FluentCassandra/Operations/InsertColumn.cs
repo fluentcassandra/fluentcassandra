@@ -36,7 +36,6 @@ namespace FluentCassandra.Operations
 				path.Super_column = SuperColumnName;
 
 			CassandraSession.Current.GetClient().insert(
-				columnFamily.Keyspace.KeyspaceName,
 				Key,
 				path,
 				ColumnValue,
@@ -51,19 +50,19 @@ namespace FluentCassandra.Operations
 
 		public InsertColumn(string key, CassandraType name, BytesType value, DateTimeOffset timestamp)
 		{
-			this.Key = key;
-			this.ColumnName = name;
-			this.ColumnValue = value;
-			this.Timestamp = timestamp;
+			Key = key;
+			ColumnName = name;
+			ColumnValue = value;
+			Timestamp = timestamp;
 		}
 
 		public InsertColumn(string key, CassandraType superColumnName, CassandraType name, BytesType value, DateTimeOffset timestamp)
 		{
-			this.Key = key;
-			this.SuperColumnName = superColumnName;
-			this.ColumnName = name;
-			this.ColumnValue = value;
-			this.Timestamp = timestamp;
+			Key = key;
+			SuperColumnName = superColumnName;
+			ColumnName = name;
+			ColumnValue = value;
+			Timestamp = timestamp;
 		}
 	}
 }

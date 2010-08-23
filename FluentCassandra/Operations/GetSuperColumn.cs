@@ -1,11 +1,12 @@
-﻿using System;
+using System;
 using FluentCassandra.Types;
 using Apache.Cassandra;
 
 namespace FluentCassandra.Operations
 {
-	public class GetColumn<CompareWith> : ColumnFamilyOperation<IFluentColumn<CompareWith>>
+	public class GetSuperColumn<CompareWith, CompareSubcolumnWith> : ColumnFamilyOperation<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>>
 		where CompareWith : CassandraType
+		where CompareSubcolumnWith : CassandraType
 	{
 		/*
 		 * ColumnOrSuperColumn get(keyspace, key, column_path, consistency_level)
@@ -15,9 +16,7 @@ namespace FluentCassandra.Operations
 
 		public CassandraType SuperColumnName { get; private set; }
 
-		public CassandraType ColumnName { get; private set; }
-
-		public override IFluentColumn<CompareWith> Execute(BaseCassandraColumnFamily columnFamily)
+		public override IFluentSuperColumn<CompareWith, CompareSubcolumnWith> Execute(BaseCassandraColumnFamily columnFamily)
 		{
 			var path = new ColumnPath {
 				Column_family = columnFamily.FamilyName
@@ -26,29 +25,19 @@ namespace FluentCassandra.Operations
 			if (SuperColumnName != null)
 				path.Super_column = SuperColumnName;
 
-			if (ColumnName != null)
-				path.Column = ColumnName;
-
 			var output = CassandraSession.Current.GetClient().get(
 				Key,
 				path,
 				CassandraSession.Current.ReadConsistency
 			);
 
-			return (IFluentColumn<CompareWith>)ObjectHelper.ConvertToFluentBaseColumn<CompareWith, VoidType>(output);
+			return (IFluentSuperColumn<CompareWith, CompareSubcolumnWith>)ObjectHelper.ConvertToFluentBaseColumn<CompareWith, CompareSubcolumnWith>(output);
 		}
 
-		public GetColumn(string key, CassandraType superColumnName, CassandraType columnName)
+		public GetSuperColumn(string key, CassandraType superColumnName)
 		{
 			Key = key;
 			SuperColumnName = superColumnName;
-			ColumnName = columnName;
-		}
-
-		public GetColumn(string key, CassandraType columnName)
-		{
-			Key = key;
-			ColumnName = columnName;
 		}
 	}
 }

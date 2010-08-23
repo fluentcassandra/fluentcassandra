@@ -9,6 +9,11 @@ namespace FluentCassandra.Operations
 {
 	internal static class ObjectHelper
 	{
+		public static Clock ToClock(this DateTimeOffset dt)
+		{
+			return new Clock { Timestamp = DateTimeOffset.Now.UtcTicks };
+		}
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -37,7 +42,7 @@ namespace FluentCassandra.Operations
 			return new FluentColumn<CompareWith> {
 				ColumnName = CassandraType.GetType<CompareWith>(col.Name),
 				ColumnValue = col.Value,
-				ColumnTimestamp = new DateTimeOffset(col.Timestamp, TimeSpan.Zero)
+				ColumnTimestamp = new DateTimeOffset(col.Clock.Timestamp, TimeSpan.Zero)
 			};
 		}
 
@@ -70,7 +75,7 @@ namespace FluentCassandra.Operations
 			var columnNames = mutation.Select(m => m.Column.ColumnName).ToList();
 
 			var deletion = new Deletion {
-				Timestamp = DateTimeOffset.UtcNow.UtcTicks,
+				Clock = DateTimeOffset.Now.ToClock(),
 				Predicate = CreateSlicePredicate(columnNames)
 			};
 
@@ -90,7 +95,7 @@ namespace FluentCassandra.Operations
 			var columnNames = mutation.Select(m => m.Column.ColumnName).ToList();
 
 			var deletion = new Deletion {
-				Timestamp = DateTimeOffset.UtcNow.UtcTicks,
+				Clock = DateTimeOffset.Now.ToClock(),
 				Super_column = superColumn,
 				Predicate = CreateSlicePredicate(columnNames)
 			};
@@ -125,7 +130,7 @@ namespace FluentCassandra.Operations
 			return new Column {
 				Name = column.ColumnName,
 				Value = column.ColumnValue,
-				Timestamp = column.ColumnTimestamp.UtcTicks
+				Clock = column.ColumnTimestamp.ToClock()
 			};
 		}
 

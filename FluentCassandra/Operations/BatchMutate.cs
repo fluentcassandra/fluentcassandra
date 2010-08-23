@@ -16,7 +16,7 @@ namespace FluentCassandra.Operations
 
 		public override Void Execute(CassandraContext context)
 		{
-			var mutationMap = new Dictionary<string, Dictionary<string, List<Mutation>>>();
+			var mutationMap = new Dictionary<byte[], Dictionary<string, List<Mutation>>>();
 
 			foreach (var key in Mutations.GroupBy(x => x.Column.Family.Key))
 			{
@@ -49,7 +49,6 @@ namespace FluentCassandra.Operations
 
 			// Dictionary<string : key, Dicationary<string : columnFamily, List<Mutation>>>
 			CassandraSession.Current.GetClient().batch_mutate(
-				context.Keyspace.KeyspaceName,
 				mutationMap,
 				CassandraSession.Current.WriteConsistency
 			);

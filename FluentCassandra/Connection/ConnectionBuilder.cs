@@ -61,7 +61,13 @@ namespace FluentCassandra
 			#region Keyspace
 
 			if (pairs.ContainsKey("Keyspace"))
+			{
 				Keyspace = pairs["Keyspace"];
+			}
+			else
+			{
+				throw new CassandraException("Keyspace is required.");
+			}
 
 			#endregion
 

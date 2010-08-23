@@ -88,6 +88,9 @@ namespace FluentCassandra
 
 			var server = Builder.Servers[_random.Next(ActiveServers.Count)];
 			var conn = new Connection(server, Timeout);
+
+			SetKeyspace(conn);
+			
 			return conn;
 		}
 	}

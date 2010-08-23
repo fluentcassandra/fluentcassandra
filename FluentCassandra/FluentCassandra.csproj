@@ -52,20 +52,30 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Apache\Cassandra\AccessLevel.cs" />
     <Compile Include="Apache\Cassandra\AuthenticationException.cs" />
     <Compile Include="Apache\Cassandra\AuthenticationRequest.cs" />
     <Compile Include="Apache\Cassandra\AuthorizationException.cs" />
     <Compile Include="Apache\Cassandra\Cassandra.cs" />
+    <Compile Include="Apache\Cassandra\CfDef.cs" />
+    <Compile Include="Apache\Cassandra\Clock.cs" />
     <Compile Include="Apache\Cassandra\Column.cs" />
+    <Compile Include="Apache\Cassandra\ColumnDef.cs" />
     <Compile Include="Apache\Cassandra\ColumnOrSuperColumn.cs" />
     <Compile Include="Apache\Cassandra\ColumnParent.cs" />
     <Compile Include="Apache\Cassandra\ColumnPath.cs" />
     <Compile Include="Apache\Cassandra\ConsistencyLevel.cs" />
     <Compile Include="Apache\Cassandra\Constants.cs" />
     <Compile Include="Apache\Cassandra\Deletion.cs" />
+    <Compile Include="Apache\Cassandra\IndexClause.cs" />
+    <Compile Include="Apache\Cassandra\IndexExpression.cs" />
+    <Compile Include="Apache\Cassandra\IndexOperator.cs" />
+    <Compile Include="Apache\Cassandra\IndexType.cs" />
     <Compile Include="Apache\Cassandra\InvalidRequestException.cs" />
+    <Compile Include="Apache\Cassandra\KeyCount.cs" />
     <Compile Include="Apache\Cassandra\KeyRange.cs" />
     <Compile Include="Apache\Cassandra\KeySlice.cs" />
+    <Compile Include="Apache\Cassandra\KsDef.cs" />
     <Compile Include="Apache\Cassandra\Mutation.cs" />
     <Compile Include="Apache\Cassandra\NotFoundException.cs" />
     <Compile Include="Apache\Cassandra\SlicePredicate.cs" />
@@ -140,6 +150,7 @@
     <Compile Include="Operations\CassandraQueryable.cs" />
     <Compile Include="Operations\CassandraSlicePredicateBuilder.cs" />
     <Compile Include="Operations\ContextOperation.cs" />
+    <Compile Include="Operations\GetSuperColumn.cs" />
     <Compile Include="Operations\ICassandraQueryable.cs" />
     <Compile Include="Operations\CassandraSlicePredicateQuery.cs" />
     <Compile Include="Operations\CassandraKeyRange.cs" />
@@ -163,7 +174,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Operations\QueryableColumnFamilyOperation.cs" />
-    <Compile Include="Operations\Remove.cs" />
+    <Compile Include="Operations\RemoveColumn.cs" />
+    <Compile Include="Operations\RemoveKey.cs" />
+    <Compile Include="Operations\RemoveSuperColumn.cs" />
     <Compile Include="Operations\Void.cs">
       <SubType>Code</SubType>
     </Compile>

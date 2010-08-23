@@ -35,7 +35,6 @@ namespace FluentCassandra.Operations
 				};
 
 				var output = CassandraSession.Current.GetClient().multiget_slice(
-					columnFamily.Keyspace.KeyspaceName,
 					Keys,
 					parent,
 					SlicePredicate.CreateSlicePredicate(),

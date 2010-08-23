@@ -35,7 +35,6 @@ namespace FluentCassandra.Operations
 				};
 
 				var output = CassandraSession.Current.GetClient().get_range_slices(
-					columnFamily.Keyspace.KeyspaceName,
 					parent,
 					SlicePredicate.CreateSlicePredicate(),
 					KeyRange.CreateKeyRange(),
@@ -66,8 +65,8 @@ namespace FluentCassandra.Operations
 
 		public GetSuperColumnFamilyRangeSlice(CassandraKeyRange keyRange, CassandraSlicePredicate columnSlicePredicate)
 		{
-			this.KeyRange = keyRange;
-			this.SlicePredicate = columnSlicePredicate;
+			KeyRange = keyRange;
+			SlicePredicate = columnSlicePredicate;
 		}
 	}
 }

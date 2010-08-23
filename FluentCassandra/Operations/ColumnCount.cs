@@ -29,7 +29,6 @@ namespace FluentCassandra.Operations
 				parent.Super_column = SuperColumnName;
 
 			var result = CassandraSession.Current.GetClient().get_count(
-				columnFamily.Keyspace.KeyspaceName,
 				Key,
 				parent,
 				CassandraSession.Current.ReadConsistency

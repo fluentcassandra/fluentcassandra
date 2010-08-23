@@ -45,28 +45,11 @@ namespace FluentCassandra
 		/// </summary>
 		/// <param name="connectionBuilder"></param>
 		public CassandraContext(ConnectionBuilder connectionBuilder)
-			: this(connectionBuilder.Keyspace, connectionBuilder) { }
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="keyspace"></param>
-		/// <param name="connectionBuilder"></param>
-		public CassandraContext(string keyspace, ConnectionBuilder connectionBuilder)
 		{
-			if (String.IsNullOrEmpty(keyspace))
-				throw new ArgumentNullException("keyspace");
-
-			Keyspace = new CassandraKeyspace(keyspace);
 			CurrentConnectionBuilder = connectionBuilder;
 			
 			_trackers = new List<IFluentMutationTracker>();
 		}
-
-		/// <summary>
-		/// Gets the database.
-		/// </summary>
-		public CassandraKeyspace Keyspace { get; private set; }
 
 		/// <summary>
 		/// Gets a typed column family.

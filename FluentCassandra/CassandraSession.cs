@@ -79,6 +79,7 @@ namespace FluentCassandra
 			ConnectionProvider = connectionProvider;
 			ReadConsistency = read;
 			WriteConsistency = write;
+			Keyspace = new CassandraKeyspace(connectionProvider.Builder.Keyspace);
 
 			Current = this;
 		}
@@ -88,6 +89,11 @@ namespace FluentCassandra
 		{
 			_connection = new Connection(server);
 		}
+
+		/// <summary>
+		/// Gets ConnectionProvider.
+		/// </summary>
+		public IConnectionProvider ConnectionProvider { get; private set; }
 
 		/// <summary>
 		/// 
@@ -100,9 +106,9 @@ namespace FluentCassandra
 		public ConsistencyLevel WriteConsistency { get; private set; }
 
 		/// <summary>
-		/// Gets ConnectionProvider.
+		/// 
 		/// </summary>
-		public IConnectionProvider ConnectionProvider { get; private set; }
+		public CassandraKeyspace Keyspace { get; private set; }
 
 		/// <summary>
 		/// 
@@ -134,24 +140,24 @@ namespace FluentCassandra
 		/// </param>
 		protected virtual void Dispose(bool disposing)
 		{
-			if (!this._disposed && disposing)
+			if (!_disposed && disposing)
 			{
-				if (this._connection != null)
-					this.ConnectionProvider.Close(this._connection);
+				if (_connection != null)
+					ConnectionProvider.Close(_connection);
 
 				if (Current == this)
 					Current = null;
 			}
 
-			this._disposed = true;
+			_disposed = true;
 		}
 
 		/// <summary>
-		/// Finalizes an instance of the <see cref="Mongo"/> class. 
+		/// Finalizes an instance of the <see cref="CassandraSession"/> class. 
 		/// </summary>
 		~CassandraSession()
 		{
-			this.Dispose(false);
+			Dispose(false);
 		}
 
 		#endregion

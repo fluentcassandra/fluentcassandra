@@ -46,7 +46,6 @@ namespace FluentCassandra.Operations
 					parent.Super_column = SuperColumnName;
 
 				var output = CassandraSession.Current.GetClient().get_slice(
-					columnFamily.Keyspace.KeyspaceName,
 					Key,
 					parent,
 					SlicePredicate.CreateSlicePredicate(),
