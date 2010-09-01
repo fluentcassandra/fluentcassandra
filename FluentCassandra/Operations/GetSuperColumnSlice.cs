@@ -15,7 +15,7 @@ namespace FluentCassandra.Operations
 		 * list<ColumnOrSuperColumn> get_slice(keyspace, key, column_parent, predicate, consistency_level)
 		 */
 
-		public string Key { get; private set; }
+		public BytesType Key { get; private set; }
 
 		public CassandraType SuperColumnName { get; private set; }
 
@@ -65,11 +65,11 @@ namespace FluentCassandra.Operations
 			}
 		}
 
-		public GetSuperColumnSlice(string key, CassandraType superColumnName, CassandraSlicePredicate columnSlicePredicate)
+		public GetSuperColumnSlice(BytesType key, CassandraType superColumnName, CassandraSlicePredicate columnSlicePredicate)
 		{
-			this.Key = key;
-			this.SuperColumnName = superColumnName;
-			this.SlicePredicate = columnSlicePredicate;
+			Key = key;
+			SuperColumnName = superColumnName;
+			SlicePredicate = columnSlicePredicate;
 		}
 	}
 }

@@ -11,7 +11,7 @@ namespace FluentCassandra.Operations
 		 * ColumnOrSuperColumn get(keyspace, key, column_path, consistency_level)
 		 */
 
-		public string Key { get; private set; }
+		public BytesType Key { get; private set; }
 
 		public CassandraType SuperColumnName { get; private set; }
 

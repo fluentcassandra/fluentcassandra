@@ -9,6 +9,11 @@ namespace FluentCassandra.Operations
 {
 	internal static class ObjectHelper
 	{
+		public static List<byte[]> ToByteArrayList(this List<BytesType> list)
+		{
+			return list.Select(x => (byte[])x).ToList();
+		}
+
 		public static Clock ToClock(this DateTimeOffset dt)
 		{
 			return new Clock { Timestamp = DateTimeOffset.Now.UtcTicks };

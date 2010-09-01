@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Apache.Cassandra;
+using FluentCassandra.Types;
 
 namespace FluentCassandra.Operations
 {
 	public class CassandraKeyRange
 	{
-		public CassandraKeyRange(string startKey, string endKey, string startToken, string endToken, int count)
+		public CassandraKeyRange(BytesType startKey, BytesType endKey, string startToken, string endToken, int count)
 		{
 			StartKey = startKey;
 			EndKey = endKey;
@@ -17,8 +15,8 @@ namespace FluentCassandra.Operations
 			Count = count;
 		}
 
-		public string StartKey { get; private set; }
-		public string EndKey { get; private set; }
+		public BytesType StartKey { get; private set; }
+		public BytesType EndKey { get; private set; }
 		public string StartToken { get; private set; }
 		public string EndToken { get; private set; }
 		public int Count { get; private set; }

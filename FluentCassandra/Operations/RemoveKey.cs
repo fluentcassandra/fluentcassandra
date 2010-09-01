@@ -13,7 +13,7 @@ namespace FluentCassandra.Operations
 		 * remove(keyspace, key, column_path, timestamp, consistency_level)
 		 */
 
-		public string Key { get; private set; }
+		public BytesType Key { get; private set; }
 
 		public override Void Execute(BaseCassandraColumnFamily columnFamily)
 		{
@@ -24,14 +24,14 @@ namespace FluentCassandra.Operations
 			CassandraSession.Current.GetClient().remove(
 				Key,
 				path,
-				DateTimeOffset.UtcNow.Ticks,
+				DateTimeOffset.UtcNow.ToClock(),
 				CassandraSession.Current.WriteConsistency
 			);
 
 			return new Void();
 		}
 
-		public RemoveKey(string key)
+		public RemoveKey(BytesType key)
 		{
 			Key = key;
 		}

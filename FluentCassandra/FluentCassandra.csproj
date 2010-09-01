@@ -149,6 +149,7 @@
     <Compile Include="Operations\BatchMutate.cs" />
     <Compile Include="Operations\CassandraQueryable.cs" />
     <Compile Include="Operations\CassandraSlicePredicateBuilder.cs" />
+    <Compile Include="Operations\ColumnSlicePredicate.cs" />
     <Compile Include="Operations\ContextOperation.cs" />
     <Compile Include="Operations\GetSuperColumn.cs" />
     <Compile Include="Operations\ICassandraQueryable.cs" />
@@ -174,6 +175,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Operations\QueryableColumnFamilyOperation.cs" />
+    <Compile Include="Operations\RangeSlicePredicate.cs" />
     <Compile Include="Operations\RemoveColumn.cs" />
     <Compile Include="Operations\RemoveKey.cs" />
     <Compile Include="Operations\RemoveSuperColumn.cs" />

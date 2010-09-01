@@ -13,9 +13,11 @@ namespace FluentCassandra.Operations
 		 * i32 get_count(keyspace, key, column_parent, consistency_level) 
 		 */
 
-		public string Key { get; private set; }
+		public BytesType Key { get; private set; }
 
 		public CassandraType SuperColumnName { get; private set; }
+
+		public CassandraSlicePredicate SlicePredicate { get; private set; }
 
 		#region ICassandraAction<int> Members
 
@@ -31,6 +33,7 @@ namespace FluentCassandra.Operations
 			var result = CassandraSession.Current.GetClient().get_count(
 				Key,
 				parent,
+				SlicePredicate.CreateSlicePredicate(),
 				CassandraSession.Current.ReadConsistency
 			);
 
@@ -39,15 +42,17 @@ namespace FluentCassandra.Operations
 
 		#endregion
 
-		public ColumnCount(string key)
+		public ColumnCount(BytesType key, CassandraSlicePredicate columnSlicePredicate)
 		{
-			this.Key = key;
+			Key = key;
+			SlicePredicate = columnSlicePredicate;
 		}
 
-		public ColumnCount(string key, CassandraType superColumnName)
+		public ColumnCount(BytesType key, CassandraType superColumnName, CassandraSlicePredicate columnSlicePredicate)
 		{
-			this.Key = key;
-			this.SuperColumnName = superColumnName;
+			Key = key;
+			SuperColumnName = superColumnName;
+			SlicePredicate = columnSlicePredicate;
 		}
 	}
 }

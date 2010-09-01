@@ -33,11 +33,6 @@ namespace FluentCassandra
 		public CassandraContext Context { get { return _context; } }
 
 		/// <summary>
-		/// The keyspace the column family belongs to.
-		/// </summary>
-		public CassandraKeyspace Keyspace { get { return _context.Keyspace; } }
-
-		/// <summary>
 		/// The family name for this column family.
 		/// </summary>
 		public string FamilyName { get; private set; }

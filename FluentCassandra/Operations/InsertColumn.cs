@@ -13,7 +13,7 @@ namespace FluentCassandra.Operations
 		* insert(keyspace, key, column_path, value, timestamp, consistency_level)
 		*/
 
-		public string Key { get; private set; }
+		public BytesType Key { get; private set; }
 
 		public CassandraType SuperColumnName { get; private set; }
 
@@ -27,19 +27,24 @@ namespace FluentCassandra.Operations
 
 		public override Void Execute(BaseCassandraColumnFamily columnFamily)
 		{
-			var path = new ColumnPath {
+			var parent = new ColumnParent {
 				Column_family = columnFamily.FamilyName,
-				Column = ColumnName
 			};
 
 			if (SuperColumnName != null)
-				path.Super_column = SuperColumnName;
+				parent.Super_column = SuperColumnName;
+
+			var column = new Column {
+				Name = ColumnName,
+				Value = ColumnValue,
+				Clock = Timestamp.ToClock(),
+				Ttl = 0
+			};
 
 			CassandraSession.Current.GetClient().insert(
 				Key,
-				path,
-				ColumnValue,
-				Timestamp.UtcTicks,
+				parent,
+				column,
 				CassandraSession.Current.WriteConsistency
 			);
 
@@ -48,7 +53,7 @@ namespace FluentCassandra.Operations
 
 		#endregion
 
-		public InsertColumn(string key, CassandraType name, BytesType value, DateTimeOffset timestamp)
+		public InsertColumn(BytesType key, CassandraType name, BytesType value, DateTimeOffset timestamp)
 		{
 			Key = key;
 			ColumnName = name;
@@ -56,7 +61,7 @@ namespace FluentCassandra.Operations
 			Timestamp = timestamp;
 		}
 
-		public InsertColumn(string key, CassandraType superColumnName, CassandraType name, BytesType value, DateTimeOffset timestamp)
+		public InsertColumn(BytesType key, CassandraType superColumnName, CassandraType name, BytesType value, DateTimeOffset timestamp)
 		{
 			Key = key;
 			SuperColumnName = superColumnName;

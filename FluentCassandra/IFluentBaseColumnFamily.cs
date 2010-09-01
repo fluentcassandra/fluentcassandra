@@ -9,7 +9,7 @@ namespace FluentCassandra
 {
 	public interface IFluentBaseColumnFamily : IFluentRecord, INotifyPropertyChanged
 	{
-		string Key { get; set; }
+		BytesType Key { get; set; }
 		string FamilyName { get; }
 		ColumnType ColumnType { get; }
 

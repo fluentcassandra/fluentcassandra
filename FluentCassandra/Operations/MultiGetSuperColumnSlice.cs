@@ -15,7 +15,7 @@ namespace FluentCassandra.Operations
 		 * map<string,list<ColumnOrSuperColumn>> multiget_slice(keyspace, keys, column_parent, predicate, consistency_level)
 		 */
 
-		public List<string> Keys { get; private set; }
+		public List<BytesType> Keys { get; private set; }
 
 		public CassandraType SuperColumnName { get; private set; }
 
@@ -40,7 +40,7 @@ namespace FluentCassandra.Operations
 					parent.Super_column = SuperColumnName;
 
 				var output = CassandraSession.Current.GetClient().multiget_slice(
-					Keys,
+					Keys.ToByteArrayList(),
 					parent,
 					SlicePredicate.CreateSlicePredicate(),
 					CassandraSession.Current.ReadConsistency
@@ -64,11 +64,11 @@ namespace FluentCassandra.Operations
 			}
 		}
 
-		public MultiGetSuperColumnSlice(IEnumerable<string> keys, CassandraType superColumnName, CassandraSlicePredicate columnSlicePredicate)
+		public MultiGetSuperColumnSlice(IEnumerable<BytesType> keys, CassandraType superColumnName, CassandraSlicePredicate columnSlicePredicate)
 		{
-			this.Keys = keys.ToList();
-			this.SuperColumnName = superColumnName;
-			this.SlicePredicate = columnSlicePredicate;
+			Keys = keys.ToList();
+			SuperColumnName = superColumnName;
+			SlicePredicate = columnSlicePredicate;
 		}
 	}
 }

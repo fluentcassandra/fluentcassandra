@@ -19,7 +19,7 @@ namespace FluentCassandra
 		/// </summary>
 		/// <param name="key"></param>
 		/// <param name="columnFamily"></param>
-		public FluentColumnFamily(string key, string columnFamily)
+		public FluentColumnFamily(BytesType key, string columnFamily)
 		{
 			Key = key;
 			FamilyName = columnFamily;
@@ -33,7 +33,7 @@ namespace FluentCassandra
 		/// <param name="key"></param>
 		/// <param name="columnFamily"></param>
 		/// <param name="columns"></param>
-		internal FluentColumnFamily(string key, string columnFamily, IEnumerable<IFluentColumn<CompareWith>> columns)
+		internal FluentColumnFamily(BytesType key, string columnFamily, IEnumerable<IFluentColumn<CompareWith>> columns)
 		{
 			Key = key;
 			FamilyName = columnFamily;
@@ -44,7 +44,7 @@ namespace FluentCassandra
 		/// <summary>
 		/// 
 		/// </summary>
-		public string Key { get; set; }
+		public BytesType Key { get; set; }
 
 		/// <summary>
 		/// 
