@@ -10,20 +10,32 @@ namespace FluentCassandra.Operations
 {
 	internal static class CassandraSlicePredicateBuilder
 	{
-		public static void BuildPredicate<TResult, CompareWith>(this ICassandraQueryable<TResult, CompareWith> source)
+		public static QueryableColumnFamilyOperation<TResult> BuildQueryableOperation<TResult, CompareWith>(this ICassandraQueryable<TResult, CompareWith> source)
 			where CompareWith : CassandraType
+		{
+			return BuildOperation<QueryableColumnFamilyOperation<TResult>>(source, source.Setup.CreateQueryOperation);
+		}
+
+		public static ColumnFamilyOperation<TResult> BuildOperation<TResult>(this ICassandraQueryable source, Func<CassandraQuerySetup, CassandraSlicePredicate, ColumnFamilyOperation<TResult>> createOp)
+		{
+			return BuildOperation<ColumnFamilyOperation<TResult>>(source, createOp);
+		}
+
+		private static TOperation BuildOperation<TOperation>(this ICassandraQueryable source, Func<CassandraQuerySetup, CassandraSlicePredicate, TOperation> createOp)
 		{
 			if (source == null)
 				throw new ArgumentNullException("source");
 
-			var predicate = BuildPredicateFromExpression(source.Expression);
-			source.Operation.SlicePredicate = predicate;
+			var calls = BuildCallDictionary(new Dictionary<string, object>(), source.Expression);
+
+			var predicate = BuildPredicateFromExpression(calls);
+			var operation = createOp(source.Setup, predicate);
+
+			return operation;
 		}
 
-		private static CassandraSlicePredicate BuildPredicateFromExpression(Expression exp)
+		private static CassandraSlicePredicate BuildPredicateFromExpression(IDictionary<string, object> calls)
 		{
-			var calls = BuildCallDictionary(new Dictionary<string, object>(), exp);
-
 			object fetch, take, takeUntil;
 
 			if (!calls.TryGetValue("Fetch", out fetch))
@@ -101,7 +113,7 @@ namespace FluentCassandra.Operations
 					break;
 
 				default:
-					throw new NotSupportedException("Method call to " + exp.Method.Name + " is not supported.");
+					throw new NotSupportedException(String.Format("Method call to {0} is not supported.", exp.Method.Name));
 			}
 
 			return calls;

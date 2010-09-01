@@ -29,8 +29,8 @@ namespace FluentCassandra.Operations
 		{
 			return new SlicePredicate {
 				Slice_range = new SliceRange {
-					Start = (Start == null ? new byte[0] : Start),
-					Finish = (Finish == null ? new byte[0] : Finish),
+					Start = (byte[])Start ?? new byte[0],
+					Finish = (byte[])Finish ?? new byte[0],
 					Reversed = Reversed,
 					Count = Count
 				}

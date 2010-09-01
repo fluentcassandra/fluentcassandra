@@ -7,7 +7,7 @@ using FluentCassandra.Types;
 
 namespace FluentCassandra.Operations
 {
-	public class GetColumnFamilyRangeSlice<CompareWith> : QueryableColumnFamilyOperation<IFluentColumnFamily<CompareWith>, CompareWith>
+	public class GetColumnFamilyRangeSlice<CompareWith> : QueryableColumnFamilyOperation<IFluentColumnFamily<CompareWith>>
 		where CompareWith : CassandraType
 	{
 		/*
@@ -60,8 +60,8 @@ namespace FluentCassandra.Operations
 
 		public GetColumnFamilyRangeSlice(CassandraKeyRange keyRange, CassandraSlicePredicate columnSlicePredicate)
 		{
-			this.KeyRange = keyRange;
-			this.SlicePredicate = columnSlicePredicate;
+			KeyRange = keyRange;
+			SlicePredicate = columnSlicePredicate;
 		}
 	}
 }

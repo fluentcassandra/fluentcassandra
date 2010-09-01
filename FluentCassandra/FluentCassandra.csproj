@@ -148,6 +148,7 @@
     <Compile Include="CassandraColumnFamilyOperations.cs" />
     <Compile Include="Operations\BatchMutate.cs" />
     <Compile Include="Operations\CassandraQueryable.cs" />
+    <Compile Include="Operations\CassandraQuerySetup.cs" />
     <Compile Include="Operations\CassandraSlicePredicateBuilder.cs" />
     <Compile Include="Operations\ColumnSlicePredicate.cs" />
     <Compile Include="Operations\ContextOperation.cs" />
@@ -163,6 +164,8 @@
     <Compile Include="Operations\GetColumnFamilyRangeSlice.cs" />
     <Compile Include="Operations\GetSuperColumnFamilyRangeSlice.cs" />
     <Compile Include="Operations\GetSuperColumnRangeSlice.cs" />
+    <Compile Include="Operations\ICassandraQueryProvider.cs" />
+    <Compile Include="Operations\MultiGetColumnCount.cs" />
     <Compile Include="Operations\MultiGetSuperColumnFamilySlice.cs" />
     <Compile Include="Operations\MultiGetSuperColumnSlice.cs" />
     <Compile Include="Operations\GetColumn.cs" />

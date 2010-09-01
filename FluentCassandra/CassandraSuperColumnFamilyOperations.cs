@@ -226,16 +226,24 @@ namespace FluentCassandra
 			where CompareWith : CassandraType
 			where CompareSubcolumnWith : CassandraType
 		{
-			var op = new MultiGetSuperColumnSlice<CompareWith, CompareSubcolumnWith>(keys, superColumnName, null);
-			return ((ICassandraQueryProvider)family).CreateQuery(op, null);
+			var setup = new CassandraQuerySetup<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>, CompareSubcolumnWith> {
+				Keys = keys,
+				SuperColumnName = superColumnName,
+				CreateQueryOperation = (x, slice) => new MultiGetSuperColumnSlice<CompareWith, CompareSubcolumnWith>(x.Keys, x.SuperColumnName, slice)
+			};
+			return ((ICassandraQueryProvider)family).CreateQuery(setup, null);
 		}
 
 		public static ICassandraQueryable<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>, CompareSubcolumnWith> GetSuperColumns<CompareWith, CompareSubcolumnWith>(this CassandraSuperColumnFamily<CompareWith, CompareSubcolumnWith> family, BytesType startKey, BytesType endKey, string startToken, string endToken, int keyCount, CompareWith superColumnName)
 			where CompareWith : CassandraType
 			where CompareSubcolumnWith : CassandraType
 		{
-			var op = new GetSuperColumnRangeSlice<CompareWith, CompareSubcolumnWith>(new CassandraKeyRange(startKey, endKey, startToken, endToken, keyCount), superColumnName, null);
-			return ((ICassandraQueryProvider)family).CreateQuery(op, null);
+			var setup = new CassandraQuerySetup<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>, CompareSubcolumnWith> {
+				KeyRange = new CassandraKeyRange(startKey, endKey, startToken, endToken, keyCount),
+				SuperColumnName = superColumnName,
+				CreateQueryOperation = (x, slice) => new GetSuperColumnRangeSlice<CompareWith, CompareSubcolumnWith>(x.KeyRange, x.SuperColumnName, slice)
+			};
+			return ((ICassandraQueryProvider)family).CreateQuery(setup, null);
 		}
 
 		// multi_get_slice
@@ -284,16 +292,22 @@ namespace FluentCassandra
 			where CompareWith : CassandraType
 			where CompareSubcolumnWith : CassandraType
 		{
-			var op = new MultiGetSuperColumnFamilySlice<CompareWith, CompareSubcolumnWith>(keys, null);
-			return ((ICassandraQueryProvider)family).CreateQuery(op, null);
+			var setup = new CassandraQuerySetup<IFluentSuperColumnFamily<CompareWith, CompareSubcolumnWith>, CompareWith> {
+				Keys = keys,
+				CreateQueryOperation = (x, slice) => new MultiGetSuperColumnFamilySlice<CompareWith, CompareSubcolumnWith>(x.Keys, slice)
+			};
+			return ((ICassandraQueryProvider)family).CreateQuery(setup, null);
 		}
 
 		public static ICassandraQueryable<IFluentSuperColumnFamily<CompareWith, CompareSubcolumnWith>, CompareWith> Get<CompareWith, CompareSubcolumnWith>(this CassandraSuperColumnFamily<CompareWith, CompareSubcolumnWith> family, BytesType startKey, BytesType endKey, string startToken, string endToken, int keyCount)
 			where CompareWith : CassandraType
 			where CompareSubcolumnWith : CassandraType
 		{
-			var op = new GetSuperColumnFamilyRangeSlice<CompareWith, CompareSubcolumnWith>(new CassandraKeyRange(startKey, endKey, startToken, endToken, keyCount), null);
-			return ((ICassandraQueryProvider)family).CreateQuery(op, null);
+			var setup = new CassandraQuerySetup<IFluentSuperColumnFamily<CompareWith, CompareSubcolumnWith>, CompareWith> {
+				KeyRange = new CassandraKeyRange(startKey, endKey, startToken, endToken, keyCount),
+				CreateQueryOperation = (x, slice) => new GetSuperColumnFamilyRangeSlice<CompareWith, CompareSubcolumnWith>(x.KeyRange, slice)
+			};
+			return ((ICassandraQueryProvider)family).CreateQuery(setup, null);
 		}
 
 		// multi_get_slice

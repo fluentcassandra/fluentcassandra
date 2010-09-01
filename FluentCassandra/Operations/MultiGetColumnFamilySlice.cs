@@ -7,7 +7,7 @@ using FluentCassandra.Types;
 
 namespace FluentCassandra.Operations
 {
-	public class MultiGetColumnFamilySlice<CompareWith> : QueryableColumnFamilyOperation<IFluentColumnFamily<CompareWith>, CompareWith>
+	public class MultiGetColumnFamilySlice<CompareWith> : QueryableColumnFamilyOperation<IFluentColumnFamily<CompareWith>>
 		where CompareWith : CassandraType
 	{
 		/*
@@ -17,11 +17,6 @@ namespace FluentCassandra.Operations
 		public List<BytesType> Keys { get; private set; }
 
 		public override IEnumerable<IFluentColumnFamily<CompareWith>> Execute(BaseCassandraColumnFamily columnFamily)
-		{
-			return GetFamilies(columnFamily);
-		}
-
-		private IEnumerable<IFluentColumnFamily<CompareWith>> GetFamilies(BaseCassandraColumnFamily columnFamily)
 		{
 			CassandraSession _localSession = null;
 			if (CassandraSession.Current == null)

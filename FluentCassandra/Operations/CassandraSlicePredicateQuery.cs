@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using FluentCassandra.Operations;
 using System.Linq.Expressions;
 using System.Collections;
@@ -12,9 +10,9 @@ namespace FluentCassandra.Operations
 	internal class CassandraSlicePredicateQuery<TResult, CompareWith> : ICassandraQueryable<TResult, CompareWith>
 		where CompareWith : CassandraType
 	{
-		internal CassandraSlicePredicateQuery(QueryableColumnFamilyOperation<TResult, CompareWith> op, BaseCassandraColumnFamily family, Expression expression)
+		internal CassandraSlicePredicateQuery(CassandraQuerySetup<TResult, CompareWith> setup, BaseCassandraColumnFamily family, Expression expression)
 		{
-			Operation = op;
+			Setup = setup;
 			Family = family;
 			Expression = expression;
 
@@ -33,14 +31,20 @@ namespace FluentCassandra.Operations
 
 		#region IEnumerable Members
 
-		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+		IEnumerator IEnumerable.GetEnumerator()
 		{
 			return GetEnumerator();
 		}
 
 		#endregion
 
-		#region ICassandraQueryable<TResult> Members
+		#region ICassandraQueryable<TResult, CompareWith> Members
+
+		public CassandraQuerySetup<TResult, CompareWith> Setup
+		{
+			get;
+			private set;
+		}
 
 		public ICassandraQueryProvider Provider
 		{
@@ -53,16 +57,19 @@ namespace FluentCassandra.Operations
 			private set;
 		}
 
-		public QueryableColumnFamilyOperation<TResult, CompareWith> Operation
+		public Expression Expression
 		{
 			get;
 			private set;
 		}
 
-		public Expression Expression
+		#endregion
+
+		#region ICassandraQueryable Members
+
+		CassandraQuerySetup ICassandraQueryable.Setup
 		{
-			get;
-			private set;
+			get { return Setup; }
 		}
 
 		#endregion

@@ -1,25 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using FluentCassandra.Operations;
 using System.Linq.Expressions;
 using FluentCassandra.Types;
 
 namespace FluentCassandra.Operations
 {
-	public interface ICassandraQueryable<TResult, CompareWith> : IEnumerable<TResult>
-		where CompareWith : CassandraType
+	public interface ICassandraQueryable
 	{
 		ICassandraQueryProvider Provider { get; }
-		QueryableColumnFamilyOperation<TResult, CompareWith> Operation { get; }
-
+		CassandraQuerySetup Setup { get; }
 		Expression Expression { get; }
 	}
 
-	public interface ICassandraQueryProvider
+	public interface ICassandraQueryable<TResult, CompareWith> : ICassandraQueryable, IEnumerable<TResult>
+		where CompareWith : CassandraType
 	{
-		ICassandraQueryable<TResult, CompareWith> CreateQuery<TResult, CompareWith>(QueryableColumnFamilyOperation<TResult, CompareWith> op, Expression expression) where CompareWith : CassandraType;
-		IEnumerable<TResult> ExecuteQuery<TResult, CompareWith>(ICassandraQueryable<TResult, CompareWith> query) where CompareWith : CassandraType;
+		new CassandraQuerySetup<TResult, CompareWith> Setup { get; }
 	}
 }

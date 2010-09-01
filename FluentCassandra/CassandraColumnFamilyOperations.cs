@@ -133,15 +133,21 @@ namespace FluentCassandra
 		public static ICassandraQueryable<IFluentColumnFamily<CompareWith>, CompareWith> Get<CompareWith>(this CassandraColumnFamily<CompareWith> family, params BytesType[] keys)
 			where CompareWith : CassandraType
 		{
-			var op = new MultiGetColumnFamilySlice<CompareWith>(keys, null);
-			return ((ICassandraQueryProvider)family).CreateQuery(op, null);
+			var setup = new CassandraQuerySetup<IFluentColumnFamily<CompareWith>, CompareWith> {
+				Keys = keys,
+				CreateQueryOperation = (s, slice) => new MultiGetColumnFamilySlice<CompareWith>(s.Keys, slice)
+			};
+			return ((ICassandraQueryProvider)family).CreateQuery(setup, null);
 		}
 
 		public static ICassandraQueryable<IFluentColumnFamily<CompareWith>, CompareWith> Get<CompareWith>(this CassandraColumnFamily<CompareWith> family, BytesType startKey, BytesType endKey, string startToken, string endToken, int keyCount)
 			where CompareWith : CassandraType
 		{
-			var op = new GetColumnFamilyRangeSlice<CompareWith>(new CassandraKeyRange(startKey, endKey, startToken, endToken, keyCount), null);
-			return ((ICassandraQueryProvider)family).CreateQuery(op, null);
+			var setup = new CassandraQuerySetup<IFluentColumnFamily<CompareWith>, CompareWith> {
+				KeyRange = new CassandraKeyRange(startKey, endKey, startToken, endToken, keyCount),
+				CreateQueryOperation = (s, slice) => new GetColumnFamilyRangeSlice<CompareWith>(s.KeyRange, slice)
+			};
+			return ((ICassandraQueryProvider)family).CreateQuery<IFluentColumnFamily<CompareWith>, CompareWith>(setup, null);
 		}
 
 		// multi_get_slice

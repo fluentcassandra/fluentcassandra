@@ -17,7 +17,7 @@ namespace FluentCassandra.Operations
 
 		public CassandraType SuperColumnName { get; private set; }
 
-		public CassandraSlicePredicate SlicePredicate { get; private set; }
+		public CassandraSlicePredicate SlicePredicate { get; internal protected set; }
 
 		#region ICassandraAction<int> Members
 

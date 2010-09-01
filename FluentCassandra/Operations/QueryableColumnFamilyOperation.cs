@@ -6,8 +6,7 @@ using FluentCassandra.Types;
 
 namespace FluentCassandra.Operations
 {
-	public abstract class QueryableColumnFamilyOperation<TResult, CompareWith> : ColumnFamilyOperation<IEnumerable<TResult>>
-		where CompareWith : CassandraType
+	public abstract class QueryableColumnFamilyOperation<TResult> : ColumnFamilyOperation<IEnumerable<TResult>>
 	{
 		public CassandraSlicePredicate SlicePredicate { get; internal protected set; }
 	}

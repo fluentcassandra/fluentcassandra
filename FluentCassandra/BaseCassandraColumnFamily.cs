@@ -1,10 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Apache.Cassandra;
-using FluentCassandra.Configuration;
-using System.Collections;
 using FluentCassandra.Types;
 using FluentCassandra.Operations;
 using System.Linq.Expressions;
@@ -100,15 +95,21 @@ namespace FluentCassandra
 
 		#region ICassandraQueryProvider Members
 
-		ICassandraQueryable<TResult, CompareWith> ICassandraQueryProvider.CreateQuery<TResult, CompareWith>(QueryableColumnFamilyOperation<TResult, CompareWith> op, Expression expression)
+		ICassandraQueryable<TResult, CompareWith> ICassandraQueryProvider.CreateQuery<TResult, CompareWith>(CassandraQuerySetup<TResult, CompareWith> setup, Expression expression) 
 		{
-			return new CassandraSlicePredicateQuery<TResult, CompareWith>(op, this, expression);
+			return new CassandraSlicePredicateQuery<TResult, CompareWith>(setup, this, expression);
 		}
 
 		IEnumerable<TResult> ICassandraQueryProvider.ExecuteQuery<TResult, CompareWith>(ICassandraQueryable<TResult, CompareWith> query)
 		{
-			query.BuildPredicate();
-			return ExecuteOperation(query.Operation, true);
+			var op = query.BuildQueryableOperation();
+			return ExecuteOperation(op, true);
+		}
+
+		TResult ICassandraQueryProvider.Execute<TResult>(ICassandraQueryable query, Func<CassandraQuerySetup, CassandraSlicePredicate, ColumnFamilyOperation<TResult>> createOp)
+		{
+			var op = query.BuildOperation<TResult>(createOp);
+			return ExecuteOperation(op, true);
 		}
 
 		#endregion
