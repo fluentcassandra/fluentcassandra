@@ -11,6 +11,19 @@ namespace FluentCassandra.Test.Types
 	public class BytesTypeTest
 	{
 		[TestMethod]
+		public void String_To_BytesType()
+		{
+			// arrange
+			string expected = "Something Good";
+
+			// act
+			BytesType actual = expected;
+
+			// assert
+			Assert.AreEqual(expected, (string)actual);
+		}
+
+		[TestMethod]
 		public void Double_To_BytesType()
 		{
 			// arrange

@@ -49,7 +49,7 @@ namespace FluentCassandra.Test.Operations
 			_family.RemoveColumn(_testKey, _testName);
 
 			// assert
-			int actualCount = _family.ColumnCount(_testKey);
+			int actualCount = _family.ColumnCount(_testKey, null, null);
 			Assert.AreEqual(expectedCount, actualCount);
 		}
 
@@ -63,7 +63,7 @@ namespace FluentCassandra.Test.Operations
 			_family.RemoveKey(_testKey);
 
 			// assert
-			int actualCount = _family.ColumnCount(_testKey);
+			int actualCount = _family.ColumnCount(_testKey, null, null);
 			Assert.AreEqual(expectedCount, actualCount);
 		}
 
@@ -77,7 +77,7 @@ namespace FluentCassandra.Test.Operations
 			_superFamily.RemoveColumn(_testKey, _testSuperName, _testName);
 
 			// assert
-			int actualCount = _superFamily.ColumnCount(_testKey, _testSuperName);
+			int actualCount = _superFamily.ColumnCount(_testKey, _testSuperName, null, null);
 			Assert.AreEqual(expectedCount, actualCount);
 		}
 
@@ -91,7 +91,7 @@ namespace FluentCassandra.Test.Operations
 			_superFamily.RemoveSuperColumn(_testKey, _testSuperName);
 
 			// assert
-			int actualCount = _superFamily.ColumnCount(_testKey);
+			int actualCount = _superFamily.ColumnCount(_testKey, null, null);
 			Assert.AreEqual(expectedCount, actualCount);
 		}
 
@@ -105,7 +105,7 @@ namespace FluentCassandra.Test.Operations
 			_superFamily.RemoveKey(_testKey);
 
 			// assert
-			int actualCount = _superFamily.ColumnCount(_testKey);
+			int actualCount = _superFamily.ColumnCount(_testKey, null, null);
 			Assert.AreEqual(expectedCount, actualCount);
 		}
 	}

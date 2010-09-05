@@ -30,12 +30,12 @@ namespace Apache.Cassandra
       void batch_mutate(Dictionary<byte[], Dictionary<string, List<Mutation>>> mutation_map, ConsistencyLevel consistency_level);
       void truncate(string cfname);
       Dictionary<string, List<string>> check_schema_agreement();
-      THashSet<string> describe_keyspaces();
+      List<KsDef> describe_keyspaces();
       string describe_cluster_name();
       string describe_version();
       List<TokenRange> describe_ring(string keyspace);
       string describe_partitioner();
-      Dictionary<string, Dictionary<string, string>> describe_keyspace(string keyspace);
+      KsDef describe_keyspace(string keyspace);
       List<string> describe_splits(string keyspace, string cfName, string start_token, string end_token, int keys_per_split);
       string system_add_column_family(CfDef cf_def);
       string system_drop_column_family(string column_family);
@@ -655,7 +655,7 @@ namespace Apache.Cassandra
         throw new TApplicationException(TApplicationException.ExceptionType.MissingResult, "check_schema_agreement failed: unknown result");
       }
 
-      public THashSet<string> describe_keyspaces()
+      public List<KsDef> describe_keyspaces()
       {
         send_describe_keyspaces();
         return recv_describe_keyspaces();
@@ -670,7 +670,7 @@ namespace Apache.Cassandra
         oprot_.Transport.Flush();
       }
 
-      public THashSet<string> recv_describe_keyspaces()
+      public List<KsDef> recv_describe_keyspaces()
       {
         TMessage msg = iprot_.ReadMessageBegin();
         if (msg.Type == TMessageType.Exception) {
@@ -819,7 +819,7 @@ namespace Apache.Cassandra
         throw new TApplicationException(TApplicationException.ExceptionType.MissingResult, "describe_partitioner failed: unknown result");
       }
 
-      public Dictionary<string, Dictionary<string, string>> describe_keyspace(string keyspace)
+      public KsDef describe_keyspace(string keyspace)
       {
         send_describe_keyspace(keyspace);
         return recv_describe_keyspace();
@@ -835,7 +835,7 @@ namespace Apache.Cassandra
         oprot_.Transport.Flush();
       }
 
-      public Dictionary<string, Dictionary<string, string>> recv_describe_keyspace()
+      public KsDef recv_describe_keyspace()
       {
         TMessage msg = iprot_.ReadMessageBegin();
         if (msg.Type == TMessageType.Exception) {
@@ -6380,9 +6380,9 @@ namespace Apache.Cassandra
     [Serializable]
     public partial class describe_keyspaces_result : TBase
     {
-      private THashSet<string> success;
+      private List<KsDef> success;
 
-      public THashSet<string> Success
+      public List<KsDef> Success
       {
         get
         {
@@ -6418,17 +6418,18 @@ namespace Apache.Cassandra
           switch (field.ID)
           {
             case 0:
-              if (field.Type == TType.Set) {
+              if (field.Type == TType.List) {
                 {
-                  this.success = new THashSet<string>();
-                  TSet _set95 = iprot.ReadSetBegin();
-                  for( int _i96 = 0; _i96 < _set95.Count; ++_i96)
+                  this.success = new List<KsDef>();
+                  TList _list95 = iprot.ReadListBegin();
+                  for( int _i96 = 0; _i96 < _list95.Count; ++_i96)
                   {
-                    string _elem97 = null;
-                    _elem97 = iprot.ReadString();
+                    KsDef _elem97 = new KsDef();
+                    _elem97 = new KsDef();
+                    _elem97.Read(iprot);
                     this.success.Add(_elem97);
                   }
-                  iprot.ReadSetEnd();
+                  iprot.ReadListEnd();
                 }
                 this.__isset.success = true;
               } else { 
@@ -6452,15 +6453,15 @@ namespace Apache.Cassandra
         if (this.__isset.success) {
           if (this.success != null) {
             field.Name = "success";
-            field.Type = TType.Set;
+            field.Type = TType.List;
             field.ID = 0;
             oprot.WriteFieldBegin(field);
             {
-              oprot.WriteSetBegin(new TSet(TType.String, this.success.Count));
-              foreach (string _iter98 in this.success)
+              oprot.WriteListBegin(new TList(TType.Struct, this.success.Count));
+              foreach (KsDef _iter98 in this.success)
               {
-                oprot.WriteString(_iter98);
-                oprot.WriteSetEnd();
+                _iter98.Write(oprot);
+                oprot.WriteListEnd();
               }
             }
             oprot.WriteFieldEnd();
@@ -7185,10 +7186,10 @@ namespace Apache.Cassandra
     [Serializable]
     public partial class describe_keyspace_result : TBase
     {
-      private Dictionary<string, Dictionary<string, string>> success;
+      private KsDef success;
       private NotFoundException nfe;
 
-      public Dictionary<string, Dictionary<string, string>> Success
+      public KsDef Success
       {
         get
         {
@@ -7238,32 +7239,9 @@ namespace Apache.Cassandra
           switch (field.ID)
           {
             case 0:
-              if (field.Type == TType.Map) {
-                {
-                  this.success = new Dictionary<string, Dictionary<string, string>>();
-                  TMap _map103 = iprot.ReadMapBegin();
-                  for( int _i104 = 0; _i104 < _map103.Count; ++_i104)
-                  {
-                    string _key105;
-                    Dictionary<string, string> _val106;
-                    _key105 = iprot.ReadString();
-                    {
-                      _val106 = new Dictionary<string, string>();
-                      TMap _map107 = iprot.ReadMapBegin();
-                      for( int _i108 = 0; _i108 < _map107.Count; ++_i108)
-                      {
-                        string _key109;
-                        string _val110;
-                        _key109 = iprot.ReadString();
-                        _val110 = iprot.ReadString();
-                        _val106[_key109] = _val110;
-                      }
-                      iprot.ReadMapEnd();
-                    }
-                    this.success[_key105] = _val106;
-                  }
-                  iprot.ReadMapEnd();
-                }
+              if (field.Type == TType.Struct) {
+                this.success = new KsDef();
+                this.success.Read(iprot);
                 this.__isset.success = true;
               } else { 
                 TProtocolUtil.Skip(iprot, field.Type);
@@ -7295,26 +7273,10 @@ namespace Apache.Cassandra
         if (this.__isset.success) {
           if (this.success != null) {
             field.Name = "success";
-            field.Type = TType.Map;
+            field.Type = TType.Struct;
             field.ID = 0;
             oprot.WriteFieldBegin(field);
-            {
-              oprot.WriteMapBegin(new TMap(TType.String, TType.Map, this.success.Count));
-              foreach (string _iter111 in this.success.Keys)
-              {
-                oprot.WriteString(_iter111);
-                {
-                  oprot.WriteMapBegin(new TMap(TType.String, TType.String, this.success[_iter111].Count));
-                  foreach (string _iter112 in this.success[_iter111].Keys)
-                  {
-                    oprot.WriteString(_iter112);
-                    oprot.WriteString(this.success[_iter111][_iter112]);
-                    oprot.WriteMapEnd();
-                  }
-                }
-                oprot.WriteMapEnd();
-              }
-            }
+            this.success.Write(oprot);
             oprot.WriteFieldEnd();
           }
         } else if (this.__isset.nfe) {
@@ -7334,7 +7296,7 @@ namespace Apache.Cassandra
       public override string ToString() {
         StringBuilder sb = new StringBuilder("describe_keyspace_result(");
         sb.Append("success: ");
-        sb.Append(this.success);
+        sb.Append(this.success== null ? "<null>" : this.success.ToString());
         sb.Append(",nfe: ");
         sb.Append(this.nfe== null ? "<null>" : this.nfe.ToString());
         sb.Append(")");
@@ -7604,12 +7566,12 @@ namespace Apache.Cassandra
               if (field.Type == TType.List) {
                 {
                   this.success = new List<string>();
-                  TList _list113 = iprot.ReadListBegin();
-                  for( int _i114 = 0; _i114 < _list113.Count; ++_i114)
+                  TList _list103 = iprot.ReadListBegin();
+                  for( int _i104 = 0; _i104 < _list103.Count; ++_i104)
                   {
-                    string _elem115 = null;
-                    _elem115 = iprot.ReadString();
-                    this.success.Add(_elem115);
+                    string _elem105 = null;
+                    _elem105 = iprot.ReadString();
+                    this.success.Add(_elem105);
                   }
                   iprot.ReadListEnd();
                 }
@@ -7640,9 +7602,9 @@ namespace Apache.Cassandra
             oprot.WriteFieldBegin(field);
             {
               oprot.WriteListBegin(new TList(TType.String, this.success.Count));
-              foreach (string _iter116 in this.success)
+              foreach (string _iter106 in this.success)
               {
-                oprot.WriteString(_iter116);
+                oprot.WriteString(_iter106);
                 oprot.WriteListEnd();
               }
             }

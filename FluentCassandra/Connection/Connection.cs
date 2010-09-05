@@ -2,6 +2,7 @@
 using Thrift.Transport;
 using Thrift.Protocol;
 using Apache.Cassandra;
+using System.Net.Sockets;
 
 namespace FluentCassandra
 {
@@ -28,7 +29,17 @@ namespace FluentCassandra
 			Server = server;
 			Timeout = timeout;
 
-			_transport = new TSocket(Server.Host, Server.Port, Timeout);
+			//TcpClient client = new TcpClient(server.Host, server.Port);
+			//client.NoDelay = true;
+			//client.SendBufferSize = timeout;
+			//client.ReceiveTimeout = timeout;
+
+			//TTransport socket = new TSocket(client);
+
+			TTransport socket = new TSocket(server.Host, server.Port, timeout);
+			_transport = new TFramedTransport(socket);
+
+			//_transport = socket;
 			_protocol = new TBinaryProtocol(_transport);
 			_client = new Cassandra.Client(_protocol);
 		}
@@ -90,12 +101,25 @@ namespace FluentCassandra
 			_transport.Close();
 		}
 
+		public void SetKeyspace(string keyspace) 
+		{
+			Client.set_keyspace(keyspace);
+		}
+
 		/// <summary>
 		/// 
 		/// </summary>
 		public Cassandra.Client Client
 		{
 			get { return _client; }
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public override string ToString()
+		{
+			return String.Format("{0}/{1}", Server, Created);
 		}
 
 		/// <summary>

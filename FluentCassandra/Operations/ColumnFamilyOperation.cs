@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Apache.Cassandra;
+using System.Diagnostics;
 
 namespace FluentCassandra.Operations
 {
@@ -25,6 +26,8 @@ namespace FluentCassandra.Operations
 			}
 			catch (Exception exc)
 			{
+				Debug.WriteLine(exc);
+
 				result = default(TResult);
 				HasError = true;
 				Error = new CassandraException(exc.Message, exc);

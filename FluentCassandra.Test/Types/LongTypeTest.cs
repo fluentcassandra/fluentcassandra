@@ -5,7 +5,7 @@ using System.ComponentModel;
 using System.Text;
 using System.Linq;
 
-namespace FluentCassandra.Test
+namespace FluentCassandra.Test.Types
 {
 	[TestClass]
 	public class LongTypeTest

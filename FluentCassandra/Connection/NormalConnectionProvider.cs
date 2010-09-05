@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Net.Sockets;
-using System.Collections.Concurrent;
-using System.Collections;
 
 namespace FluentCassandra
 {
@@ -89,8 +85,6 @@ namespace FluentCassandra
 			var server = Builder.Servers[_random.Next(ActiveServers.Count)];
 			var conn = new Connection(server, Timeout);
 
-			SetKeyspace(conn);
-			
 			return conn;
 		}
 	}

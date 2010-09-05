@@ -5,7 +5,7 @@ using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using FluentCassandra.Types;
 
-namespace FluentCassandra.Test.Types
+namespace FluentCassandra.Test.Types.Types
 {
 	[TestClass]
 	public class TimeUUIDTypeTest

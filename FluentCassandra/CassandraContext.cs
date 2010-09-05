@@ -26,6 +26,15 @@ namespace FluentCassandra
 		/// 
 		/// </summary>
 		/// <param name="keyspace"></param>
+		/// <param name="server"></param>
+		/// <param name="timeout"></param>
+		public CassandraContext(string keyspace, Server server, int timeout = 0)
+			: this(keyspace, server.Host, server.Port, timeout) { }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="keyspace"></param>
 		/// <param name="host"></param>
 		/// <param name="port"></param>
 		/// <param name="timeout"></param>
@@ -192,10 +201,13 @@ namespace FluentCassandra
 		/// </param>
 		protected virtual void Dispose(bool disposing)
 		{
-			if (!this._disposed && disposing && CassandraSession.Current != null)
+			if (!_disposed && disposing && CassandraSession.Current != null)
+			{
+				CassandraSession.Current.Dispose();
 				CassandraSession.Current = null;
+			}
 
-			this._disposed = true;
+			_disposed = true;
 		}
 
 		/// <summary>
@@ -203,7 +215,7 @@ namespace FluentCassandra
 		/// </summary>
 		~CassandraContext()
 		{
-			this.Dispose(false);
+			Dispose(false);
 		}
 
 		#endregion

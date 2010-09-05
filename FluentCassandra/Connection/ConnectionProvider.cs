@@ -30,20 +30,12 @@ namespace FluentCassandra
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="connection"></param>
-		public virtual void SetKeyspace(IConnection connection)
-		{
-			connection.Client.set_keyspace(Builder.Keyspace);
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
 		/// <returns></returns>
 		public virtual IConnection Open()
 		{
 			var conn = CreateConnection();
 			conn.Open();
+
 			return conn;
 		}
 

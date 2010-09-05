@@ -14,6 +14,8 @@ namespace FluentCassandra
 		Server Server { get; }
 		Cassandra.Client Client { get; }
 
+		void SetKeyspace(string keyspace);
+
 		void Open();
 		void Close();
 	}

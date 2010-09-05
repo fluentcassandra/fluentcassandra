@@ -17,9 +17,61 @@ namespace FluentCassandra
 			internal set { _current = value; }
 		}
 
+		#region Cassandra System For Server
+
+		public static string AddColumnFamily(Server server, CfDef definition)
+		{
+			using (var session = new CassandraSession(server))
+			{
+				return session.GetClient().system_add_column_family(definition);
+			}
+		}
+
+		public static string DropColumnFamily(Server server, string columnFamily)
+		{
+			using (var session = new CassandraSession(server))
+			{
+				return session.GetClient().system_drop_column_family(columnFamily);
+			}
+		}
+
+		public static string RenameColumnFamily(Server server, string oldColumnFamily, string newColumnFamily)
+		{
+			using (var session = new CassandraSession(server))
+			{
+				return session.GetClient().system_rename_column_family(oldColumnFamily, newColumnFamily);
+			}
+		}
+
+		public static string AddKeyspace(Server server, KsDef definition)
+		{
+			using (var session = new CassandraSession(server))
+			{
+				return session.GetClient().system_add_keyspace(definition);
+			}
+		}
+
+		public static string DropKeyspace(Server server, string keyspace)
+		{
+			using (var session = new CassandraSession(server))
+			{
+				return session.GetClient().system_drop_keyspace(keyspace);
+			}
+		}
+
+		public static string RenameKeyspace(Server server, string oldKeyspace, string newKeyspace)
+		{
+			using (var session = new CassandraSession(server))
+			{
+				return session.GetClient().system_rename_keyspace(oldKeyspace, newKeyspace);
+			}
+		}
+
+		#endregion
+
 		#region Cassandra Descriptions For Server
 
-		public static IEnumerable<CassandraKeyspace> DescribeKeyspacesFor(Server server)
+		public static IEnumerable<CassandraKeyspace> DescribeKeyspaces(Server server)
 		{
 			using (var session = new CassandraSession(server))
 			{
@@ -30,7 +82,7 @@ namespace FluentCassandra
 			}
 		}
 
-		public static string DescribeClusterNameFor(Server server)
+		public static string DescribeClusterName(Server server)
 		{
 			using (var session = new CassandraSession(server))
 			{
@@ -39,7 +91,7 @@ namespace FluentCassandra
 			}
 		}
 
-		public static string DescribeVersionFor(Server server)
+		public static string DescribeVersion(Server server)
 		{
 			using (var session = new CassandraSession(server))
 			{
@@ -48,7 +100,7 @@ namespace FluentCassandra
 			}
 		}
 
-		public static string DescribePartitionerFor(Server server)
+		public static string DescribePartitioner(Server server)
 		{
 			using (var session = new CassandraSession(server))
 			{
@@ -85,7 +137,6 @@ namespace FluentCassandra
 		}
 
 		public CassandraSession(Server server)
-			: this()
 		{
 			_connection = new Connection(server);
 		}
@@ -116,8 +167,14 @@ namespace FluentCassandra
 		/// <returns></returns>
 		internal Cassandra.Client GetClient()
 		{
-			if (_connection == null || !_connection.IsOpen)
+			if (_connection == null)
+			{
 				_connection = ConnectionProvider.Open();
+				_connection.SetKeyspace(Keyspace.KeyspaceName);
+			}
+
+			if (!_connection.IsOpen)
+				_connection.Open();
 
 			return _connection.Client;
 		}

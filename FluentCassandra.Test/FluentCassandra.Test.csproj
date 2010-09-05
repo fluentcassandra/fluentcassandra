@@ -53,6 +53,7 @@
     <Compile Include="CassandraQueryTest.cs" />
     <Compile Include="Connection\ConnectionProviderTest.cs" />
     <Compile Include="Connection\NormalConnectionProviderTest.cs" />
+    <Compile Include="_CassandraSetup.cs" />
     <Compile Include="FluentSuperColumnFamilyTest.cs" />
     <Compile Include="FluentColumnFamilyTest.cs" />
     <Compile Include="FluentColumnTest.cs" />
@@ -81,7 +82,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Test.Keyspace.xml" />
+    <None Include="Test.Keyspace.yaml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

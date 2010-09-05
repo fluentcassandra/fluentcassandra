@@ -41,7 +41,7 @@ namespace FluentCassandra.Test.Operations
 			_family.InsertColumn(_testKey, "Test3", Math.PI);
 
 			// act
-			int actual = _family.ColumnCount(_testKey);
+			int actual = _family.ColumnCount(_testKey, null, null);
 
 			// assert
 			Assert.AreEqual(expected, actual);
@@ -57,7 +57,7 @@ namespace FluentCassandra.Test.Operations
 			_superFamily.InsertColumn(_testKey, _testSuperName, "Test3", Math.PI);
 
 			// act
-			int actual = _superFamily.ColumnCount(_testKey);
+			int actual = _superFamily.ColumnCount(_testKey, null, null);
 
 			// assert
 			Assert.AreEqual(expected, actual);
@@ -73,7 +73,7 @@ namespace FluentCassandra.Test.Operations
 			_superFamily.InsertColumn(_testKey, _testSuperName, "Test3", Math.PI);
 
 			// act
-			int actual = _superFamily.ColumnCount(_testKey, _testSuperName);
+			int actual = _superFamily.ColumnCount(_testKey, _testSuperName, null, null);
 
 			// assert
 			Assert.AreEqual(expected, actual);
