@@ -208,6 +208,7 @@
     <Compile Include="Thrift\TProcessor.cs" />
     <Compile Include="Thrift\Transport\TBufferedTransport.cs" />
     <Compile Include="Thrift\Transport\TFramedTransport.cs" />
+    <Compile Include="Thrift\Transport\THttpClient.cs" />
     <Compile Include="Thrift\Transport\TServerSocket.cs" />
     <Compile Include="Thrift\Transport\TServerTransport.cs" />
     <Compile Include="Thrift\Transport\TSocket.cs" />
