@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace FluentCassandra.Connection.Test
+namespace FluentCassandra.Test.Connection
 {
 	[TestClass]
 	public class ConnectionProviderTest
@@ -14,7 +14,7 @@ namespace FluentCassandra.Connection.Test
 		{
 			// arrange
 			var expected = typeof(NormalConnectionProvider);
-			var connectionString = "";
+			var connectionString = "Keyspace=Testing";
 
 			// act
 			var result = new ConnectionBuilder(connectionString);
@@ -29,7 +29,7 @@ namespace FluentCassandra.Connection.Test
 		{
 			// arrange
 			var expected = typeof(PooledConnectionProvider);
-			var connectionString = "Pooled=True";
+			var connectionString = "Keyspace=Testing;Pooled=True";
 
 			// act
 			var result = new ConnectionBuilder(connectionString);

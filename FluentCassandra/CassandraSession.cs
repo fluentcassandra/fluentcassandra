@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Apache.Cassandra;
 
 namespace FluentCassandra
@@ -19,51 +18,27 @@ namespace FluentCassandra
 
 		#region Cassandra System For Server
 
-		public static string AddColumnFamily(Server server, CfDef definition)
-		{
-			using (var session = new CassandraSession(server))
-			{
-				return session.GetClient().system_add_column_family(definition);
-			}
-		}
-
-		public static string DropColumnFamily(Server server, string columnFamily)
-		{
-			using (var session = new CassandraSession(server))
-			{
-				return session.GetClient().system_drop_column_family(columnFamily);
-			}
-		}
-
-		public static string RenameColumnFamily(Server server, string oldColumnFamily, string newColumnFamily)
-		{
-			using (var session = new CassandraSession(server))
-			{
-				return session.GetClient().system_rename_column_family(oldColumnFamily, newColumnFamily);
-			}
-		}
-
 		public static string AddKeyspace(Server server, KsDef definition)
 		{
-			using (var session = new CassandraSession(server))
+			using (var session = new CassandraSession(new ConnectionBuilder(null, server.Host, server.Port)))
 			{
-				return session.GetClient().system_add_keyspace(definition);
+				return session.GetClient(setKeyspace: false).system_add_keyspace(definition);
 			}
 		}
 
 		public static string DropKeyspace(Server server, string keyspace)
 		{
-			using (var session = new CassandraSession(server))
+			using (var session = new CassandraSession(new ConnectionBuilder(null, server.Host, server.Port)))
 			{
-				return session.GetClient().system_drop_keyspace(keyspace);
+				return session.GetClient(setKeyspace: false).system_drop_keyspace(keyspace);
 			}
 		}
 
 		public static string RenameKeyspace(Server server, string oldKeyspace, string newKeyspace)
 		{
-			using (var session = new CassandraSession(server))
+			using (var session = new CassandraSession(new ConnectionBuilder(null, server.Host, server.Port)))
 			{
-				return session.GetClient().system_rename_keyspace(oldKeyspace, newKeyspace);
+				return session.GetClient(setKeyspace: false).system_rename_keyspace(oldKeyspace, newKeyspace);
 			}
 		}
 
@@ -71,11 +46,16 @@ namespace FluentCassandra
 
 		#region Cassandra Descriptions For Server
 
+		public static bool KeyspaceExists(Server server, string keyspaceName)
+		{
+			return DescribeKeyspaces(server).Any(keyspace => keyspace.KeyspaceName == keyspaceName);
+		}
+
 		public static IEnumerable<CassandraKeyspace> DescribeKeyspaces(Server server)
 		{
-			using (var session = new CassandraSession(server))
+			using (var session = new CassandraSession(new ConnectionBuilder(null, server.Host, server.Port)))
 			{
-				IEnumerable<string> keyspaces = session.GetClient().describe_keyspaces();
+				IEnumerable<string> keyspaces = session.GetClient(setKeyspace: false).describe_keyspaces();
 
 				foreach (var keyspace in keyspaces)
 					yield return new CassandraKeyspace(keyspace);
@@ -84,27 +64,27 @@ namespace FluentCassandra
 
 		public static string DescribeClusterName(Server server)
 		{
-			using (var session = new CassandraSession(server))
+			using (var session = new CassandraSession(new ConnectionBuilder(null, server.Host, server.Port)))
 			{
-				string response = session.GetClient().describe_cluster_name();
+				string response = session.GetClient(setKeyspace: false).describe_cluster_name();
 				return response;
 			}
 		}
 
 		public static string DescribeVersion(Server server)
 		{
-			using (var session = new CassandraSession(server))
+			using (var session = new CassandraSession(new ConnectionBuilder(null, server.Host, server.Port)))
 			{
-				string response = session.GetClient().describe_version();
+				string response = session.GetClient(setKeyspace: false).describe_version();
 				return response;
 			}
 		}
 
 		public static string DescribePartitioner(Server server)
 		{
-			using (var session = new CassandraSession(server))
+			using (var session = new CassandraSession(new ConnectionBuilder(null, server.Host, server.Port)))
 			{
-				string response = session.GetClient().describe_partitioner();
+				string response = session.GetClient(setKeyspace: false).describe_partitioner();
 				return response;
 			}
 		}
@@ -136,11 +116,6 @@ namespace FluentCassandra
 			Current = this;
 		}
 
-		public CassandraSession(Server server)
-		{
-			_connection = new Connection(server);
-		}
-
 		/// <summary>
 		/// Gets ConnectionProvider.
 		/// </summary>
@@ -165,16 +140,16 @@ namespace FluentCassandra
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		internal Cassandra.Client GetClient()
+		internal Cassandra.Client GetClient(bool setKeyspace = true)
 		{
 			if (_connection == null)
-			{
 				_connection = ConnectionProvider.Open();
-				_connection.SetKeyspace(Keyspace.KeyspaceName);
-			}
 
 			if (!_connection.IsOpen)
 				_connection.Open();
+
+			if (setKeyspace)
+				_connection.SetKeyspace(Keyspace.KeyspaceName);
 
 			return _connection.Client;
 		}

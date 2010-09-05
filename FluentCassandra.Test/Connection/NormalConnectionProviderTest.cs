@@ -12,7 +12,7 @@ namespace FluentCassandra.Test.Connection
 		/// <summary>
 		/// Needed to switch to testing ports since the network timeout was making the tests unbearably long.
 		/// </summary>
-		private static string FailoverConnectionString = "Timeout=1;Server=127.0.0.1:1234,127.0.0.1:4567,127.0.0.1";
+		private static string FailoverConnectionString = "Keyspace=Testing;Timeout=1;Server=127.0.0.1:1234,127.0.0.1:4567,127.0.0.1";
 
 		[TestMethod]
 		public void Fails_Over()

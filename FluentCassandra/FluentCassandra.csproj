@@ -182,6 +182,7 @@
     <Compile Include="Operations\RemoveColumn.cs" />
     <Compile Include="Operations\RemoveKey.cs" />
     <Compile Include="Operations\RemoveSuperColumn.cs" />
+    <Compile Include="Operations\Truncate.cs" />
     <Compile Include="Operations\Void.cs">
       <SubType>Code</SubType>
     </Compile>

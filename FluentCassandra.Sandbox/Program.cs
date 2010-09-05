@@ -21,10 +21,10 @@ namespace FluentCassandra.Sandbox
 			TProtocol framedProtocol = new TBinaryProtocol(framedTransport);
 			TProtocol socketProtocol = new TBinaryProtocol(socketTransport);
 
-			//var client = new Cassandra.Client(framedProtocol, framedProtocol); // all framed
+			var client = new Cassandra.Client(framedProtocol, framedProtocol); // all framed
 			//var client = new Cassandra.Client(socketProtocol, socketProtocol); // all socket
 			//var client = new Cassandra.Client(framedProtocol, socketProtocol); // in: framed out: socket
-			var client = new Cassandra.Client(socketProtocol, framedProtocol); // in: socket out: framed
+			//var client = new Cassandra.Client(socketProtocol, framedProtocol); // in: socket out: framed
 
 			framedTransport.Open();
 			socketTransport.Open();
@@ -33,8 +33,8 @@ namespace FluentCassandra.Sandbox
 			client.set_keyspace("Keyspace1");
 
 			Console.WriteLine("Count Key");
-			var key = System.Text.Encoding.ASCII.GetBytes("MyKey");
-			var columns = new List<byte[]>(new[] { System.Text.Encoding.ASCII.GetBytes("MyColumn") });
+			var key = Encoding.ASCII.GetBytes("MyKey");
+			var columns = new List<byte[]>(new[] { Encoding.ASCII.GetBytes("MyColumn") });
 			var column_parent = new ColumnParent {
 				Column_family = "Standard1"
 			};

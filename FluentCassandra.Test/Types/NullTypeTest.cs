@@ -10,36 +10,15 @@ namespace FluentCassandra.Test.Types
 	[TestClass]
 	public class NullTypeTest
 	{
-		private CassandraContext _db;
-		private CassandraColumnFamily<AsciiType> _family;
-		private CassandraSuperColumnFamily<AsciiType, AsciiType> _superFamily;
-		private const string _testKey = "Test1";
-		private const string _testName = "Test1";
-		private const string _testSuperName = "SubTest1";
-
-		[TestInitialize]
-		public void TestInit()
-		{
-			var setup = new _CassandraSetup();
-			_db = setup.DB;
-			_family = setup.Family;
-			_superFamily = setup.SuperFamily;
-		}
-
-		[TestCleanup]
-		public void TestCleanup()
-		{
-			_db.Dispose();
-		}
-
 		[TestMethod]
 		public void Implicity_Cast_To_Int64()
 		{
 			// arranage
 			long? expected = null;
+			dynamic family = new FluentColumnFamily<AsciiType>("Test1", "Test1");
 
 			// act
-			long? actual = _family.Get(_testKey).Fetch(_testName).FirstOrDefault().AsDynamic().ShouldNotBeFound;
+			long? actual = family.ShouldNotBeFound;
 
 			// assert
 			Assert.AreEqual(expected, actual);
@@ -51,9 +30,10 @@ namespace FluentCassandra.Test.Types
 			// arranage
 			var expectedName = "ShouldNotBeFound";
 			var expectedColumnCount = 0;
+			dynamic family = new FluentSuperColumnFamily<AsciiType, AsciiType>("Test1", "SubTest1");
 
 			// act
-			FluentSuperColumn<AsciiType, AsciiType> actual = _superFamily.Get(_testKey).FirstOrDefault().AsDynamic().ShouldNotBeFound;
+			FluentSuperColumn<AsciiType, AsciiType> actual = family.ShouldNotBeFound;
 
 			// assert
 			Assert.AreEqual(expectedName, (string)actual.ColumnName);

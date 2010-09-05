@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using FluentCassandra.Types;
 
@@ -20,17 +17,10 @@ namespace FluentCassandra.Test.Operations
 		[TestInitialize]
 		public void TestInit()
 		{
-			_db = new CassandraContext("Testing", "localhost");
-			_family = _db.GetColumnFamily<AsciiType>("Standard");
-			_superFamily = _db.GetColumnFamily<AsciiType, AsciiType>("Super");
-
-			_family.InsertColumn(_testKey, "Test1", Math.PI);
-			_family.InsertColumn(_testKey, "Test2", Math.PI);
-			_family.InsertColumn(_testKey, "Test3", Math.PI);
-
-			_superFamily.InsertColumn(_testKey, _testSuperName, "Test1", Math.PI);
-			_superFamily.InsertColumn(_testKey, _testSuperName, "Test2", Math.PI);
-			_superFamily.InsertColumn(_testKey, _testSuperName, "Test3", Math.PI);
+			var setup = new _CassandraSetup();
+			_db = setup.DB;
+			_family = setup.Family;
+			_superFamily = setup.SuperFamily;
 		}
 
 		[TestCleanup]
@@ -77,7 +67,7 @@ namespace FluentCassandra.Test.Operations
 			_superFamily.RemoveColumn(_testKey, _testSuperName, _testName);
 
 			// assert
-			int actualCount = _superFamily.ColumnCount(_testKey, _testSuperName, null, null);
+			int actualCount = _superFamily.SuperColumnCount(_testKey, _testSuperName, null, null);
 			Assert.AreEqual(expectedCount, actualCount);
 		}
 

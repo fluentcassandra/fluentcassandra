@@ -64,10 +64,6 @@ namespace FluentCassandra
 			{
 				Keyspace = pairs["Keyspace"];
 			}
-			else
-			{
-				throw new CassandraException("Keyspace is required.");
-			}
 
 			#endregion
 

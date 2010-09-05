@@ -28,9 +28,14 @@ namespace FluentCassandra.Operations
 			{
 				Debug.WriteLine(exc);
 
+				string message = exc.Message;
+
+				if (exc is InvalidRequestException)
+					message = ((InvalidRequestException)exc).Why;
+
 				result = default(TResult);
 				HasError = true;
-				Error = new CassandraException(exc.Message, exc);
+				Error = new CassandraException(message, exc);
 			}
 
 			return !HasError;

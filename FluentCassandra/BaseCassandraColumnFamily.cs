@@ -48,6 +48,15 @@ namespace FluentCassandra
 		}
 
 		/// <summary>
+		/// Removes all the rows from the given column family.
+		/// </summary>
+		public void RemoveAllRows()
+		{
+			var op = new Truncate();
+			ExecuteOperation(op);
+		}
+
+		/// <summary>
 		/// Execute the column family operation against the connection to the server.
 		/// </summary>
 		/// <typeparam name="TResult"></typeparam>
@@ -55,7 +64,7 @@ namespace FluentCassandra
 		/// <returns></returns>
 		public TResult ExecuteOperation<TResult>(ColumnFamilyOperation<TResult> action)
 		{
-			return ExecuteOperation<TResult>(action, false);
+			return ExecuteOperation<TResult>(action, true);
 		}
 
 		/// <summary>

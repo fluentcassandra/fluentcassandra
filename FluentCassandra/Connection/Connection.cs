@@ -16,7 +16,7 @@ namespace FluentCassandra
 		private bool _disposed;
 
 		private TTransport _transport;
-		private TProtocol _inputProtocol;
+		private TProtocol _protocol;
 		private Cassandra.Client _client;
 
 		/// <summary>
@@ -29,20 +29,18 @@ namespace FluentCassandra
 			Server = server;
 			Timeout = timeout;
 
-			TcpClient client = new TcpClient(server.Host, server.Port);
-			client.NoDelay = true;
-			client.SendBufferSize = timeout;
-			client.ReceiveTimeout = timeout;
+			//TcpClient client = new TcpClient(server.Host, server.Port);
+			//client.NoDelay = true;
+			//client.SendBufferSize = timeout;
+			//client.ReceiveTimeout = timeout;
 
-			TTransport socket = new TSocket(client);
+			//TTransport socket = new TSocket(client);
 
-			//TTransport socket = new TSocket(server.Host, server.Port, timeout);
-			//_transport = new TFramedTransport(socket);
+			TTransport socket = new TSocket(server.Host, server.Port, timeout);
 
-			_transport = socket;
-			_inputProtocol = new TBinaryProtocol(_transport);
-
-			_client = new Cassandra.Client(_inputProtocol);
+			_transport = new TFramedTransport(socket);
+			_protocol = new TBinaryProtocol(_transport);
+			_client = new Cassandra.Client(_protocol);
 		}
 
 		/// <summary>

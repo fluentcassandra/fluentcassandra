@@ -47,7 +47,8 @@ namespace FluentCassandra.Operations
 			return new FluentColumn<CompareWith> {
 				ColumnName = CassandraType.GetType<CompareWith>(col.Name),
 				ColumnValue = col.Value,
-				ColumnTimestamp = new DateTimeOffset(col.Clock.Timestamp, TimeSpan.Zero)
+				ColumnTimestamp = new DateTimeOffset(col.Clock.Timestamp, TimeSpan.Zero),
+				ColumnTimeToLive = col.Ttl
 			};
 		}
 

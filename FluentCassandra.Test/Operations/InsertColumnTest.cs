@@ -20,9 +20,10 @@ namespace FluentCassandra.Test.Operations
 		[TestInitialize]
 		public void TestInit()
 		{
-			_db = new CassandraContext("Testing", "localhost");
-			_family = _db.GetColumnFamily<AsciiType>("Standard");
-			_superFamily = _db.GetColumnFamily<AsciiType, AsciiType>("Super");
+			var setup = new _CassandraSetup();
+			_db = setup.DB;
+			_family = setup.Family;
+			_superFamily = setup.SuperFamily;
 		}
 
 		[TestCleanup]
@@ -37,9 +38,10 @@ namespace FluentCassandra.Test.Operations
 			// arrange
 			double value = Math.PI;
 			DateTimeOffset timestamp = DateTimeOffset.UtcNow;
+			int timeToLive = 1;
 
 			// act
-			_family.InsertColumn(_testKey, _testName, value, timestamp);
+			_family.InsertColumn(_testKey, _testName, value, timestamp, timeToLive);
 
 			// assert
 		}
@@ -50,9 +52,10 @@ namespace FluentCassandra.Test.Operations
 			// arrange
 			double value = Math.PI;
 			DateTimeOffset timestamp = DateTimeOffset.UtcNow;
+			int timeToLive = 1;
 
 			// act
-			_superFamily.InsertColumn(_testKey, _testSuperName, _testName, value, timestamp);
+			_superFamily.InsertColumn(_testKey, _testSuperName, _testName, value, timestamp, timeToLive);
 
 			// assert
 		}

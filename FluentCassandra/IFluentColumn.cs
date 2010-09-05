@@ -10,5 +10,6 @@ namespace FluentCassandra
 	{
 		BytesType ColumnValue { get; set; }
 		DateTimeOffset ColumnTimestamp { get; }
+		int ColumnTimeToLive { get; set; }
 	}
 }

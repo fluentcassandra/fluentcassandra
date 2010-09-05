@@ -20,6 +20,7 @@ namespace FluentCassandra
 		public FluentColumn()
 		{
 			ColumnTimestamp = DateTimeOffset.UtcNow;
+			ColumnTimeToLive = 1;
 		}
 
 		/// <summary>
@@ -63,6 +64,15 @@ namespace FluentCassandra
 				_family = value;
 				UpdateParent(GetParent());
 			}
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public int ColumnTimeToLive
+		{
+			get;
+			set;
 		}
 
 		/// <summary>
