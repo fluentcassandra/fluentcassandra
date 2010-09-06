@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.ComponentModel;
 
 namespace FluentCassandra.Types
@@ -23,9 +20,9 @@ namespace FluentCassandra.Types
 			}
 
 			if (!converter.CanConvertTo(type))
-				throw new InvalidCastException(type + " cannot be cast to " + TypeCode);
+				throw new InvalidCastException(String.Format("{0} cannot be cast to {1}", type, TypeCode));
 
-			return converter.ConvertTo(this._value, type);
+			return converter.ConvertTo(_value, type);
 		}
 
 		public override CassandraType SetValue(object obj)
@@ -33,7 +30,7 @@ namespace FluentCassandra.Types
 			var converter = Converter;
 
 			if (!converter.CanConvertFrom(obj.GetType()))
-				throw new InvalidCastException(obj.GetType() + " cannot be cast to " + TypeCode);
+				throw new InvalidCastException(String.Format("{0} cannot be cast to {1}", obj.GetType(), TypeCode));
 
 			_value = (Guid)converter.ConvertFrom(obj);
 
@@ -78,39 +75,46 @@ namespace FluentCassandra.Types
 
 		#region Conversion
 
-		public static implicit operator Guid(TimeUUIDType type) { return type._value; }
-		public static implicit operator Guid?(TimeUUIDType type) { return type._value; }
-
-		public static implicit operator DateTime(TimeUUIDType type) { return GuidGenerator.GetDateTime(type._value); }
-		public static implicit operator DateTime?(TimeUUIDType type) { return GuidGenerator.GetDateTime(type._value); }
-
-		public static implicit operator DateTimeOffset(TimeUUIDType type) { return GuidGenerator.GetDateTimeOffset(type._value); }
-		public static implicit operator DateTimeOffset?(TimeUUIDType type) { return GuidGenerator.GetDateTimeOffset(type._value); }
-
-		public static implicit operator TimeUUIDType(DateTime o)
+		public static implicit operator Guid(TimeUUIDType type)
 		{
-			return new TimeUUIDType {
-				_value = GuidGenerator.GenerateTimeBasedGuid(o)
-			};
+			return type._value;
 		}
 
-		public static implicit operator TimeUUIDType(DateTimeOffset o)
+		public static implicit operator Guid?(TimeUUIDType type)
 		{
-			return new TimeUUIDType {
-				_value = GuidGenerator.GenerateTimeBasedGuid(o)
-			};
+			return type._value;
 		}
 
-		public static implicit operator TimeUUIDType(Guid o)
+		public static implicit operator TimeUUIDType(Guid s)
 		{
-			return new TimeUUIDType {
-				_value = o
-			};
+			return new TimeUUIDType { _value = s };
 		}
 
-		public static implicit operator byte[](TimeUUIDType type)
+		public static implicit operator byte[](TimeUUIDType o) { return ConvertTo<byte[]>(o); }
+		public static implicit operator TimeUUIDType(byte[] o) { return ConvertFrom(o); }
+
+		public static implicit operator TimeUUIDType(DateTime o) { return ConvertFrom(o); }
+		public static implicit operator TimeUUIDType(DateTimeOffset o) { return ConvertFrom(o); }
+
+		public static implicit operator DateTime(TimeUUIDType o) { return ConvertTo<DateTime>(o); }
+		public static implicit operator DateTimeOffset(TimeUUIDType o) { return ConvertTo<DateTimeOffset>(o); }
+
+		public static implicit operator DateTime?(TimeUUIDType o) { return ConvertTo<DateTime>(o); }
+		public static implicit operator DateTimeOffset?(TimeUUIDType o) { return ConvertTo<DateTimeOffset>(o); }
+
+		private static T ConvertTo<T>(TimeUUIDType type)
 		{
-			return type.ToByteArray();
+			if (type == null)
+				return default(T);
+
+			return type.GetValue<T>();
+		}
+
+		private static TimeUUIDType ConvertFrom(object o)
+		{
+			var type = new TimeUUIDType();
+			type.SetValue(o);
+			return type;
 		}
 
 		#endregion

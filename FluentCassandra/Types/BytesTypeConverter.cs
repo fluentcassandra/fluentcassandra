@@ -94,7 +94,7 @@ namespace FluentCassandra.Types
 				case TypeCode.Byte:
 					return new byte[] { (byte)value };
 				case TypeCode.SByte:
-					return new byte[] { (byte)value };
+					return new byte[] { Convert.ToByte((sbyte)value) };
 				case TypeCode.DateTime:
 					return BitConverter.GetBytes(((DateTime)value).Ticks);
 				case TypeCode.Boolean:
@@ -147,7 +147,7 @@ namespace FluentCassandra.Types
 				case TypeCode.Byte:
 					return bytes[0];
 				case TypeCode.SByte:
-					return (sbyte)bytes[0];
+					return Convert.ToSByte(bytes[0]);
 				case TypeCode.DateTime:
 					return new DateTime(BitConverter.ToInt64(bytes, 0));
 				case TypeCode.Boolean:

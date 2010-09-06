@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.ComponentModel;
 
 namespace FluentCassandra.Types
@@ -23,9 +21,9 @@ namespace FluentCassandra.Types
 			}
 
 			if (!converter.CanConvertTo(type))
-				throw new InvalidCastException(type + " cannot be cast to " + TypeCode);
+				throw new InvalidCastException(String.Format("{0} cannot be cast to {1}", type, TypeCode));
 
-			return converter.ConvertTo(this._value, type);
+			return converter.ConvertTo(_value, type);
 		}
 
 		public override CassandraType SetValue(object obj)
@@ -33,7 +31,7 @@ namespace FluentCassandra.Types
 			var converter = Converter;
 
 			if (!converter.CanConvertFrom(obj.GetType()))
-				throw new InvalidCastException(obj.GetType() + " cannot be cast to " + TypeCode);
+				throw new InvalidCastException(String.Format("{0} cannot be cast to {1}", obj.GetType(), TypeCode));
 
 			_value = (byte[])converter.ConvertFrom(obj);
 

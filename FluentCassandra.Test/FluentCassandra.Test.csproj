@@ -41,6 +41,7 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Numerics" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
@@ -53,6 +54,7 @@
     <Compile Include="CassandraQueryTest.cs" />
     <Compile Include="Connection\ConnectionProviderTest.cs" />
     <Compile Include="Connection\NormalConnectionProviderTest.cs" />
+    <Compile Include="Types\IntegerTypeTest.cs" />
     <Compile Include="_CassandraSetup.cs" />
     <Compile Include="FluentSuperColumnFamilyTest.cs" />
     <Compile Include="FluentColumnFamilyTest.cs" />

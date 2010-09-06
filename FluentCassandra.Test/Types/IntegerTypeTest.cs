@@ -7,34 +7,47 @@ using System.Numerics;
 namespace FluentCassandra.Test.Types
 {
 	[TestClass]
-	public class LongTypeTest
+	public class IntegerTypeTest
 	{
 		[TestMethod]
 		public void CassandraType_Cast()
 		{
 			// arranage
-			long expected = 100L;
+			BigInteger expected = 100;
 			IntegerType actualType = expected;
 
 			// act
 			CassandraType actual = actualType;
 
 			// assert
-			Assert.AreEqual<long>(expected, actual);
+			Assert.AreEqual<BigInteger>(expected, actual);
 		}
 
 		[TestMethod]
 		public void Implicit_ByteArray_Cast()
 		{
 			// arrange
-			byte[] expected = new byte[] { 0, 0, 0, 0, 0, 0, 64, 128 };
+			byte[] expected = new byte[] { 64, 128 };
 
 			// act
-			LongType actualType = expected;
+			IntegerType actualType = expected;
 			byte[] actual = actualType;
 
 			// assert
 			Assert.IsTrue(expected.SequenceEqual(actual));
+		}
+
+		[TestMethod]
+		public void Implicit_BigInteger_Cast()
+		{
+			// arrange
+			BigInteger expected = 100;
+
+			// act
+			IntegerType actual = expected;
+
+			// assert
+			Assert.AreEqual<BigInteger>(expected, actual);
 		}
 
 		[TestMethod]
@@ -44,8 +57,8 @@ namespace FluentCassandra.Test.Types
 			byte expected = 100;
 
 			// act
-			LongType actual = expected;
-
+			IntegerType actual = expected;
+			
 			// assert
 			Assert.AreEqual<byte>(expected, actual);
 		}
@@ -57,7 +70,7 @@ namespace FluentCassandra.Test.Types
 			short expected = 100;
 
 			// act
-			LongType actual = expected;
+			IntegerType actual = expected;
 
 			// assert
 			Assert.AreEqual<short>(expected, actual);
@@ -70,7 +83,7 @@ namespace FluentCassandra.Test.Types
 			int expected = 100;
 
 			// act
-			LongType actual = expected;
+			IntegerType actual = expected;
 
 			// assert
 			Assert.AreEqual<int>(expected, actual);
@@ -83,7 +96,7 @@ namespace FluentCassandra.Test.Types
 			long expected = 100;
 
 			// act
-			LongType actual = expected;
+			IntegerType actual = expected;
 
 			// assert
 			Assert.AreEqual<long>(expected, actual);
@@ -96,7 +109,7 @@ namespace FluentCassandra.Test.Types
 			sbyte expected = 100;
 
 			// act
-			LongType actual = expected;
+			IntegerType actual = expected;
 
 			// assert
 			Assert.AreEqual<sbyte>(expected, actual);
@@ -109,7 +122,7 @@ namespace FluentCassandra.Test.Types
 			ushort expected = 100;
 
 			// act
-			LongType actual = expected;
+			IntegerType actual = expected;
 
 			// assert
 			Assert.AreEqual<ushort>(expected, actual);
@@ -122,7 +135,7 @@ namespace FluentCassandra.Test.Types
 			uint expected = 100;
 
 			// act
-			LongType actual = expected;
+			IntegerType actual = expected;
 
 			// assert
 			Assert.AreEqual<uint>(expected, actual);
@@ -135,7 +148,7 @@ namespace FluentCassandra.Test.Types
 			ulong expected = 100;
 
 			// act
-			LongType actual = expected;
+			IntegerType actual = expected;
 
 			// assert
 			Assert.AreEqual<ulong>(expected, actual);
@@ -146,7 +159,7 @@ namespace FluentCassandra.Test.Types
 		{
 			// arrange
 			long value = 100L;
-			LongType type = value;
+			IntegerType type = value;
 
 			// act
 			bool actual = type == value;
@@ -160,7 +173,7 @@ namespace FluentCassandra.Test.Types
 		{
 			// arrange
 			long value = 100L;
-			LongType type = value;
+			IntegerType type = value;
 
 			// act
 			bool actual = type != value;

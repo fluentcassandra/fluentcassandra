@@ -15,12 +15,81 @@ namespace FluentCassandra.Test.Types
 		private byte[] javaByteOrder = new byte[] { 0x38, 0x40, 0x00, 0x00, 0x8C, 0xF0, 0x11, 0xBD, 0xB2, 0x3E, 0x10, 0xB9, 0x6E, 0x4E, 0xF0, 0x0D };
 
 		[TestMethod]
+		public void CassandraType_Cast()
+		{
+			// arranage
+			Guid expected = guid;
+			LexicalUUIDType actualType = expected;
+
+			// act
+			CassandraType actual = actualType;
+
+			// assert
+			Assert.AreEqual<Guid>(expected, actual);
+		}
+
+		[TestMethod]
+		public void Implicit_ByteArray_Cast()
+		{
+			// arrange
+			byte[] expected = dotNetByteOrder;
+
+			// act
+			LexicalUUIDType actualType = expected;
+			byte[] actual = actualType;
+
+			// assert
+			Assert.IsTrue(expected.SequenceEqual(actual));
+		}
+
+		[TestMethod]
+		public void Implicit_Guid_Cast()
+		{
+			// arrange
+			Guid expected = guid;
+
+			// act
+			LexicalUUIDType actual = expected;
+
+			// assert
+			Assert.AreEqual<Guid>(expected, actual);
+		}
+
+		[TestMethod]
+		public void Operator_EqualTo()
+		{
+			// arrange
+			var value = guid;
+			LexicalUUIDType type = value;
+
+			// act
+			bool actual = type.Equals(value);
+
+			// assert
+			Assert.IsTrue(actual);
+		}
+
+		[TestMethod]
+		public void Operator_NotEqualTo()
+		{
+			// arrange
+			var value = guid;
+			LexicalUUIDType type = value;
+
+			// act
+			bool actual = !type.Equals(value);
+
+			// assert
+			Assert.IsFalse(actual);
+		}
+
+		[TestMethod]
 		public void Guid_To_JavaBytes()
 		{
 			// arrange
 		
 			// act
-			TimeUUIDType actual = guid;
+			LexicalUUIDType actual = guid;
 
 			// assert
 			Assert.IsTrue(actual.GetValue<byte[]>().SequenceEqual(javaByteOrder));
@@ -32,7 +101,7 @@ namespace FluentCassandra.Test.Types
 			// arrange
 
 			// act
-			TimeUUIDType actual = new TimeUUIDType();
+			LexicalUUIDType actual = new LexicalUUIDType();
 			actual.SetValue(javaByteOrder);
 
 			// assert

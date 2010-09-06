@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.ComponentModel;
 
 namespace FluentCassandra.Types
@@ -23,9 +20,9 @@ namespace FluentCassandra.Types
 			}
 
 			if (!converter.CanConvertTo(type))
-				throw new InvalidCastException(type + " cannot be cast to " + TypeCode);
+				throw new InvalidCastException(String.Format("{0} cannot be cast to {1}", type, TypeCode));
 
-			return converter.ConvertTo(this._value, type);
+			return converter.ConvertTo(_value, type);
 		}
 
 		public override CassandraType SetValue(object obj)
@@ -33,7 +30,7 @@ namespace FluentCassandra.Types
 			var converter = Converter;
 
 			if (!converter.CanConvertFrom(obj.GetType()))
-				throw new InvalidCastException(obj.GetType() + " cannot be cast to " + TypeCode);
+				throw new InvalidCastException(String.Format("{0} cannot be cast to {1}", obj.GetType(), TypeCode));
 
 			_value = (Guid)converter.ConvertFrom(obj);
 
@@ -78,19 +75,37 @@ namespace FluentCassandra.Types
 
 		#region Conversion
 
-		public static implicit operator Guid(LexicalUUIDType type) { return type._value; }
-		public static implicit operator Guid?(LexicalUUIDType type) { return type._value; }
-
-		public static implicit operator LexicalUUIDType(Guid o)
+		public static implicit operator Guid(LexicalUUIDType type)
 		{
-			return new LexicalUUIDType {
-				_value = o
-			};
+			return type._value;
 		}
 
-		public static implicit operator byte[](LexicalUUIDType type)
+		public static implicit operator Guid?(LexicalUUIDType type)
 		{
-			return type.ToByteArray();
+			return type._value;
+		}
+
+		public static implicit operator LexicalUUIDType(Guid s)
+		{
+			return new LexicalUUIDType { _value = s };
+		}
+
+		public static implicit operator byte[](LexicalUUIDType o) { return ConvertTo<byte[]>(o); }
+		public static implicit operator LexicalUUIDType(byte[] o) { return ConvertFrom(o); }
+
+		private static T ConvertTo<T>(LexicalUUIDType type)
+		{
+			if (type == null)
+				return default(T);
+
+			return type.GetValue<T>();
+		}
+
+		private static LexicalUUIDType ConvertFrom(object o)
+		{
+			var type = new LexicalUUIDType();
+			type.SetValue(o);
+			return type;
 		}
 
 		#endregion

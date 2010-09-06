@@ -43,11 +43,11 @@ namespace FluentCassandra.Types
 
 			if (value is byte[] && ((byte[])value).Length == 16)
 			{
-				var bytes = (byte[])value;
-				ReverseLowFieldTimestamp(bytes);
-				ReverseMiddleFieldTimestamp(bytes);
-				ReverseHighFieldTimestamp(bytes);
-				return new Guid(bytes);
+				var buffer = (byte[])((byte[])value).Clone();
+				ReverseLowFieldTimestamp(buffer);
+				ReverseMiddleFieldTimestamp(buffer);
+				ReverseHighFieldTimestamp(buffer);
+				return new Guid(buffer);
 			}
 
 			if (value is Guid)

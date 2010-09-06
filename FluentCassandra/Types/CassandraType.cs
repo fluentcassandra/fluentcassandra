@@ -1,17 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.ComponentModel;
+using System.Numerics;
 
 namespace FluentCassandra.Types
 {
 	public abstract class CassandraType : IConvertible
 	{
-		public CassandraType()
-		{
-		}
-
 		public T GetValue<T>()
 		{
 			return (T)GetValue(typeof(T));
@@ -88,6 +82,7 @@ namespace FluentCassandra.Types
 		public static implicit operator Guid(CassandraType o) { return Convert<Guid>(o); }
 		public static implicit operator DateTime(CassandraType o) { return Convert<DateTime>(o); }
 		public static implicit operator DateTimeOffset(CassandraType o) { return Convert<DateTimeOffset>(o); }
+		public static implicit operator BigInteger(CassandraType o) { return Convert<BigInteger>(o); }
 
 		public static implicit operator byte?(CassandraType o) { return Convert<byte?>(o); }
 		public static implicit operator sbyte?(CassandraType o) { return Convert<sbyte?>(o); }
@@ -106,6 +101,7 @@ namespace FluentCassandra.Types
 		public static implicit operator Guid?(CassandraType o) { return Convert<Guid?>(o); }
 		public static implicit operator DateTime?(CassandraType o) { return Convert<DateTime?>(o); }
 		public static implicit operator DateTimeOffset?(CassandraType o) { return Convert<DateTimeOffset?>(o); }
+		public static implicit operator BigInteger?(CassandraType o) { return Convert<BigInteger?>(o); }
 
 		#endregion
 
@@ -157,7 +153,7 @@ namespace FluentCassandra.Types
 			var objType = obj.GetType();
 
 			if (!converter.CanConvertFrom(objType))
-				throw new InvalidCastException(objType + " cannot be cast to " + destinationType);
+				throw new InvalidCastException(String.Format("{0} cannot be cast to {1}", objType, destinationType));
 
 			return converter.ConvertFrom(obj);
 		}

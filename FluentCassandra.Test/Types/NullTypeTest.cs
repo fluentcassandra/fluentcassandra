@@ -1,9 +1,6 @@
 ﻿using FluentCassandra.Types;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.ComponentModel;
-using System.Text;
-using System.Linq;
 
 namespace FluentCassandra.Test.Types
 {
