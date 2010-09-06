@@ -8,9 +8,8 @@ namespace FluentCassandra.Types
 
 		private NullType() { }
 
-		public override CassandraType SetValue(object obj)
+		public override void SetValue(object obj)
 		{
-			return new NullType();
 		}
 
 		public override object GetValue(Type type)

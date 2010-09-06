@@ -7,7 +7,7 @@ namespace FluentCassandra.Types
 	/// </summary>
 	internal class VoidType : CassandraType
 	{
-		public override CassandraType SetValue(object obj)
+		public override void SetValue(object obj)
 		{
 			throw new NotImplementedException();
 		}

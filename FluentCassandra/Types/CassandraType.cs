@@ -11,7 +11,29 @@ namespace FluentCassandra.Types
 			return (T)GetValue(typeof(T));
 		}
 
-		public abstract CassandraType SetValue(object obj);
+		protected object GetValue(object value, Type type, TypeConverter converter)
+		{
+			if (type.IsGenericType && type.GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
+			{
+				var nc = new NullableConverter(type);
+				type = nc.UnderlyingType;
+			}
+
+			if (!converter.CanConvertTo(type))
+				throw new InvalidCastException(String.Format("{0} cannot be cast to {1}", type, TypeCode));
+
+			return converter.ConvertTo(value, type);
+		}
+
+		protected object SetValue(object obj, TypeConverter converter)
+		{
+			if (!converter.CanConvertFrom(obj.GetType()))
+				throw new InvalidCastException(String.Format("{0} cannot be cast to {1}", obj.GetType(), TypeCode));
+
+			return converter.ConvertFrom(obj);
+		}
+
+		public abstract void SetValue(object obj);
 		public abstract object GetValue(Type type);
 		public abstract byte[] ToByteArray();
 

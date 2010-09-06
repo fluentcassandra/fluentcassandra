@@ -11,30 +11,12 @@ namespace FluentCassandra.Types
 
 		public override object GetValue(Type type)
 		{
-			var converter = Converter;
-
-			if (type.IsGenericType && type.GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
-			{
-				var nc = new NullableConverter(type);
-				type = nc.UnderlyingType;
-			}
-
-			if (!converter.CanConvertTo(type))
-				throw new InvalidCastException(String.Format("{0} cannot be cast to {1}", type, TypeCode));
-
-			return converter.ConvertTo(_value, type);
+			return GetValue(_value, type, Converter);
 		}
 
-		public override CassandraType SetValue(object obj)
+		public override void SetValue(object obj)
 		{
-			var converter = Converter;
-
-			if (!converter.CanConvertFrom(obj.GetType()))
-				throw new InvalidCastException(String.Format("{0} cannot be cast to {1}", obj.GetType(), TypeCode));
-
-			_value = (long)converter.ConvertFrom(obj);
-
-			return this;
+			_value = (long)SetValue(obj, Converter);
 		}
 
 		protected override TypeCode TypeCode
