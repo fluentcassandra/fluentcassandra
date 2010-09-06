@@ -69,9 +69,22 @@ namespace FluentCassandra.Types
 			};
 		}
 
-		public static implicit operator byte[](UTF8Type type)
+		public static implicit operator UTF8Type(byte[] o) { return ConvertFrom(o); }
+		public static implicit operator byte[](UTF8Type o) { return ConvertTo<byte[]>(o); }
+
+		private static T ConvertTo<T>(UTF8Type type)
 		{
-			return type.ToByteArray();
+			if (type == null)
+				return default(T);
+
+			return type.GetValue<T>();
+		}
+
+		private static UTF8Type ConvertFrom(object o)
+		{
+			var type = new UTF8Type();
+			type.SetValue(o);
+			return type;
 		}
 
 		#endregion

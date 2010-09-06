@@ -80,50 +80,59 @@ namespace FluentCassandra.Types
 
 		public override object ConvertFrom(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value)
 		{
-			if (value is byte[])
-				return (byte[])value;
-
 			if (value is Guid)
-				return ((Guid)value).ToByteArray();
+				return CassandraConversionHelper.ConvertGuidToBytes((Guid)value);
 
-			if (value is DateTimeOffset)
-				return BitConverter.GetBytes(((DateTimeOffset)value).UtcTicks);
+			byte[] bytes = null;
 
-			switch (Type.GetTypeCode(value.GetType()))
+			if (value is byte[])
+				bytes = (byte[])value;
+			else if (value is DateTimeOffset)
+				bytes = BitConverter.GetBytes(((DateTimeOffset)value).UtcTicks);
+
+			if (bytes == null)
 			{
-				case TypeCode.Byte:
-					return new byte[] { (byte)value };
-				case TypeCode.SByte:
-					return new byte[] { Convert.ToByte((sbyte)value) };
-				case TypeCode.DateTime:
-					return BitConverter.GetBytes(((DateTime)value).Ticks);
-				case TypeCode.Boolean:
-					return BitConverter.GetBytes((bool)value);
-				case TypeCode.Char:
-					return BitConverter.GetBytes((char)value);
-				case TypeCode.Double:
-					return BitConverter.GetBytes((double)value);
-				case TypeCode.Int16:
-					return BitConverter.GetBytes((short)value);
-				case TypeCode.Int32:
-					return BitConverter.GetBytes((int)value);
-				case TypeCode.Int64:
-					return BitConverter.GetBytes((long)value);
-				case TypeCode.Single:
-					return BitConverter.GetBytes((float)value);
-				case TypeCode.UInt16:
-					return BitConverter.GetBytes((ushort)value);
-				case TypeCode.UInt32:
-					return BitConverter.GetBytes((uint)value);
-				case TypeCode.UInt64:
-					return BitConverter.GetBytes((ulong)value);
-				case TypeCode.Decimal:
-					return FromDecimal((decimal)value);
-				case TypeCode.String:
-					return Encoding.UTF8.GetBytes((string)value);
-				default:
-					return null;
+				switch (Type.GetTypeCode(value.GetType()))
+				{
+					case TypeCode.Byte:
+						bytes = new byte[] { (byte)value }; break;
+					case TypeCode.SByte:
+						bytes = new byte[] { Convert.ToByte((sbyte)value) }; break;
+					case TypeCode.DateTime:
+						bytes = BitConverter.GetBytes(((DateTime)value).Ticks); break;
+					case TypeCode.Boolean:
+						bytes = BitConverter.GetBytes((bool)value); break;
+					case TypeCode.Char:
+						bytes = BitConverter.GetBytes((char)value); break;
+					case TypeCode.Double:
+						bytes = BitConverter.GetBytes((double)value); break;
+					case TypeCode.Int16:
+						bytes = BitConverter.GetBytes((short)value); break;
+					case TypeCode.Int32:
+						bytes = BitConverter.GetBytes((int)value); break;
+					case TypeCode.Int64:
+						bytes = BitConverter.GetBytes((long)value); break;
+					case TypeCode.Single:
+						bytes = BitConverter.GetBytes((float)value); break;
+					case TypeCode.UInt16:
+						bytes = BitConverter.GetBytes((ushort)value); break;
+					case TypeCode.UInt32:
+						bytes = BitConverter.GetBytes((uint)value); break;
+					case TypeCode.UInt64:
+						bytes = BitConverter.GetBytes((ulong)value); break;
+					case TypeCode.Decimal:
+						bytes = FromDecimal((decimal)value); break;
+					case TypeCode.String:
+						bytes = Encoding.UTF8.GetBytes((string)value); break;
+					default:
+						break;
+				}
 			}
+
+			if (bytes == null)
+				return null;
+
+			return CassandraConversionHelper.ConvertEndian(bytes);
 		}
 
 		public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType)
@@ -131,13 +140,13 @@ namespace FluentCassandra.Types
 			if (!(value is byte[]))
 				return null;
 
-			byte[] bytes = (byte[])value;
+			if (destinationType == typeof(Guid))
+				return CassandraConversionHelper.ConvertBytesToGuid((byte[])value);
+
+			var bytes = CassandraConversionHelper.ConvertEndian((byte[])value);
 
 			if (destinationType == typeof(byte[]))
 				return bytes;
-
-			if (destinationType == typeof(Guid))
-				return new Guid(bytes);
 
 			if (destinationType == typeof(DateTimeOffset))
 				return new DateTimeOffset(BitConverter.ToInt64(bytes, 0), new TimeSpan(0L));

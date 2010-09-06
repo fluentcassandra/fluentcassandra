@@ -18,21 +18,6 @@ namespace FluentCassandra.Types
 			return destinationType == typeof(byte[]) || destinationType == typeof(Guid) || destinationType == typeof(DateTime) || destinationType == typeof(DateTimeOffset);
 		}
 
-		private void ReverseLowFieldTimestamp(byte[] guid)
-		{
-			Array.Reverse(guid, 0, 4);
-		}
-
-		private void ReverseMiddleFieldTimestamp(byte[] guid)
-		{
-			Array.Reverse(guid, 4, 2);
-		}
-
-		private void ReverseHighFieldTimestamp(byte[] guid)
-		{
-			Array.Reverse(guid, 6, 2);
-		}
-
 		public override object ConvertFrom(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value)
 		{
 			if (value is DateTime)
@@ -42,13 +27,7 @@ namespace FluentCassandra.Types
 				return GuidGenerator.GenerateTimeBasedGuid((DateTimeOffset)value);
 
 			if (value is byte[] && ((byte[])value).Length == 16)
-			{
-				var buffer = (byte[])((byte[])value).Clone();
-				ReverseLowFieldTimestamp(buffer);
-				ReverseMiddleFieldTimestamp(buffer);
-				ReverseHighFieldTimestamp(buffer);
-				return new Guid(buffer);
-			}
+				return CassandraConversionHelper.ConvertBytesToGuid((byte[])value);
 
 			if (value is Guid)
 				return (Guid)value;
@@ -70,13 +49,7 @@ namespace FluentCassandra.Types
 				return GuidGenerator.GetDateTimeOffset(guid);
 
 			if (destinationType == typeof(byte[]))
-			{
-				var bytes = guid.ToByteArray();
-				ReverseLowFieldTimestamp(bytes);
-				ReverseMiddleFieldTimestamp(bytes);
-				ReverseHighFieldTimestamp(bytes);
-				return bytes;
-			}
+				return CassandraConversionHelper.ConvertGuidToBytes((Guid)value);
 
 			if (destinationType == typeof(Guid))
 				return guid;

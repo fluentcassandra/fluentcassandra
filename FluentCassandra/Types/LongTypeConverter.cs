@@ -47,8 +47,7 @@ namespace FluentCassandra.Types
 		{
 			if (value is byte[])
 			{
-				var buffer = (byte[])((byte[])value).Clone();
-				Array.Reverse(buffer);
+				var buffer = CassandraConversionHelper.ConvertEndian((byte[])value);
 				return BitConverter.ToInt64(buffer, 0);
 			}
 
@@ -74,8 +73,7 @@ namespace FluentCassandra.Types
 			if (destinationType == typeof(byte[]))
 			{
 				var buffer = BitConverter.GetBytes((long)value);
-				Array.Reverse(buffer);
-				return buffer;
+				return CassandraConversionHelper.ConvertEndian(buffer);
 			}
 
 			if (destinationType == typeof(long)) return (long)value;

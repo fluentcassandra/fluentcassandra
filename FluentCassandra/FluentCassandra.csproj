@@ -226,6 +226,7 @@
     <Compile Include="IFluentBaseColumnFamily.cs" />
     <Compile Include="IFluentRecord.cs" />
     <Compile Include="Types\CassandraType.cs" />
+    <Compile Include="Types\CassandraConversionHelper.cs" />
     <Compile Include="Types\IntegerTypeConverter.cs" />
     <Compile Include="Types\IntegerType.cs" />
     <Compile Include="Types\LexicalUUIDTypeConverter.cs" />

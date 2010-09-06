@@ -58,15 +58,8 @@ namespace FluentCassandra.Types
 
 		#region Conversion
 
-		public static implicit operator byte[](BytesType type)
-		{
-			return type._value;
-		}
-
-		public static implicit operator BytesType(byte[] s)
-		{
-			return new BytesType { _value = s };
-		}
+		public static implicit operator BytesType(byte[] o) { return ConvertFrom(o); }
+		public static implicit operator byte[](BytesType o) { return ConvertTo<byte[]>(o); }
 
 		public static implicit operator BytesType(byte o) { return ConvertFrom(o); }
 		public static implicit operator BytesType(sbyte o) { return ConvertFrom(o); }

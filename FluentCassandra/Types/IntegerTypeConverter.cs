@@ -48,8 +48,7 @@ namespace FluentCassandra.Types
 		{
 			if (value is byte[])
 			{
-				var buffer = (byte[])((byte[])value).Clone();
-				Array.Reverse(buffer);
+				var buffer = CassandraConversionHelper.ConvertEndian((byte[])value);
 				return new BigInteger(buffer);
 			}
 
@@ -75,8 +74,7 @@ namespace FluentCassandra.Types
 			if (destinationType == typeof(byte[]))
 			{
 				var buffer = ((BigInteger)value).ToByteArray();
-				Array.Reverse(buffer);
-				return buffer;
+				return CassandraConversionHelper.ConvertEndian(buffer);
 			}
 
 			if (destinationType == typeof(BigInteger)) return (BigInteger)value;

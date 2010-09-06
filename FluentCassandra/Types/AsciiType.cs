@@ -69,9 +69,22 @@ namespace FluentCassandra.Types
 			};
 		}
 
-		public static implicit operator byte[](AsciiType type)
+		public static implicit operator AsciiType(byte[] o) { return ConvertFrom(o); }
+		public static implicit operator byte[](AsciiType o) { return ConvertTo<byte[]>(o); }
+
+		private static T ConvertTo<T>(AsciiType type)
 		{
-			return type.ToByteArray();
+			if (type == null)
+				return default(T);
+
+			return type.GetValue<T>();
+		}
+
+		private static AsciiType ConvertFrom(object o)
+		{
+			var type = new AsciiType();
+			type.SetValue(o);
+			return type;
 		}
 
 		#endregion
