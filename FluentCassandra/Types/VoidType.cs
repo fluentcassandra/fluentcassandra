@@ -17,11 +17,6 @@ namespace FluentCassandra.Types
 			throw new NotImplementedException();
 		}
 
-		public override byte[] ToByteArray()
-		{
-			throw new NotImplementedException();
-		}
-
 		public override string ToString()
 		{
 			throw new NotImplementedException();

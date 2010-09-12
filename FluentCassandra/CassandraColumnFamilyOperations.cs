@@ -75,7 +75,7 @@ namespace FluentCassandra
 			where CompareWith : CassandraType
 		{
 			var op = new GetColumn<CompareWith>(key, columnName);
-			return family.ExecuteOperation(op, false);
+			return family.ExecuteOperation(op);
 		}
 
 		#endregion

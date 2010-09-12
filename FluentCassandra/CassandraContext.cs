@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Apache.Cassandra;
 using FluentCassandra.Types;
 using FluentCassandra.Operations;
 
@@ -56,6 +53,7 @@ namespace FluentCassandra
 		public CassandraContext(ConnectionBuilder connectionBuilder)
 		{
 			CurrentConnectionBuilder = connectionBuilder;
+			ThrowErrors = true;
 			
 			_trackers = new List<IFluentMutationTracker>();
 		}
@@ -138,15 +136,9 @@ namespace FluentCassandra
 		public CassandraException LastError { get; private set; }
 
 		/// <summary>
-		/// Execute the column family operation against the connection to the server.
+		/// Indicates if errors should be thrown when occuring on opperation.
 		/// </summary>
-		/// <typeparam name="TResult"></typeparam>
-		/// <param name="action"></param>
-		/// <returns></returns>
-		public TResult ExecuteOperation<TResult>(ContextOperation<TResult> action)
-		{
-			return ExecuteOperation<TResult>(action, true);
-		}
+		public bool ThrowErrors { get; set; }
 
 		/// <summary>
 		/// Execute the column family operation against the connection to the server.
@@ -155,8 +147,11 @@ namespace FluentCassandra
 		/// <param name="action"></param>
 		/// <param name="throwOnError"></param>
 		/// <returns></returns>
-		public TResult ExecuteOperation<TResult>(ContextOperation<TResult> action, bool throwOnError)
+		public TResult ExecuteOperation<TResult>(ContextOperation<TResult> action, bool? throwOnError = null)
 		{
+			if (!throwOnError.HasValue)
+				throwOnError = ThrowErrors;
+
 			CassandraSession _localSession = null;
 			if (CassandraSession.Current == null)
 				_localSession = new CassandraSession();
@@ -171,7 +166,7 @@ namespace FluentCassandra
 				if (!success)
 					LastError = action.Error;
 
-				if (!success && throwOnError)
+				if (!success && (throwOnError ?? ThrowErrors))
 					throw action.Error;
 
 				return result;

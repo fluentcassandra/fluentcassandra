@@ -20,6 +20,7 @@ namespace FluentCassandra
 		{
 			_context = context;
 			FamilyName = columnFamily;
+			ThrowErrors = context.ThrowErrors;
 		}
 
 		/// <summary>
@@ -36,6 +37,11 @@ namespace FluentCassandra
 		/// The last error that occured during the execution of an operation.
 		/// </summary>
 		public CassandraException LastError { get; private set; }
+
+		/// <summary>
+		/// Indicates if errors should be thrown when occuring on opperation.
+		/// </summary>
+		public bool ThrowErrors { get; set; }
 
 		/// <summary>
 		/// Verifies that the family passed in is part of this family.
@@ -61,20 +67,9 @@ namespace FluentCassandra
 		/// </summary>
 		/// <typeparam name="TResult"></typeparam>
 		/// <param name="action"></param>
-		/// <returns></returns>
-		public TResult ExecuteOperation<TResult>(ColumnFamilyOperation<TResult> action)
-		{
-			return ExecuteOperation<TResult>(action, true);
-		}
-
-		/// <summary>
-		/// Execute the column family operation against the connection to the server.
-		/// </summary>
-		/// <typeparam name="TResult"></typeparam>
-		/// <param name="action"></param>
 		/// <param name="throwOnError"></param>
 		/// <returns></returns>
-		public TResult ExecuteOperation<TResult>(ColumnFamilyOperation<TResult> action, bool throwOnError)
+		public TResult ExecuteOperation<TResult>(ColumnFamilyOperation<TResult> action, bool? throwOnError = null)
 		{
 			CassandraSession _localSession = null;
 			if (CassandraSession.Current == null)
@@ -90,7 +85,7 @@ namespace FluentCassandra
 				if (!success)
 					LastError = action.Error;
 
-				if (!success && throwOnError)
+				if (!success && (throwOnError ?? ThrowErrors))
 					throw action.Error;
 
 				return result;

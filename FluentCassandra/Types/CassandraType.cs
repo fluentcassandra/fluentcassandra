@@ -35,7 +35,6 @@ namespace FluentCassandra.Types
 
 		public abstract void SetValue(object obj);
 		public abstract object GetValue(Type type);
-		public abstract byte[] ToByteArray();
 
 		protected abstract TypeCode TypeCode { get; }
 

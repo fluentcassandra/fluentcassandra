@@ -17,11 +17,6 @@ namespace FluentCassandra.Types
 			return type.IsValueType ? Activator.CreateInstance(type) : null;
 		}
 
-		public override byte[] ToByteArray()
-		{
-			return new byte[0];
-		}
-
 		protected override TypeCode TypeCode
 		{
 			get { return TypeCode.Empty; }

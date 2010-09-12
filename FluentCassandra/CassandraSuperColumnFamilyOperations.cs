@@ -101,7 +101,7 @@ namespace FluentCassandra
 			where CompareSubcolumnWith : CassandraType
 		{
 			var op = new GetColumn<CompareSubcolumnWith>(key, superColumnName, columnName);
-			return family.ExecuteOperation(op, false);
+			return family.ExecuteOperation(op);
 		}
 
 		#endregion

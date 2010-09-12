@@ -117,6 +117,8 @@ namespace FluentCassandra.Test
 				});
 
 			DB = new CassandraContext(keyspaceName, server);
+			DB.ThrowErrors = true;
+
 			Family = DB.GetColumnFamily<AsciiType>("Standard");
 			SuperFamily = DB.GetColumnFamily<AsciiType, AsciiType>("Super");
 

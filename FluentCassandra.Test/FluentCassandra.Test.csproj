@@ -55,6 +55,7 @@
     <Compile Include="Connection\ConnectionProviderTest.cs" />
     <Compile Include="Connection\NormalConnectionProviderTest.cs" />
     <Compile Include="TypesToDatabase\AsciiTypeTest.cs" />
+    <Compile Include="TypesToDatabase\BytesTypeTest.cs" />
     <Compile Include="TypesToDatabase\TimeUUIDTypeTest.cs" />
     <Compile Include="TypesToDatabase\LexicalUUIDTypeTest.cs" />
     <Compile Include="TypesToDatabase\IntegerTypeTest.cs" />
@@ -88,9 +89,6 @@
       <Project>{EAA32600-3C2A-4B34-B9B2-5764F280FCE3}</Project>
       <Name>FluentCassandra</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Test.Keyspace.yaml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

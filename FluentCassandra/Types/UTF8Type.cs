@@ -24,11 +24,6 @@ namespace FluentCassandra.Types
 			get { return TypeCode.String; }
 		}
 
-		public override byte[] ToByteArray()
-		{
-			return GetValue<byte[]>();
-		}
-
 		public override string ToString()
 		{
 			return _value;
