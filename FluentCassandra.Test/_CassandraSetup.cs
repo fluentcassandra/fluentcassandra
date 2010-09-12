@@ -43,6 +43,69 @@ namespace FluentCassandra.Test
 					Comment = "Used for testing Standard family."
 				});
 
+			if (!keyspace.ColumnFamilyExists(server, "StandardAsciiType"))
+				keyspace.AddColumnFamily(server, new CfDef {
+					Name = "StandardAsciiType",
+					Keyspace = "Testing",
+					Column_type = "Standard",
+					Comparator_type = "AsciiType",
+					Comment = "Used for testing Standard family."
+				});
+
+			if (!keyspace.ColumnFamilyExists(server, "StandardBytesType"))
+				keyspace.AddColumnFamily(server, new CfDef {
+					Name = "StandardBytesType",
+					Keyspace = "Testing",
+					Column_type = "Standard",
+					Comparator_type = "BytesType",
+					Comment = "Used for testing BytesType family."
+				});
+
+			if (!keyspace.ColumnFamilyExists(server, "StandardIntegerType"))
+				keyspace.AddColumnFamily(server, new CfDef {
+					Name = "StandardIntegerType",
+					Keyspace = "Testing",
+					Column_type = "Standard",
+					Comparator_type = "IntegerType",
+					Comment = "Used for testing IntegerType family."
+				});
+
+			if (!keyspace.ColumnFamilyExists(server, "StandardLexicalUUIDType"))
+				keyspace.AddColumnFamily(server, new CfDef {
+					Name = "StandardLexicalUUIDType",
+					Keyspace = "Testing",
+					Column_type = "Standard",
+					Comparator_type = "LexicalUUIDType",
+					Comment = "Used for testing LexicalUUIDType family."
+				});
+
+			if (!keyspace.ColumnFamilyExists(server, "StandardLongType"))
+				keyspace.AddColumnFamily(server, new CfDef {
+					Name = "StandardLongType",
+					Keyspace = "Testing",
+					Column_type = "Standard",
+					Comparator_type = "LongType",
+					Comment = "Used for testing LongType family."
+				});
+
+			if (!keyspace.ColumnFamilyExists(server, "StandardTimeUUIDType"))
+				keyspace.AddColumnFamily(server, new CfDef {
+					Name = "StandardTimeUUIDType",
+					Keyspace = "Testing",
+					Column_type = "Standard",
+					Comparator_type = "TimeUUIDType",
+					Comment = "Used for testing TimeUUIDType family."
+				});
+
+			if (!keyspace.ColumnFamilyExists(server, "StandardUTF8Type"))
+				keyspace.AddColumnFamily(server, new CfDef {
+					Name = "StandardUTF8Type",
+					Keyspace = "Testing",
+					Column_type = "Standard",
+					Comparator_type = "UTF8Type",
+					Comment = "Used for testing UTF8Type family."
+				});
+
 			if (!keyspace.ColumnFamilyExists(server, "Super"))
 				keyspace.AddColumnFamily(server, new CfDef {
 					Name = "Super",

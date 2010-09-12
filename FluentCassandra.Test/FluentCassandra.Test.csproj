@@ -54,6 +54,12 @@
     <Compile Include="CassandraQueryTest.cs" />
     <Compile Include="Connection\ConnectionProviderTest.cs" />
     <Compile Include="Connection\NormalConnectionProviderTest.cs" />
+    <Compile Include="TypesToDatabase\AsciiTypeTest.cs" />
+    <Compile Include="TypesToDatabase\TimeUUIDTypeTest.cs" />
+    <Compile Include="TypesToDatabase\LexicalUUIDTypeTest.cs" />
+    <Compile Include="TypesToDatabase\IntegerTypeTest.cs" />
+    <Compile Include="TypesToDatabase\LongTypeTest.cs" />
+    <Compile Include="TypesToDatabase\UTF8TypeTest.cs" />
     <Compile Include="Types\IntegerTypeTest.cs" />
     <Compile Include="_CassandraSetup.cs" />
     <Compile Include="FluentSuperColumnFamilyTest.cs" />
