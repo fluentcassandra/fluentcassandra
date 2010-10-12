@@ -55,7 +55,7 @@ namespace FluentCassandra
 		{
 			using (var session = new CassandraSession(new ConnectionBuilder(null, server.Host, server.Port)))
 			{
-				IEnumerable<string> keyspaces = session.GetClient(setKeyspace: false).describe_keyspaces();
+				IEnumerable<KsDef> keyspaces = session.GetClient(setKeyspace: false).describe_keyspaces();
 
 				foreach (var keyspace in keyspaces)
 					yield return new CassandraKeyspace(keyspace);

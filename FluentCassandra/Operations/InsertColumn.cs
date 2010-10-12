@@ -39,7 +39,7 @@ namespace FluentCassandra.Operations
 			var column = new Column {
 				Name = ColumnName,
 				Value = ColumnValue,
-				Clock = Timestamp.ToClock(),
+				Timestamp = Timestamp.ToTimestamp(),
 				Ttl = TimeToLive
 			};
 

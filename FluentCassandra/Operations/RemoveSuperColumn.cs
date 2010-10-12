@@ -29,7 +29,7 @@ namespace FluentCassandra.Operations
 			CassandraSession.Current.GetClient().remove(
 				Key,
 				path,
-				DateTimeOffset.Now.ToClock(),
+				DateTimeOffset.Now.ToTimestamp(),
 				CassandraSession.Current.WriteConsistency
 			);
 

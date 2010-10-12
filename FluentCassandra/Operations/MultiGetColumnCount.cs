@@ -31,7 +31,6 @@ namespace FluentCassandra.Operations
 					parent.Super_column = SuperColumnName;
 
 				var output = CassandraSession.Current.GetClient().multiget_count(
-					CassandraSession.Current.Keyspace.KeyspaceName,
 					Keys.ToByteArrayList(),
 					parent,
 					SlicePredicate.CreateSlicePredicate(),

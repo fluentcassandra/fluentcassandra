@@ -12,6 +12,15 @@ namespace FluentCassandra
 	{
 		private readonly string _keyspaceName;
 
+		public CassandraKeyspace(KsDef definition)
+		{
+			if (definition == null)
+				throw new ArgumentNullException("definition");
+
+			_keyspaceName = definition.Name;
+			_cachedKeyspaceDescription = definition;
+		}
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -30,7 +39,7 @@ namespace FluentCassandra
 			get { return _keyspaceName; }
 		}
 
-		private IDictionary<string, Dictionary<string, string>> _cachedKeyspaceDescription;
+		private KsDef _cachedKeyspaceDescription;
 
 		#region Cassandra System For Server
 
@@ -70,7 +79,7 @@ namespace FluentCassandra
 
 		public bool ColumnFamilyExists(Server server, string columnFamilyName)
 		{
-			return Describe(server).ContainsKey(columnFamilyName);
+			return String.Equals(Describe(server).Name, columnFamilyName, StringComparison.OrdinalIgnoreCase);
 		}
 
 		public IEnumerable<CassandraTokenRange> DescribeRing(Server server)
@@ -84,7 +93,7 @@ namespace FluentCassandra
 			}
 		}
 
-		public IDictionary<string, Dictionary<string, string>> Describe(Server server)
+		public KsDef Describe(Server server)
 		{
 			if (_cachedKeyspaceDescription == null)
 			{
