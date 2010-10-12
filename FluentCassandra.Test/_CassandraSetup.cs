@@ -28,7 +28,7 @@ namespace FluentCassandra.Test
 				CassandraSession.AddKeyspace(server, new KsDef {
 					Name = "Testing",
 					Replication_factor = 1,
-					Strategy_class = "org.apache.cassandra.locator.RackUnawareStrategy",
+					Strategy_class = "org.apache.cassandra.locator.SimpleStrategy",
 					Cf_defs = new List<CfDef>()
 				});
 

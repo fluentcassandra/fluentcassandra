@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using FluentCassandra.Types;
+using System.Threading;
 
 namespace FluentCassandra.Test.TypesToDatabase
 {

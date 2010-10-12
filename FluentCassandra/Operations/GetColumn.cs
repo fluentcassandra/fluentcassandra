@@ -38,14 +38,14 @@ namespace FluentCassandra.Operations
 			return (IFluentColumn<CompareWith>)ObjectHelper.ConvertToFluentBaseColumn<CompareWith, VoidType>(output);
 		}
 
-		public GetColumn(string key, CassandraType superColumnName, CassandraType columnName)
+		public GetColumn(BytesType key, CassandraType superColumnName, CassandraType columnName)
 		{
 			Key = key;
 			SuperColumnName = superColumnName;
 			ColumnName = columnName;
 		}
 
-		public GetColumn(string key, CassandraType columnName)
+		public GetColumn(BytesType key, CassandraType columnName)
 		{
 			Key = key;
 			ColumnName = columnName;

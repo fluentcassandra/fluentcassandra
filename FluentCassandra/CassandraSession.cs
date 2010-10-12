@@ -18,28 +18,34 @@ namespace FluentCassandra
 
 		#region Cassandra System For Server
 
+		public static KsDef GetKeyspace(Server server, string keyspace)
+		{
+			using (var session = new CassandraSession(new ConnectionBuilder(keyspace, server.Host, server.Port)))
+				return session.GetClient().describe_keyspace(keyspace);
+		}
+
 		public static string AddKeyspace(Server server, KsDef definition)
 		{
 			using (var session = new CassandraSession(new ConnectionBuilder(null, server.Host, server.Port)))
-			{
 				return session.GetClient(setKeyspace: false).system_add_keyspace(definition);
-			}
+		}
+
+		public static string UpdateKeyspace(Server server, KsDef definition)
+		{
+			using (var session = new CassandraSession(new ConnectionBuilder(null, server.Host, server.Port)))
+				return session.GetClient(setKeyspace: false).system_update_keyspace(definition);
 		}
 
 		public static string DropKeyspace(Server server, string keyspace)
 		{
 			using (var session = new CassandraSession(new ConnectionBuilder(null, server.Host, server.Port)))
-			{
 				return session.GetClient(setKeyspace: false).system_drop_keyspace(keyspace);
-			}
 		}
 
 		public static string RenameKeyspace(Server server, string oldKeyspace, string newKeyspace)
 		{
 			using (var session = new CassandraSession(new ConnectionBuilder(null, server.Host, server.Port)))
-			{
 				return session.GetClient(setKeyspace: false).system_rename_keyspace(oldKeyspace, newKeyspace);
-			}
 		}
 
 		#endregion
@@ -71,6 +77,15 @@ namespace FluentCassandra
 			}
 		}
 
+		public static Dictionary<string, List<string>> DescribeSchemaVersions(Server server)
+		{
+			using (var session = new CassandraSession(new ConnectionBuilder(null, server.Host, server.Port)))
+			{
+				var response = session.GetClient(setKeyspace: false).describe_schema_versions();
+				return response;
+			}
+		}
+
 		public static string DescribeVersion(Server server)
 		{
 			using (var session = new CassandraSession(new ConnectionBuilder(null, server.Host, server.Port)))
@@ -85,6 +100,15 @@ namespace FluentCassandra
 			using (var session = new CassandraSession(new ConnectionBuilder(null, server.Host, server.Port)))
 			{
 				string response = session.GetClient(setKeyspace: false).describe_partitioner();
+				return response;
+			}
+		}
+
+		public static string DescribeSnitch(Server server)
+		{
+			using (var session = new CassandraSession(new ConnectionBuilder(null, server.Host, server.Port)))
+			{
+				string response = session.GetClient(setKeyspace: false).describe_snitch();
 				return response;
 			}
 		}
@@ -152,6 +176,15 @@ namespace FluentCassandra
 				_connection.SetKeyspace(Keyspace.KeyspaceName);
 
 			return _connection.Client;
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="authRequest"></param>
+		public void Login(AuthenticationRequest authRequest)
+		{
+			GetClient().login(authRequest);
 		}
 
 		#region IDisposable Members

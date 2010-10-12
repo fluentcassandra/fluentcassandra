@@ -43,14 +43,25 @@ namespace FluentCassandra
 
 		#region Cassandra System For Server
 
+		public CfDef GetColumnFamily(Server server, string columnFamily)
+		{
+			return Describe(server).Cf_defs.FirstOrDefault(cf => cf.Name == columnFamily);
+		}
+
 		public string AddColumnFamily(Server server, CfDef definition)
 		{
 			_cachedKeyspaceDescription = null;
 
 			using (var session = new CassandraSession(new ConnectionBuilder(KeyspaceName, server.Host, server.Port)))
-			{
 				return session.GetClient().system_add_column_family(definition);
-			}
+		}
+
+		public string UpdateColumnFamily(Server server, CfDef definition)
+		{
+			_cachedKeyspaceDescription = null;
+
+			using (var session = new CassandraSession(new ConnectionBuilder(KeyspaceName, server.Host, server.Port)))
+				return session.GetClient().system_update_column_family(definition);
 		}
 
 		public string DropColumnFamily(Server server, string columnFamily)
@@ -58,9 +69,7 @@ namespace FluentCassandra
 			_cachedKeyspaceDescription = null;
 
 			using (var session = new CassandraSession(new ConnectionBuilder(KeyspaceName, server.Host, server.Port)))
-			{
 				return session.GetClient().system_drop_column_family(columnFamily);
-			}
 		}
 
 		public string RenameColumnFamily(Server server, string oldColumnFamily, string newColumnFamily)
@@ -68,9 +77,7 @@ namespace FluentCassandra
 			_cachedKeyspaceDescription = null;
 
 			using (var session = new CassandraSession(new ConnectionBuilder(KeyspaceName, server.Host, server.Port)))
-			{
 				return session.GetClient().system_rename_column_family(oldColumnFamily, newColumnFamily);
-			}
 		}
 
 		#endregion
@@ -79,7 +86,7 @@ namespace FluentCassandra
 
 		public bool ColumnFamilyExists(Server server, string columnFamilyName)
 		{
-			return String.Equals(Describe(server).Name, columnFamilyName, StringComparison.OrdinalIgnoreCase);
+			return Describe(server).Cf_defs.Any(columnFamily => columnFamily.Name == columnFamilyName);
 		}
 
 		public IEnumerable<CassandraTokenRange> DescribeRing(Server server)
@@ -96,13 +103,7 @@ namespace FluentCassandra
 		public KsDef Describe(Server server)
 		{
 			if (_cachedKeyspaceDescription == null)
-			{
-				using (var session = new CassandraSession(new ConnectionBuilder(KeyspaceName, server.Host, server.Port)))
-				{
-					var desc = session.GetClient(setKeyspace: false).describe_keyspace(KeyspaceName);
-					_cachedKeyspaceDescription = desc;
-				}
-			}
+				_cachedKeyspaceDescription = CassandraSession.GetKeyspace(server, KeyspaceName);
 
 			return _cachedKeyspaceDescription;
 		}
