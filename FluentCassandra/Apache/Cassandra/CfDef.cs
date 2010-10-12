@@ -21,10 +21,8 @@ namespace Apache.Cassandra
     private string keyspace;
     private string name;
     private string column_type;
-    private string clock_type;
     private string comparator_type;
     private string subcomparator_type;
-    private string reconciler;
     private string comment;
     private double row_cache_size;
     private bool preload_row_cache;
@@ -32,6 +30,10 @@ namespace Apache.Cassandra
     private double read_repair_chance;
     private List<ColumnDef> column_metadata;
     private int gc_grace_seconds;
+    private string default_validation_class;
+    private int id;
+    private int min_compaction_threshold;
+    private int max_compaction_threshold;
 
     public string Keyspace
     {
@@ -72,19 +74,6 @@ namespace Apache.Cassandra
       }
     }
 
-    public string Clock_type
-    {
-      get
-      {
-        return clock_type;
-      }
-      set
-      {
-        __isset.clock_type = true;
-        this.clock_type = value;
-      }
-    }
-
     public string Comparator_type
     {
       get
@@ -108,19 +97,6 @@ namespace Apache.Cassandra
       {
         __isset.subcomparator_type = true;
         this.subcomparator_type = value;
-      }
-    }
-
-    public string Reconciler
-    {
-      get
-      {
-        return reconciler;
-      }
-      set
-      {
-        __isset.reconciler = true;
-        this.reconciler = value;
       }
     }
 
@@ -215,6 +191,58 @@ namespace Apache.Cassandra
       }
     }
 
+    public string Default_validation_class
+    {
+      get
+      {
+        return default_validation_class;
+      }
+      set
+      {
+        __isset.default_validation_class = true;
+        this.default_validation_class = value;
+      }
+    }
+
+    public int Id
+    {
+      get
+      {
+        return id;
+      }
+      set
+      {
+        __isset.id = true;
+        this.id = value;
+      }
+    }
+
+    public int Min_compaction_threshold
+    {
+      get
+      {
+        return min_compaction_threshold;
+      }
+      set
+      {
+        __isset.min_compaction_threshold = true;
+        this.min_compaction_threshold = value;
+      }
+    }
+
+    public int Max_compaction_threshold
+    {
+      get
+      {
+        return max_compaction_threshold;
+      }
+      set
+      {
+        __isset.max_compaction_threshold = true;
+        this.max_compaction_threshold = value;
+      }
+    }
+
 
     public Isset __isset;
     [Serializable]
@@ -222,10 +250,8 @@ namespace Apache.Cassandra
       public bool keyspace;
       public bool name;
       public bool column_type;
-      public bool clock_type;
       public bool comparator_type;
       public bool subcomparator_type;
-      public bool reconciler;
       public bool comment;
       public bool row_cache_size;
       public bool preload_row_cache;
@@ -233,15 +259,15 @@ namespace Apache.Cassandra
       public bool read_repair_chance;
       public bool column_metadata;
       public bool gc_grace_seconds;
+      public bool default_validation_class;
+      public bool id;
+      public bool min_compaction_threshold;
+      public bool max_compaction_threshold;
     }
 
     public CfDef() {
       this.column_type = "Standard";
-      this.clock_type = "Timestamp";
       this.comparator_type = "BytesType";
-      this.subcomparator_type = "";
-      this.reconciler = "";
-      this.comment = "";
       this.row_cache_size = 0;
       this.preload_row_cache = false;
       this.key_cache_size = 200000;
@@ -284,14 +310,6 @@ namespace Apache.Cassandra
               TProtocolUtil.Skip(iprot, field.Type);
             }
             break;
-          case 4:
-            if (field.Type == TType.String) {
-              this.clock_type = iprot.ReadString();
-              this.__isset.clock_type = true;
-            } else { 
-              TProtocolUtil.Skip(iprot, field.Type);
-            }
-            break;
           case 5:
             if (field.Type == TType.String) {
               this.comparator_type = iprot.ReadString();
@@ -304,14 +322,6 @@ namespace Apache.Cassandra
             if (field.Type == TType.String) {
               this.subcomparator_type = iprot.ReadString();
               this.__isset.subcomparator_type = true;
-            } else { 
-              TProtocolUtil.Skip(iprot, field.Type);
-            }
-            break;
-          case 7:
-            if (field.Type == TType.String) {
-              this.reconciler = iprot.ReadString();
-              this.__isset.reconciler = true;
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
@@ -383,6 +393,38 @@ namespace Apache.Cassandra
               TProtocolUtil.Skip(iprot, field.Type);
             }
             break;
+          case 15:
+            if (field.Type == TType.String) {
+              this.default_validation_class = iprot.ReadString();
+              this.__isset.default_validation_class = true;
+            } else { 
+              TProtocolUtil.Skip(iprot, field.Type);
+            }
+            break;
+          case 16:
+            if (field.Type == TType.I32) {
+              this.id = iprot.ReadI32();
+              this.__isset.id = true;
+            } else { 
+              TProtocolUtil.Skip(iprot, field.Type);
+            }
+            break;
+          case 17:
+            if (field.Type == TType.I32) {
+              this.min_compaction_threshold = iprot.ReadI32();
+              this.__isset.min_compaction_threshold = true;
+            } else { 
+              TProtocolUtil.Skip(iprot, field.Type);
+            }
+            break;
+          case 18:
+            if (field.Type == TType.I32) {
+              this.max_compaction_threshold = iprot.ReadI32();
+              this.__isset.max_compaction_threshold = true;
+            } else { 
+              TProtocolUtil.Skip(iprot, field.Type);
+            }
+            break;
           default: 
             TProtocolUtil.Skip(iprot, field.Type);
             break;
@@ -420,14 +462,6 @@ namespace Apache.Cassandra
         oprot.WriteString(this.column_type);
         oprot.WriteFieldEnd();
       }
-      if (this.clock_type != null && __isset.clock_type) {
-        field.Name = "clock_type";
-        field.Type = TType.String;
-        field.ID = 4;
-        oprot.WriteFieldBegin(field);
-        oprot.WriteString(this.clock_type);
-        oprot.WriteFieldEnd();
-      }
       if (this.comparator_type != null && __isset.comparator_type) {
         field.Name = "comparator_type";
         field.Type = TType.String;
@@ -442,14 +476,6 @@ namespace Apache.Cassandra
         field.ID = 6;
         oprot.WriteFieldBegin(field);
         oprot.WriteString(this.subcomparator_type);
-        oprot.WriteFieldEnd();
-      }
-      if (this.reconciler != null && __isset.reconciler) {
-        field.Name = "reconciler";
-        field.Type = TType.String;
-        field.ID = 7;
-        oprot.WriteFieldBegin(field);
-        oprot.WriteString(this.reconciler);
         oprot.WriteFieldEnd();
       }
       if (this.comment != null && __isset.comment) {
@@ -515,6 +541,38 @@ namespace Apache.Cassandra
         oprot.WriteI32(this.gc_grace_seconds);
         oprot.WriteFieldEnd();
       }
+      if (this.default_validation_class != null && __isset.default_validation_class) {
+        field.Name = "default_validation_class";
+        field.Type = TType.String;
+        field.ID = 15;
+        oprot.WriteFieldBegin(field);
+        oprot.WriteString(this.default_validation_class);
+        oprot.WriteFieldEnd();
+      }
+      if (__isset.id) {
+        field.Name = "id";
+        field.Type = TType.I32;
+        field.ID = 16;
+        oprot.WriteFieldBegin(field);
+        oprot.WriteI32(this.id);
+        oprot.WriteFieldEnd();
+      }
+      if (__isset.min_compaction_threshold) {
+        field.Name = "min_compaction_threshold";
+        field.Type = TType.I32;
+        field.ID = 17;
+        oprot.WriteFieldBegin(field);
+        oprot.WriteI32(this.min_compaction_threshold);
+        oprot.WriteFieldEnd();
+      }
+      if (__isset.max_compaction_threshold) {
+        field.Name = "max_compaction_threshold";
+        field.Type = TType.I32;
+        field.ID = 18;
+        oprot.WriteFieldBegin(field);
+        oprot.WriteI32(this.max_compaction_threshold);
+        oprot.WriteFieldEnd();
+      }
       oprot.WriteFieldStop();
       oprot.WriteStructEnd();
     }
@@ -527,14 +585,10 @@ namespace Apache.Cassandra
       sb.Append(this.name);
       sb.Append(",column_type: ");
       sb.Append(this.column_type);
-      sb.Append(",clock_type: ");
-      sb.Append(this.clock_type);
       sb.Append(",comparator_type: ");
       sb.Append(this.comparator_type);
       sb.Append(",subcomparator_type: ");
       sb.Append(this.subcomparator_type);
-      sb.Append(",reconciler: ");
-      sb.Append(this.reconciler);
       sb.Append(",comment: ");
       sb.Append(this.comment);
       sb.Append(",row_cache_size: ");
@@ -549,6 +603,14 @@ namespace Apache.Cassandra
       sb.Append(this.column_metadata);
       sb.Append(",gc_grace_seconds: ");
       sb.Append(this.gc_grace_seconds);
+      sb.Append(",default_validation_class: ");
+      sb.Append(this.default_validation_class);
+      sb.Append(",id: ");
+      sb.Append(this.id);
+      sb.Append(",min_compaction_threshold: ");
+      sb.Append(this.min_compaction_threshold);
+      sb.Append(",max_compaction_threshold: ");
+      sb.Append(this.max_compaction_threshold);
       sb.Append(")");
       return sb.ToString();
     }

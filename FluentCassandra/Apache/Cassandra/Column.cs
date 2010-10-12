@@ -20,7 +20,7 @@ namespace Apache.Cassandra
   {
     private byte[] name;
     private byte[] value;
-    private Clock clock;
+    private long timestamp;
     private int ttl;
 
     public byte[] Name
@@ -49,16 +49,16 @@ namespace Apache.Cassandra
       }
     }
 
-    public Clock Clock
+    public long Timestamp
     {
       get
       {
-        return clock;
+        return timestamp;
       }
       set
       {
-        __isset.clock = true;
-        this.clock = value;
+        __isset.timestamp = true;
+        this.timestamp = value;
       }
     }
 
@@ -81,7 +81,7 @@ namespace Apache.Cassandra
     public struct Isset {
       public bool name;
       public bool value;
-      public bool clock;
+      public bool timestamp;
       public bool ttl;
     }
 
@@ -117,10 +117,9 @@ namespace Apache.Cassandra
             }
             break;
           case 3:
-            if (field.Type == TType.Struct) {
-              this.clock = new Clock();
-              this.clock.Read(iprot);
-              this.__isset.clock = true;
+            if (field.Type == TType.I64) {
+              this.timestamp = iprot.ReadI64();
+              this.__isset.timestamp = true;
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
@@ -162,12 +161,12 @@ namespace Apache.Cassandra
         oprot.WriteBinary(this.value);
         oprot.WriteFieldEnd();
       }
-      if (this.clock != null && __isset.clock) {
-        field.Name = "clock";
-        field.Type = TType.Struct;
+      if (__isset.timestamp) {
+        field.Name = "timestamp";
+        field.Type = TType.I64;
         field.ID = 3;
         oprot.WriteFieldBegin(field);
-        this.clock.Write(oprot);
+        oprot.WriteI64(this.timestamp);
         oprot.WriteFieldEnd();
       }
       if (__isset.ttl) {
@@ -188,8 +187,8 @@ namespace Apache.Cassandra
       sb.Append(this.name);
       sb.Append(",value: ");
       sb.Append(this.value);
-      sb.Append(",clock: ");
-      sb.Append(this.clock== null ? "<null>" : this.clock.ToString());
+      sb.Append(",timestamp: ");
+      sb.Append(this.timestamp);
       sb.Append(",ttl: ");
       sb.Append(this.ttl);
       sb.Append(")");

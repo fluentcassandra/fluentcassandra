@@ -18,20 +18,20 @@ namespace Apache.Cassandra
   [Serializable]
   public partial class Deletion : TBase
   {
-    private Clock clock;
+    private long timestamp;
     private byte[] super_column;
     private SlicePredicate predicate;
 
-    public Clock Clock
+    public long Timestamp
     {
       get
       {
-        return clock;
+        return timestamp;
       }
       set
       {
-        __isset.clock = true;
-        this.clock = value;
+        __isset.timestamp = true;
+        this.timestamp = value;
       }
     }
 
@@ -65,7 +65,7 @@ namespace Apache.Cassandra
     public Isset __isset;
     [Serializable]
     public struct Isset {
-      public bool clock;
+      public bool timestamp;
       public bool super_column;
       public bool predicate;
     }
@@ -86,10 +86,9 @@ namespace Apache.Cassandra
         switch (field.ID)
         {
           case 1:
-            if (field.Type == TType.Struct) {
-              this.clock = new Clock();
-              this.clock.Read(iprot);
-              this.__isset.clock = true;
+            if (field.Type == TType.I64) {
+              this.timestamp = iprot.ReadI64();
+              this.__isset.timestamp = true;
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
@@ -124,12 +123,12 @@ namespace Apache.Cassandra
       TStruct struc = new TStruct("Deletion");
       oprot.WriteStructBegin(struc);
       TField field = new TField();
-      if (this.clock != null && __isset.clock) {
-        field.Name = "clock";
-        field.Type = TType.Struct;
+      if (__isset.timestamp) {
+        field.Name = "timestamp";
+        field.Type = TType.I64;
         field.ID = 1;
         oprot.WriteFieldBegin(field);
-        this.clock.Write(oprot);
+        oprot.WriteI64(this.timestamp);
         oprot.WriteFieldEnd();
       }
       if (this.super_column != null && __isset.super_column) {
@@ -154,8 +153,8 @@ namespace Apache.Cassandra
 
     public override string ToString() {
       StringBuilder sb = new StringBuilder("Deletion(");
-      sb.Append("clock: ");
-      sb.Append(this.clock== null ? "<null>" : this.clock.ToString());
+      sb.Append("timestamp: ");
+      sb.Append(this.timestamp);
       sb.Append(",super_column: ");
       sb.Append(this.super_column);
       sb.Append(",predicate: ");
