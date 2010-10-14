@@ -242,7 +242,7 @@ namespace FluentCassandra
 			var setup = new CassandraQuerySetup<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>, CompareSubcolumnWith> {
 				KeyRange = new CassandraKeyRange(startKey, endKey, startToken, endToken, keyCount),
 				SuperColumnName = superColumnName,
-				CreateQueryOperation = (x, slice) => new GetSuperColumnRangeSlice<CompareWith, CompareSubcolumnWith>(x.KeyRange, x.SuperColumnName, slice)
+				CreateQueryOperation = (x, slice) => new GetSuperColumnRangeSlices<CompareWith, CompareSubcolumnWith>(x.KeyRange, x.SuperColumnName, slice)
 			};
 			return ((ICassandraQueryProvider)family).CreateQuery(setup, null);
 		}
@@ -271,7 +271,7 @@ namespace FluentCassandra
 			where CompareWith : CassandraType
 			where CompareSubcolumnWith : CassandraType
 		{
-			var op = new GetSuperColumnRangeSlice<CompareWith, CompareSubcolumnWith>(new CassandraKeyRange(startKey, endKey, startToken, endToken, keyCount), superColumnName, new ColumnSlicePredicate(columnNames));
+			var op = new GetSuperColumnRangeSlices<CompareWith, CompareSubcolumnWith>(new CassandraKeyRange(startKey, endKey, startToken, endToken, keyCount), superColumnName, new ColumnSlicePredicate(columnNames));
 			return family.ExecuteOperation(op);
 		}
 
@@ -279,7 +279,7 @@ namespace FluentCassandra
 			where CompareWith : CassandraType
 			where CompareSubcolumnWith : CassandraType
 		{
-			var op = new GetSuperColumnRangeSlice<CompareWith, CompareSubcolumnWith>(new CassandraKeyRange(startKey, endKey, startToken, endToken, keyCount), superColumnName, new RangeSlicePredicate(columnStart, columnEnd, columnsReversed, columnCount));
+			var op = new GetSuperColumnRangeSlices<CompareWith, CompareSubcolumnWith>(new CassandraKeyRange(startKey, endKey, startToken, endToken, keyCount), superColumnName, new RangeSlicePredicate(columnStart, columnEnd, columnsReversed, columnCount));
 			return family.ExecuteOperation(op);
 		}
 
@@ -306,7 +306,7 @@ namespace FluentCassandra
 		{
 			var setup = new CassandraQuerySetup<IFluentSuperColumnFamily<CompareWith, CompareSubcolumnWith>, CompareWith> {
 				KeyRange = new CassandraKeyRange(startKey, endKey, startToken, endToken, keyCount),
-				CreateQueryOperation = (x, slice) => new GetSuperColumnFamilyRangeSlice<CompareWith, CompareSubcolumnWith>(x.KeyRange, slice)
+				CreateQueryOperation = (x, slice) => new GetSuperColumnFamilyRangeSlices<CompareWith, CompareSubcolumnWith>(x.KeyRange, slice)
 			};
 			return ((ICassandraQueryProvider)family).CreateQuery(setup, null);
 		}
@@ -335,7 +335,7 @@ namespace FluentCassandra
 			where CompareWith : CassandraType
 			where CompareSubcolumnWith : CassandraType
 		{
-			var op = new GetSuperColumnFamilyRangeSlice<CompareWith, CompareSubcolumnWith>(new CassandraKeyRange(startKey, endKey, startToken, endToken, keyCount), new ColumnSlicePredicate(columnNames));
+			var op = new GetSuperColumnFamilyRangeSlices<CompareWith, CompareSubcolumnWith>(new CassandraKeyRange(startKey, endKey, startToken, endToken, keyCount), new ColumnSlicePredicate(columnNames));
 			return family.ExecuteOperation(op);
 		}
 
@@ -343,7 +343,7 @@ namespace FluentCassandra
 			where CompareWith : CassandraType
 			where CompareSubcolumnWith : CassandraType
 		{
-			var op = new GetSuperColumnFamilyRangeSlice<CompareWith, CompareSubcolumnWith>(new CassandraKeyRange(startKey, endKey, startToken, endToken, keyCount), new RangeSlicePredicate(columnStart, columnEnd, columnsReversed, columnCount));
+			var op = new GetSuperColumnFamilyRangeSlices<CompareWith, CompareSubcolumnWith>(new CassandraKeyRange(startKey, endKey, startToken, endToken, keyCount), new RangeSlicePredicate(columnStart, columnEnd, columnsReversed, columnCount));
 			return family.ExecuteOperation(op);
 		}
 

@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Apache.Cassandra;
 using FluentCassandra.Types;
 
 namespace FluentCassandra.Operations
 {
-	public class GetColumnFamilyRangeSlice<CompareWith> : QueryableColumnFamilyOperation<IFluentColumnFamily<CompareWith>>
+	public class GetSuperColumnRangeSlices<CompareWith, CompareSubcolumnWith> : QueryableColumnFamilyOperation<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>>
 		where CompareWith : CassandraType
+		where CompareSubcolumnWith : CassandraType
 	{
 		/*
 		 * list<KeySlice> get_range_slices(keyspace, column_parent, predicate, range, consistency_level)
@@ -16,12 +16,9 @@ namespace FluentCassandra.Operations
 
 		public CassandraKeyRange KeyRange { get; private set; }
 
-		public override IEnumerable<IFluentColumnFamily<CompareWith>> Execute(BaseCassandraColumnFamily columnFamily)
-		{
-			return GetFamilies(columnFamily);
-		}
+		public CassandraType SuperColumnName { get; private set; }
 
-		private IEnumerable<IFluentColumnFamily<CompareWith>> GetFamilies(BaseCassandraColumnFamily columnFamily)
+		public override IEnumerable<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>> Execute(BaseCassandraColumnFamily columnFamily)
 		{
 			CassandraSession _localSession = null;
 			if (CassandraSession.Current == null)
@@ -33,6 +30,9 @@ namespace FluentCassandra.Operations
 					Column_family = columnFamily.FamilyName
 				};
 
+				if (SuperColumnName != null)
+					parent.Super_column = SuperColumnName;
+
 				var output = CassandraSession.Current.GetClient().get_range_slices(
 					parent,
 					SlicePredicate.CreateSlicePredicate(),
@@ -42,8 +42,8 @@ namespace FluentCassandra.Operations
 
 				foreach (var result in output)
 				{
-					var r = new FluentColumnFamily<CompareWith>(result.Key, columnFamily.FamilyName, result.Columns.Select(col => {
-						return ObjectHelper.ConvertColumnToFluentColumn<CompareWith>(col.Column);
+					var r = new FluentSuperColumn<CompareWith, CompareSubcolumnWith>(result.Columns.Select(col => {
+						return ObjectHelper.ConvertColumnToFluentColumn<CompareSubcolumnWith>(col.Column);
 					}));
 					columnFamily.Context.Attach(r);
 					r.MutationTracker.Clear();
@@ -58,9 +58,10 @@ namespace FluentCassandra.Operations
 			}
 		}
 
-		public GetColumnFamilyRangeSlice(CassandraKeyRange keyRange, CassandraSlicePredicate columnSlicePredicate)
+		public GetSuperColumnRangeSlices(CassandraKeyRange keyRange, CassandraType superColumnName, CassandraSlicePredicate columnSlicePredicate)
 		{
 			KeyRange = keyRange;
+			SuperColumnName = superColumnName;
 			SlicePredicate = columnSlicePredicate;
 		}
 	}

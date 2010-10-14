@@ -146,7 +146,7 @@ namespace FluentCassandra
 		{
 			var setup = new CassandraQuerySetup<IFluentColumnFamily<CompareWith>, CompareWith> {
 				KeyRange = new CassandraKeyRange(startKey, endKey, startToken, endToken, keyCount),
-				CreateQueryOperation = (s, slice) => new GetColumnFamilyRangeSlice<CompareWith>(s.KeyRange, slice)
+				CreateQueryOperation = (s, slice) => new GetColumnFamilyRangeSlices<CompareWith>(s.KeyRange, slice)
 			};
 			return ((ICassandraQueryProvider)family).CreateQuery<IFluentColumnFamily<CompareWith>, CompareWith>(setup, null);
 		}
@@ -172,14 +172,14 @@ namespace FluentCassandra
 		public static IEnumerable<IFluentColumnFamily<CompareWith>> Get<CompareWith>(this CassandraColumnFamily<CompareWith> family, BytesType startKey, BytesType endKey, string startToken, string endToken, int keyCount, IEnumerable<CompareWith> columnNames)
 			where CompareWith : CassandraType
 		{
-			var op = new GetColumnFamilyRangeSlice<CompareWith>(new CassandraKeyRange(startKey, endKey, startToken, endToken, keyCount), new ColumnSlicePredicate(columnNames));
+			var op = new GetColumnFamilyRangeSlices<CompareWith>(new CassandraKeyRange(startKey, endKey, startToken, endToken, keyCount), new ColumnSlicePredicate(columnNames));
 			return family.ExecuteOperation(op);
 		}
 
 		public static IEnumerable<IFluentColumnFamily<CompareWith>> Get<CompareWith>(this CassandraColumnFamily<CompareWith> family, BytesType startKey, BytesType endKey, string startToken, string endToken, int keyCount, CompareWith columnStart, CompareWith columnEnd, bool columnsReversed = false, int columnCount = 100)
 			where CompareWith : CassandraType
 		{
-			var op = new GetColumnFamilyRangeSlice<CompareWith>(new CassandraKeyRange(startKey, endKey, startToken, endToken, keyCount), new RangeSlicePredicate(columnStart, columnEnd, columnsReversed, columnCount));
+			var op = new GetColumnFamilyRangeSlices<CompareWith>(new CassandraKeyRange(startKey, endKey, startToken, endToken, keyCount), new RangeSlicePredicate(columnStart, columnEnd, columnsReversed, columnCount));
 			return family.ExecuteOperation(op);
 		}
 

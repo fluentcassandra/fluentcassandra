@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using FluentCassandra.Types;
 using Apache.Cassandra;
 
 namespace FluentCassandra.Operations
 {
-	public class GetSuperColumnFamilyRangeSlice<CompareWith, CompareSubcolumnWith> : QueryableColumnFamilyOperation<IFluentSuperColumnFamily<CompareWith, CompareSubcolumnWith>>
+	public class GetSuperColumnFamilyIndexedSlices<CompareWith, CompareSubcolumnWith> : QueryableColumnFamilyOperation<IFluentSuperColumnFamily<CompareWith, CompareSubcolumnWith>>
 		where CompareWith : CassandraType
 		where CompareSubcolumnWith : CassandraType
 	{
@@ -15,7 +14,7 @@ namespace FluentCassandra.Operations
 		 * list<KeySlice> get_range_slices(keyspace, column_parent, predicate, range, consistency_level)
 		 */
 
-		public CassandraKeyRange KeyRange { get; private set; }
+		public CassandraIndexClause<CompareWith> IndexClause { get; private set; }
 
 		public override IEnumerable<IFluentSuperColumnFamily<CompareWith, CompareSubcolumnWith>> Execute(BaseCassandraColumnFamily columnFamily)
 		{
@@ -29,10 +28,10 @@ namespace FluentCassandra.Operations
 					Column_family = columnFamily.FamilyName
 				};
 
-				var output = CassandraSession.Current.GetClient().get_range_slices(
+				var output = CassandraSession.Current.GetClient().get_indexed_slices(
 					parent,
+					IndexClause.CreateIndexClause(),
 					SlicePredicate.CreateSlicePredicate(),
-					KeyRange.CreateKeyRange(),
 					CassandraSession.Current.ReadConsistency
 				);
 
@@ -58,9 +57,9 @@ namespace FluentCassandra.Operations
 			}
 		}
 
-		public GetSuperColumnFamilyRangeSlice(CassandraKeyRange keyRange, CassandraSlicePredicate columnSlicePredicate)
+		public GetSuperColumnFamilyIndexedSlices(CassandraIndexClause<CompareWith> indexClause, CassandraSlicePredicate columnSlicePredicate)
 		{
-			KeyRange = keyRange;
+			IndexClause = indexClause;
 			SlicePredicate = columnSlicePredicate;
 		}
 	}
