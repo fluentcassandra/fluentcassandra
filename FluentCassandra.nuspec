@@ -2,7 +2,7 @@
 <package>
 	<metadata>
 		<id>FluentCassandra</id>
-		<version>0.6</version>
+		<version>0.6.0</version>
 		<authors>
 			<author>Managed Fusion, LLC</author>
 			<author>Nick Berardi</author>
