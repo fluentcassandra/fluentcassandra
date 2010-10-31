@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using FluentCassandra.Types;
 using FluentCassandra.Operations;
+using System.Linq.Expressions;
 
 namespace FluentCassandra
 {
@@ -148,7 +149,17 @@ namespace FluentCassandra
 				KeyRange = new CassandraKeyRange(startKey, endKey, startToken, endToken, keyCount),
 				CreateQueryOperation = (s, slice) => new GetColumnFamilyRangeSlices<CompareWith>(s.KeyRange, slice)
 			};
-			return ((ICassandraQueryProvider)family).CreateQuery<IFluentColumnFamily<CompareWith>, CompareWith>(setup, null);
+			return ((ICassandraQueryProvider)family).CreateQuery(setup, null);
+		}
+
+		public static ICassandraQueryable<IFluentColumnFamily<CompareWith>, CompareWith> Get<CompareWith>(this CassandraColumnFamily<CompareWith> family, BytesType startKey, int keyCount, Expression<Func<IFluentRecordHasFluentColumns<CompareWith>, bool>> expression)
+			where CompareWith : CassandraType
+		{
+			var setup = new CassandraQuerySetup<IFluentColumnFamily<CompareWith>, CompareWith> {
+				IndexClause = new CassandraIndexClause<CompareWith>(startKey, keyCount, expression),
+				CreateQueryOperation = (s, slice) => new GetColumnFamilyIndexedSlices<CompareWith>(s.IndexClause, slice)
+			};
+			return ((ICassandraQueryProvider)family).CreateQuery(setup, null);
 		}
 
 		// multi_get_slice
@@ -180,6 +191,22 @@ namespace FluentCassandra
 			where CompareWith : CassandraType
 		{
 			var op = new GetColumnFamilyRangeSlices<CompareWith>(new CassandraKeyRange(startKey, endKey, startToken, endToken, keyCount), new RangeSlicePredicate(columnStart, columnEnd, columnsReversed, columnCount));
+			return family.ExecuteOperation(op);
+		}
+
+		// get_indexed_slices
+
+		public static IEnumerable<IFluentColumnFamily<CompareWith>> Get<CompareWith>(this CassandraColumnFamily<CompareWith> family, BytesType startKey, int keyCount, Expression<Func<IFluentRecordHasFluentColumns<CompareWith>, bool>> expression, IEnumerable<CompareWith> columnNames)
+			where CompareWith : CassandraType
+		{
+			var op = new GetColumnFamilyIndexedSlices<CompareWith>(new CassandraIndexClause<CompareWith>(startKey, keyCount, expression), new ColumnSlicePredicate(columnNames));
+			return family.ExecuteOperation(op);
+		}
+
+		public static IEnumerable<IFluentColumnFamily<CompareWith>> Get<CompareWith>(this CassandraColumnFamily<CompareWith> family, BytesType startKey, int keyCount, Expression<Func<IFluentRecordHasFluentColumns<CompareWith>, bool>> expression, CompareWith columnStart, CompareWith columnEnd, bool columnsReversed = false, int columnCount = 100)
+			where CompareWith : CassandraType
+		{
+			var op = new GetColumnFamilyIndexedSlices<CompareWith>(new CassandraIndexClause<CompareWith>(startKey, keyCount, expression), new RangeSlicePredicate(columnStart, columnEnd, columnsReversed, columnCount));
 			return family.ExecuteOperation(op);
 		}
 

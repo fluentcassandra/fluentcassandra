@@ -14,7 +14,7 @@ namespace FluentCassandra.Operations
 		 * list<KeySlice> get_range_slices(keyspace, column_parent, predicate, range, consistency_level)
 		 */
 
-		public CassandraIndexClause<CompareSubcolumnWith> IndexClause { get; private set; }
+		public CassandraIndexClause IndexClause { get; private set; }
 
 		public CassandraType SuperColumnName { get; private set; }
 
@@ -58,7 +58,7 @@ namespace FluentCassandra.Operations
 			}
 		}
 
-		public GetSuperColumnIndexedSlices(CassandraIndexClause<CompareSubcolumnWith> indexClause, CassandraType superColumnName, CassandraSlicePredicate columnSlicePredicate)
+		public GetSuperColumnIndexedSlices(CassandraIndexClause indexClause, CassandraType superColumnName, CassandraSlicePredicate columnSlicePredicate)
 		{
 			IndexClause = indexClause;
 			SuperColumnName = superColumnName;

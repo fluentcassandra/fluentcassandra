@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using FluentCassandra.Types;
 using FluentCassandra.Operations;
+using System.Linq.Expressions;
 
 namespace FluentCassandra
 {
@@ -247,6 +248,17 @@ namespace FluentCassandra
 			return ((ICassandraQueryProvider)family).CreateQuery(setup, null);
 		}
 
+		public static ICassandraQueryable<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>, CompareSubcolumnWith> GetSuperColumns<CompareWith, CompareSubcolumnWith>(this CassandraSuperColumnFamily<CompareWith, CompareSubcolumnWith> family, BytesType startKey, int keyCount, Expression<Func<IFluentRecordHasFluentColumns<CompareWith>, bool>> expression)
+			where CompareWith : CassandraType
+			where CompareSubcolumnWith : CassandraType
+		{
+			var setup = new CassandraQuerySetup<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>, CompareSubcolumnWith> {
+				IndexClause = new CassandraIndexClause<CompareWith>(startKey, keyCount, expression),
+				CreateQueryOperation = (s, slice) => new GetSuperColumnIndexedSlices<CompareWith, CompareSubcolumnWith>(s.IndexClause, s.SuperColumnName, slice)
+			};
+			return ((ICassandraQueryProvider)family).CreateQuery(setup, null);
+		}
+
 		// multi_get_slice
 
 		public static IEnumerable<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>> GetSuperColumns<CompareWith, CompareSubcolumnWith>(this CassandraSuperColumnFamily<CompareWith, CompareSubcolumnWith> family, IEnumerable<BytesType> keys, CompareWith superColumnName, IEnumerable<CompareSubcolumnWith> columnNames)
@@ -280,6 +292,24 @@ namespace FluentCassandra
 			where CompareSubcolumnWith : CassandraType
 		{
 			var op = new GetSuperColumnRangeSlices<CompareWith, CompareSubcolumnWith>(new CassandraKeyRange(startKey, endKey, startToken, endToken, keyCount), superColumnName, new RangeSlicePredicate(columnStart, columnEnd, columnsReversed, columnCount));
+			return family.ExecuteOperation(op);
+		}
+
+		// get_indexed_slices
+
+		public static IEnumerable<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>> GetSuperColumns<CompareWith, CompareSubcolumnWith>(this CassandraSuperColumnFamily<CompareWith, CompareSubcolumnWith> family, BytesType startKey, int keyCount, Expression<Func<IFluentRecordHasFluentColumns<CompareSubcolumnWith>, bool>> expression, CompareWith superColumnName, IEnumerable<CompareWith> columnNames)
+			where CompareWith : CassandraType
+			where CompareSubcolumnWith : CassandraType
+		{
+			var op = new GetSuperColumnIndexedSlices<CompareWith, CompareSubcolumnWith>(new CassandraIndexClause<CompareSubcolumnWith>(startKey, keyCount, expression), superColumnName, new ColumnSlicePredicate(columnNames));
+			return family.ExecuteOperation(op);
+		}
+
+		public static IEnumerable<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>> GetSuperColumns<CompareWith, CompareSubcolumnWith>(this CassandraSuperColumnFamily<CompareWith, CompareSubcolumnWith> family, BytesType startKey, int keyCount, Expression<Func<IFluentRecordHasFluentColumns<CompareSubcolumnWith>, bool>> expression, CompareWith superColumnName, CompareWith columnStart, CompareWith columnEnd, bool columnsReversed = false, int columnCount = 100)
+			where CompareWith : CassandraType
+			where CompareSubcolumnWith : CassandraType
+		{
+			var op = new GetSuperColumnIndexedSlices<CompareWith, CompareSubcolumnWith>(new CassandraIndexClause<CompareSubcolumnWith>(startKey, keyCount, expression), superColumnName, new RangeSlicePredicate(columnStart, columnEnd, columnsReversed, columnCount));
 			return family.ExecuteOperation(op);
 		}
 

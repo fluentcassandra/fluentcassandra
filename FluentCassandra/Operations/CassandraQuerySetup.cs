@@ -39,6 +39,12 @@ namespace FluentCassandra.Operations
 			get;
 			internal set;
 		}
+
+		public CassandraIndexClause IndexClause
+		{
+			get;
+			internal set;
+		}
 	}
 	
 	public class CassandraQuerySetup<TResult, CompareWith> : CassandraQuerySetup

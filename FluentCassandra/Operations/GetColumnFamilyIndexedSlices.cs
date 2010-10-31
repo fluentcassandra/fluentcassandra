@@ -14,7 +14,7 @@ namespace FluentCassandra.Operations
 		 * list<KeySlice> get_range_slices(keyspace, column_parent, predicate, range, consistency_level)
 		 */
 
-		public CassandraIndexClause<CompareWith> IndexClause { get; private set; }
+		public CassandraIndexClause IndexClause { get; private set; }
 
 		public override IEnumerable<IFluentColumnFamily<CompareWith>> Execute(BaseCassandraColumnFamily columnFamily)
 		{
@@ -58,7 +58,7 @@ namespace FluentCassandra.Operations
 			}
 		}
 
-		public GetColumnFamilyIndexedSlices(CassandraIndexClause<CompareWith> indexClause, CassandraSlicePredicate columnSlicePredicate)
+		public GetColumnFamilyIndexedSlices(CassandraIndexClause indexClause, CassandraSlicePredicate columnSlicePredicate)
 		{
 			IndexClause = indexClause;
 			SlicePredicate = columnSlicePredicate;

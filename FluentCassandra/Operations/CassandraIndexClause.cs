@@ -6,17 +6,23 @@ using System.Linq.Expressions;
 
 namespace FluentCassandra.Operations
 {
-	public class CassandraIndexClause<CompareWith>
+	public class CassandraIndexClause<CompareWith> : CassandraIndexClause
 		where CompareWith : CassandraType
 	{
-		private List<Apache.Cassandra.IndexExpression> _compiledExpressions;
-
 		public CassandraIndexClause(BytesType startKey, int count, Expression<Func<IFluentRecordHasFluentColumns<CompareWith>, bool>> expression)
+			: base(startKey, count, expression) { }
+	}
+
+	public abstract class CassandraIndexClause
+	{
+		protected internal CassandraIndexClause(BytesType startKey, int count, Expression expression)
 		{
 			StartKey = startKey;
 			Count = count;
 			Expression = expression;
 		}
+
+		private List<Apache.Cassandra.IndexExpression> _compiledExpressions;
 
 		public BytesType StartKey { get; private set; }
 		public int Count { get; private set; }
