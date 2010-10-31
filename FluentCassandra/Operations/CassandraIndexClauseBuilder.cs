@@ -39,8 +39,8 @@ namespace FluentCassandra.Operations
 			{
 				case ExpressionType.And:
 				case ExpressionType.AndAlso:
-					expressions.AddIndexExpression(exp.Left);
-					expressions.AddIndexExpression(exp.Right);
+					expressions = Evaluate(exp.Left, expressions);
+					expressions = Evaluate(exp.Right, expressions);
 					break;
 
 				default:
