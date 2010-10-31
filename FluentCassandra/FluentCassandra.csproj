@@ -144,6 +144,7 @@
     <Compile Include="IFluentBaseColumn.cs" />
     <Compile Include="IFluentBaseColumn`1.cs" />
     <Compile Include="IFluentColumn.cs" />
+    <Compile Include="IFluentRecordHasFluentColumns`1.cs" />
     <Compile Include="IFluentSuperColumn.cs" />
     <Compile Include="IFluentSuperColumnFamily`1.cs" />
     <Compile Include="CassandraColumnFamilyOperations.cs" />
@@ -154,6 +155,7 @@
     <Compile Include="Operations\CassandraSlicePredicateBuilder.cs" />
     <Compile Include="Operations\ColumnSlicePredicate.cs" />
     <Compile Include="Operations\ContextOperation.cs" />
+    <Compile Include="Operations\CassandraIndexClauseBuilder.cs" />
     <Compile Include="Operations\GetSuperColumnIndexedSlices.cs" />
     <Compile Include="Operations\GetSuperColumnFamilyIndexedSlices.cs" />
     <Compile Include="Operations\GetColumnFamilyIndexedSlices.cs" />

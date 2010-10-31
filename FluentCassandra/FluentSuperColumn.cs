@@ -67,6 +67,24 @@ namespace FluentCassandra
 		}
 
 		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="columnName"></param>
+		/// <returns></returns>
+		public BytesType this[CompareSubcolumnWith columnName]
+		{
+			get
+			{
+				var value = GetColumnValue(columnName);
+
+				if (value is NullType)
+					throw new CassandraException(String.Format("Column, {0}, could not be found.", columnName));
+
+				return value as BytesType;
+			}
+		}
+
+		/// <summary>
 		/// Gets the path.
 		/// </summary>
 		/// <returns></returns>
@@ -90,12 +108,24 @@ namespace FluentCassandra
 		/// <param name="name"></param>
 		/// <param name="result"></param>
 		/// <returns></returns>
+		private CassandraType GetColumnValue(object name)
+		{
+			var col = Columns.FirstOrDefault(c => c.ColumnName == name);
+			var result = (col == null) ? (CassandraType)NullType.Value : (CassandraType)col.ColumnValue;
+
+			return result;
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="name"></param>
+		/// <param name="result"></param>
+		/// <returns></returns>
 		public override bool TryGetColumn(object name, out object result)
 		{
-		    var col = Columns.FirstOrDefault(c => c.ColumnName == name);
+			result = GetColumnValue(name);
 
-			result = (col == null) ? (CassandraType)NullType.Value : (CassandraType)col.ColumnValue;
-			//return col != null;
 			return true;
 		}
 
