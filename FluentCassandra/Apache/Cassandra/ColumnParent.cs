@@ -18,19 +18,19 @@ namespace Apache.Cassandra
   [Serializable]
   public partial class ColumnParent : TBase
   {
-    private string column_family;
-    private byte[] super_column;
+    private string _column_family;
+    private byte[] _super_column;
 
     public string Column_family
     {
       get
       {
-        return column_family;
+        return _column_family;
       }
       set
       {
         __isset.column_family = true;
-        this.column_family = value;
+        this._column_family = value;
       }
     }
 
@@ -38,12 +38,12 @@ namespace Apache.Cassandra
     {
       get
       {
-        return super_column;
+        return _super_column;
       }
       set
       {
         __isset.super_column = true;
-        this.super_column = value;
+        this._super_column = value;
       }
     }
 
@@ -72,16 +72,14 @@ namespace Apache.Cassandra
         {
           case 3:
             if (field.Type == TType.String) {
-              this.column_family = iprot.ReadString();
-              this.__isset.column_family = true;
+              Column_family = iprot.ReadString();
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
             break;
           case 4:
             if (field.Type == TType.String) {
-              this.super_column = iprot.ReadBinary();
-              this.__isset.super_column = true;
+              Super_column = iprot.ReadBinary();
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
@@ -99,20 +97,20 @@ namespace Apache.Cassandra
       TStruct struc = new TStruct("ColumnParent");
       oprot.WriteStructBegin(struc);
       TField field = new TField();
-      if (this.column_family != null && __isset.column_family) {
+      if (Column_family != null && __isset.column_family) {
         field.Name = "column_family";
         field.Type = TType.String;
         field.ID = 3;
         oprot.WriteFieldBegin(field);
-        oprot.WriteString(this.column_family);
+        oprot.WriteString(Column_family);
         oprot.WriteFieldEnd();
       }
-      if (this.super_column != null && __isset.super_column) {
+      if (Super_column != null && __isset.super_column) {
         field.Name = "super_column";
         field.Type = TType.String;
         field.ID = 4;
         oprot.WriteFieldBegin(field);
-        oprot.WriteBinary(this.super_column);
+        oprot.WriteBinary(Super_column);
         oprot.WriteFieldEnd();
       }
       oprot.WriteFieldStop();
@@ -121,10 +119,10 @@ namespace Apache.Cassandra
 
     public override string ToString() {
       StringBuilder sb = new StringBuilder("ColumnParent(");
-      sb.Append("column_family: ");
-      sb.Append(this.column_family);
-      sb.Append(",super_column: ");
-      sb.Append(this.super_column);
+      sb.Append("Column_family: ");
+      sb.Append(Column_family);
+      sb.Append(",Super_column: ");
+      sb.Append(Super_column);
       sb.Append(")");
       return sb.ToString();
     }

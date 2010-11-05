@@ -18,18 +18,18 @@ namespace Apache.Cassandra
   [Serializable]
   public partial class AuthorizationException : Exception, TBase
   {
-    private string why;
+    private string _why;
 
     public string Why
     {
       get
       {
-        return why;
+        return _why;
       }
       set
       {
         __isset.why = true;
-        this.why = value;
+        this._why = value;
       }
     }
 
@@ -57,8 +57,7 @@ namespace Apache.Cassandra
         {
           case 1:
             if (field.Type == TType.String) {
-              this.why = iprot.ReadString();
-              this.__isset.why = true;
+              Why = iprot.ReadString();
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
@@ -76,12 +75,12 @@ namespace Apache.Cassandra
       TStruct struc = new TStruct("AuthorizationException");
       oprot.WriteStructBegin(struc);
       TField field = new TField();
-      if (this.why != null && __isset.why) {
+      if (Why != null && __isset.why) {
         field.Name = "why";
         field.Type = TType.String;
         field.ID = 1;
         oprot.WriteFieldBegin(field);
-        oprot.WriteString(this.why);
+        oprot.WriteString(Why);
         oprot.WriteFieldEnd();
       }
       oprot.WriteFieldStop();
@@ -90,8 +89,8 @@ namespace Apache.Cassandra
 
     public override string ToString() {
       StringBuilder sb = new StringBuilder("AuthorizationException(");
-      sb.Append("why: ");
-      sb.Append(this.why);
+      sb.Append("Why: ");
+      sb.Append(Why);
       sb.Append(")");
       return sb.ToString();
     }

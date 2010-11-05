@@ -8,11 +8,10 @@ namespace Apache.Cassandra
 {
   public enum ConsistencyLevel
   {
-    ZERO = 0,
     ONE = 1,
     QUORUM = 2,
-    DCQUORUM = 3,
-    DCQUORUMSYNC = 4,
+    LOCAL_QUORUM = 3,
+    EACH_QUORUM = 4,
     ALL = 5,
     ANY = 6,
   }

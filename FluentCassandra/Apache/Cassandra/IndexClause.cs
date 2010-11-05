@@ -18,20 +18,20 @@ namespace Apache.Cassandra
   [Serializable]
   public partial class IndexClause : TBase
   {
-    private List<IndexExpression> expressions;
-    private byte[] start_key;
-    private int count;
+    private List<IndexExpression> _expressions;
+    private byte[] _start_key;
+    private int _count;
 
     public List<IndexExpression> Expressions
     {
       get
       {
-        return expressions;
+        return _expressions;
       }
       set
       {
         __isset.expressions = true;
-        this.expressions = value;
+        this._expressions = value;
       }
     }
 
@@ -39,12 +39,12 @@ namespace Apache.Cassandra
     {
       get
       {
-        return start_key;
+        return _start_key;
       }
       set
       {
         __isset.start_key = true;
-        this.start_key = value;
+        this._start_key = value;
       }
     }
 
@@ -52,12 +52,12 @@ namespace Apache.Cassandra
     {
       get
       {
-        return count;
+        return _count;
       }
       set
       {
         __isset.count = true;
-        this.count = value;
+        this._count = value;
       }
     }
 
@@ -89,34 +89,31 @@ namespace Apache.Cassandra
           case 1:
             if (field.Type == TType.List) {
               {
-                this.expressions = new List<IndexExpression>();
+                Expressions = new List<IndexExpression>();
                 TList _list8 = iprot.ReadListBegin();
                 for( int _i9 = 0; _i9 < _list8.Count; ++_i9)
                 {
                   IndexExpression _elem10 = new IndexExpression();
                   _elem10 = new IndexExpression();
                   _elem10.Read(iprot);
-                  this.expressions.Add(_elem10);
+                  Expressions.Add(_elem10);
                 }
                 iprot.ReadListEnd();
               }
-              this.__isset.expressions = true;
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
             break;
           case 2:
             if (field.Type == TType.String) {
-              this.start_key = iprot.ReadBinary();
-              this.__isset.start_key = true;
+              Start_key = iprot.ReadBinary();
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
             break;
           case 3:
             if (field.Type == TType.I32) {
-              this.count = iprot.ReadI32();
-              this.__isset.count = true;
+              Count = iprot.ReadI32();
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
@@ -134,14 +131,14 @@ namespace Apache.Cassandra
       TStruct struc = new TStruct("IndexClause");
       oprot.WriteStructBegin(struc);
       TField field = new TField();
-      if (this.expressions != null && __isset.expressions) {
+      if (Expressions != null && __isset.expressions) {
         field.Name = "expressions";
         field.Type = TType.List;
         field.ID = 1;
         oprot.WriteFieldBegin(field);
         {
-          oprot.WriteListBegin(new TList(TType.Struct, this.expressions.Count));
-          foreach (IndexExpression _iter11 in this.expressions)
+          oprot.WriteListBegin(new TList(TType.Struct, Expressions.Count));
+          foreach (IndexExpression _iter11 in Expressions)
           {
             _iter11.Write(oprot);
             oprot.WriteListEnd();
@@ -149,12 +146,12 @@ namespace Apache.Cassandra
         }
         oprot.WriteFieldEnd();
       }
-      if (this.start_key != null && __isset.start_key) {
+      if (Start_key != null && __isset.start_key) {
         field.Name = "start_key";
         field.Type = TType.String;
         field.ID = 2;
         oprot.WriteFieldBegin(field);
-        oprot.WriteBinary(this.start_key);
+        oprot.WriteBinary(Start_key);
         oprot.WriteFieldEnd();
       }
       if (__isset.count) {
@@ -162,7 +159,7 @@ namespace Apache.Cassandra
         field.Type = TType.I32;
         field.ID = 3;
         oprot.WriteFieldBegin(field);
-        oprot.WriteI32(this.count);
+        oprot.WriteI32(Count);
         oprot.WriteFieldEnd();
       }
       oprot.WriteFieldStop();
@@ -171,12 +168,12 @@ namespace Apache.Cassandra
 
     public override string ToString() {
       StringBuilder sb = new StringBuilder("IndexClause(");
-      sb.Append("expressions: ");
-      sb.Append(this.expressions);
-      sb.Append(",start_key: ");
-      sb.Append(this.start_key);
-      sb.Append(",count: ");
-      sb.Append(this.count);
+      sb.Append("Expressions: ");
+      sb.Append(Expressions);
+      sb.Append(",Start_key: ");
+      sb.Append(Start_key);
+      sb.Append(",Count: ");
+      sb.Append(Count);
       sb.Append(")");
       return sb.ToString();
     }

@@ -18,18 +18,18 @@ namespace Apache.Cassandra
   [Serializable]
   public partial class AuthenticationRequest : TBase
   {
-    private Dictionary<string, string> credentials;
+    private Dictionary<string, string> _credentials;
 
     public Dictionary<string, string> Credentials
     {
       get
       {
-        return credentials;
+        return _credentials;
       }
       set
       {
         __isset.credentials = true;
-        this.credentials = value;
+        this._credentials = value;
       }
     }
 
@@ -58,7 +58,7 @@ namespace Apache.Cassandra
           case 1:
             if (field.Type == TType.Map) {
               {
-                this.credentials = new Dictionary<string, string>();
+                Credentials = new Dictionary<string, string>();
                 TMap _map20 = iprot.ReadMapBegin();
                 for( int _i21 = 0; _i21 < _map20.Count; ++_i21)
                 {
@@ -66,11 +66,10 @@ namespace Apache.Cassandra
                   string _val23;
                   _key22 = iprot.ReadString();
                   _val23 = iprot.ReadString();
-                  this.credentials[_key22] = _val23;
+                  Credentials[_key22] = _val23;
                 }
                 iprot.ReadMapEnd();
               }
-              this.__isset.credentials = true;
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
@@ -88,17 +87,17 @@ namespace Apache.Cassandra
       TStruct struc = new TStruct("AuthenticationRequest");
       oprot.WriteStructBegin(struc);
       TField field = new TField();
-      if (this.credentials != null && __isset.credentials) {
+      if (Credentials != null && __isset.credentials) {
         field.Name = "credentials";
         field.Type = TType.Map;
         field.ID = 1;
         oprot.WriteFieldBegin(field);
         {
-          oprot.WriteMapBegin(new TMap(TType.String, TType.String, this.credentials.Count));
-          foreach (string _iter24 in this.credentials.Keys)
+          oprot.WriteMapBegin(new TMap(TType.String, TType.String, Credentials.Count));
+          foreach (string _iter24 in Credentials.Keys)
           {
             oprot.WriteString(_iter24);
-            oprot.WriteString(this.credentials[_iter24]);
+            oprot.WriteString(Credentials[_iter24]);
             oprot.WriteMapEnd();
           }
         }
@@ -110,8 +109,8 @@ namespace Apache.Cassandra
 
     public override string ToString() {
       StringBuilder sb = new StringBuilder("AuthenticationRequest(");
-      sb.Append("credentials: ");
-      sb.Append(this.credentials);
+      sb.Append("Credentials: ");
+      sb.Append(Credentials);
       sb.Append(")");
       return sb.ToString();
     }

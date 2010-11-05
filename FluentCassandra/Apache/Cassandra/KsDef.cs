@@ -18,22 +18,22 @@ namespace Apache.Cassandra
   [Serializable]
   public partial class KsDef : TBase
   {
-    private string name;
-    private string strategy_class;
-    private Dictionary<string, string> strategy_options;
-    private int replication_factor;
-    private List<CfDef> cf_defs;
+    private string _name;
+    private string _strategy_class;
+    private Dictionary<string, string> _strategy_options;
+    private int _replication_factor;
+    private List<CfDef> _cf_defs;
 
     public string Name
     {
       get
       {
-        return name;
+        return _name;
       }
       set
       {
         __isset.name = true;
-        this.name = value;
+        this._name = value;
       }
     }
 
@@ -41,12 +41,12 @@ namespace Apache.Cassandra
     {
       get
       {
-        return strategy_class;
+        return _strategy_class;
       }
       set
       {
         __isset.strategy_class = true;
-        this.strategy_class = value;
+        this._strategy_class = value;
       }
     }
 
@@ -54,12 +54,12 @@ namespace Apache.Cassandra
     {
       get
       {
-        return strategy_options;
+        return _strategy_options;
       }
       set
       {
         __isset.strategy_options = true;
-        this.strategy_options = value;
+        this._strategy_options = value;
       }
     }
 
@@ -67,12 +67,12 @@ namespace Apache.Cassandra
     {
       get
       {
-        return replication_factor;
+        return _replication_factor;
       }
       set
       {
         __isset.replication_factor = true;
-        this.replication_factor = value;
+        this._replication_factor = value;
       }
     }
 
@@ -80,12 +80,12 @@ namespace Apache.Cassandra
     {
       get
       {
-        return cf_defs;
+        return _cf_defs;
       }
       set
       {
         __isset.cf_defs = true;
-        this.cf_defs = value;
+        this._cf_defs = value;
       }
     }
 
@@ -117,16 +117,14 @@ namespace Apache.Cassandra
         {
           case 1:
             if (field.Type == TType.String) {
-              this.name = iprot.ReadString();
-              this.__isset.name = true;
+              Name = iprot.ReadString();
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
             break;
           case 2:
             if (field.Type == TType.String) {
-              this.strategy_class = iprot.ReadString();
-              this.__isset.strategy_class = true;
+              Strategy_class = iprot.ReadString();
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
@@ -134,7 +132,7 @@ namespace Apache.Cassandra
           case 3:
             if (field.Type == TType.Map) {
               {
-                this.strategy_options = new Dictionary<string, string>();
+                Strategy_options = new Dictionary<string, string>();
                 TMap _map29 = iprot.ReadMapBegin();
                 for( int _i30 = 0; _i30 < _map29.Count; ++_i30)
                 {
@@ -142,19 +140,17 @@ namespace Apache.Cassandra
                   string _val32;
                   _key31 = iprot.ReadString();
                   _val32 = iprot.ReadString();
-                  this.strategy_options[_key31] = _val32;
+                  Strategy_options[_key31] = _val32;
                 }
                 iprot.ReadMapEnd();
               }
-              this.__isset.strategy_options = true;
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
             break;
           case 4:
             if (field.Type == TType.I32) {
-              this.replication_factor = iprot.ReadI32();
-              this.__isset.replication_factor = true;
+              Replication_factor = iprot.ReadI32();
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
@@ -162,18 +158,17 @@ namespace Apache.Cassandra
           case 5:
             if (field.Type == TType.List) {
               {
-                this.cf_defs = new List<CfDef>();
+                Cf_defs = new List<CfDef>();
                 TList _list33 = iprot.ReadListBegin();
                 for( int _i34 = 0; _i34 < _list33.Count; ++_i34)
                 {
                   CfDef _elem35 = new CfDef();
                   _elem35 = new CfDef();
                   _elem35.Read(iprot);
-                  this.cf_defs.Add(_elem35);
+                  Cf_defs.Add(_elem35);
                 }
                 iprot.ReadListEnd();
               }
-              this.__isset.cf_defs = true;
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
@@ -191,33 +186,33 @@ namespace Apache.Cassandra
       TStruct struc = new TStruct("KsDef");
       oprot.WriteStructBegin(struc);
       TField field = new TField();
-      if (this.name != null && __isset.name) {
+      if (Name != null && __isset.name) {
         field.Name = "name";
         field.Type = TType.String;
         field.ID = 1;
         oprot.WriteFieldBegin(field);
-        oprot.WriteString(this.name);
+        oprot.WriteString(Name);
         oprot.WriteFieldEnd();
       }
-      if (this.strategy_class != null && __isset.strategy_class) {
+      if (Strategy_class != null && __isset.strategy_class) {
         field.Name = "strategy_class";
         field.Type = TType.String;
         field.ID = 2;
         oprot.WriteFieldBegin(field);
-        oprot.WriteString(this.strategy_class);
+        oprot.WriteString(Strategy_class);
         oprot.WriteFieldEnd();
       }
-      if (this.strategy_options != null && __isset.strategy_options) {
+      if (Strategy_options != null && __isset.strategy_options) {
         field.Name = "strategy_options";
         field.Type = TType.Map;
         field.ID = 3;
         oprot.WriteFieldBegin(field);
         {
-          oprot.WriteMapBegin(new TMap(TType.String, TType.String, this.strategy_options.Count));
-          foreach (string _iter36 in this.strategy_options.Keys)
+          oprot.WriteMapBegin(new TMap(TType.String, TType.String, Strategy_options.Count));
+          foreach (string _iter36 in Strategy_options.Keys)
           {
             oprot.WriteString(_iter36);
-            oprot.WriteString(this.strategy_options[_iter36]);
+            oprot.WriteString(Strategy_options[_iter36]);
             oprot.WriteMapEnd();
           }
         }
@@ -228,17 +223,17 @@ namespace Apache.Cassandra
         field.Type = TType.I32;
         field.ID = 4;
         oprot.WriteFieldBegin(field);
-        oprot.WriteI32(this.replication_factor);
+        oprot.WriteI32(Replication_factor);
         oprot.WriteFieldEnd();
       }
-      if (this.cf_defs != null && __isset.cf_defs) {
+      if (Cf_defs != null && __isset.cf_defs) {
         field.Name = "cf_defs";
         field.Type = TType.List;
         field.ID = 5;
         oprot.WriteFieldBegin(field);
         {
-          oprot.WriteListBegin(new TList(TType.Struct, this.cf_defs.Count));
-          foreach (CfDef _iter37 in this.cf_defs)
+          oprot.WriteListBegin(new TList(TType.Struct, Cf_defs.Count));
+          foreach (CfDef _iter37 in Cf_defs)
           {
             _iter37.Write(oprot);
             oprot.WriteListEnd();
@@ -252,16 +247,16 @@ namespace Apache.Cassandra
 
     public override string ToString() {
       StringBuilder sb = new StringBuilder("KsDef(");
-      sb.Append("name: ");
-      sb.Append(this.name);
-      sb.Append(",strategy_class: ");
-      sb.Append(this.strategy_class);
-      sb.Append(",strategy_options: ");
-      sb.Append(this.strategy_options);
-      sb.Append(",replication_factor: ");
-      sb.Append(this.replication_factor);
-      sb.Append(",cf_defs: ");
-      sb.Append(this.cf_defs);
+      sb.Append("Name: ");
+      sb.Append(Name);
+      sb.Append(",Strategy_class: ");
+      sb.Append(Strategy_class);
+      sb.Append(",Strategy_options: ");
+      sb.Append(Strategy_options);
+      sb.Append(",Replication_factor: ");
+      sb.Append(Replication_factor);
+      sb.Append(",Cf_defs: ");
+      sb.Append(Cf_defs);
       sb.Append(")");
       return sb.ToString();
     }

@@ -18,21 +18,21 @@ namespace Apache.Cassandra
   [Serializable]
   public partial class ColumnDef : TBase
   {
-    private byte[] name;
-    private string validation_class;
-    private IndexType index_type;
-    private string index_name;
+    private byte[] _name;
+    private string _validation_class;
+    private IndexType _index_type;
+    private string _index_name;
 
     public byte[] Name
     {
       get
       {
-        return name;
+        return _name;
       }
       set
       {
         __isset.name = true;
-        this.name = value;
+        this._name = value;
       }
     }
 
@@ -40,12 +40,12 @@ namespace Apache.Cassandra
     {
       get
       {
-        return validation_class;
+        return _validation_class;
       }
       set
       {
         __isset.validation_class = true;
-        this.validation_class = value;
+        this._validation_class = value;
       }
     }
 
@@ -53,12 +53,12 @@ namespace Apache.Cassandra
     {
       get
       {
-        return index_type;
+        return _index_type;
       }
       set
       {
         __isset.index_type = true;
-        this.index_type = value;
+        this._index_type = value;
       }
     }
 
@@ -66,12 +66,12 @@ namespace Apache.Cassandra
     {
       get
       {
-        return index_name;
+        return _index_name;
       }
       set
       {
         __isset.index_name = true;
-        this.index_name = value;
+        this._index_name = value;
       }
     }
 
@@ -102,32 +102,28 @@ namespace Apache.Cassandra
         {
           case 1:
             if (field.Type == TType.String) {
-              this.name = iprot.ReadBinary();
-              this.__isset.name = true;
+              Name = iprot.ReadBinary();
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
             break;
           case 2:
             if (field.Type == TType.String) {
-              this.validation_class = iprot.ReadString();
-              this.__isset.validation_class = true;
+              Validation_class = iprot.ReadString();
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
             break;
           case 3:
             if (field.Type == TType.I32) {
-              this.index_type = (IndexType)iprot.ReadI32();
-              this.__isset.index_type = true;
+              Index_type = (IndexType)iprot.ReadI32();
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
             break;
           case 4:
             if (field.Type == TType.String) {
-              this.index_name = iprot.ReadString();
-              this.__isset.index_name = true;
+              Index_name = iprot.ReadString();
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
@@ -145,20 +141,20 @@ namespace Apache.Cassandra
       TStruct struc = new TStruct("ColumnDef");
       oprot.WriteStructBegin(struc);
       TField field = new TField();
-      if (this.name != null && __isset.name) {
+      if (Name != null && __isset.name) {
         field.Name = "name";
         field.Type = TType.String;
         field.ID = 1;
         oprot.WriteFieldBegin(field);
-        oprot.WriteBinary(this.name);
+        oprot.WriteBinary(Name);
         oprot.WriteFieldEnd();
       }
-      if (this.validation_class != null && __isset.validation_class) {
+      if (Validation_class != null && __isset.validation_class) {
         field.Name = "validation_class";
         field.Type = TType.String;
         field.ID = 2;
         oprot.WriteFieldBegin(field);
-        oprot.WriteString(this.validation_class);
+        oprot.WriteString(Validation_class);
         oprot.WriteFieldEnd();
       }
       if (__isset.index_type) {
@@ -166,15 +162,15 @@ namespace Apache.Cassandra
         field.Type = TType.I32;
         field.ID = 3;
         oprot.WriteFieldBegin(field);
-        oprot.WriteI32((int)this.index_type);
+        oprot.WriteI32((int)Index_type);
         oprot.WriteFieldEnd();
       }
-      if (this.index_name != null && __isset.index_name) {
+      if (Index_name != null && __isset.index_name) {
         field.Name = "index_name";
         field.Type = TType.String;
         field.ID = 4;
         oprot.WriteFieldBegin(field);
-        oprot.WriteString(this.index_name);
+        oprot.WriteString(Index_name);
         oprot.WriteFieldEnd();
       }
       oprot.WriteFieldStop();
@@ -183,14 +179,14 @@ namespace Apache.Cassandra
 
     public override string ToString() {
       StringBuilder sb = new StringBuilder("ColumnDef(");
-      sb.Append("name: ");
-      sb.Append(this.name);
-      sb.Append(",validation_class: ");
-      sb.Append(this.validation_class);
-      sb.Append(",index_type: ");
-      sb.Append(this.index_type);
-      sb.Append(",index_name: ");
-      sb.Append(this.index_name);
+      sb.Append("Name: ");
+      sb.Append(Name);
+      sb.Append(",Validation_class: ");
+      sb.Append(Validation_class);
+      sb.Append(",Index_type: ");
+      sb.Append(Index_type);
+      sb.Append(",Index_name: ");
+      sb.Append(Index_name);
       sb.Append(")");
       return sb.ToString();
     }

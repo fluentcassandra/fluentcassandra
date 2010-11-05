@@ -18,22 +18,22 @@ namespace Apache.Cassandra
   [Serializable]
   public partial class KeyRange : TBase
   {
-    private byte[] start_key;
-    private byte[] end_key;
-    private string start_token;
-    private string end_token;
-    private int count;
+    private byte[] _start_key;
+    private byte[] _end_key;
+    private string _start_token;
+    private string _end_token;
+    private int _count;
 
     public byte[] Start_key
     {
       get
       {
-        return start_key;
+        return _start_key;
       }
       set
       {
         __isset.start_key = true;
-        this.start_key = value;
+        this._start_key = value;
       }
     }
 
@@ -41,12 +41,12 @@ namespace Apache.Cassandra
     {
       get
       {
-        return end_key;
+        return _end_key;
       }
       set
       {
         __isset.end_key = true;
-        this.end_key = value;
+        this._end_key = value;
       }
     }
 
@@ -54,12 +54,12 @@ namespace Apache.Cassandra
     {
       get
       {
-        return start_token;
+        return _start_token;
       }
       set
       {
         __isset.start_token = true;
-        this.start_token = value;
+        this._start_token = value;
       }
     }
 
@@ -67,12 +67,12 @@ namespace Apache.Cassandra
     {
       get
       {
-        return end_token;
+        return _end_token;
       }
       set
       {
         __isset.end_token = true;
-        this.end_token = value;
+        this._end_token = value;
       }
     }
 
@@ -80,12 +80,12 @@ namespace Apache.Cassandra
     {
       get
       {
-        return count;
+        return _count;
       }
       set
       {
         __isset.count = true;
-        this.count = value;
+        this._count = value;
       }
     }
 
@@ -118,40 +118,35 @@ namespace Apache.Cassandra
         {
           case 1:
             if (field.Type == TType.String) {
-              this.start_key = iprot.ReadBinary();
-              this.__isset.start_key = true;
+              Start_key = iprot.ReadBinary();
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
             break;
           case 2:
             if (field.Type == TType.String) {
-              this.end_key = iprot.ReadBinary();
-              this.__isset.end_key = true;
+              End_key = iprot.ReadBinary();
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
             break;
           case 3:
             if (field.Type == TType.String) {
-              this.start_token = iprot.ReadString();
-              this.__isset.start_token = true;
+              Start_token = iprot.ReadString();
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
             break;
           case 4:
             if (field.Type == TType.String) {
-              this.end_token = iprot.ReadString();
-              this.__isset.end_token = true;
+              End_token = iprot.ReadString();
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
             break;
           case 5:
             if (field.Type == TType.I32) {
-              this.count = iprot.ReadI32();
-              this.__isset.count = true;
+              Count = iprot.ReadI32();
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
@@ -169,36 +164,36 @@ namespace Apache.Cassandra
       TStruct struc = new TStruct("KeyRange");
       oprot.WriteStructBegin(struc);
       TField field = new TField();
-      if (this.start_key != null && __isset.start_key) {
+      if (Start_key != null && __isset.start_key) {
         field.Name = "start_key";
         field.Type = TType.String;
         field.ID = 1;
         oprot.WriteFieldBegin(field);
-        oprot.WriteBinary(this.start_key);
+        oprot.WriteBinary(Start_key);
         oprot.WriteFieldEnd();
       }
-      if (this.end_key != null && __isset.end_key) {
+      if (End_key != null && __isset.end_key) {
         field.Name = "end_key";
         field.Type = TType.String;
         field.ID = 2;
         oprot.WriteFieldBegin(field);
-        oprot.WriteBinary(this.end_key);
+        oprot.WriteBinary(End_key);
         oprot.WriteFieldEnd();
       }
-      if (this.start_token != null && __isset.start_token) {
+      if (Start_token != null && __isset.start_token) {
         field.Name = "start_token";
         field.Type = TType.String;
         field.ID = 3;
         oprot.WriteFieldBegin(field);
-        oprot.WriteString(this.start_token);
+        oprot.WriteString(Start_token);
         oprot.WriteFieldEnd();
       }
-      if (this.end_token != null && __isset.end_token) {
+      if (End_token != null && __isset.end_token) {
         field.Name = "end_token";
         field.Type = TType.String;
         field.ID = 4;
         oprot.WriteFieldBegin(field);
-        oprot.WriteString(this.end_token);
+        oprot.WriteString(End_token);
         oprot.WriteFieldEnd();
       }
       if (__isset.count) {
@@ -206,7 +201,7 @@ namespace Apache.Cassandra
         field.Type = TType.I32;
         field.ID = 5;
         oprot.WriteFieldBegin(field);
-        oprot.WriteI32(this.count);
+        oprot.WriteI32(Count);
         oprot.WriteFieldEnd();
       }
       oprot.WriteFieldStop();
@@ -215,16 +210,16 @@ namespace Apache.Cassandra
 
     public override string ToString() {
       StringBuilder sb = new StringBuilder("KeyRange(");
-      sb.Append("start_key: ");
-      sb.Append(this.start_key);
-      sb.Append(",end_key: ");
-      sb.Append(this.end_key);
-      sb.Append(",start_token: ");
-      sb.Append(this.start_token);
-      sb.Append(",end_token: ");
-      sb.Append(this.end_token);
-      sb.Append(",count: ");
-      sb.Append(this.count);
+      sb.Append("Start_key: ");
+      sb.Append(Start_key);
+      sb.Append(",End_key: ");
+      sb.Append(End_key);
+      sb.Append(",Start_token: ");
+      sb.Append(Start_token);
+      sb.Append(",End_token: ");
+      sb.Append(End_token);
+      sb.Append(",Count: ");
+      sb.Append(Count);
       sb.Append(")");
       return sb.ToString();
     }

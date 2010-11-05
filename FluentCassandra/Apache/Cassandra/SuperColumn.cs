@@ -18,19 +18,19 @@ namespace Apache.Cassandra
   [Serializable]
   public partial class SuperColumn : TBase
   {
-    private byte[] name;
-    private List<Column> columns;
+    private byte[] _name;
+    private List<Column> _columns;
 
     public byte[] Name
     {
       get
       {
-        return name;
+        return _name;
       }
       set
       {
         __isset.name = true;
-        this.name = value;
+        this._name = value;
       }
     }
 
@@ -38,12 +38,12 @@ namespace Apache.Cassandra
     {
       get
       {
-        return columns;
+        return _columns;
       }
       set
       {
         __isset.columns = true;
-        this.columns = value;
+        this._columns = value;
       }
     }
 
@@ -72,8 +72,7 @@ namespace Apache.Cassandra
         {
           case 1:
             if (field.Type == TType.String) {
-              this.name = iprot.ReadBinary();
-              this.__isset.name = true;
+              Name = iprot.ReadBinary();
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
@@ -81,18 +80,17 @@ namespace Apache.Cassandra
           case 2:
             if (field.Type == TType.List) {
               {
-                this.columns = new List<Column>();
+                Columns = new List<Column>();
                 TList _list0 = iprot.ReadListBegin();
                 for( int _i1 = 0; _i1 < _list0.Count; ++_i1)
                 {
                   Column _elem2 = new Column();
                   _elem2 = new Column();
                   _elem2.Read(iprot);
-                  this.columns.Add(_elem2);
+                  Columns.Add(_elem2);
                 }
                 iprot.ReadListEnd();
               }
-              this.__isset.columns = true;
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
@@ -110,22 +108,22 @@ namespace Apache.Cassandra
       TStruct struc = new TStruct("SuperColumn");
       oprot.WriteStructBegin(struc);
       TField field = new TField();
-      if (this.name != null && __isset.name) {
+      if (Name != null && __isset.name) {
         field.Name = "name";
         field.Type = TType.String;
         field.ID = 1;
         oprot.WriteFieldBegin(field);
-        oprot.WriteBinary(this.name);
+        oprot.WriteBinary(Name);
         oprot.WriteFieldEnd();
       }
-      if (this.columns != null && __isset.columns) {
+      if (Columns != null && __isset.columns) {
         field.Name = "columns";
         field.Type = TType.List;
         field.ID = 2;
         oprot.WriteFieldBegin(field);
         {
-          oprot.WriteListBegin(new TList(TType.Struct, this.columns.Count));
-          foreach (Column _iter3 in this.columns)
+          oprot.WriteListBegin(new TList(TType.Struct, Columns.Count));
+          foreach (Column _iter3 in Columns)
           {
             _iter3.Write(oprot);
             oprot.WriteListEnd();
@@ -139,10 +137,10 @@ namespace Apache.Cassandra
 
     public override string ToString() {
       StringBuilder sb = new StringBuilder("SuperColumn(");
-      sb.Append("name: ");
-      sb.Append(this.name);
-      sb.Append(",columns: ");
-      sb.Append(this.columns);
+      sb.Append("Name: ");
+      sb.Append(Name);
+      sb.Append(",Columns: ");
+      sb.Append(Columns);
       sb.Append(")");
       return sb.ToString();
     }

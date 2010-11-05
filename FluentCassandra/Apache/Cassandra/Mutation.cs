@@ -18,19 +18,19 @@ namespace Apache.Cassandra
   [Serializable]
   public partial class Mutation : TBase
   {
-    private ColumnOrSuperColumn column_or_supercolumn;
-    private Deletion deletion;
+    private ColumnOrSuperColumn _column_or_supercolumn;
+    private Deletion _deletion;
 
     public ColumnOrSuperColumn Column_or_supercolumn
     {
       get
       {
-        return column_or_supercolumn;
+        return _column_or_supercolumn;
       }
       set
       {
         __isset.column_or_supercolumn = true;
-        this.column_or_supercolumn = value;
+        this._column_or_supercolumn = value;
       }
     }
 
@@ -38,12 +38,12 @@ namespace Apache.Cassandra
     {
       get
       {
-        return deletion;
+        return _deletion;
       }
       set
       {
         __isset.deletion = true;
-        this.deletion = value;
+        this._deletion = value;
       }
     }
 
@@ -72,18 +72,16 @@ namespace Apache.Cassandra
         {
           case 1:
             if (field.Type == TType.Struct) {
-              this.column_or_supercolumn = new ColumnOrSuperColumn();
-              this.column_or_supercolumn.Read(iprot);
-              this.__isset.column_or_supercolumn = true;
+              Column_or_supercolumn = new ColumnOrSuperColumn();
+              Column_or_supercolumn.Read(iprot);
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
             break;
           case 2:
             if (field.Type == TType.Struct) {
-              this.deletion = new Deletion();
-              this.deletion.Read(iprot);
-              this.__isset.deletion = true;
+              Deletion = new Deletion();
+              Deletion.Read(iprot);
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
@@ -101,20 +99,20 @@ namespace Apache.Cassandra
       TStruct struc = new TStruct("Mutation");
       oprot.WriteStructBegin(struc);
       TField field = new TField();
-      if (this.column_or_supercolumn != null && __isset.column_or_supercolumn) {
+      if (Column_or_supercolumn != null && __isset.column_or_supercolumn) {
         field.Name = "column_or_supercolumn";
         field.Type = TType.Struct;
         field.ID = 1;
         oprot.WriteFieldBegin(field);
-        this.column_or_supercolumn.Write(oprot);
+        Column_or_supercolumn.Write(oprot);
         oprot.WriteFieldEnd();
       }
-      if (this.deletion != null && __isset.deletion) {
+      if (Deletion != null && __isset.deletion) {
         field.Name = "deletion";
         field.Type = TType.Struct;
         field.ID = 2;
         oprot.WriteFieldBegin(field);
-        this.deletion.Write(oprot);
+        Deletion.Write(oprot);
         oprot.WriteFieldEnd();
       }
       oprot.WriteFieldStop();
@@ -123,10 +121,10 @@ namespace Apache.Cassandra
 
     public override string ToString() {
       StringBuilder sb = new StringBuilder("Mutation(");
-      sb.Append("column_or_supercolumn: ");
-      sb.Append(this.column_or_supercolumn== null ? "<null>" : this.column_or_supercolumn.ToString());
-      sb.Append(",deletion: ");
-      sb.Append(this.deletion== null ? "<null>" : this.deletion.ToString());
+      sb.Append("Column_or_supercolumn: ");
+      sb.Append(Column_or_supercolumn== null ? "<null>" : Column_or_supercolumn.ToString());
+      sb.Append(",Deletion: ");
+      sb.Append(Deletion== null ? "<null>" : Deletion.ToString());
       sb.Append(")");
       return sb.ToString();
     }

@@ -18,21 +18,21 @@ namespace Apache.Cassandra
   [Serializable]
   public partial class Column : TBase
   {
-    private byte[] name;
-    private byte[] value;
-    private long timestamp;
-    private int ttl;
+    private byte[] _name;
+    private byte[] _value;
+    private long _timestamp;
+    private int _ttl;
 
     public byte[] Name
     {
       get
       {
-        return name;
+        return _name;
       }
       set
       {
         __isset.name = true;
-        this.name = value;
+        this._name = value;
       }
     }
 
@@ -40,12 +40,12 @@ namespace Apache.Cassandra
     {
       get
       {
-        return value;
+        return _value;
       }
       set
       {
         __isset.value = true;
-        this.value = value;
+        this._value = value;
       }
     }
 
@@ -53,12 +53,12 @@ namespace Apache.Cassandra
     {
       get
       {
-        return timestamp;
+        return _timestamp;
       }
       set
       {
         __isset.timestamp = true;
-        this.timestamp = value;
+        this._timestamp = value;
       }
     }
 
@@ -66,12 +66,12 @@ namespace Apache.Cassandra
     {
       get
       {
-        return ttl;
+        return _ttl;
       }
       set
       {
         __isset.ttl = true;
-        this.ttl = value;
+        this._ttl = value;
       }
     }
 
@@ -102,32 +102,28 @@ namespace Apache.Cassandra
         {
           case 1:
             if (field.Type == TType.String) {
-              this.name = iprot.ReadBinary();
-              this.__isset.name = true;
+              Name = iprot.ReadBinary();
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
             break;
           case 2:
             if (field.Type == TType.String) {
-              this.value = iprot.ReadBinary();
-              this.__isset.value = true;
+              Value = iprot.ReadBinary();
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
             break;
           case 3:
             if (field.Type == TType.I64) {
-              this.timestamp = iprot.ReadI64();
-              this.__isset.timestamp = true;
+              Timestamp = iprot.ReadI64();
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
             break;
           case 4:
             if (field.Type == TType.I32) {
-              this.ttl = iprot.ReadI32();
-              this.__isset.ttl = true;
+              Ttl = iprot.ReadI32();
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
@@ -145,20 +141,20 @@ namespace Apache.Cassandra
       TStruct struc = new TStruct("Column");
       oprot.WriteStructBegin(struc);
       TField field = new TField();
-      if (this.name != null && __isset.name) {
+      if (Name != null && __isset.name) {
         field.Name = "name";
         field.Type = TType.String;
         field.ID = 1;
         oprot.WriteFieldBegin(field);
-        oprot.WriteBinary(this.name);
+        oprot.WriteBinary(Name);
         oprot.WriteFieldEnd();
       }
-      if (this.value != null && __isset.value) {
+      if (Value != null && __isset.value) {
         field.Name = "value";
         field.Type = TType.String;
         field.ID = 2;
         oprot.WriteFieldBegin(field);
-        oprot.WriteBinary(this.value);
+        oprot.WriteBinary(Value);
         oprot.WriteFieldEnd();
       }
       if (__isset.timestamp) {
@@ -166,7 +162,7 @@ namespace Apache.Cassandra
         field.Type = TType.I64;
         field.ID = 3;
         oprot.WriteFieldBegin(field);
-        oprot.WriteI64(this.timestamp);
+        oprot.WriteI64(Timestamp);
         oprot.WriteFieldEnd();
       }
       if (__isset.ttl) {
@@ -174,7 +170,7 @@ namespace Apache.Cassandra
         field.Type = TType.I32;
         field.ID = 4;
         oprot.WriteFieldBegin(field);
-        oprot.WriteI32(this.ttl);
+        oprot.WriteI32(Ttl);
         oprot.WriteFieldEnd();
       }
       oprot.WriteFieldStop();
@@ -183,14 +179,14 @@ namespace Apache.Cassandra
 
     public override string ToString() {
       StringBuilder sb = new StringBuilder("Column(");
-      sb.Append("name: ");
-      sb.Append(this.name);
-      sb.Append(",value: ");
-      sb.Append(this.value);
-      sb.Append(",timestamp: ");
-      sb.Append(this.timestamp);
-      sb.Append(",ttl: ");
-      sb.Append(this.ttl);
+      sb.Append("Name: ");
+      sb.Append(Name);
+      sb.Append(",Value: ");
+      sb.Append(Value);
+      sb.Append(",Timestamp: ");
+      sb.Append(Timestamp);
+      sb.Append(",Ttl: ");
+      sb.Append(Ttl);
       sb.Append(")");
       return sb.ToString();
     }

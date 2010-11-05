@@ -18,19 +18,19 @@ namespace Apache.Cassandra
   [Serializable]
   public partial class KeyCount : TBase
   {
-    private byte[] key;
-    private int count;
+    private byte[] _key;
+    private int _count;
 
     public byte[] Key
     {
       get
       {
-        return key;
+        return _key;
       }
       set
       {
         __isset.key = true;
-        this.key = value;
+        this._key = value;
       }
     }
 
@@ -38,12 +38,12 @@ namespace Apache.Cassandra
     {
       get
       {
-        return count;
+        return _count;
       }
       set
       {
         __isset.count = true;
-        this.count = value;
+        this._count = value;
       }
     }
 
@@ -72,16 +72,14 @@ namespace Apache.Cassandra
         {
           case 1:
             if (field.Type == TType.String) {
-              this.key = iprot.ReadBinary();
-              this.__isset.key = true;
+              Key = iprot.ReadBinary();
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
             break;
           case 2:
             if (field.Type == TType.I32) {
-              this.count = iprot.ReadI32();
-              this.__isset.count = true;
+              Count = iprot.ReadI32();
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
@@ -99,12 +97,12 @@ namespace Apache.Cassandra
       TStruct struc = new TStruct("KeyCount");
       oprot.WriteStructBegin(struc);
       TField field = new TField();
-      if (this.key != null && __isset.key) {
+      if (Key != null && __isset.key) {
         field.Name = "key";
         field.Type = TType.String;
         field.ID = 1;
         oprot.WriteFieldBegin(field);
-        oprot.WriteBinary(this.key);
+        oprot.WriteBinary(Key);
         oprot.WriteFieldEnd();
       }
       if (__isset.count) {
@@ -112,7 +110,7 @@ namespace Apache.Cassandra
         field.Type = TType.I32;
         field.ID = 2;
         oprot.WriteFieldBegin(field);
-        oprot.WriteI32(this.count);
+        oprot.WriteI32(Count);
         oprot.WriteFieldEnd();
       }
       oprot.WriteFieldStop();
@@ -121,10 +119,10 @@ namespace Apache.Cassandra
 
     public override string ToString() {
       StringBuilder sb = new StringBuilder("KeyCount(");
-      sb.Append("key: ");
-      sb.Append(this.key);
-      sb.Append(",count: ");
-      sb.Append(this.count);
+      sb.Append("Key: ");
+      sb.Append(Key);
+      sb.Append(",Count: ");
+      sb.Append(Count);
       sb.Append(")");
       return sb.ToString();
     }

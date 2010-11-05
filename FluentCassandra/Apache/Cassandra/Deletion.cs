@@ -18,20 +18,20 @@ namespace Apache.Cassandra
   [Serializable]
   public partial class Deletion : TBase
   {
-    private long timestamp;
-    private byte[] super_column;
-    private SlicePredicate predicate;
+    private long _timestamp;
+    private byte[] _super_column;
+    private SlicePredicate _predicate;
 
     public long Timestamp
     {
       get
       {
-        return timestamp;
+        return _timestamp;
       }
       set
       {
         __isset.timestamp = true;
-        this.timestamp = value;
+        this._timestamp = value;
       }
     }
 
@@ -39,12 +39,12 @@ namespace Apache.Cassandra
     {
       get
       {
-        return super_column;
+        return _super_column;
       }
       set
       {
         __isset.super_column = true;
-        this.super_column = value;
+        this._super_column = value;
       }
     }
 
@@ -52,12 +52,12 @@ namespace Apache.Cassandra
     {
       get
       {
-        return predicate;
+        return _predicate;
       }
       set
       {
         __isset.predicate = true;
-        this.predicate = value;
+        this._predicate = value;
       }
     }
 
@@ -87,25 +87,22 @@ namespace Apache.Cassandra
         {
           case 1:
             if (field.Type == TType.I64) {
-              this.timestamp = iprot.ReadI64();
-              this.__isset.timestamp = true;
+              Timestamp = iprot.ReadI64();
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
             break;
           case 2:
             if (field.Type == TType.String) {
-              this.super_column = iprot.ReadBinary();
-              this.__isset.super_column = true;
+              Super_column = iprot.ReadBinary();
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
             break;
           case 3:
             if (field.Type == TType.Struct) {
-              this.predicate = new SlicePredicate();
-              this.predicate.Read(iprot);
-              this.__isset.predicate = true;
+              Predicate = new SlicePredicate();
+              Predicate.Read(iprot);
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
@@ -128,23 +125,23 @@ namespace Apache.Cassandra
         field.Type = TType.I64;
         field.ID = 1;
         oprot.WriteFieldBegin(field);
-        oprot.WriteI64(this.timestamp);
+        oprot.WriteI64(Timestamp);
         oprot.WriteFieldEnd();
       }
-      if (this.super_column != null && __isset.super_column) {
+      if (Super_column != null && __isset.super_column) {
         field.Name = "super_column";
         field.Type = TType.String;
         field.ID = 2;
         oprot.WriteFieldBegin(field);
-        oprot.WriteBinary(this.super_column);
+        oprot.WriteBinary(Super_column);
         oprot.WriteFieldEnd();
       }
-      if (this.predicate != null && __isset.predicate) {
+      if (Predicate != null && __isset.predicate) {
         field.Name = "predicate";
         field.Type = TType.Struct;
         field.ID = 3;
         oprot.WriteFieldBegin(field);
-        this.predicate.Write(oprot);
+        Predicate.Write(oprot);
         oprot.WriteFieldEnd();
       }
       oprot.WriteFieldStop();
@@ -153,12 +150,12 @@ namespace Apache.Cassandra
 
     public override string ToString() {
       StringBuilder sb = new StringBuilder("Deletion(");
-      sb.Append("timestamp: ");
-      sb.Append(this.timestamp);
-      sb.Append(",super_column: ");
-      sb.Append(this.super_column);
-      sb.Append(",predicate: ");
-      sb.Append(this.predicate== null ? "<null>" : this.predicate.ToString());
+      sb.Append("Timestamp: ");
+      sb.Append(Timestamp);
+      sb.Append(",Super_column: ");
+      sb.Append(Super_column);
+      sb.Append(",Predicate: ");
+      sb.Append(Predicate== null ? "<null>" : Predicate.ToString());
       sb.Append(")");
       return sb.ToString();
     }

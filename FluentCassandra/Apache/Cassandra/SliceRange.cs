@@ -18,21 +18,21 @@ namespace Apache.Cassandra
   [Serializable]
   public partial class SliceRange : TBase
   {
-    private byte[] start;
-    private byte[] finish;
-    private bool reversed;
-    private int count;
+    private byte[] _start;
+    private byte[] _finish;
+    private bool _reversed;
+    private int _count;
 
     public byte[] Start
     {
       get
       {
-        return start;
+        return _start;
       }
       set
       {
         __isset.start = true;
-        this.start = value;
+        this._start = value;
       }
     }
 
@@ -40,12 +40,12 @@ namespace Apache.Cassandra
     {
       get
       {
-        return finish;
+        return _finish;
       }
       set
       {
         __isset.finish = true;
-        this.finish = value;
+        this._finish = value;
       }
     }
 
@@ -53,12 +53,12 @@ namespace Apache.Cassandra
     {
       get
       {
-        return reversed;
+        return _reversed;
       }
       set
       {
         __isset.reversed = true;
-        this.reversed = value;
+        this._reversed = value;
       }
     }
 
@@ -66,12 +66,12 @@ namespace Apache.Cassandra
     {
       get
       {
-        return count;
+        return _count;
       }
       set
       {
         __isset.count = true;
-        this.count = value;
+        this._count = value;
       }
     }
 
@@ -104,32 +104,28 @@ namespace Apache.Cassandra
         {
           case 1:
             if (field.Type == TType.String) {
-              this.start = iprot.ReadBinary();
-              this.__isset.start = true;
+              Start = iprot.ReadBinary();
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
             break;
           case 2:
             if (field.Type == TType.String) {
-              this.finish = iprot.ReadBinary();
-              this.__isset.finish = true;
+              Finish = iprot.ReadBinary();
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
             break;
           case 3:
             if (field.Type == TType.Bool) {
-              this.reversed = iprot.ReadBool();
-              this.__isset.reversed = true;
+              Reversed = iprot.ReadBool();
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
             break;
           case 4:
             if (field.Type == TType.I32) {
-              this.count = iprot.ReadI32();
-              this.__isset.count = true;
+              Count = iprot.ReadI32();
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
@@ -147,20 +143,20 @@ namespace Apache.Cassandra
       TStruct struc = new TStruct("SliceRange");
       oprot.WriteStructBegin(struc);
       TField field = new TField();
-      if (this.start != null && __isset.start) {
+      if (Start != null && __isset.start) {
         field.Name = "start";
         field.Type = TType.String;
         field.ID = 1;
         oprot.WriteFieldBegin(field);
-        oprot.WriteBinary(this.start);
+        oprot.WriteBinary(Start);
         oprot.WriteFieldEnd();
       }
-      if (this.finish != null && __isset.finish) {
+      if (Finish != null && __isset.finish) {
         field.Name = "finish";
         field.Type = TType.String;
         field.ID = 2;
         oprot.WriteFieldBegin(field);
-        oprot.WriteBinary(this.finish);
+        oprot.WriteBinary(Finish);
         oprot.WriteFieldEnd();
       }
       if (__isset.reversed) {
@@ -168,7 +164,7 @@ namespace Apache.Cassandra
         field.Type = TType.Bool;
         field.ID = 3;
         oprot.WriteFieldBegin(field);
-        oprot.WriteBool(this.reversed);
+        oprot.WriteBool(Reversed);
         oprot.WriteFieldEnd();
       }
       if (__isset.count) {
@@ -176,7 +172,7 @@ namespace Apache.Cassandra
         field.Type = TType.I32;
         field.ID = 4;
         oprot.WriteFieldBegin(field);
-        oprot.WriteI32(this.count);
+        oprot.WriteI32(Count);
         oprot.WriteFieldEnd();
       }
       oprot.WriteFieldStop();
@@ -185,14 +181,14 @@ namespace Apache.Cassandra
 
     public override string ToString() {
       StringBuilder sb = new StringBuilder("SliceRange(");
-      sb.Append("start: ");
-      sb.Append(this.start);
-      sb.Append(",finish: ");
-      sb.Append(this.finish);
-      sb.Append(",reversed: ");
-      sb.Append(this.reversed);
-      sb.Append(",count: ");
-      sb.Append(this.count);
+      sb.Append("Start: ");
+      sb.Append(Start);
+      sb.Append(",Finish: ");
+      sb.Append(Finish);
+      sb.Append(",Reversed: ");
+      sb.Append(Reversed);
+      sb.Append(",Count: ");
+      sb.Append(Count);
       sb.Append(")");
       return sb.ToString();
     }

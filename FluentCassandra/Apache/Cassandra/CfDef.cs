@@ -18,33 +18,37 @@ namespace Apache.Cassandra
   [Serializable]
   public partial class CfDef : TBase
   {
-    private string keyspace;
-    private string name;
-    private string column_type;
-    private string comparator_type;
-    private string subcomparator_type;
-    private string comment;
-    private double row_cache_size;
-    private bool preload_row_cache;
-    private double key_cache_size;
-    private double read_repair_chance;
-    private List<ColumnDef> column_metadata;
-    private int gc_grace_seconds;
-    private string default_validation_class;
-    private int id;
-    private int min_compaction_threshold;
-    private int max_compaction_threshold;
+    private string _keyspace;
+    private string _name;
+    private string _column_type;
+    private string _comparator_type;
+    private string _subcomparator_type;
+    private string _comment;
+    private double _row_cache_size;
+    private double _key_cache_size;
+    private double _read_repair_chance;
+    private List<ColumnDef> _column_metadata;
+    private int _gc_grace_seconds;
+    private string _default_validation_class;
+    private int _id;
+    private int _min_compaction_threshold;
+    private int _max_compaction_threshold;
+    private int _row_cache_save_period_in_seconds;
+    private int _key_cache_save_period_in_seconds;
+    private int _memtable_flush_after_mins;
+    private int _memtable_throughput_in_mb;
+    private double _memtable_operations_in_millions;
 
     public string Keyspace
     {
       get
       {
-        return keyspace;
+        return _keyspace;
       }
       set
       {
         __isset.keyspace = true;
-        this.keyspace = value;
+        this._keyspace = value;
       }
     }
 
@@ -52,12 +56,12 @@ namespace Apache.Cassandra
     {
       get
       {
-        return name;
+        return _name;
       }
       set
       {
         __isset.name = true;
-        this.name = value;
+        this._name = value;
       }
     }
 
@@ -65,12 +69,12 @@ namespace Apache.Cassandra
     {
       get
       {
-        return column_type;
+        return _column_type;
       }
       set
       {
         __isset.column_type = true;
-        this.column_type = value;
+        this._column_type = value;
       }
     }
 
@@ -78,12 +82,12 @@ namespace Apache.Cassandra
     {
       get
       {
-        return comparator_type;
+        return _comparator_type;
       }
       set
       {
         __isset.comparator_type = true;
-        this.comparator_type = value;
+        this._comparator_type = value;
       }
     }
 
@@ -91,12 +95,12 @@ namespace Apache.Cassandra
     {
       get
       {
-        return subcomparator_type;
+        return _subcomparator_type;
       }
       set
       {
         __isset.subcomparator_type = true;
-        this.subcomparator_type = value;
+        this._subcomparator_type = value;
       }
     }
 
@@ -104,12 +108,12 @@ namespace Apache.Cassandra
     {
       get
       {
-        return comment;
+        return _comment;
       }
       set
       {
         __isset.comment = true;
-        this.comment = value;
+        this._comment = value;
       }
     }
 
@@ -117,25 +121,12 @@ namespace Apache.Cassandra
     {
       get
       {
-        return row_cache_size;
+        return _row_cache_size;
       }
       set
       {
         __isset.row_cache_size = true;
-        this.row_cache_size = value;
-      }
-    }
-
-    public bool Preload_row_cache
-    {
-      get
-      {
-        return preload_row_cache;
-      }
-      set
-      {
-        __isset.preload_row_cache = true;
-        this.preload_row_cache = value;
+        this._row_cache_size = value;
       }
     }
 
@@ -143,12 +134,12 @@ namespace Apache.Cassandra
     {
       get
       {
-        return key_cache_size;
+        return _key_cache_size;
       }
       set
       {
         __isset.key_cache_size = true;
-        this.key_cache_size = value;
+        this._key_cache_size = value;
       }
     }
 
@@ -156,12 +147,12 @@ namespace Apache.Cassandra
     {
       get
       {
-        return read_repair_chance;
+        return _read_repair_chance;
       }
       set
       {
         __isset.read_repair_chance = true;
-        this.read_repair_chance = value;
+        this._read_repair_chance = value;
       }
     }
 
@@ -169,12 +160,12 @@ namespace Apache.Cassandra
     {
       get
       {
-        return column_metadata;
+        return _column_metadata;
       }
       set
       {
         __isset.column_metadata = true;
-        this.column_metadata = value;
+        this._column_metadata = value;
       }
     }
 
@@ -182,12 +173,12 @@ namespace Apache.Cassandra
     {
       get
       {
-        return gc_grace_seconds;
+        return _gc_grace_seconds;
       }
       set
       {
         __isset.gc_grace_seconds = true;
-        this.gc_grace_seconds = value;
+        this._gc_grace_seconds = value;
       }
     }
 
@@ -195,12 +186,12 @@ namespace Apache.Cassandra
     {
       get
       {
-        return default_validation_class;
+        return _default_validation_class;
       }
       set
       {
         __isset.default_validation_class = true;
-        this.default_validation_class = value;
+        this._default_validation_class = value;
       }
     }
 
@@ -208,12 +199,12 @@ namespace Apache.Cassandra
     {
       get
       {
-        return id;
+        return _id;
       }
       set
       {
         __isset.id = true;
-        this.id = value;
+        this._id = value;
       }
     }
 
@@ -221,12 +212,12 @@ namespace Apache.Cassandra
     {
       get
       {
-        return min_compaction_threshold;
+        return _min_compaction_threshold;
       }
       set
       {
         __isset.min_compaction_threshold = true;
-        this.min_compaction_threshold = value;
+        this._min_compaction_threshold = value;
       }
     }
 
@@ -234,12 +225,77 @@ namespace Apache.Cassandra
     {
       get
       {
-        return max_compaction_threshold;
+        return _max_compaction_threshold;
       }
       set
       {
         __isset.max_compaction_threshold = true;
-        this.max_compaction_threshold = value;
+        this._max_compaction_threshold = value;
+      }
+    }
+
+    public int Row_cache_save_period_in_seconds
+    {
+      get
+      {
+        return _row_cache_save_period_in_seconds;
+      }
+      set
+      {
+        __isset.row_cache_save_period_in_seconds = true;
+        this._row_cache_save_period_in_seconds = value;
+      }
+    }
+
+    public int Key_cache_save_period_in_seconds
+    {
+      get
+      {
+        return _key_cache_save_period_in_seconds;
+      }
+      set
+      {
+        __isset.key_cache_save_period_in_seconds = true;
+        this._key_cache_save_period_in_seconds = value;
+      }
+    }
+
+    public int Memtable_flush_after_mins
+    {
+      get
+      {
+        return _memtable_flush_after_mins;
+      }
+      set
+      {
+        __isset.memtable_flush_after_mins = true;
+        this._memtable_flush_after_mins = value;
+      }
+    }
+
+    public int Memtable_throughput_in_mb
+    {
+      get
+      {
+        return _memtable_throughput_in_mb;
+      }
+      set
+      {
+        __isset.memtable_throughput_in_mb = true;
+        this._memtable_throughput_in_mb = value;
+      }
+    }
+
+    public double Memtable_operations_in_millions
+    {
+      get
+      {
+        return _memtable_operations_in_millions;
+      }
+      set
+      {
+        __isset.memtable_operations_in_millions = true;
+        this._memtable_operations_in_millions = value;
       }
     }
 
@@ -254,7 +310,6 @@ namespace Apache.Cassandra
       public bool subcomparator_type;
       public bool comment;
       public bool row_cache_size;
-      public bool preload_row_cache;
       public bool key_cache_size;
       public bool read_repair_chance;
       public bool column_metadata;
@@ -263,13 +318,17 @@ namespace Apache.Cassandra
       public bool id;
       public bool min_compaction_threshold;
       public bool max_compaction_threshold;
+      public bool row_cache_save_period_in_seconds;
+      public bool key_cache_save_period_in_seconds;
+      public bool memtable_flush_after_mins;
+      public bool memtable_throughput_in_mb;
+      public bool memtable_operations_in_millions;
     }
 
     public CfDef() {
       this.column_type = "Standard";
       this.comparator_type = "BytesType";
       this.row_cache_size = 0;
-      this.preload_row_cache = false;
       this.key_cache_size = 200000;
       this.read_repair_chance = 1;
     }
@@ -288,80 +347,63 @@ namespace Apache.Cassandra
         {
           case 1:
             if (field.Type == TType.String) {
-              this.keyspace = iprot.ReadString();
-              this.__isset.keyspace = true;
+              Keyspace = iprot.ReadString();
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
             break;
           case 2:
             if (field.Type == TType.String) {
-              this.name = iprot.ReadString();
-              this.__isset.name = true;
+              Name = iprot.ReadString();
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
             break;
           case 3:
             if (field.Type == TType.String) {
-              this.column_type = iprot.ReadString();
-              this.__isset.column_type = true;
+              Column_type = iprot.ReadString();
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
             break;
           case 5:
             if (field.Type == TType.String) {
-              this.comparator_type = iprot.ReadString();
-              this.__isset.comparator_type = true;
+              Comparator_type = iprot.ReadString();
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
             break;
           case 6:
             if (field.Type == TType.String) {
-              this.subcomparator_type = iprot.ReadString();
-              this.__isset.subcomparator_type = true;
+              Subcomparator_type = iprot.ReadString();
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
             break;
           case 8:
             if (field.Type == TType.String) {
-              this.comment = iprot.ReadString();
-              this.__isset.comment = true;
+              Comment = iprot.ReadString();
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
             break;
           case 9:
             if (field.Type == TType.Double) {
-              this.row_cache_size = iprot.ReadDouble();
-              this.__isset.row_cache_size = true;
-            } else { 
-              TProtocolUtil.Skip(iprot, field.Type);
-            }
-            break;
-          case 10:
-            if (field.Type == TType.Bool) {
-              this.preload_row_cache = iprot.ReadBool();
-              this.__isset.preload_row_cache = true;
+              Row_cache_size = iprot.ReadDouble();
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
             break;
           case 11:
             if (field.Type == TType.Double) {
-              this.key_cache_size = iprot.ReadDouble();
-              this.__isset.key_cache_size = true;
+              Key_cache_size = iprot.ReadDouble();
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
             break;
           case 12:
             if (field.Type == TType.Double) {
-              this.read_repair_chance = iprot.ReadDouble();
-              this.__isset.read_repair_chance = true;
+              Read_repair_chance = iprot.ReadDouble();
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
@@ -369,58 +411,87 @@ namespace Apache.Cassandra
           case 13:
             if (field.Type == TType.List) {
               {
-                this.column_metadata = new List<ColumnDef>();
+                Column_metadata = new List<ColumnDef>();
                 TList _list25 = iprot.ReadListBegin();
                 for( int _i26 = 0; _i26 < _list25.Count; ++_i26)
                 {
                   ColumnDef _elem27 = new ColumnDef();
                   _elem27 = new ColumnDef();
                   _elem27.Read(iprot);
-                  this.column_metadata.Add(_elem27);
+                  Column_metadata.Add(_elem27);
                 }
                 iprot.ReadListEnd();
               }
-              this.__isset.column_metadata = true;
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
             break;
           case 14:
             if (field.Type == TType.I32) {
-              this.gc_grace_seconds = iprot.ReadI32();
-              this.__isset.gc_grace_seconds = true;
+              Gc_grace_seconds = iprot.ReadI32();
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
             break;
           case 15:
             if (field.Type == TType.String) {
-              this.default_validation_class = iprot.ReadString();
-              this.__isset.default_validation_class = true;
+              Default_validation_class = iprot.ReadString();
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
             break;
           case 16:
             if (field.Type == TType.I32) {
-              this.id = iprot.ReadI32();
-              this.__isset.id = true;
+              Id = iprot.ReadI32();
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
             break;
           case 17:
             if (field.Type == TType.I32) {
-              this.min_compaction_threshold = iprot.ReadI32();
-              this.__isset.min_compaction_threshold = true;
+              Min_compaction_threshold = iprot.ReadI32();
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
             break;
           case 18:
             if (field.Type == TType.I32) {
-              this.max_compaction_threshold = iprot.ReadI32();
-              this.__isset.max_compaction_threshold = true;
+              Max_compaction_threshold = iprot.ReadI32();
+            } else { 
+              TProtocolUtil.Skip(iprot, field.Type);
+            }
+            break;
+          case 19:
+            if (field.Type == TType.I32) {
+              Row_cache_save_period_in_seconds = iprot.ReadI32();
+            } else { 
+              TProtocolUtil.Skip(iprot, field.Type);
+            }
+            break;
+          case 20:
+            if (field.Type == TType.I32) {
+              Key_cache_save_period_in_seconds = iprot.ReadI32();
+            } else { 
+              TProtocolUtil.Skip(iprot, field.Type);
+            }
+            break;
+          case 21:
+            if (field.Type == TType.I32) {
+              Memtable_flush_after_mins = iprot.ReadI32();
+            } else { 
+              TProtocolUtil.Skip(iprot, field.Type);
+            }
+            break;
+          case 22:
+            if (field.Type == TType.I32) {
+              Memtable_throughput_in_mb = iprot.ReadI32();
+            } else { 
+              TProtocolUtil.Skip(iprot, field.Type);
+            }
+            break;
+          case 23:
+            if (field.Type == TType.Double) {
+              Memtable_operations_in_millions = iprot.ReadDouble();
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
@@ -438,52 +509,52 @@ namespace Apache.Cassandra
       TStruct struc = new TStruct("CfDef");
       oprot.WriteStructBegin(struc);
       TField field = new TField();
-      if (this.keyspace != null && __isset.keyspace) {
+      if (Keyspace != null && __isset.keyspace) {
         field.Name = "keyspace";
         field.Type = TType.String;
         field.ID = 1;
         oprot.WriteFieldBegin(field);
-        oprot.WriteString(this.keyspace);
+        oprot.WriteString(Keyspace);
         oprot.WriteFieldEnd();
       }
-      if (this.name != null && __isset.name) {
+      if (Name != null && __isset.name) {
         field.Name = "name";
         field.Type = TType.String;
         field.ID = 2;
         oprot.WriteFieldBegin(field);
-        oprot.WriteString(this.name);
+        oprot.WriteString(Name);
         oprot.WriteFieldEnd();
       }
-      if (this.column_type != null && __isset.column_type) {
+      if (Column_type != null && __isset.column_type) {
         field.Name = "column_type";
         field.Type = TType.String;
         field.ID = 3;
         oprot.WriteFieldBegin(field);
-        oprot.WriteString(this.column_type);
+        oprot.WriteString(Column_type);
         oprot.WriteFieldEnd();
       }
-      if (this.comparator_type != null && __isset.comparator_type) {
+      if (Comparator_type != null && __isset.comparator_type) {
         field.Name = "comparator_type";
         field.Type = TType.String;
         field.ID = 5;
         oprot.WriteFieldBegin(field);
-        oprot.WriteString(this.comparator_type);
+        oprot.WriteString(Comparator_type);
         oprot.WriteFieldEnd();
       }
-      if (this.subcomparator_type != null && __isset.subcomparator_type) {
+      if (Subcomparator_type != null && __isset.subcomparator_type) {
         field.Name = "subcomparator_type";
         field.Type = TType.String;
         field.ID = 6;
         oprot.WriteFieldBegin(field);
-        oprot.WriteString(this.subcomparator_type);
+        oprot.WriteString(Subcomparator_type);
         oprot.WriteFieldEnd();
       }
-      if (this.comment != null && __isset.comment) {
+      if (Comment != null && __isset.comment) {
         field.Name = "comment";
         field.Type = TType.String;
         field.ID = 8;
         oprot.WriteFieldBegin(field);
-        oprot.WriteString(this.comment);
+        oprot.WriteString(Comment);
         oprot.WriteFieldEnd();
       }
       if (__isset.row_cache_size) {
@@ -491,15 +562,7 @@ namespace Apache.Cassandra
         field.Type = TType.Double;
         field.ID = 9;
         oprot.WriteFieldBegin(field);
-        oprot.WriteDouble(this.row_cache_size);
-        oprot.WriteFieldEnd();
-      }
-      if (__isset.preload_row_cache) {
-        field.Name = "preload_row_cache";
-        field.Type = TType.Bool;
-        field.ID = 10;
-        oprot.WriteFieldBegin(field);
-        oprot.WriteBool(this.preload_row_cache);
+        oprot.WriteDouble(Row_cache_size);
         oprot.WriteFieldEnd();
       }
       if (__isset.key_cache_size) {
@@ -507,7 +570,7 @@ namespace Apache.Cassandra
         field.Type = TType.Double;
         field.ID = 11;
         oprot.WriteFieldBegin(field);
-        oprot.WriteDouble(this.key_cache_size);
+        oprot.WriteDouble(Key_cache_size);
         oprot.WriteFieldEnd();
       }
       if (__isset.read_repair_chance) {
@@ -515,17 +578,17 @@ namespace Apache.Cassandra
         field.Type = TType.Double;
         field.ID = 12;
         oprot.WriteFieldBegin(field);
-        oprot.WriteDouble(this.read_repair_chance);
+        oprot.WriteDouble(Read_repair_chance);
         oprot.WriteFieldEnd();
       }
-      if (this.column_metadata != null && __isset.column_metadata) {
+      if (Column_metadata != null && __isset.column_metadata) {
         field.Name = "column_metadata";
         field.Type = TType.List;
         field.ID = 13;
         oprot.WriteFieldBegin(field);
         {
-          oprot.WriteListBegin(new TList(TType.Struct, this.column_metadata.Count));
-          foreach (ColumnDef _iter28 in this.column_metadata)
+          oprot.WriteListBegin(new TList(TType.Struct, Column_metadata.Count));
+          foreach (ColumnDef _iter28 in Column_metadata)
           {
             _iter28.Write(oprot);
             oprot.WriteListEnd();
@@ -538,15 +601,15 @@ namespace Apache.Cassandra
         field.Type = TType.I32;
         field.ID = 14;
         oprot.WriteFieldBegin(field);
-        oprot.WriteI32(this.gc_grace_seconds);
+        oprot.WriteI32(Gc_grace_seconds);
         oprot.WriteFieldEnd();
       }
-      if (this.default_validation_class != null && __isset.default_validation_class) {
+      if (Default_validation_class != null && __isset.default_validation_class) {
         field.Name = "default_validation_class";
         field.Type = TType.String;
         field.ID = 15;
         oprot.WriteFieldBegin(field);
-        oprot.WriteString(this.default_validation_class);
+        oprot.WriteString(Default_validation_class);
         oprot.WriteFieldEnd();
       }
       if (__isset.id) {
@@ -554,7 +617,7 @@ namespace Apache.Cassandra
         field.Type = TType.I32;
         field.ID = 16;
         oprot.WriteFieldBegin(field);
-        oprot.WriteI32(this.id);
+        oprot.WriteI32(Id);
         oprot.WriteFieldEnd();
       }
       if (__isset.min_compaction_threshold) {
@@ -562,7 +625,7 @@ namespace Apache.Cassandra
         field.Type = TType.I32;
         field.ID = 17;
         oprot.WriteFieldBegin(field);
-        oprot.WriteI32(this.min_compaction_threshold);
+        oprot.WriteI32(Min_compaction_threshold);
         oprot.WriteFieldEnd();
       }
       if (__isset.max_compaction_threshold) {
@@ -570,7 +633,47 @@ namespace Apache.Cassandra
         field.Type = TType.I32;
         field.ID = 18;
         oprot.WriteFieldBegin(field);
-        oprot.WriteI32(this.max_compaction_threshold);
+        oprot.WriteI32(Max_compaction_threshold);
+        oprot.WriteFieldEnd();
+      }
+      if (__isset.row_cache_save_period_in_seconds) {
+        field.Name = "row_cache_save_period_in_seconds";
+        field.Type = TType.I32;
+        field.ID = 19;
+        oprot.WriteFieldBegin(field);
+        oprot.WriteI32(Row_cache_save_period_in_seconds);
+        oprot.WriteFieldEnd();
+      }
+      if (__isset.key_cache_save_period_in_seconds) {
+        field.Name = "key_cache_save_period_in_seconds";
+        field.Type = TType.I32;
+        field.ID = 20;
+        oprot.WriteFieldBegin(field);
+        oprot.WriteI32(Key_cache_save_period_in_seconds);
+        oprot.WriteFieldEnd();
+      }
+      if (__isset.memtable_flush_after_mins) {
+        field.Name = "memtable_flush_after_mins";
+        field.Type = TType.I32;
+        field.ID = 21;
+        oprot.WriteFieldBegin(field);
+        oprot.WriteI32(Memtable_flush_after_mins);
+        oprot.WriteFieldEnd();
+      }
+      if (__isset.memtable_throughput_in_mb) {
+        field.Name = "memtable_throughput_in_mb";
+        field.Type = TType.I32;
+        field.ID = 22;
+        oprot.WriteFieldBegin(field);
+        oprot.WriteI32(Memtable_throughput_in_mb);
+        oprot.WriteFieldEnd();
+      }
+      if (__isset.memtable_operations_in_millions) {
+        field.Name = "memtable_operations_in_millions";
+        field.Type = TType.Double;
+        field.ID = 23;
+        oprot.WriteFieldBegin(field);
+        oprot.WriteDouble(Memtable_operations_in_millions);
         oprot.WriteFieldEnd();
       }
       oprot.WriteFieldStop();
@@ -579,38 +682,46 @@ namespace Apache.Cassandra
 
     public override string ToString() {
       StringBuilder sb = new StringBuilder("CfDef(");
-      sb.Append("keyspace: ");
-      sb.Append(this.keyspace);
-      sb.Append(",name: ");
-      sb.Append(this.name);
-      sb.Append(",column_type: ");
-      sb.Append(this.column_type);
-      sb.Append(",comparator_type: ");
-      sb.Append(this.comparator_type);
-      sb.Append(",subcomparator_type: ");
-      sb.Append(this.subcomparator_type);
-      sb.Append(",comment: ");
-      sb.Append(this.comment);
-      sb.Append(",row_cache_size: ");
-      sb.Append(this.row_cache_size);
-      sb.Append(",preload_row_cache: ");
-      sb.Append(this.preload_row_cache);
-      sb.Append(",key_cache_size: ");
-      sb.Append(this.key_cache_size);
-      sb.Append(",read_repair_chance: ");
-      sb.Append(this.read_repair_chance);
-      sb.Append(",column_metadata: ");
-      sb.Append(this.column_metadata);
-      sb.Append(",gc_grace_seconds: ");
-      sb.Append(this.gc_grace_seconds);
-      sb.Append(",default_validation_class: ");
-      sb.Append(this.default_validation_class);
-      sb.Append(",id: ");
-      sb.Append(this.id);
-      sb.Append(",min_compaction_threshold: ");
-      sb.Append(this.min_compaction_threshold);
-      sb.Append(",max_compaction_threshold: ");
-      sb.Append(this.max_compaction_threshold);
+      sb.Append("Keyspace: ");
+      sb.Append(Keyspace);
+      sb.Append(",Name: ");
+      sb.Append(Name);
+      sb.Append(",Column_type: ");
+      sb.Append(Column_type);
+      sb.Append(",Comparator_type: ");
+      sb.Append(Comparator_type);
+      sb.Append(",Subcomparator_type: ");
+      sb.Append(Subcomparator_type);
+      sb.Append(",Comment: ");
+      sb.Append(Comment);
+      sb.Append(",Row_cache_size: ");
+      sb.Append(Row_cache_size);
+      sb.Append(",Key_cache_size: ");
+      sb.Append(Key_cache_size);
+      sb.Append(",Read_repair_chance: ");
+      sb.Append(Read_repair_chance);
+      sb.Append(",Column_metadata: ");
+      sb.Append(Column_metadata);
+      sb.Append(",Gc_grace_seconds: ");
+      sb.Append(Gc_grace_seconds);
+      sb.Append(",Default_validation_class: ");
+      sb.Append(Default_validation_class);
+      sb.Append(",Id: ");
+      sb.Append(Id);
+      sb.Append(",Min_compaction_threshold: ");
+      sb.Append(Min_compaction_threshold);
+      sb.Append(",Max_compaction_threshold: ");
+      sb.Append(Max_compaction_threshold);
+      sb.Append(",Row_cache_save_period_in_seconds: ");
+      sb.Append(Row_cache_save_period_in_seconds);
+      sb.Append(",Key_cache_save_period_in_seconds: ");
+      sb.Append(Key_cache_save_period_in_seconds);
+      sb.Append(",Memtable_flush_after_mins: ");
+      sb.Append(Memtable_flush_after_mins);
+      sb.Append(",Memtable_throughput_in_mb: ");
+      sb.Append(Memtable_throughput_in_mb);
+      sb.Append(",Memtable_operations_in_millions: ");
+      sb.Append(Memtable_operations_in_millions);
       sb.Append(")");
       return sb.ToString();
     }

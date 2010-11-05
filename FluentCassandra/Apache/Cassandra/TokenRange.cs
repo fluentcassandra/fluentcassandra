@@ -18,20 +18,20 @@ namespace Apache.Cassandra
   [Serializable]
   public partial class TokenRange : TBase
   {
-    private string start_token;
-    private string end_token;
-    private List<string> endpoints;
+    private string _start_token;
+    private string _end_token;
+    private List<string> _endpoints;
 
     public string Start_token
     {
       get
       {
-        return start_token;
+        return _start_token;
       }
       set
       {
         __isset.start_token = true;
-        this.start_token = value;
+        this._start_token = value;
       }
     }
 
@@ -39,12 +39,12 @@ namespace Apache.Cassandra
     {
       get
       {
-        return end_token;
+        return _end_token;
       }
       set
       {
         __isset.end_token = true;
-        this.end_token = value;
+        this._end_token = value;
       }
     }
 
@@ -52,12 +52,12 @@ namespace Apache.Cassandra
     {
       get
       {
-        return endpoints;
+        return _endpoints;
       }
       set
       {
         __isset.endpoints = true;
-        this.endpoints = value;
+        this._endpoints = value;
       }
     }
 
@@ -87,16 +87,14 @@ namespace Apache.Cassandra
         {
           case 1:
             if (field.Type == TType.String) {
-              this.start_token = iprot.ReadString();
-              this.__isset.start_token = true;
+              Start_token = iprot.ReadString();
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
             break;
           case 2:
             if (field.Type == TType.String) {
-              this.end_token = iprot.ReadString();
-              this.__isset.end_token = true;
+              End_token = iprot.ReadString();
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
@@ -104,17 +102,16 @@ namespace Apache.Cassandra
           case 3:
             if (field.Type == TType.List) {
               {
-                this.endpoints = new List<string>();
+                Endpoints = new List<string>();
                 TList _list16 = iprot.ReadListBegin();
                 for( int _i17 = 0; _i17 < _list16.Count; ++_i17)
                 {
                   string _elem18 = null;
                   _elem18 = iprot.ReadString();
-                  this.endpoints.Add(_elem18);
+                  Endpoints.Add(_elem18);
                 }
                 iprot.ReadListEnd();
               }
-              this.__isset.endpoints = true;
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
@@ -132,30 +129,30 @@ namespace Apache.Cassandra
       TStruct struc = new TStruct("TokenRange");
       oprot.WriteStructBegin(struc);
       TField field = new TField();
-      if (this.start_token != null && __isset.start_token) {
+      if (Start_token != null && __isset.start_token) {
         field.Name = "start_token";
         field.Type = TType.String;
         field.ID = 1;
         oprot.WriteFieldBegin(field);
-        oprot.WriteString(this.start_token);
+        oprot.WriteString(Start_token);
         oprot.WriteFieldEnd();
       }
-      if (this.end_token != null && __isset.end_token) {
+      if (End_token != null && __isset.end_token) {
         field.Name = "end_token";
         field.Type = TType.String;
         field.ID = 2;
         oprot.WriteFieldBegin(field);
-        oprot.WriteString(this.end_token);
+        oprot.WriteString(End_token);
         oprot.WriteFieldEnd();
       }
-      if (this.endpoints != null && __isset.endpoints) {
+      if (Endpoints != null && __isset.endpoints) {
         field.Name = "endpoints";
         field.Type = TType.List;
         field.ID = 3;
         oprot.WriteFieldBegin(field);
         {
-          oprot.WriteListBegin(new TList(TType.String, this.endpoints.Count));
-          foreach (string _iter19 in this.endpoints)
+          oprot.WriteListBegin(new TList(TType.String, Endpoints.Count));
+          foreach (string _iter19 in Endpoints)
           {
             oprot.WriteString(_iter19);
             oprot.WriteListEnd();
@@ -169,12 +166,12 @@ namespace Apache.Cassandra
 
     public override string ToString() {
       StringBuilder sb = new StringBuilder("TokenRange(");
-      sb.Append("start_token: ");
-      sb.Append(this.start_token);
-      sb.Append(",end_token: ");
-      sb.Append(this.end_token);
-      sb.Append(",endpoints: ");
-      sb.Append(this.endpoints);
+      sb.Append("Start_token: ");
+      sb.Append(Start_token);
+      sb.Append(",End_token: ");
+      sb.Append(End_token);
+      sb.Append(",Endpoints: ");
+      sb.Append(Endpoints);
       sb.Append(")");
       return sb.ToString();
     }

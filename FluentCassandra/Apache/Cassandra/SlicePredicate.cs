@@ -18,19 +18,19 @@ namespace Apache.Cassandra
   [Serializable]
   public partial class SlicePredicate : TBase
   {
-    private List<byte[]> column_names;
-    private SliceRange slice_range;
+    private List<byte[]> _column_names;
+    private SliceRange _slice_range;
 
     public List<byte[]> Column_names
     {
       get
       {
-        return column_names;
+        return _column_names;
       }
       set
       {
         __isset.column_names = true;
-        this.column_names = value;
+        this._column_names = value;
       }
     }
 
@@ -38,12 +38,12 @@ namespace Apache.Cassandra
     {
       get
       {
-        return slice_range;
+        return _slice_range;
       }
       set
       {
         __isset.slice_range = true;
-        this.slice_range = value;
+        this._slice_range = value;
       }
     }
 
@@ -73,26 +73,24 @@ namespace Apache.Cassandra
           case 1:
             if (field.Type == TType.List) {
               {
-                this.column_names = new List<byte[]>();
+                Column_names = new List<byte[]>();
                 TList _list4 = iprot.ReadListBegin();
                 for( int _i5 = 0; _i5 < _list4.Count; ++_i5)
                 {
                   byte[] _elem6 = null;
                   _elem6 = iprot.ReadBinary();
-                  this.column_names.Add(_elem6);
+                  Column_names.Add(_elem6);
                 }
                 iprot.ReadListEnd();
               }
-              this.__isset.column_names = true;
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
             break;
           case 2:
             if (field.Type == TType.Struct) {
-              this.slice_range = new SliceRange();
-              this.slice_range.Read(iprot);
-              this.__isset.slice_range = true;
+              Slice_range = new SliceRange();
+              Slice_range.Read(iprot);
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
@@ -110,14 +108,14 @@ namespace Apache.Cassandra
       TStruct struc = new TStruct("SlicePredicate");
       oprot.WriteStructBegin(struc);
       TField field = new TField();
-      if (this.column_names != null && __isset.column_names) {
+      if (Column_names != null && __isset.column_names) {
         field.Name = "column_names";
         field.Type = TType.List;
         field.ID = 1;
         oprot.WriteFieldBegin(field);
         {
-          oprot.WriteListBegin(new TList(TType.String, this.column_names.Count));
-          foreach (byte[] _iter7 in this.column_names)
+          oprot.WriteListBegin(new TList(TType.String, Column_names.Count));
+          foreach (byte[] _iter7 in Column_names)
           {
             oprot.WriteBinary(_iter7);
             oprot.WriteListEnd();
@@ -125,12 +123,12 @@ namespace Apache.Cassandra
         }
         oprot.WriteFieldEnd();
       }
-      if (this.slice_range != null && __isset.slice_range) {
+      if (Slice_range != null && __isset.slice_range) {
         field.Name = "slice_range";
         field.Type = TType.Struct;
         field.ID = 2;
         oprot.WriteFieldBegin(field);
-        this.slice_range.Write(oprot);
+        Slice_range.Write(oprot);
         oprot.WriteFieldEnd();
       }
       oprot.WriteFieldStop();
@@ -139,10 +137,10 @@ namespace Apache.Cassandra
 
     public override string ToString() {
       StringBuilder sb = new StringBuilder("SlicePredicate(");
-      sb.Append("column_names: ");
-      sb.Append(this.column_names);
-      sb.Append(",slice_range: ");
-      sb.Append(this.slice_range== null ? "<null>" : this.slice_range.ToString());
+      sb.Append("Column_names: ");
+      sb.Append(Column_names);
+      sb.Append(",Slice_range: ");
+      sb.Append(Slice_range== null ? "<null>" : Slice_range.ToString());
       sb.Append(")");
       return sb.ToString();
     }

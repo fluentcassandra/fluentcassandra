@@ -18,20 +18,20 @@ namespace Apache.Cassandra
   [Serializable]
   public partial class IndexExpression : TBase
   {
-    private byte[] column_name;
-    private IndexOperator op;
-    private byte[] value;
+    private byte[] _column_name;
+    private IndexOperator _op;
+    private byte[] _value;
 
     public byte[] Column_name
     {
       get
       {
-        return column_name;
+        return _column_name;
       }
       set
       {
         __isset.column_name = true;
-        this.column_name = value;
+        this._column_name = value;
       }
     }
 
@@ -39,12 +39,12 @@ namespace Apache.Cassandra
     {
       get
       {
-        return op;
+        return _op;
       }
       set
       {
         __isset.op = true;
-        this.op = value;
+        this._op = value;
       }
     }
 
@@ -52,12 +52,12 @@ namespace Apache.Cassandra
     {
       get
       {
-        return value;
+        return _value;
       }
       set
       {
         __isset.value = true;
-        this.value = value;
+        this._value = value;
       }
     }
 
@@ -87,24 +87,21 @@ namespace Apache.Cassandra
         {
           case 1:
             if (field.Type == TType.String) {
-              this.column_name = iprot.ReadBinary();
-              this.__isset.column_name = true;
+              Column_name = iprot.ReadBinary();
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
             break;
           case 2:
             if (field.Type == TType.I32) {
-              this.op = (IndexOperator)iprot.ReadI32();
-              this.__isset.op = true;
+              Op = (IndexOperator)iprot.ReadI32();
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
             break;
           case 3:
             if (field.Type == TType.String) {
-              this.value = iprot.ReadBinary();
-              this.__isset.value = true;
+              Value = iprot.ReadBinary();
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
@@ -122,12 +119,12 @@ namespace Apache.Cassandra
       TStruct struc = new TStruct("IndexExpression");
       oprot.WriteStructBegin(struc);
       TField field = new TField();
-      if (this.column_name != null && __isset.column_name) {
+      if (Column_name != null && __isset.column_name) {
         field.Name = "column_name";
         field.Type = TType.String;
         field.ID = 1;
         oprot.WriteFieldBegin(field);
-        oprot.WriteBinary(this.column_name);
+        oprot.WriteBinary(Column_name);
         oprot.WriteFieldEnd();
       }
       if (__isset.op) {
@@ -135,15 +132,15 @@ namespace Apache.Cassandra
         field.Type = TType.I32;
         field.ID = 2;
         oprot.WriteFieldBegin(field);
-        oprot.WriteI32((int)this.op);
+        oprot.WriteI32((int)Op);
         oprot.WriteFieldEnd();
       }
-      if (this.value != null && __isset.value) {
+      if (Value != null && __isset.value) {
         field.Name = "value";
         field.Type = TType.String;
         field.ID = 3;
         oprot.WriteFieldBegin(field);
-        oprot.WriteBinary(this.value);
+        oprot.WriteBinary(Value);
         oprot.WriteFieldEnd();
       }
       oprot.WriteFieldStop();
@@ -152,12 +149,12 @@ namespace Apache.Cassandra
 
     public override string ToString() {
       StringBuilder sb = new StringBuilder("IndexExpression(");
-      sb.Append("column_name: ");
-      sb.Append(this.column_name);
-      sb.Append(",op: ");
-      sb.Append(this.op);
-      sb.Append(",value: ");
-      sb.Append(this.value);
+      sb.Append("Column_name: ");
+      sb.Append(Column_name);
+      sb.Append(",Op: ");
+      sb.Append(Op);
+      sb.Append(",Value: ");
+      sb.Append(Value);
       sb.Append(")");
       return sb.ToString();
     }
