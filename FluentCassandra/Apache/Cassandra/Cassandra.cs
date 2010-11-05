@@ -2145,7 +2145,7 @@ namespace Apache.Cassandra
       }
 
       public get_args() {
-        this.consistency_level = (ConsistencyLevel)1;
+        this._consistency_level = (ConsistencyLevel)1;
       }
 
       public void Read (TProtocol iprot)
@@ -2532,7 +2532,7 @@ namespace Apache.Cassandra
       }
 
       public get_slice_args() {
-        this.consistency_level = (ConsistencyLevel)1;
+        this._consistency_level = (ConsistencyLevel)1;
       }
 
       public void Read (TProtocol iprot)
@@ -2920,7 +2920,7 @@ namespace Apache.Cassandra
       }
 
       public get_count_args() {
-        this.consistency_level = (ConsistencyLevel)1;
+        this._consistency_level = (ConsistencyLevel)1;
       }
 
       public void Read (TProtocol iprot)
@@ -3288,7 +3288,7 @@ namespace Apache.Cassandra
       }
 
       public multiget_slice_args() {
-        this.consistency_level = (ConsistencyLevel)1;
+        this._consistency_level = (ConsistencyLevel)1;
       }
 
       public void Read (TProtocol iprot)
@@ -3713,7 +3713,7 @@ namespace Apache.Cassandra
       }
 
       public multiget_count_args() {
-        this.consistency_level = (ConsistencyLevel)1;
+        this._consistency_level = (ConsistencyLevel)1;
       }
 
       public void Read (TProtocol iprot)
@@ -4120,7 +4120,7 @@ namespace Apache.Cassandra
       }
 
       public get_range_slices_args() {
-        this.consistency_level = (ConsistencyLevel)1;
+        this._consistency_level = (ConsistencyLevel)1;
       }
 
       public void Read (TProtocol iprot)
@@ -4509,7 +4509,7 @@ namespace Apache.Cassandra
       }
 
       public get_indexed_slices_args() {
-        this.consistency_level = (ConsistencyLevel)1;
+        this._consistency_level = (ConsistencyLevel)1;
       }
 
       public void Read (TProtocol iprot)
@@ -4898,7 +4898,7 @@ namespace Apache.Cassandra
       }
 
       public insert_args() {
-        this.consistency_level = (ConsistencyLevel)1;
+        this._consistency_level = (ConsistencyLevel)1;
       }
 
       public void Read (TProtocol iprot)
@@ -5235,7 +5235,7 @@ namespace Apache.Cassandra
       }
 
       public remove_args() {
-        this.consistency_level = (ConsistencyLevel)1;
+        this._consistency_level = (ConsistencyLevel)1;
       }
 
       public void Read (TProtocol iprot)
@@ -5541,7 +5541,7 @@ namespace Apache.Cassandra
       }
 
       public batch_mutate_args() {
-        this.consistency_level = (ConsistencyLevel)1;
+        this._consistency_level = (ConsistencyLevel)1;
       }
 
       public void Read (TProtocol iprot)

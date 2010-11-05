@@ -42,12 +42,6 @@ namespace FluentCassandra
 				return session.GetClient(setKeyspace: false).system_drop_keyspace(keyspace);
 		}
 
-		public static string RenameKeyspace(Server server, string oldKeyspace, string newKeyspace)
-		{
-			using (var session = new CassandraSession(new ConnectionBuilder(null, server.Host, server.Port)))
-				return session.GetClient(setKeyspace: false).system_rename_keyspace(oldKeyspace, newKeyspace);
-		}
-
 		#endregion
 
 		#region Cassandra Descriptions For Server

@@ -326,11 +326,11 @@ namespace Apache.Cassandra
     }
 
     public CfDef() {
-      this.column_type = "Standard";
-      this.comparator_type = "BytesType";
-      this.row_cache_size = 0;
-      this.key_cache_size = 200000;
-      this.read_repair_chance = 1;
+      this._column_type = "Standard";
+      this._comparator_type = "BytesType";
+      this._row_cache_size = 0;
+      this._key_cache_size = 200000;
+      this._read_repair_chance = 1;
     }
 
     public void Read (TProtocol iprot)

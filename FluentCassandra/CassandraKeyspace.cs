@@ -72,14 +72,6 @@ namespace FluentCassandra
 				return session.GetClient().system_drop_column_family(columnFamily);
 		}
 
-		public string RenameColumnFamily(Server server, string oldColumnFamily, string newColumnFamily)
-		{
-			_cachedKeyspaceDescription = null;
-
-			using (var session = new CassandraSession(new ConnectionBuilder(KeyspaceName, server.Host, server.Port)))
-				return session.GetClient().system_rename_column_family(oldColumnFamily, newColumnFamily);
-		}
-
 		#endregion
 
 		#region Cassandra Descriptions For Server

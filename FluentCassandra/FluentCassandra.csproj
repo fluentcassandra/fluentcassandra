@@ -53,13 +53,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Apache\Cassandra\AccessLevel.cs" />
     <Compile Include="Apache\Cassandra\AuthenticationException.cs" />
     <Compile Include="Apache\Cassandra\AuthenticationRequest.cs" />
     <Compile Include="Apache\Cassandra\AuthorizationException.cs" />
     <Compile Include="Apache\Cassandra\Cassandra.cs" />
     <Compile Include="Apache\Cassandra\CfDef.cs" />
-    <Compile Include="Apache\Cassandra\Clock.cs" />
     <Compile Include="Apache\Cassandra\Column.cs" />
     <Compile Include="Apache\Cassandra\ColumnDef.cs" />
     <Compile Include="Apache\Cassandra\ColumnOrSuperColumn.cs" />
@@ -195,8 +193,10 @@
     </Compile>
     <Compile Include="Thrift\Collections\THashSet.cs" />
     <Compile Include="Thrift\Protocol\TBase.cs" />
+    <Compile Include="Thrift\Protocol\TBase64Utils.cs" />
     <Compile Include="Thrift\Protocol\TBinaryProtocol.cs" />
     <Compile Include="Thrift\Protocol\TField.cs" />
+    <Compile Include="Thrift\Protocol\TJSONProtocol.cs" />
     <Compile Include="Thrift\Protocol\TList.cs" />
     <Compile Include="Thrift\Protocol\TMap.cs" />
     <Compile Include="Thrift\Protocol\TMessage.cs" />

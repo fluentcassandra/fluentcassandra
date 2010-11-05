@@ -86,8 +86,8 @@ namespace Apache.Cassandra
     }
 
     public SliceRange() {
-      this.reversed = false;
-      this.count = 100;
+      this._reversed = false;
+      this._count = 100;
     }
 
     public void Read (TProtocol iprot)

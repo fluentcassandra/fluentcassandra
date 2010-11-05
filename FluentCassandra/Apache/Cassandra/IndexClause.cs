@@ -71,7 +71,7 @@ namespace Apache.Cassandra
     }
 
     public IndexClause() {
-      this.count = 100;
+      this._count = 100;
     }
 
     public void Read (TProtocol iprot)
