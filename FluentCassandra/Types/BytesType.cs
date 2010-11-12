@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.ComponentModel;
 
 namespace FluentCassandra.Types
 {

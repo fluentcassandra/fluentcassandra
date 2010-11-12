@@ -2,7 +2,6 @@
 using Thrift.Transport;
 using Thrift.Protocol;
 using Apache.Cassandra;
-using System.Net.Sockets;
 
 namespace FluentCassandra
 {

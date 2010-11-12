@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Linq.Expressions;
 using FluentCassandra.Types;
-using System.Collections;
 
 namespace FluentCassandra.Operations
 {

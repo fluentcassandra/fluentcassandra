@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using FluentCassandra.Types;
 using FluentCassandra.Operations;
 using System.Linq.Expressions;
 

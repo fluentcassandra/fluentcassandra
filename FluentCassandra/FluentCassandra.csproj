@@ -145,6 +145,7 @@
     <Compile Include="GuidGenerator.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="GuidVersion.cs" />
     <Compile Include="IFluentBaseColumn.cs" />
     <Compile Include="IFluentBaseColumn`1.cs" />
     <Compile Include="IFluentColumn.cs" />

@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Thrift.Transport;
-using Thrift.Protocol;
 using Apache.Cassandra;
 
 namespace FluentCassandra
