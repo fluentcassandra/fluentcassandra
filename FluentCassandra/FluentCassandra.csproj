@@ -98,9 +98,15 @@
     <Compile Include="Configuration\CassandraTypeConfiguration.cs" />
     <Compile Include="Configuration\ICassandraConfigurationMap.cs" />
     <Compile Include="Configuration\IConfigurationContainer.cs" />
+    <Compile Include="Configuration\IKeyGetMapping.cs" />
     <Compile Include="Configuration\IKeyMapping.cs" />
+    <Compile Include="Configuration\IKeySetMapping.cs" />
+    <Compile Include="Configuration\IPropertyGetMapping.cs" />
     <Compile Include="Configuration\IPropertyMapping.cs" />
+    <Compile Include="Configuration\IPropertySetMapping.cs" />
     <Compile Include="Configuration\ITypeConfiguration.cs" />
+    <Compile Include="Configuration\ITypeGetConfiguration.cs" />
+    <Compile Include="Configuration\ITypeSetConfiguration.cs" />
     <Compile Include="Configuration\KeyMappingExpression.cs" />
     <Compile Include="Configuration\PropertyMappingExpression.cs" />
     <Compile Include="Connection\Connection.cs" />

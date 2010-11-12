@@ -1,18 +1,18 @@
-﻿using System;
+using System;
 
 namespace FluentCassandra.Configuration
 {
-	public class KeyMappingExpression<T> : IKeyGetMapping<T>, IKeySetMapping<T>
+	public interface IKeyGetMapping<T> : IKeyMapping, IHideObjectMembers
 	{
 		/// <summary>
 		/// Gets or sets the name of the source property.
 		/// </summary>
 		/// <value>The name of the source property.</value>
-		public string KeyName { get; set; }
+		string KeyName { get; set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public Func<T, string> KeyAccessor { get; set; }
+		Func<T, string> KeyAccessor { get; set; }
 	}
 }
