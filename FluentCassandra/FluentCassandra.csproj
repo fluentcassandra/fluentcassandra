@@ -186,7 +186,7 @@
     <Compile Include="Operations\GetSuperColumnSlice.cs" />
     <Compile Include="Operations\InsertColumn.cs" />
     <Compile Include="Operations\MultiGetColumnFamilySlice.cs" />
-    <Compile Include="Operations\ObjectHelper.cs">
+    <Compile Include="Operations\Helper.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Operations\QueryableColumnFamilyOperation.cs" />

@@ -6,8 +6,10 @@ using FluentCassandra.Types;
 
 namespace FluentCassandra.Operations
 {
-	internal static class ObjectHelper
+	internal static class Helper
 	{
+		private static readonly DateTimeOffset UnixStart = new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero);
+
 		public static List<byte[]> ToByteArrayList(this List<BytesType> list)
 		{
 			return list.Select(x => (byte[])x).ToList();
@@ -15,14 +17,10 @@ namespace FluentCassandra.Operations
 
 		public static long ToTimestamp(this DateTimeOffset dt)
 		{
-			return DateTimeOffset.Now.UtcTicks;
+			// this was changed from .NET Ticks to the Unix Epoch to be compatible with other cassandra libraries
+			return Convert.ToInt64((DateTimeOffset.UtcNow - UnixStart).TotalMilliseconds);
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="col"></param>
-		/// <returns></returns>
 		public static IFluentBaseColumn<CompareWith> ConvertToFluentBaseColumn<CompareWith, CompareSubcolumnWith>(ColumnOrSuperColumn col)
 			where CompareWith : CassandraType
 			where CompareSubcolumnWith : CassandraType
@@ -35,11 +33,6 @@ namespace FluentCassandra.Operations
 				return null;
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="col"></param>
-		/// <returns></returns>
 		public static FluentColumn<CompareWith> ConvertColumnToFluentColumn<CompareWith>(Column col)
 			where CompareWith : CassandraType
 		{
@@ -51,11 +44,6 @@ namespace FluentCassandra.Operations
 			};
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="col"></param>
-		/// <returns></returns>
 		public static FluentSuperColumn<CompareWith, CompareSubcolumnWith> ConvertSuperColumnToFluentSuperColumn<CompareWith, CompareSubcolumnWith>(SuperColumn col)
 			where CompareWith : CassandraType
 			where CompareSubcolumnWith : CassandraType
@@ -70,11 +58,6 @@ namespace FluentCassandra.Operations
 			return superCol;
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="mutation"></param>
-		/// <returns></returns>
 		public static Mutation CreateDeletedColumnMutation(IEnumerable<FluentMutation> mutation)
 		{
 			var columnNames = mutation.Select(m => m.Column.ColumnName).ToList();
@@ -89,11 +72,6 @@ namespace FluentCassandra.Operations
 			};
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="mutation"></param>
-		/// <returns></returns>
 		public static Mutation CreateDeletedSuperColumnMutation(IEnumerable<FluentMutation> mutation)
 		{
 			var superColumn = mutation.Select(m => m.Column.GetPath().SuperColumn.ColumnName).FirstOrDefault();
@@ -110,11 +88,6 @@ namespace FluentCassandra.Operations
 			};
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="mutation"></param>
-		/// <returns></returns>
 		public static Mutation CreateInsertedOrChangedMutation(FluentMutation mutation)
 		{
 			switch (mutation.Type)
@@ -139,11 +112,6 @@ namespace FluentCassandra.Operations
 			};
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="column"></param>
-		/// <returns></returns>
 		public static ColumnOrSuperColumn CreateColumnOrSuperColumn(IFluentBaseColumn column)
 		{
 			if (column is IFluentColumn)
@@ -173,11 +141,6 @@ namespace FluentCassandra.Operations
 			}
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="columnNames"></param>
-		/// <returns></returns>
 		public static SlicePredicate CreateSlicePredicate(List<CassandraType> columnNames)
 		{
 			return new SlicePredicate {
@@ -185,14 +148,6 @@ namespace FluentCassandra.Operations
 			};
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="start"></param>
-		/// <param name="finish"></param>
-		/// <param name="reversed"></param>
-		/// <param name="count"></param>
-		/// <returns></returns>
 		public static SlicePredicate CreateSlicePredicate(byte[] start, byte[] finish, bool reversed = false, int count = 100)
 		{
 			return new SlicePredicate {
