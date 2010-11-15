@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace FluentCassandra
+namespace FluentCassandra.Connections
 {
 	public interface IConnectionProvider
 	{

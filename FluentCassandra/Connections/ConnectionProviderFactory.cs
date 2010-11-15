@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace FluentCassandra
+namespace FluentCassandra.Connections
 {
 	public static class ConnectionProviderFactory
 	{

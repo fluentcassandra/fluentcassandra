@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Runtime.Serialization;
 
-namespace FluentCassandra
+namespace FluentCassandra.Connections
 {
 	/// <summary>
 	/// Thanks to Eric Gunnerson and Phil Haack

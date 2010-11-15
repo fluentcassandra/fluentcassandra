@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 
-namespace FluentCassandra
+namespace FluentCassandra.Connections
 {
 	public class PooledConnectionProvider : NormalConnectionProvider
 	{

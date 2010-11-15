@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using FluentCassandra.Types;
 using FluentCassandra.Operations;
+using FluentCassandra.Connections;
 
 namespace FluentCassandra
 {

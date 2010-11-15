@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace FluentCassandra
+namespace FluentCassandra.Connections
 {
 	public abstract class ConnectionProvider : IConnectionProvider
 	{
@@ -11,12 +11,18 @@ namespace FluentCassandra
 		protected ConnectionProvider(ConnectionBuilder builder)
 		{
 			Builder = builder;
+			Servers = new RoundRobinServerManager(builder);
 		}
 
 		/// <summary>
 		/// 
 		/// </summary>
 		public ConnectionBuilder Builder { get; private set; }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public IServerManager Servers { get; private set; }
 
 		/// <summary>
 		/// 

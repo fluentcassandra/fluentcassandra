@@ -1,7 +1,7 @@
 ﻿using System;
 using Apache.Cassandra;
 
-namespace FluentCassandra
+namespace FluentCassandra.Connections
 {
 	public interface IConnection : IDisposable
 	{

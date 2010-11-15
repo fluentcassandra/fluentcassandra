@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Apache.Cassandra;
 
-namespace FluentCassandra
+namespace FluentCassandra.Connections
 {
 	public class ConnectionBuilder
 	{
@@ -107,9 +107,9 @@ namespace FluentCassandra
 					{
 						int port;
 						if (Int32.TryParse(serverParts[1], out port))
-							Servers.Add(new Server(host, port));
+							Servers.Add(new Server(host: host, port: port, timeout: Timeout));
 						else
-							Servers.Add(new Server(host));
+							Servers.Add(new Server(host: host, timeout: Timeout));
 					}
 					else
 						Servers.Add(new Server(host));

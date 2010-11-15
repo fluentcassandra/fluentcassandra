@@ -3,7 +3,7 @@ using Thrift.Transport;
 using Thrift.Protocol;
 using Apache.Cassandra;
 
-namespace FluentCassandra
+namespace FluentCassandra.Connections
 {
 	/// <summary>
 	/// 
@@ -22,20 +22,12 @@ namespace FluentCassandra
 		/// 
 		/// </summary>
 		/// <param name="builder"></param>
-		internal Connection(Server server, int timeout = 0)
+		internal Connection(Server server)
 		{
 			Created = DateTime.Now;
 			Server = server;
-			Timeout = timeout;
 
-			//TcpClient client = new TcpClient(server.Host, server.Port);
-			//client.NoDelay = true;
-			//client.SendBufferSize = timeout;
-			//client.ReceiveTimeout = timeout;
-
-			//TTransport socket = new TSocket(client);
-
-			TTransport socket = new TSocket(server.Host, server.Port, timeout);
+			TTransport socket = new TSocket(server.Host, server.Port, server.Timeout);
 
 			_transport = new TFramedTransport(socket);
 			_protocol = new TBinaryProtocol(_transport);
@@ -46,15 +38,6 @@ namespace FluentCassandra
 		/// 
 		/// </summary>
 		public DateTime Created
-		{
-			get;
-			private set;
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		public int Timeout
 		{
 			get;
 			private set;
