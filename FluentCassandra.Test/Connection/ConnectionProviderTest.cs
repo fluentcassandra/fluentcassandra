@@ -3,8 +3,9 @@ using System.Text;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using FluentCassandra.Connections;
 
-namespace FluentCassandra.Test.Connection
+namespace FluentCassandra.Test.Connections
 {
 	[TestClass]
 	public class ConnectionProviderTest
