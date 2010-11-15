@@ -25,20 +25,20 @@ namespace FluentCassandra.Operations
 				{
 					var columnFamilyMutations = columnFamily
 						.Where(m => m.Type == MutationType.Added || m.Type == MutationType.Changed)
-						.Select(m => ObjectHelper.CreateInsertedOrChangedMutation(m))
+						.Select(m => Helper.CreateInsertedOrChangedMutation(m))
 						.ToList();
 
 					var superColumnsNeedingDeleted = columnFamily
 						.Where(m => m.Type == MutationType.Removed && m.Column.GetParent().SuperColumn != null);
 
 					foreach (var superColumn in superColumnsNeedingDeleted.GroupBy(x => x.Column.GetParent().SuperColumn.ColumnName))
-						columnFamilyMutations.Add(ObjectHelper.CreateDeletedSuperColumnMutation(superColumn));
+						columnFamilyMutations.Add(Helper.CreateDeletedSuperColumnMutation(superColumn));
 
 					var columnsNeedingDeleted = columnFamily
 						.Where(m => m.Type == MutationType.Removed && m.Column.GetParent().SuperColumn == null);
 
 					if (columnsNeedingDeleted.Count() > 0)
-						columnFamilyMutations.Add(ObjectHelper.CreateDeletedColumnMutation(columnsNeedingDeleted));
+						columnFamilyMutations.Add(Helper.CreateDeletedColumnMutation(columnsNeedingDeleted));
 
 					keyMutations.Add(columnFamily.Key, columnFamilyMutations);
 				}

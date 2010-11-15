@@ -46,7 +46,7 @@ namespace FluentCassandra.Operations
 
 				foreach (var result in output)
 				{
-					var r = ObjectHelper.ConvertColumnToFluentColumn<CompareWith>(result.Column);
+					var r = Helper.ConvertColumnToFluentColumn<CompareWith>(result.Column);
 					yield return r;
 				}
 			}

@@ -43,7 +43,7 @@ namespace FluentCassandra.Operations
 				foreach (var result in output)
 				{
 					var r = new FluentSuperColumn<CompareWith, CompareSubcolumnWith>(result.Value.Select(col => {
-						return ObjectHelper.ConvertColumnToFluentColumn<CompareSubcolumnWith>(col.Column);
+						return Helper.ConvertColumnToFluentColumn<CompareSubcolumnWith>(col.Column);
 					}));
 					columnFamily.Context.Attach(r);
 					r.MutationTracker.Clear();

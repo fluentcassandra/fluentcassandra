@@ -35,7 +35,7 @@ namespace FluentCassandra.Operations
 				CassandraSession.Current.ReadConsistency
 			);
 
-			return (IFluentColumn<CompareWith>)ObjectHelper.ConvertToFluentBaseColumn<CompareWith, VoidType>(output);
+			return (IFluentColumn<CompareWith>)Helper.ConvertToFluentBaseColumn<CompareWith, VoidType>(output);
 		}
 
 		public GetColumn(BytesType key, CassandraType superColumnName, CassandraType columnName)

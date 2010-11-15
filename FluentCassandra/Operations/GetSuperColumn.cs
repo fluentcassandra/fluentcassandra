@@ -31,7 +31,7 @@ namespace FluentCassandra.Operations
 				CassandraSession.Current.ReadConsistency
 			);
 
-			return (IFluentSuperColumn<CompareWith, CompareSubcolumnWith>)ObjectHelper.ConvertToFluentBaseColumn<CompareWith, CompareSubcolumnWith>(output);
+			return (IFluentSuperColumn<CompareWith, CompareSubcolumnWith>)Helper.ConvertToFluentBaseColumn<CompareWith, CompareSubcolumnWith>(output);
 		}
 
 		public GetSuperColumn(BytesType key, CassandraType superColumnName)

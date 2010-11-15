@@ -38,7 +38,7 @@ namespace FluentCassandra.Operations
 				foreach (var result in output)
 				{
 					var r = new FluentSuperColumnFamily<CompareWith, CompareSubcolumnWith>(result.Key, columnFamily.FamilyName, result.Value.Select(col => {
-						var superCol = ObjectHelper.ConvertSuperColumnToFluentSuperColumn<CompareWith, CompareSubcolumnWith>(col.Super_column);
+						var superCol = Helper.ConvertSuperColumnToFluentSuperColumn<CompareWith, CompareSubcolumnWith>(col.Super_column);
 						columnFamily.Context.Attach(superCol);
 						superCol.MutationTracker.Clear();
 
