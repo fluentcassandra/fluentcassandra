@@ -26,8 +26,8 @@ namespace FluentCassandra
 		/// <param name="keyspace"></param>
 		/// <param name="server"></param>
 		/// <param name="timeout"></param>
-		public CassandraContext(string keyspace, Server server, int timeout = 0)
-			: this(keyspace, server.Host, server.Port, timeout) { }
+		public CassandraContext(string keyspace, Server server)
+			: this(keyspace, server.Host, server.Port, server.Timeout) { }
 
 		/// <summary>
 		/// 

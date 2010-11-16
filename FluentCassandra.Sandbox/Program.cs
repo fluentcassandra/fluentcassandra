@@ -14,40 +14,7 @@ namespace FluentCassandra.Sandbox
 {
 	internal class Program
 	{
-		private static void Main()
-		{
-			TTransport framedTransport = new TFramedTransport(new TSocket("localhost", 9160));
-			TTransport socketTransport = new TSocket("localhost", 9160);
-			TProtocol framedProtocol = new TBinaryProtocol(framedTransport);
-			TProtocol socketProtocol = new TBinaryProtocol(socketTransport);
-
-			var client = new Cassandra.Client(framedProtocol, framedProtocol); // all framed
-			//var client = new Cassandra.Client(socketProtocol, socketProtocol); // all socket
-			//var client = new Cassandra.Client(framedProtocol, socketProtocol); // in: framed out: socket
-			//var client = new Cassandra.Client(socketProtocol, framedProtocol); // in: socket out: framed
-
-			framedTransport.Open();
-			socketTransport.Open();
-			Console.WriteLine("Start");
-
-			client.set_keyspace("Keyspace1");
-
-			Console.WriteLine("Count Key");
-			var key = Encoding.ASCII.GetBytes("MyKey");
-			var columns = new List<byte[]>(new[] { Encoding.ASCII.GetBytes("MyColumn") });
-			var column_parent = new ColumnParent {
-				Column_family = "Standard1"
-			};
-			var predicate = new SlicePredicate {
-				Column_names = columns
-			};
-			client.get_count(key, column_parent, predicate, ConsistencyLevel.ALL);
-
-			Console.WriteLine("Done");
-			Console.Read();
-		}
-
-		private static void _Main(string[] args)
+		private static void Main(string[] args)
 		{
 			using (var db = new CassandraContext(keyspace: "Blog", host: "localhost"))
 			{
