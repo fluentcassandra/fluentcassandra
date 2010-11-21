@@ -48,7 +48,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FluentCassandra\FluentCassandra.csproj">
+    <ProjectReference Include="..\..\src\FluentCassandra\FluentCassandra.csproj">
       <Project>{EAA32600-3C2A-4B34-B9B2-5764F280FCE3}</Project>
       <Name>FluentCassandra</Name>
     </ProjectReference>

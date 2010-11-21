@@ -1,13 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentCassandra.Sandbox", "FluentCassandra.Sandbox\FluentCassandra.Sandbox.csproj", "{DE6B46DE-C37A-49AF-8B9A-B9B6D4F03A55}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentCassandra", "src\FluentCassandra\FluentCassandra.csproj", "{EAA32600-3C2A-4B34-B9B2-5764F280FCE3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentCassandra.Test", "FluentCassandra.Test\FluentCassandra.Test.csproj", "{9DAF7022-5820-4214-B13E-AC0A1B37691F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentCassandra.Sandbox", "test\FluentCassandra.Sandbox\FluentCassandra.Sandbox.csproj", "{DE6B46DE-C37A-49AF-8B9A-B9B6D4F03A55}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{92DB8CF4-95BB-4B5E-8E5C-0EC6B34442AF}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentCassandra", "FluentCassandra\FluentCassandra.csproj", "{EAA32600-3C2A-4B34-B9B2-5764F280FCE3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentCassandra.Test", "test\FluentCassandra.Test\FluentCassandra.Test.csproj", "{9DAF7022-5820-4214-B13E-AC0A1B37691F}"
 EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
@@ -22,6 +20,16 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EAA32600-3C2A-4B34-B9B2-5764F280FCE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EAA32600-3C2A-4B34-B9B2-5764F280FCE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EAA32600-3C2A-4B34-B9B2-5764F280FCE3}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{EAA32600-3C2A-4B34-B9B2-5764F280FCE3}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{EAA32600-3C2A-4B34-B9B2-5764F280FCE3}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{EAA32600-3C2A-4B34-B9B2-5764F280FCE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EAA32600-3C2A-4B34-B9B2-5764F280FCE3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EAA32600-3C2A-4B34-B9B2-5764F280FCE3}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{EAA32600-3C2A-4B34-B9B2-5764F280FCE3}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{EAA32600-3C2A-4B34-B9B2-5764F280FCE3}.Release|x86.ActiveCfg = Release|Any CPU
 		{DE6B46DE-C37A-49AF-8B9A-B9B6D4F03A55}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{DE6B46DE-C37A-49AF-8B9A-B9B6D4F03A55}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
 		{DE6B46DE-C37A-49AF-8B9A-B9B6D4F03A55}.Debug|Mixed Platforms.Build.0 = Debug|x86
@@ -42,16 +50,6 @@ Global
 		{9DAF7022-5820-4214-B13E-AC0A1B37691F}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{9DAF7022-5820-4214-B13E-AC0A1B37691F}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{9DAF7022-5820-4214-B13E-AC0A1B37691F}.Release|x86.ActiveCfg = Release|Any CPU
-		{EAA32600-3C2A-4B34-B9B2-5764F280FCE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EAA32600-3C2A-4B34-B9B2-5764F280FCE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EAA32600-3C2A-4B34-B9B2-5764F280FCE3}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{EAA32600-3C2A-4B34-B9B2-5764F280FCE3}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{EAA32600-3C2A-4B34-B9B2-5764F280FCE3}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{EAA32600-3C2A-4B34-B9B2-5764F280FCE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EAA32600-3C2A-4B34-B9B2-5764F280FCE3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EAA32600-3C2A-4B34-B9B2-5764F280FCE3}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{EAA32600-3C2A-4B34-B9B2-5764F280FCE3}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{EAA32600-3C2A-4B34-B9B2-5764F280FCE3}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
