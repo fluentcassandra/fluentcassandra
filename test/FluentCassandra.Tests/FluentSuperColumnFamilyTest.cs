@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using NUnit.Framework;
 using FluentCassandra.Types;
+using System.Collections;
 
 namespace FluentCassandra.Test
 {
@@ -87,7 +88,7 @@ namespace FluentCassandra.Test
 			var actual = family.Test3;
 
 			// assert
-			Assert.IsInstanceOfType(actual, typeof(IFluentSuperColumn));
+			Assert.IsInstanceOfType(typeof(IFluentSuperColumn), actual);
 		}
 
 		[Test]

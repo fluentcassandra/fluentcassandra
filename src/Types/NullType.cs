@@ -4,7 +4,7 @@ namespace FluentCassandra.Types
 {
 	internal class NullType : CassandraType
 	{
-		public readonly static NullType Value = new NullType();
+		public readonly static NullType Value = null;
 
 		private NullType() { }
 

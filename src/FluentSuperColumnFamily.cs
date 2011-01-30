@@ -109,9 +109,8 @@ namespace FluentCassandra
 		public override bool TryGetColumn(object name, out object result)
 		{
 			var col = Columns.FirstOrDefault(c => c.ColumnName == name);
-
 			result = (col == null) ? CreateSuperColumn(CassandraType.GetType<CompareWith>(name)) : col;
-			//return col != null;
+
 			return true;
 		}
 
