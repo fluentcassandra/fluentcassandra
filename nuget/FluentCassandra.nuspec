@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package>
+	<metadata>
+		<id>FluentCassandra</id>
+		<version>1.0.0</version>
+		<title>Fluent Cassandra</title>
+		<authors>Nick Berardi</authors>
+		<owners>nberardi</owners>
+		<description>FluentCassandra is a .NET library for accessing Cassandra, which wraps the Thrift client library and provides a more fluent POCO interface for accessing and querying the objects in Cassandra.</description>
+		<summary>FluentCassandra is a .NET library for accessing Cassandra, which wraps the Thrift client library and provides a more fluent POCO interface for accessing and querying the objects in Cassandra.</summary>
+		<language>en-US</language>
+		<projectUrl>https://github.com/managedfusion/fluentcassandra</projectUrl>
+		<licenseUrl>https://github.com/managedfusion/fluentcassandra/raw/master/LICENSE.txt</licenseUrl>
+		<iconUrl>https://github.com/managedfusion/fluentcassandra/raw/master/nuget/FluentCassandra.Logo.png</iconUrl>
+		<requireLicenseAcceptance>false</requireLicenseAcceptance>
+		<tags>fluent cassandra apache nosql database managedfusion .net40</tags>
+	</metadata>
+</package>

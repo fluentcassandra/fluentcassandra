@@ -7,6 +7,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentCassandra.Sandbox", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentCassandra.Tests", "test\FluentCassandra.Tests\FluentCassandra.Tests.csproj", "{9DAF7022-5820-4214-B13E-AC0A1B37691F}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{53AE6E93-92B4-4D33-9BE5-3CE59C1A2AD6}"
+	ProjectSection(SolutionItems) = preProject
+		FluentCassandra.msbuild = FluentCassandra.msbuild
+		nuget\FluentCassandra.nuspec = nuget\FluentCassandra.nuspec
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = FluentCassandra.vsmdi

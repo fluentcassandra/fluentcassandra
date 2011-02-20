@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"/>
+	<UsingTask TaskName="NUnitTeamCity" AssemblyFile="$(teamcity_dotnet_nunitlauncher_msbuild_task)" />
+	<UsingTask AssemblyFile="$(MSBuildExtensionsPath)\NuGet\NuGet.MSBuild.dll" TaskName="NuGet.MSBuild.NuGet" />
+
+	<ItemGroup>
+		<MainProjects Include="src\**\*.csproj" />
+		<TestProjects Include="test\**\*.csproj" />
+		<AllProjects Include="@(MainProjects);@(TestProjects)" />
+	</ItemGroup>
+
+	<PropertyGroup>
+		<AssemblyName>FluentCassandra</AssemblyName>
+		<AssemblyNetVersion>net40</AssemblyNetVersion>
+		<AssemblyInfo>src\Properties\AssemblyInfo.cs</AssemblyInfo>
+		<PackagePath>nuget</PackagePath>
+		<PackageSpec>$(PackagePath)\$(AssemblyName).nuspec</PackageSpec>
+		<PackageBuildPath>build</PackageBuildPath>
+		<PackageId>$(AssemblyName)</PackageId>
+		<NuGetExe>lib\nuget.exe</NuGetExe>
+		<NuPackage>$(PackageBuildPath)\$(PackageId).$(build_number).nupkg</NuPackage>
+	</PropertyGroup>
+
+	<Target Name="CleanPackage">
+		<RemoveDir Directories="$(PackageBuildPath)" Condition="Exists($(PackageBuildPath))"/>
+	</Target>
+
+	<Target Name="Clean" DependsOnTargets="CleanPackage">
+		<TeamCityProgressMessage Text="Cleaning Projects" />
+		<MSBuild Projects="@(AllProjects)" Targets="Clean"/>
+	</Target>
+
+	<Target Name="SetVersion" DependsOnTargets="Clean">
+		<TeamCityProgressMessage Text="Update Version" />
+		<FileUpdate
+			Files="$(AssemblyInfo)"
+			Regex='\[assembly: (Assembly(File)?Version)\("([0-9\.\*]+)"\)\]'
+			ReplacementText='[assembly: $1("$(build_number)")]' />
+
+		<XmlUpdate
+			XmlFileName="$(PackageSpec)"
+			XPath="/package/metadata/version"
+			Value="$(build_number)"/>
+	</Target>
+
+	<Target Name="Test" DependsOnTargets="SetVersion">
+		<TeamCityProgressMessage Text="Building Tests" />
+		<MSBuild Projects="@(TestProjects)" Targets="Rebuild" Properties="Configuration=Release">
+			<Output TaskParameter="TargetOutputs" ItemName="TestOutput"/>
+		</MSBuild>
+
+		<TeamCityProgressMessage Text="Running Tests" />
+		<NUnitTeamCity Assemblies="@(TestOutput)" NUnitVersion="NUnit-2.5.9" />
+	</Target>
+
+	<Target Name="Build" DependsOnTargets="SetVersion">
+		<TeamCityProgressMessage Text="Building Projects" />
+		<MSBuild Projects="@(MainProjects)" Targets="Rebuild" Properties="Configuration=Release" />
+	</Target>
+
+	<Target Name="Package" DependsOnTargets="Build">
+		<TeamCityProgressMessage Text="Packaging NuGet" />
+
+		<ItemGroup>
+			<AssembliesToPackage Include="src\bin\**\$(AssemblyName).dll" />
+		</ItemGroup>
+
+		<RemoveDir Directories="$(PackagePath)\lib" />
+		<Copy SourceFiles="@(AssembliesToPackage)" DestinationFolder="$(PackagePath)\lib\$(AssemblyNetVersion)\" />
+		<Copy SourceFiles="@(AssembliesToPackage)" DestinationFolder="$(PackageBuildPath)" />
+
+		<Exec Command="$(NuGetExe) update" />
+		<Exec Command="$(NuGetExe) pack $(PackageSpec) -o $(PackageBuildPath)" />
+	</Target>
+
+	<Target Name="Deploy" DependsOnTargets="Package">
+		<TeamCityProgressMessage Text="Deploying NuGet" />
+
+		<Exec Command="$(NuGetExe) push $(NuPackage) $(package_key)" />
+	</Target>
+</Project>
