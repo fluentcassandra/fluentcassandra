@@ -26,8 +26,8 @@ namespace FluentCassandra
 		/// <param name="keyspace"></param>
 		/// <param name="server"></param>
 		/// <param name="timeout"></param>
-		public CassandraContext(string keyspace, Server server)
-			: this(keyspace, server.Host, server.Port, server.Timeout) { }
+		public CassandraContext(string keyspace, Server server, string username = null, string password = null)
+			: this(keyspace, server.Host, server.Port, server.Timeout, username, password) { }
 
 		/// <summary>
 		/// 
@@ -37,8 +37,8 @@ namespace FluentCassandra
 		/// <param name="port"></param>
 		/// <param name="timeout"></param>
 		/// <param name="provider"></param>
-		public CassandraContext(string keyspace, string host, int port = 9160, int timeout = 0)
-			: this(new ConnectionBuilder(keyspace, host, port, timeout)) { }
+		public CassandraContext(string keyspace, string host, int port = 9160, int timeout = 0, string username = null, string password = null)
+			: this(new ConnectionBuilder(keyspace, host, port, timeout, username: username, password: password)) { }
 
 		/// <summary>
 		/// 

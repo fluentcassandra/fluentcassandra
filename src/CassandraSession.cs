@@ -132,33 +132,20 @@ namespace FluentCassandra
 			WriteConsistency = write;
 			Keyspace = new CassandraKeyspace(connectionProvider.Builder.Keyspace);
 
+			IsAuthenticated = false;
 			Current = this;
 		}
 
-		/// <summary>
-		/// Gets ConnectionProvider.
-		/// </summary>
 		public IConnectionProvider ConnectionProvider { get; private set; }
 
-		/// <summary>
-		/// 
-		/// </summary>
 		public ConsistencyLevel ReadConsistency { get; private set; }
 
-		/// <summary>
-		/// 
-		/// </summary>
 		public ConsistencyLevel WriteConsistency { get; private set; }
 
-		/// <summary>
-		/// 
-		/// </summary>
 		public CassandraKeyspace Keyspace { get; private set; }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
+		public bool IsAuthenticated { get; private set; }
+
 		internal Cassandra.Client GetClient(bool setKeyspace = true)
 		{
 			if (_connection == null)
@@ -168,18 +155,27 @@ namespace FluentCassandra
 				_connection.Open();
 
 			if (setKeyspace)
-				_connection.SetKeyspace(Keyspace.KeyspaceName);
+				_connection.SetKeyspace(Keyspace.KeyspaceName)
 
 			return _connection.Client;
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="authRequest"></param>
-		public void Login(AuthenticationRequest authRequest)
+		public void Login(string username, string password)
 		{
-			GetClient().login(authRequest);
+			var auth = new AuthenticationRequest {
+				Credentials = new Dictionary<string, string> { { "username", username }, { "password", password } }
+			};
+
+			try
+			{
+				GetClient().login(auth);
+				IsAuthenticated = true;
+			}
+			catch (Exception exc)
+			{
+				IsAuthenticated = false;
+				throw new CassandraException("Login failed.", exc);
+			}
 		}
 
 		#region IDisposable Members

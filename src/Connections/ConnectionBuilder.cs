@@ -15,7 +15,7 @@ namespace FluentCassandra.Connections
 		/// <param name="port"></param>
 		/// <param name="timeout"></param>
 		/// <param name="provider"></param>
-		public ConnectionBuilder(string keyspace, string host, int port = 9160, int timeout = 0, bool pooled = false, int poolSize = 25, int lifetime = 0)
+		public ConnectionBuilder(string keyspace, string host, int port = 9160, int timeout = 0, bool pooled = false, int poolSize = 25, int lifetime = 0, string username = null, string password = null)
 		{
 			Keyspace = keyspace;
 			Servers = new List<Server>() { new Server(host, port) };
@@ -26,6 +26,8 @@ namespace FluentCassandra.Connections
 			ConnectionString = GetConnectionString();
 			ReadConsistency = ConsistencyLevel.QUORUM;
 			WriteConsistency = ConsistencyLevel.QUORUM;
+			Username = username;
+			Password = password;
 		}
 
 		/// <summary>
@@ -210,6 +212,24 @@ namespace FluentCassandra.Connections
 			}
 
 			#endregion
+
+			#region Username
+
+			if (pairs.ContainsKey("Username"))
+			{
+				Username = pairs["Username"];
+			}
+
+			#endregion
+
+			#region Password
+
+			if (pairs.ContainsKey("Password"))
+			{
+				Password = pairs["Password"];
+			}
+
+			#endregion
 		}
 
 		private string GetConnectionString()
@@ -225,6 +245,8 @@ namespace FluentCassandra.Connections
 			b.AppendFormat(format, "Lifetime", Lifetime);
 			b.AppendFormat(format, "Read", ReadConsistency);
 			b.AppendFormat(format, "Write", WriteConsistency);
+			b.AppendFormat(format, "Username", Username);
+			b.AppendFormat(format, "Password", Password == null ? "" : new String('X', Password.Length));
 
 			return b.ToString();
 		}
@@ -268,6 +290,16 @@ namespace FluentCassandra.Connections
 		/// 
 		/// </summary>
 		public IList<Server> Servers { get; private set; }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public string Username { get; private set; }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public string Password { get; private set; }
 
 		/// <summary>
 		/// 
