@@ -299,5 +299,54 @@ namespace FluentCassandra.Test.Types
 			// assert
 			Assert.IsFalse(actual);
 		}
+
+		[Test]
+		public void HashCode_String_AcceptsShortStrings()
+		{
+			// arrange
+			string value = "abc";
+			BytesType type = value;
+
+			// act
+			var hashcode = type.GetHashCode();
+
+			// assert
+			Assert.IsNotNull(hashcode);
+		}
+
+		[Test]
+		public void HashCode_String_NotEqualTo()
+		{
+			// arrange
+			string value1 = "abcdef";
+			string value2 = "bacdef";
+
+			BytesType type1 = value1;
+			BytesType type2 = value2;
+
+			// act
+			var hashcode1 = type1.GetHashCode();
+			var hashcode2 = type2.GetHashCode();
+
+			// assert
+			Assert.AreNotEqual(hashcode1, hashcode2);
+		}
+
+		[Test]
+		public void HashCode_String_EqualTo()
+		{
+			// arrange
+			string value = "abcdef";
+
+			BytesType type1 = value;
+			BytesType type2 = value;
+
+			// act
+			var hashcode1 = type1.GetHashCode();
+			var hashcode2 = type2.GetHashCode();
+
+			// assert
+			Assert.AreEqual(hashcode1, hashcode2);
+		}
 	}
 }
