@@ -155,7 +155,7 @@ namespace FluentCassandra
 				_connection.Open();
 
 			if (setKeyspace)
-				_connection.SetKeyspace(Keyspace.KeyspaceName)
+				_connection.SetKeyspace(Keyspace.KeyspaceName);
 
 			return _connection.Client;
 		}

@@ -40,7 +40,7 @@ namespace FluentCassandra.Connections
 					conn.Open();
 					break;
 				}
-				catch (SocketException exc)
+				catch (SocketException)
 				{
 					Close(conn);
 					Servers.Remove(conn.Server);
