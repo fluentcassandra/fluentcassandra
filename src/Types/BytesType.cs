@@ -43,9 +43,27 @@ namespace FluentCassandra.Types
 			return _value.SequenceEqual(CassandraType.GetValue<byte[]>(obj, Converter));
 		}
 
+		/// <remarks>
+		/// Uses a modified FMV technique to generate a hashcode for a byte array.
+		/// See: http://stackoverflow.com/questions/16340/how-do-i-generate-a-hashcode-from-a-byte-array-in-c/468084#468084
+		/// </remarks>
 		public override int GetHashCode()
 		{
-			return BitConverter.ToInt32(_value, 0);
+			unchecked
+			{
+				const int p = 16777619;
+				int hash = (int)2166136261;
+
+				for (int i = 0; i < _value.Length; i++)
+					hash = (hash ^ _value[i]) * p;
+
+				hash += hash << 13;
+				hash ^= hash >> 7;
+				hash += hash << 3;
+				hash ^= hash >> 17;
+				hash += hash << 5;
+				return hash;
+			}
 		}
 
 		#endregion
