@@ -51,7 +51,7 @@
 		<MSBuild Projects="@(MainProjects)" Targets="Rebuild" Properties="Configuration=Release" />
 	</Target>
 
-	<Target Name="Package" DependsOnTargets="Test">
+	<Target Name="Package" DependsOnTargets="Build">
 		<TeamCityProgressMessage Text="Packaging NuGet" />
 
 		<ItemGroup>

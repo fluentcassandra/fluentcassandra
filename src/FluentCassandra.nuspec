@@ -14,5 +14,8 @@
 		<iconUrl>https://github.com/managedfusion/fluentcassandra/raw/master/nuget/FluentCassandra.Logo.png</iconUrl>
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
 		<tags>fluent cassandra apache nosql database managedfusion .net40</tags>
+		<frameworkAssemblies>
+			<frameworkAssembly assemblyName="System.Numerics" targetFramework="net40" />
+		</frameworkAssemblies>
 	</metadata>
 </package>
