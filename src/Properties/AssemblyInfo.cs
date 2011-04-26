@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("FluentCassandra")]
-[assembly: AssemblyDescription("Cassandra wrapper around the Thrift interface. [http://managedfusion.com], [http://github.com/managedfusion/fluentcassandra]")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Managed Fusion")]
+[assembly: AssemblyDescription("FluentCassandra is a .NET library for accessing Cassandra, which wraps the Thrift client library and provides a more fluent POCO interface for accessing and querying the objects in Cassandra.")]
 [assembly: AssemblyProduct("FluentCassandra")]
-[assembly: AssemblyCopyright("Copyright © Managed Fusion 2010")]
+[assembly: AssemblyCompany("Managed Fusion, LLC")]
+[assembly: AssemblyCopyright("Copyright © Nick Berardi, Managed Fusion, LLC 2011")]
+[assembly: AssemblyConfiguration("")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
