@@ -14,5 +14,7 @@ namespace Apache.Cassandra
     EACH_QUORUM = 4,
     ALL = 5,
     ANY = 6,
+    TWO = 7,
+    THREE = 8,
   }
 }
