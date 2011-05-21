@@ -16,34 +16,34 @@ namespace Apache.Cassandra
 {
 
   [Serializable]
-  public partial class KeySlice : TBase
+  public partial class CounterColumn : TBase
   {
-    private byte[] _key;
-    private List<ColumnOrSuperColumn> _columns;
+    private byte[] _name;
+    private long _value;
 
-    public byte[] Key
+    public byte[] Name
     {
       get
       {
-        return _key;
+        return _name;
       }
       set
       {
-        __isset.key = true;
-        this._key = value;
+        __isset.name = true;
+        this._name = value;
       }
     }
 
-    public List<ColumnOrSuperColumn> Columns
+    public long Value
     {
       get
       {
-        return _columns;
+        return _value;
       }
       set
       {
-        __isset.columns = true;
-        this._columns = value;
+        __isset.value = true;
+        this._value = value;
       }
     }
 
@@ -51,11 +51,11 @@ namespace Apache.Cassandra
     public Isset __isset;
     [Serializable]
     public struct Isset {
-      public bool key;
-      public bool columns;
+      public bool name;
+      public bool value;
     }
 
-    public KeySlice() {
+    public CounterColumn() {
     }
 
     public void Read (TProtocol iprot)
@@ -72,25 +72,14 @@ namespace Apache.Cassandra
         {
           case 1:
             if (field.Type == TType.String) {
-              Key = iprot.ReadBinary();
+              Name = iprot.ReadBinary();
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
             break;
           case 2:
-            if (field.Type == TType.List) {
-              {
-                Columns = new List<ColumnOrSuperColumn>();
-                TList _list16 = iprot.ReadListBegin();
-                for( int _i17 = 0; _i17 < _list16.Count; ++_i17)
-                {
-                  ColumnOrSuperColumn _elem18 = new ColumnOrSuperColumn();
-                  _elem18 = new ColumnOrSuperColumn();
-                  _elem18.Read(iprot);
-                  Columns.Add(_elem18);
-                }
-                iprot.ReadListEnd();
-              }
+            if (field.Type == TType.I64) {
+              Value = iprot.ReadI64();
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
@@ -105,30 +94,23 @@ namespace Apache.Cassandra
     }
 
     public void Write(TProtocol oprot) {
-      TStruct struc = new TStruct("KeySlice");
+      TStruct struc = new TStruct("CounterColumn");
       oprot.WriteStructBegin(struc);
       TField field = new TField();
-      if (Key != null && __isset.key) {
-        field.Name = "key";
+      if (Name != null && __isset.name) {
+        field.Name = "name";
         field.Type = TType.String;
         field.ID = 1;
         oprot.WriteFieldBegin(field);
-        oprot.WriteBinary(Key);
+        oprot.WriteBinary(Name);
         oprot.WriteFieldEnd();
       }
-      if (Columns != null && __isset.columns) {
-        field.Name = "columns";
-        field.Type = TType.List;
+      if (__isset.value) {
+        field.Name = "value";
+        field.Type = TType.I64;
         field.ID = 2;
         oprot.WriteFieldBegin(field);
-        {
-          oprot.WriteListBegin(new TList(TType.Struct, Columns.Count));
-          foreach (ColumnOrSuperColumn _iter19 in Columns)
-          {
-            _iter19.Write(oprot);
-            oprot.WriteListEnd();
-          }
-        }
+        oprot.WriteI64(Value);
         oprot.WriteFieldEnd();
       }
       oprot.WriteFieldStop();
@@ -136,11 +118,11 @@ namespace Apache.Cassandra
     }
 
     public override string ToString() {
-      StringBuilder sb = new StringBuilder("KeySlice(");
-      sb.Append("Key: ");
-      sb.Append(Key);
-      sb.Append(",Columns: ");
-      sb.Append(Columns);
+      StringBuilder sb = new StringBuilder("CounterColumn(");
+      sb.Append("Name: ");
+      sb.Append(Name);
+      sb.Append(",Value: ");
+      sb.Append(Value);
       sb.Append(")");
       return sb.ToString();
     }

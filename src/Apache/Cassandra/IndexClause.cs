@@ -90,13 +90,13 @@ namespace Apache.Cassandra
             if (field.Type == TType.List) {
               {
                 Expressions = new List<IndexExpression>();
-                TList _list8 = iprot.ReadListBegin();
-                for( int _i9 = 0; _i9 < _list8.Count; ++_i9)
+                TList _list12 = iprot.ReadListBegin();
+                for( int _i13 = 0; _i13 < _list12.Count; ++_i13)
                 {
-                  IndexExpression _elem10 = new IndexExpression();
-                  _elem10 = new IndexExpression();
-                  _elem10.Read(iprot);
-                  Expressions.Add(_elem10);
+                  IndexExpression _elem14 = new IndexExpression();
+                  _elem14 = new IndexExpression();
+                  _elem14.Read(iprot);
+                  Expressions.Add(_elem14);
                 }
                 iprot.ReadListEnd();
               }
@@ -138,9 +138,9 @@ namespace Apache.Cassandra
         oprot.WriteFieldBegin(field);
         {
           oprot.WriteListBegin(new TList(TType.Struct, Expressions.Count));
-          foreach (IndexExpression _iter11 in Expressions)
+          foreach (IndexExpression _iter15 in Expressions)
           {
-            _iter11.Write(oprot);
+            _iter15.Write(oprot);
             oprot.WriteListEnd();
           }
         }

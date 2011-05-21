@@ -74,12 +74,12 @@ namespace Apache.Cassandra
             if (field.Type == TType.List) {
               {
                 Column_names = new List<byte[]>();
-                TList _list4 = iprot.ReadListBegin();
-                for( int _i5 = 0; _i5 < _list4.Count; ++_i5)
+                TList _list8 = iprot.ReadListBegin();
+                for( int _i9 = 0; _i9 < _list8.Count; ++_i9)
                 {
-                  byte[] _elem6 = null;
-                  _elem6 = iprot.ReadBinary();
-                  Column_names.Add(_elem6);
+                  byte[] _elem10 = null;
+                  _elem10 = iprot.ReadBinary();
+                  Column_names.Add(_elem10);
                 }
                 iprot.ReadListEnd();
               }
@@ -115,9 +115,9 @@ namespace Apache.Cassandra
         oprot.WriteFieldBegin(field);
         {
           oprot.WriteListBegin(new TList(TType.String, Column_names.Count));
-          foreach (byte[] _iter7 in Column_names)
+          foreach (byte[] _iter11 in Column_names)
           {
-            oprot.WriteBinary(_iter7);
+            oprot.WriteBinary(_iter11);
             oprot.WriteListEnd();
           }
         }

@@ -20,6 +20,8 @@ namespace Apache.Cassandra
   {
     private Column _column;
     private SuperColumn _super_column;
+    private CounterColumn _counter_column;
+    private CounterSuperColumn _counter_super_column;
 
     public Column Column
     {
@@ -47,12 +49,40 @@ namespace Apache.Cassandra
       }
     }
 
+    public CounterColumn Counter_column
+    {
+      get
+      {
+        return _counter_column;
+      }
+      set
+      {
+        __isset.counter_column = true;
+        this._counter_column = value;
+      }
+    }
+
+    public CounterSuperColumn Counter_super_column
+    {
+      get
+      {
+        return _counter_super_column;
+      }
+      set
+      {
+        __isset.counter_super_column = true;
+        this._counter_super_column = value;
+      }
+    }
+
 
     public Isset __isset;
     [Serializable]
     public struct Isset {
       public bool column;
       public bool super_column;
+      public bool counter_column;
+      public bool counter_super_column;
     }
 
     public ColumnOrSuperColumn() {
@@ -86,6 +116,22 @@ namespace Apache.Cassandra
               TProtocolUtil.Skip(iprot, field.Type);
             }
             break;
+          case 3:
+            if (field.Type == TType.Struct) {
+              Counter_column = new CounterColumn();
+              Counter_column.Read(iprot);
+            } else { 
+              TProtocolUtil.Skip(iprot, field.Type);
+            }
+            break;
+          case 4:
+            if (field.Type == TType.Struct) {
+              Counter_super_column = new CounterSuperColumn();
+              Counter_super_column.Read(iprot);
+            } else { 
+              TProtocolUtil.Skip(iprot, field.Type);
+            }
+            break;
           default: 
             TProtocolUtil.Skip(iprot, field.Type);
             break;
@@ -115,6 +161,22 @@ namespace Apache.Cassandra
         Super_column.Write(oprot);
         oprot.WriteFieldEnd();
       }
+      if (Counter_column != null && __isset.counter_column) {
+        field.Name = "counter_column";
+        field.Type = TType.Struct;
+        field.ID = 3;
+        oprot.WriteFieldBegin(field);
+        Counter_column.Write(oprot);
+        oprot.WriteFieldEnd();
+      }
+      if (Counter_super_column != null && __isset.counter_super_column) {
+        field.Name = "counter_super_column";
+        field.Type = TType.Struct;
+        field.ID = 4;
+        oprot.WriteFieldBegin(field);
+        Counter_super_column.Write(oprot);
+        oprot.WriteFieldEnd();
+      }
       oprot.WriteFieldStop();
       oprot.WriteStructEnd();
     }
@@ -125,6 +187,10 @@ namespace Apache.Cassandra
       sb.Append(Column== null ? "<null>" : Column.ToString());
       sb.Append(",Super_column: ");
       sb.Append(Super_column== null ? "<null>" : Super_column.ToString());
+      sb.Append(",Counter_column: ");
+      sb.Append(Counter_column== null ? "<null>" : Counter_column.ToString());
+      sb.Append(",Counter_super_column: ");
+      sb.Append(Counter_super_column== null ? "<null>" : Counter_super_column.ToString());
       sb.Append(")");
       return sb.ToString();
     }

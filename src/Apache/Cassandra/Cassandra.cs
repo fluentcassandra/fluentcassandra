@@ -26,7 +26,9 @@ namespace Apache.Cassandra
       List<KeySlice> get_range_slices(ColumnParent column_parent, SlicePredicate predicate, KeyRange range, ConsistencyLevel consistency_level);
       List<KeySlice> get_indexed_slices(ColumnParent column_parent, IndexClause index_clause, SlicePredicate column_predicate, ConsistencyLevel consistency_level);
       void insert(byte[] key, ColumnParent column_parent, Column column, ConsistencyLevel consistency_level);
+      void add(byte[] key, ColumnParent column_parent, CounterColumn column, ConsistencyLevel consistency_level);
       void remove(byte[] key, ColumnPath column_path, long timestamp, ConsistencyLevel consistency_level);
+      void remove_counter(byte[] key, ColumnPath path, ConsistencyLevel consistency_level);
       void batch_mutate(Dictionary<byte[], Dictionary<string, List<Mutation>>> mutation_map, ConsistencyLevel consistency_level);
       void truncate(string cfname);
       Dictionary<string, List<string>> describe_schema_versions();
@@ -44,6 +46,7 @@ namespace Apache.Cassandra
       string system_drop_keyspace(string keyspace);
       string system_update_keyspace(KsDef ks_def);
       string system_update_column_family(CfDef cf_def);
+      CqlResult execute_cql_query(byte[] query, Compression compression);
     }
 
     public class Client : Iface {
@@ -499,6 +502,48 @@ namespace Apache.Cassandra
         return;
       }
 
+      public void add(byte[] key, ColumnParent column_parent, CounterColumn column, ConsistencyLevel consistency_level)
+      {
+        send_add(key, column_parent, column, consistency_level);
+        recv_add();
+      }
+
+      public void send_add(byte[] key, ColumnParent column_parent, CounterColumn column, ConsistencyLevel consistency_level)
+      {
+        oprot_.WriteMessageBegin(new TMessage("add", TMessageType.Call, seqid_));
+        add_args args = new add_args();
+        args.Key = key;
+        args.Column_parent = column_parent;
+        args.Column = column;
+        args.Consistency_level = consistency_level;
+        args.Write(oprot_);
+        oprot_.WriteMessageEnd();
+        oprot_.Transport.Flush();
+      }
+
+      public void recv_add()
+      {
+        TMessage msg = iprot_.ReadMessageBegin();
+        if (msg.Type == TMessageType.Exception) {
+          TApplicationException x = TApplicationException.Read(iprot_);
+          iprot_.ReadMessageEnd();
+          throw x;
+        }
+        add_result result = new add_result();
+        result.Read(iprot_);
+        iprot_.ReadMessageEnd();
+        if (result.__isset.ire) {
+          throw result.Ire;
+        }
+        if (result.__isset.ue) {
+          throw result.Ue;
+        }
+        if (result.__isset.te) {
+          throw result.Te;
+        }
+        return;
+      }
+
       public void remove(byte[] key, ColumnPath column_path, long timestamp, ConsistencyLevel consistency_level)
       {
         send_remove(key, column_path, timestamp, consistency_level);
@@ -527,6 +572,47 @@ namespace Apache.Cassandra
           throw x;
         }
         remove_result result = new remove_result();
+        result.Read(iprot_);
+        iprot_.ReadMessageEnd();
+        if (result.__isset.ire) {
+          throw result.Ire;
+        }
+        if (result.__isset.ue) {
+          throw result.Ue;
+        }
+        if (result.__isset.te) {
+          throw result.Te;
+        }
+        return;
+      }
+
+      public void remove_counter(byte[] key, ColumnPath path, ConsistencyLevel consistency_level)
+      {
+        send_remove_counter(key, path, consistency_level);
+        recv_remove_counter();
+      }
+
+      public void send_remove_counter(byte[] key, ColumnPath path, ConsistencyLevel consistency_level)
+      {
+        oprot_.WriteMessageBegin(new TMessage("remove_counter", TMessageType.Call, seqid_));
+        remove_counter_args args = new remove_counter_args();
+        args.Key = key;
+        args.Path = path;
+        args.Consistency_level = consistency_level;
+        args.Write(oprot_);
+        oprot_.WriteMessageEnd();
+        oprot_.Transport.Flush();
+      }
+
+      public void recv_remove_counter()
+      {
+        TMessage msg = iprot_.ReadMessageBegin();
+        if (msg.Type == TMessageType.Exception) {
+          TApplicationException x = TApplicationException.Read(iprot_);
+          iprot_.ReadMessageEnd();
+          throw x;
+        }
+        remove_counter_result result = new remove_counter_result();
         result.Read(iprot_);
         iprot_.ReadMessageEnd();
         if (result.__isset.ire) {
@@ -923,6 +1009,9 @@ namespace Apache.Cassandra
         if (result.__isset.success) {
           return result.Success;
         }
+        if (result.__isset.ire) {
+          throw result.Ire;
+        }
         throw new TApplicationException(TApplicationException.ExceptionType.MissingResult, "describe_splits failed: unknown result");
       }
 
@@ -958,6 +1047,9 @@ namespace Apache.Cassandra
         }
         if (result.__isset.ire) {
           throw result.Ire;
+        }
+        if (result.__isset.sde) {
+          throw result.Sde;
         }
         throw new TApplicationException(TApplicationException.ExceptionType.MissingResult, "system_add_column_family failed: unknown result");
       }
@@ -995,6 +1087,9 @@ namespace Apache.Cassandra
         if (result.__isset.ire) {
           throw result.Ire;
         }
+        if (result.__isset.sde) {
+          throw result.Sde;
+        }
         throw new TApplicationException(TApplicationException.ExceptionType.MissingResult, "system_drop_column_family failed: unknown result");
       }
 
@@ -1030,6 +1125,9 @@ namespace Apache.Cassandra
         }
         if (result.__isset.ire) {
           throw result.Ire;
+        }
+        if (result.__isset.sde) {
+          throw result.Sde;
         }
         throw new TApplicationException(TApplicationException.ExceptionType.MissingResult, "system_add_keyspace failed: unknown result");
       }
@@ -1067,6 +1165,9 @@ namespace Apache.Cassandra
         if (result.__isset.ire) {
           throw result.Ire;
         }
+        if (result.__isset.sde) {
+          throw result.Sde;
+        }
         throw new TApplicationException(TApplicationException.ExceptionType.MissingResult, "system_drop_keyspace failed: unknown result");
       }
 
@@ -1102,6 +1203,9 @@ namespace Apache.Cassandra
         }
         if (result.__isset.ire) {
           throw result.Ire;
+        }
+        if (result.__isset.sde) {
+          throw result.Sde;
         }
         throw new TApplicationException(TApplicationException.ExceptionType.MissingResult, "system_update_keyspace failed: unknown result");
       }
@@ -1139,7 +1243,56 @@ namespace Apache.Cassandra
         if (result.__isset.ire) {
           throw result.Ire;
         }
+        if (result.__isset.sde) {
+          throw result.Sde;
+        }
         throw new TApplicationException(TApplicationException.ExceptionType.MissingResult, "system_update_column_family failed: unknown result");
+      }
+
+      public CqlResult execute_cql_query(byte[] query, Compression compression)
+      {
+        send_execute_cql_query(query, compression);
+        return recv_execute_cql_query();
+      }
+
+      public void send_execute_cql_query(byte[] query, Compression compression)
+      {
+        oprot_.WriteMessageBegin(new TMessage("execute_cql_query", TMessageType.Call, seqid_));
+        execute_cql_query_args args = new execute_cql_query_args();
+        args.Query = query;
+        args.Compression = compression;
+        args.Write(oprot_);
+        oprot_.WriteMessageEnd();
+        oprot_.Transport.Flush();
+      }
+
+      public CqlResult recv_execute_cql_query()
+      {
+        TMessage msg = iprot_.ReadMessageBegin();
+        if (msg.Type == TMessageType.Exception) {
+          TApplicationException x = TApplicationException.Read(iprot_);
+          iprot_.ReadMessageEnd();
+          throw x;
+        }
+        execute_cql_query_result result = new execute_cql_query_result();
+        result.Read(iprot_);
+        iprot_.ReadMessageEnd();
+        if (result.__isset.success) {
+          return result.Success;
+        }
+        if (result.__isset.ire) {
+          throw result.Ire;
+        }
+        if (result.__isset.ue) {
+          throw result.Ue;
+        }
+        if (result.__isset.te) {
+          throw result.Te;
+        }
+        if (result.__isset.sde) {
+          throw result.Sde;
+        }
+        throw new TApplicationException(TApplicationException.ExceptionType.MissingResult, "execute_cql_query failed: unknown result");
       }
 
     }
@@ -1157,7 +1310,9 @@ namespace Apache.Cassandra
         processMap_["get_range_slices"] = get_range_slices_Process;
         processMap_["get_indexed_slices"] = get_indexed_slices_Process;
         processMap_["insert"] = insert_Process;
+        processMap_["add"] = add_Process;
         processMap_["remove"] = remove_Process;
+        processMap_["remove_counter"] = remove_counter_Process;
         processMap_["batch_mutate"] = batch_mutate_Process;
         processMap_["truncate"] = truncate_Process;
         processMap_["describe_schema_versions"] = describe_schema_versions_Process;
@@ -1175,6 +1330,7 @@ namespace Apache.Cassandra
         processMap_["system_drop_keyspace"] = system_drop_keyspace_Process;
         processMap_["system_update_keyspace"] = system_update_keyspace_Process;
         processMap_["system_update_column_family"] = system_update_column_family_Process;
+        processMap_["execute_cql_query"] = execute_cql_query_Process;
       }
 
       protected delegate void ProcessFunction(int seqid, TProtocol iprot, TProtocol oprot);
@@ -1413,6 +1569,27 @@ namespace Apache.Cassandra
         oprot.Transport.Flush();
       }
 
+      public void add_Process(int seqid, TProtocol iprot, TProtocol oprot)
+      {
+        add_args args = new add_args();
+        args.Read(iprot);
+        iprot.ReadMessageEnd();
+        add_result result = new add_result();
+        try {
+          iface_.add(args.Key, args.Column_parent, args.Column, args.Consistency_level);
+        } catch (InvalidRequestException ire) {
+          result.Ire = ire;
+        } catch (UnavailableException ue) {
+          result.Ue = ue;
+        } catch (TimedOutException te) {
+          result.Te = te;
+        }
+        oprot.WriteMessageBegin(new TMessage("add", TMessageType.Reply, seqid)); 
+        result.Write(oprot);
+        oprot.WriteMessageEnd();
+        oprot.Transport.Flush();
+      }
+
       public void remove_Process(int seqid, TProtocol iprot, TProtocol oprot)
       {
         remove_args args = new remove_args();
@@ -1429,6 +1606,27 @@ namespace Apache.Cassandra
           result.Te = te;
         }
         oprot.WriteMessageBegin(new TMessage("remove", TMessageType.Reply, seqid)); 
+        result.Write(oprot);
+        oprot.WriteMessageEnd();
+        oprot.Transport.Flush();
+      }
+
+      public void remove_counter_Process(int seqid, TProtocol iprot, TProtocol oprot)
+      {
+        remove_counter_args args = new remove_counter_args();
+        args.Read(iprot);
+        iprot.ReadMessageEnd();
+        remove_counter_result result = new remove_counter_result();
+        try {
+          iface_.remove_counter(args.Key, args.Path, args.Consistency_level);
+        } catch (InvalidRequestException ire) {
+          result.Ire = ire;
+        } catch (UnavailableException ue) {
+          result.Ue = ue;
+        } catch (TimedOutException te) {
+          result.Te = te;
+        }
+        oprot.WriteMessageBegin(new TMessage("remove_counter", TMessageType.Reply, seqid)); 
         result.Write(oprot);
         oprot.WriteMessageEnd();
         oprot.Transport.Flush();
@@ -1602,7 +1800,11 @@ namespace Apache.Cassandra
         args.Read(iprot);
         iprot.ReadMessageEnd();
         describe_splits_result result = new describe_splits_result();
-        result.Success = iface_.describe_splits(args.CfName, args.Start_token, args.End_token, args.Keys_per_split);
+        try {
+          result.Success = iface_.describe_splits(args.CfName, args.Start_token, args.End_token, args.Keys_per_split);
+        } catch (InvalidRequestException ire) {
+          result.Ire = ire;
+        }
         oprot.WriteMessageBegin(new TMessage("describe_splits", TMessageType.Reply, seqid)); 
         result.Write(oprot);
         oprot.WriteMessageEnd();
@@ -1619,6 +1821,8 @@ namespace Apache.Cassandra
           result.Success = iface_.system_add_column_family(args.Cf_def);
         } catch (InvalidRequestException ire) {
           result.Ire = ire;
+        } catch (SchemaDisagreementException sde) {
+          result.Sde = sde;
         }
         oprot.WriteMessageBegin(new TMessage("system_add_column_family", TMessageType.Reply, seqid)); 
         result.Write(oprot);
@@ -1636,6 +1840,8 @@ namespace Apache.Cassandra
           result.Success = iface_.system_drop_column_family(args.Column_family);
         } catch (InvalidRequestException ire) {
           result.Ire = ire;
+        } catch (SchemaDisagreementException sde) {
+          result.Sde = sde;
         }
         oprot.WriteMessageBegin(new TMessage("system_drop_column_family", TMessageType.Reply, seqid)); 
         result.Write(oprot);
@@ -1653,6 +1859,8 @@ namespace Apache.Cassandra
           result.Success = iface_.system_add_keyspace(args.Ks_def);
         } catch (InvalidRequestException ire) {
           result.Ire = ire;
+        } catch (SchemaDisagreementException sde) {
+          result.Sde = sde;
         }
         oprot.WriteMessageBegin(new TMessage("system_add_keyspace", TMessageType.Reply, seqid)); 
         result.Write(oprot);
@@ -1670,6 +1878,8 @@ namespace Apache.Cassandra
           result.Success = iface_.system_drop_keyspace(args.Keyspace);
         } catch (InvalidRequestException ire) {
           result.Ire = ire;
+        } catch (SchemaDisagreementException sde) {
+          result.Sde = sde;
         }
         oprot.WriteMessageBegin(new TMessage("system_drop_keyspace", TMessageType.Reply, seqid)); 
         result.Write(oprot);
@@ -1687,6 +1897,8 @@ namespace Apache.Cassandra
           result.Success = iface_.system_update_keyspace(args.Ks_def);
         } catch (InvalidRequestException ire) {
           result.Ire = ire;
+        } catch (SchemaDisagreementException sde) {
+          result.Sde = sde;
         }
         oprot.WriteMessageBegin(new TMessage("system_update_keyspace", TMessageType.Reply, seqid)); 
         result.Write(oprot);
@@ -1704,8 +1916,33 @@ namespace Apache.Cassandra
           result.Success = iface_.system_update_column_family(args.Cf_def);
         } catch (InvalidRequestException ire) {
           result.Ire = ire;
+        } catch (SchemaDisagreementException sde) {
+          result.Sde = sde;
         }
         oprot.WriteMessageBegin(new TMessage("system_update_column_family", TMessageType.Reply, seqid)); 
+        result.Write(oprot);
+        oprot.WriteMessageEnd();
+        oprot.Transport.Flush();
+      }
+
+      public void execute_cql_query_Process(int seqid, TProtocol iprot, TProtocol oprot)
+      {
+        execute_cql_query_args args = new execute_cql_query_args();
+        args.Read(iprot);
+        iprot.ReadMessageEnd();
+        execute_cql_query_result result = new execute_cql_query_result();
+        try {
+          result.Success = iface_.execute_cql_query(args.Query, args.Compression);
+        } catch (InvalidRequestException ire) {
+          result.Ire = ire;
+        } catch (UnavailableException ue) {
+          result.Ue = ue;
+        } catch (TimedOutException te) {
+          result.Te = te;
+        } catch (SchemaDisagreementException sde) {
+          result.Sde = sde;
+        }
+        oprot.WriteMessageBegin(new TMessage("execute_cql_query", TMessageType.Reply, seqid)); 
         result.Write(oprot);
         oprot.WriteMessageEnd();
         oprot.Transport.Flush();
@@ -2732,13 +2969,13 @@ namespace Apache.Cassandra
               if (field.Type == TType.List) {
                 {
                   Success = new List<ColumnOrSuperColumn>();
-                  TList _list38 = iprot.ReadListBegin();
-                  for( int _i39 = 0; _i39 < _list38.Count; ++_i39)
+                  TList _list50 = iprot.ReadListBegin();
+                  for( int _i51 = 0; _i51 < _list50.Count; ++_i51)
                   {
-                    ColumnOrSuperColumn _elem40 = new ColumnOrSuperColumn();
-                    _elem40 = new ColumnOrSuperColumn();
-                    _elem40.Read(iprot);
-                    Success.Add(_elem40);
+                    ColumnOrSuperColumn _elem52 = new ColumnOrSuperColumn();
+                    _elem52 = new ColumnOrSuperColumn();
+                    _elem52.Read(iprot);
+                    Success.Add(_elem52);
                   }
                   iprot.ReadListEnd();
                 }
@@ -2792,9 +3029,9 @@ namespace Apache.Cassandra
             oprot.WriteFieldBegin(field);
             {
               oprot.WriteListBegin(new TList(TType.Struct, Success.Count));
-              foreach (ColumnOrSuperColumn _iter41 in Success)
+              foreach (ColumnOrSuperColumn _iter53 in Success)
               {
-                _iter41.Write(oprot);
+                _iter53.Write(oprot);
                 oprot.WriteListEnd();
               }
             }
@@ -3307,12 +3544,12 @@ namespace Apache.Cassandra
               if (field.Type == TType.List) {
                 {
                   Keys = new List<byte[]>();
-                  TList _list42 = iprot.ReadListBegin();
-                  for( int _i43 = 0; _i43 < _list42.Count; ++_i43)
+                  TList _list54 = iprot.ReadListBegin();
+                  for( int _i55 = 0; _i55 < _list54.Count; ++_i55)
                   {
-                    byte[] _elem44 = null;
-                    _elem44 = iprot.ReadBinary();
-                    Keys.Add(_elem44);
+                    byte[] _elem56 = null;
+                    _elem56 = iprot.ReadBinary();
+                    Keys.Add(_elem56);
                   }
                   iprot.ReadListEnd();
                 }
@@ -3363,9 +3600,9 @@ namespace Apache.Cassandra
           oprot.WriteFieldBegin(field);
           {
             oprot.WriteListBegin(new TList(TType.String, Keys.Count));
-            foreach (byte[] _iter45 in Keys)
+            foreach (byte[] _iter57 in Keys)
             {
-              oprot.WriteBinary(_iter45);
+              oprot.WriteBinary(_iter57);
               oprot.WriteListEnd();
             }
           }
@@ -3505,25 +3742,25 @@ namespace Apache.Cassandra
               if (field.Type == TType.Map) {
                 {
                   Success = new Dictionary<byte[], List<ColumnOrSuperColumn>>();
-                  TMap _map46 = iprot.ReadMapBegin();
-                  for( int _i47 = 0; _i47 < _map46.Count; ++_i47)
+                  TMap _map58 = iprot.ReadMapBegin();
+                  for( int _i59 = 0; _i59 < _map58.Count; ++_i59)
                   {
-                    byte[] _key48;
-                    List<ColumnOrSuperColumn> _val49;
-                    _key48 = iprot.ReadBinary();
+                    byte[] _key60;
+                    List<ColumnOrSuperColumn> _val61;
+                    _key60 = iprot.ReadBinary();
                     {
-                      _val49 = new List<ColumnOrSuperColumn>();
-                      TList _list50 = iprot.ReadListBegin();
-                      for( int _i51 = 0; _i51 < _list50.Count; ++_i51)
+                      _val61 = new List<ColumnOrSuperColumn>();
+                      TList _list62 = iprot.ReadListBegin();
+                      for( int _i63 = 0; _i63 < _list62.Count; ++_i63)
                       {
-                        ColumnOrSuperColumn _elem52 = new ColumnOrSuperColumn();
-                        _elem52 = new ColumnOrSuperColumn();
-                        _elem52.Read(iprot);
-                        _val49.Add(_elem52);
+                        ColumnOrSuperColumn _elem64 = new ColumnOrSuperColumn();
+                        _elem64 = new ColumnOrSuperColumn();
+                        _elem64.Read(iprot);
+                        _val61.Add(_elem64);
                       }
                       iprot.ReadListEnd();
                     }
-                    Success[_key48] = _val49;
+                    Success[_key60] = _val61;
                   }
                   iprot.ReadMapEnd();
                 }
@@ -3577,14 +3814,14 @@ namespace Apache.Cassandra
             oprot.WriteFieldBegin(field);
             {
               oprot.WriteMapBegin(new TMap(TType.String, TType.List, Success.Count));
-              foreach (byte[] _iter53 in Success.Keys)
+              foreach (byte[] _iter65 in Success.Keys)
               {
-                oprot.WriteBinary(_iter53);
+                oprot.WriteBinary(_iter65);
                 {
-                  oprot.WriteListBegin(new TList(TType.Struct, Success[_iter53].Count));
-                  foreach (ColumnOrSuperColumn _iter54 in Success[_iter53])
+                  oprot.WriteListBegin(new TList(TType.Struct, Success[_iter65].Count));
+                  foreach (ColumnOrSuperColumn _iter66 in Success[_iter65])
                   {
-                    _iter54.Write(oprot);
+                    _iter66.Write(oprot);
                     oprot.WriteListEnd();
                   }
                 }
@@ -3732,12 +3969,12 @@ namespace Apache.Cassandra
               if (field.Type == TType.List) {
                 {
                   Keys = new List<byte[]>();
-                  TList _list55 = iprot.ReadListBegin();
-                  for( int _i56 = 0; _i56 < _list55.Count; ++_i56)
+                  TList _list67 = iprot.ReadListBegin();
+                  for( int _i68 = 0; _i68 < _list67.Count; ++_i68)
                   {
-                    byte[] _elem57 = null;
-                    _elem57 = iprot.ReadBinary();
-                    Keys.Add(_elem57);
+                    byte[] _elem69 = null;
+                    _elem69 = iprot.ReadBinary();
+                    Keys.Add(_elem69);
                   }
                   iprot.ReadListEnd();
                 }
@@ -3788,9 +4025,9 @@ namespace Apache.Cassandra
           oprot.WriteFieldBegin(field);
           {
             oprot.WriteListBegin(new TList(TType.String, Keys.Count));
-            foreach (byte[] _iter58 in Keys)
+            foreach (byte[] _iter70 in Keys)
             {
-              oprot.WriteBinary(_iter58);
+              oprot.WriteBinary(_iter70);
               oprot.WriteListEnd();
             }
           }
@@ -3930,14 +4167,14 @@ namespace Apache.Cassandra
               if (field.Type == TType.Map) {
                 {
                   Success = new Dictionary<byte[], int>();
-                  TMap _map59 = iprot.ReadMapBegin();
-                  for( int _i60 = 0; _i60 < _map59.Count; ++_i60)
+                  TMap _map71 = iprot.ReadMapBegin();
+                  for( int _i72 = 0; _i72 < _map71.Count; ++_i72)
                   {
-                    byte[] _key61;
-                    int _val62;
-                    _key61 = iprot.ReadBinary();
-                    _val62 = iprot.ReadI32();
-                    Success[_key61] = _val62;
+                    byte[] _key73;
+                    int _val74;
+                    _key73 = iprot.ReadBinary();
+                    _val74 = iprot.ReadI32();
+                    Success[_key73] = _val74;
                   }
                   iprot.ReadMapEnd();
                 }
@@ -3991,10 +4228,10 @@ namespace Apache.Cassandra
             oprot.WriteFieldBegin(field);
             {
               oprot.WriteMapBegin(new TMap(TType.String, TType.I32, Success.Count));
-              foreach (byte[] _iter63 in Success.Keys)
+              foreach (byte[] _iter75 in Success.Keys)
               {
-                oprot.WriteBinary(_iter63);
-                oprot.WriteI32(Success[_iter63]);
+                oprot.WriteBinary(_iter75);
+                oprot.WriteI32(Success[_iter75]);
                 oprot.WriteMapEnd();
               }
             }
@@ -4321,13 +4558,13 @@ namespace Apache.Cassandra
               if (field.Type == TType.List) {
                 {
                   Success = new List<KeySlice>();
-                  TList _list64 = iprot.ReadListBegin();
-                  for( int _i65 = 0; _i65 < _list64.Count; ++_i65)
+                  TList _list76 = iprot.ReadListBegin();
+                  for( int _i77 = 0; _i77 < _list76.Count; ++_i77)
                   {
-                    KeySlice _elem66 = new KeySlice();
-                    _elem66 = new KeySlice();
-                    _elem66.Read(iprot);
-                    Success.Add(_elem66);
+                    KeySlice _elem78 = new KeySlice();
+                    _elem78 = new KeySlice();
+                    _elem78.Read(iprot);
+                    Success.Add(_elem78);
                   }
                   iprot.ReadListEnd();
                 }
@@ -4381,9 +4618,9 @@ namespace Apache.Cassandra
             oprot.WriteFieldBegin(field);
             {
               oprot.WriteListBegin(new TList(TType.Struct, Success.Count));
-              foreach (KeySlice _iter67 in Success)
+              foreach (KeySlice _iter79 in Success)
               {
-                _iter67.Write(oprot);
+                _iter79.Write(oprot);
                 oprot.WriteListEnd();
               }
             }
@@ -4710,13 +4947,13 @@ namespace Apache.Cassandra
               if (field.Type == TType.List) {
                 {
                   Success = new List<KeySlice>();
-                  TList _list68 = iprot.ReadListBegin();
-                  for( int _i69 = 0; _i69 < _list68.Count; ++_i69)
+                  TList _list80 = iprot.ReadListBegin();
+                  for( int _i81 = 0; _i81 < _list80.Count; ++_i81)
                   {
-                    KeySlice _elem70 = new KeySlice();
-                    _elem70 = new KeySlice();
-                    _elem70.Read(iprot);
-                    Success.Add(_elem70);
+                    KeySlice _elem82 = new KeySlice();
+                    _elem82 = new KeySlice();
+                    _elem82.Read(iprot);
+                    Success.Add(_elem82);
                   }
                   iprot.ReadListEnd();
                 }
@@ -4770,9 +5007,9 @@ namespace Apache.Cassandra
             oprot.WriteFieldBegin(field);
             {
               oprot.WriteListBegin(new TList(TType.Struct, Success.Count));
-              foreach (KeySlice _iter71 in Success)
+              foreach (KeySlice _iter83 in Success)
               {
-                _iter71.Write(oprot);
+                _iter83.Write(oprot);
                 oprot.WriteListEnd();
               }
             }
@@ -5165,6 +5402,343 @@ namespace Apache.Cassandra
 
 
     [Serializable]
+    public partial class add_args : TBase
+    {
+      private byte[] _key;
+      private ColumnParent _column_parent;
+      private CounterColumn _column;
+      private ConsistencyLevel _consistency_level;
+
+      public byte[] Key
+      {
+        get
+        {
+          return _key;
+        }
+        set
+        {
+          __isset.key = true;
+          this._key = value;
+        }
+      }
+
+      public ColumnParent Column_parent
+      {
+        get
+        {
+          return _column_parent;
+        }
+        set
+        {
+          __isset.column_parent = true;
+          this._column_parent = value;
+        }
+      }
+
+      public CounterColumn Column
+      {
+        get
+        {
+          return _column;
+        }
+        set
+        {
+          __isset.column = true;
+          this._column = value;
+        }
+      }
+
+      public ConsistencyLevel Consistency_level
+      {
+        get
+        {
+          return _consistency_level;
+        }
+        set
+        {
+          __isset.consistency_level = true;
+          this._consistency_level = value;
+        }
+      }
+
+
+      public Isset __isset;
+      [Serializable]
+      public struct Isset {
+        public bool key;
+        public bool column_parent;
+        public bool column;
+        public bool consistency_level;
+      }
+
+      public add_args() {
+        this._consistency_level = (ConsistencyLevel)1;
+      }
+
+      public void Read (TProtocol iprot)
+      {
+        TField field;
+        iprot.ReadStructBegin();
+        while (true)
+        {
+          field = iprot.ReadFieldBegin();
+          if (field.Type == TType.Stop) { 
+            break;
+          }
+          switch (field.ID)
+          {
+            case 1:
+              if (field.Type == TType.String) {
+                Key = iprot.ReadBinary();
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            case 2:
+              if (field.Type == TType.Struct) {
+                Column_parent = new ColumnParent();
+                Column_parent.Read(iprot);
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            case 3:
+              if (field.Type == TType.Struct) {
+                Column = new CounterColumn();
+                Column.Read(iprot);
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            case 4:
+              if (field.Type == TType.I32) {
+                Consistency_level = (ConsistencyLevel)iprot.ReadI32();
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            default: 
+              TProtocolUtil.Skip(iprot, field.Type);
+              break;
+          }
+          iprot.ReadFieldEnd();
+        }
+        iprot.ReadStructEnd();
+      }
+
+      public void Write(TProtocol oprot) {
+        TStruct struc = new TStruct("add_args");
+        oprot.WriteStructBegin(struc);
+        TField field = new TField();
+        if (Key != null && __isset.key) {
+          field.Name = "key";
+          field.Type = TType.String;
+          field.ID = 1;
+          oprot.WriteFieldBegin(field);
+          oprot.WriteBinary(Key);
+          oprot.WriteFieldEnd();
+        }
+        if (Column_parent != null && __isset.column_parent) {
+          field.Name = "column_parent";
+          field.Type = TType.Struct;
+          field.ID = 2;
+          oprot.WriteFieldBegin(field);
+          Column_parent.Write(oprot);
+          oprot.WriteFieldEnd();
+        }
+        if (Column != null && __isset.column) {
+          field.Name = "column";
+          field.Type = TType.Struct;
+          field.ID = 3;
+          oprot.WriteFieldBegin(field);
+          Column.Write(oprot);
+          oprot.WriteFieldEnd();
+        }
+        if (__isset.consistency_level) {
+          field.Name = "consistency_level";
+          field.Type = TType.I32;
+          field.ID = 4;
+          oprot.WriteFieldBegin(field);
+          oprot.WriteI32((int)Consistency_level);
+          oprot.WriteFieldEnd();
+        }
+        oprot.WriteFieldStop();
+        oprot.WriteStructEnd();
+      }
+
+      public override string ToString() {
+        StringBuilder sb = new StringBuilder("add_args(");
+        sb.Append("Key: ");
+        sb.Append(Key);
+        sb.Append(",Column_parent: ");
+        sb.Append(Column_parent== null ? "<null>" : Column_parent.ToString());
+        sb.Append(",Column: ");
+        sb.Append(Column== null ? "<null>" : Column.ToString());
+        sb.Append(",Consistency_level: ");
+        sb.Append(Consistency_level);
+        sb.Append(")");
+        return sb.ToString();
+      }
+
+    }
+
+
+    [Serializable]
+    public partial class add_result : TBase
+    {
+      private InvalidRequestException _ire;
+      private UnavailableException _ue;
+      private TimedOutException _te;
+
+      public InvalidRequestException Ire
+      {
+        get
+        {
+          return _ire;
+        }
+        set
+        {
+          __isset.ire = true;
+          this._ire = value;
+        }
+      }
+
+      public UnavailableException Ue
+      {
+        get
+        {
+          return _ue;
+        }
+        set
+        {
+          __isset.ue = true;
+          this._ue = value;
+        }
+      }
+
+      public TimedOutException Te
+      {
+        get
+        {
+          return _te;
+        }
+        set
+        {
+          __isset.te = true;
+          this._te = value;
+        }
+      }
+
+
+      public Isset __isset;
+      [Serializable]
+      public struct Isset {
+        public bool ire;
+        public bool ue;
+        public bool te;
+      }
+
+      public add_result() {
+      }
+
+      public void Read (TProtocol iprot)
+      {
+        TField field;
+        iprot.ReadStructBegin();
+        while (true)
+        {
+          field = iprot.ReadFieldBegin();
+          if (field.Type == TType.Stop) { 
+            break;
+          }
+          switch (field.ID)
+          {
+            case 1:
+              if (field.Type == TType.Struct) {
+                Ire = new InvalidRequestException();
+                Ire.Read(iprot);
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            case 2:
+              if (field.Type == TType.Struct) {
+                Ue = new UnavailableException();
+                Ue.Read(iprot);
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            case 3:
+              if (field.Type == TType.Struct) {
+                Te = new TimedOutException();
+                Te.Read(iprot);
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            default: 
+              TProtocolUtil.Skip(iprot, field.Type);
+              break;
+          }
+          iprot.ReadFieldEnd();
+        }
+        iprot.ReadStructEnd();
+      }
+
+      public void Write(TProtocol oprot) {
+        TStruct struc = new TStruct("add_result");
+        oprot.WriteStructBegin(struc);
+        TField field = new TField();
+
+        if (this.__isset.ire) {
+          if (Ire != null) {
+            field.Name = "Ire";
+            field.Type = TType.Struct;
+            field.ID = 1;
+            oprot.WriteFieldBegin(field);
+            Ire.Write(oprot);
+            oprot.WriteFieldEnd();
+          }
+        } else if (this.__isset.ue) {
+          if (Ue != null) {
+            field.Name = "Ue";
+            field.Type = TType.Struct;
+            field.ID = 2;
+            oprot.WriteFieldBegin(field);
+            Ue.Write(oprot);
+            oprot.WriteFieldEnd();
+          }
+        } else if (this.__isset.te) {
+          if (Te != null) {
+            field.Name = "Te";
+            field.Type = TType.Struct;
+            field.ID = 3;
+            oprot.WriteFieldBegin(field);
+            Te.Write(oprot);
+            oprot.WriteFieldEnd();
+          }
+        }
+        oprot.WriteFieldStop();
+        oprot.WriteStructEnd();
+      }
+
+      public override string ToString() {
+        StringBuilder sb = new StringBuilder("add_result(");
+        sb.Append("Ire: ");
+        sb.Append(Ire== null ? "<null>" : Ire.ToString());
+        sb.Append(",Ue: ");
+        sb.Append(Ue== null ? "<null>" : Ue.ToString());
+        sb.Append(",Te: ");
+        sb.Append(Te== null ? "<null>" : Te.ToString());
+        sb.Append(")");
+        return sb.ToString();
+      }
+
+    }
+
+
+    [Serializable]
     public partial class remove_args : TBase
     {
       private byte[] _key;
@@ -5501,6 +6075,310 @@ namespace Apache.Cassandra
 
 
     [Serializable]
+    public partial class remove_counter_args : TBase
+    {
+      private byte[] _key;
+      private ColumnPath _path;
+      private ConsistencyLevel _consistency_level;
+
+      public byte[] Key
+      {
+        get
+        {
+          return _key;
+        }
+        set
+        {
+          __isset.key = true;
+          this._key = value;
+        }
+      }
+
+      public ColumnPath Path
+      {
+        get
+        {
+          return _path;
+        }
+        set
+        {
+          __isset.path = true;
+          this._path = value;
+        }
+      }
+
+      public ConsistencyLevel Consistency_level
+      {
+        get
+        {
+          return _consistency_level;
+        }
+        set
+        {
+          __isset.consistency_level = true;
+          this._consistency_level = value;
+        }
+      }
+
+
+      public Isset __isset;
+      [Serializable]
+      public struct Isset {
+        public bool key;
+        public bool path;
+        public bool consistency_level;
+      }
+
+      public remove_counter_args() {
+        this._consistency_level = (ConsistencyLevel)1;
+      }
+
+      public void Read (TProtocol iprot)
+      {
+        TField field;
+        iprot.ReadStructBegin();
+        while (true)
+        {
+          field = iprot.ReadFieldBegin();
+          if (field.Type == TType.Stop) { 
+            break;
+          }
+          switch (field.ID)
+          {
+            case 1:
+              if (field.Type == TType.String) {
+                Key = iprot.ReadBinary();
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            case 2:
+              if (field.Type == TType.Struct) {
+                Path = new ColumnPath();
+                Path.Read(iprot);
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            case 3:
+              if (field.Type == TType.I32) {
+                Consistency_level = (ConsistencyLevel)iprot.ReadI32();
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            default: 
+              TProtocolUtil.Skip(iprot, field.Type);
+              break;
+          }
+          iprot.ReadFieldEnd();
+        }
+        iprot.ReadStructEnd();
+      }
+
+      public void Write(TProtocol oprot) {
+        TStruct struc = new TStruct("remove_counter_args");
+        oprot.WriteStructBegin(struc);
+        TField field = new TField();
+        if (Key != null && __isset.key) {
+          field.Name = "key";
+          field.Type = TType.String;
+          field.ID = 1;
+          oprot.WriteFieldBegin(field);
+          oprot.WriteBinary(Key);
+          oprot.WriteFieldEnd();
+        }
+        if (Path != null && __isset.path) {
+          field.Name = "path";
+          field.Type = TType.Struct;
+          field.ID = 2;
+          oprot.WriteFieldBegin(field);
+          Path.Write(oprot);
+          oprot.WriteFieldEnd();
+        }
+        if (__isset.consistency_level) {
+          field.Name = "consistency_level";
+          field.Type = TType.I32;
+          field.ID = 3;
+          oprot.WriteFieldBegin(field);
+          oprot.WriteI32((int)Consistency_level);
+          oprot.WriteFieldEnd();
+        }
+        oprot.WriteFieldStop();
+        oprot.WriteStructEnd();
+      }
+
+      public override string ToString() {
+        StringBuilder sb = new StringBuilder("remove_counter_args(");
+        sb.Append("Key: ");
+        sb.Append(Key);
+        sb.Append(",Path: ");
+        sb.Append(Path== null ? "<null>" : Path.ToString());
+        sb.Append(",Consistency_level: ");
+        sb.Append(Consistency_level);
+        sb.Append(")");
+        return sb.ToString();
+      }
+
+    }
+
+
+    [Serializable]
+    public partial class remove_counter_result : TBase
+    {
+      private InvalidRequestException _ire;
+      private UnavailableException _ue;
+      private TimedOutException _te;
+
+      public InvalidRequestException Ire
+      {
+        get
+        {
+          return _ire;
+        }
+        set
+        {
+          __isset.ire = true;
+          this._ire = value;
+        }
+      }
+
+      public UnavailableException Ue
+      {
+        get
+        {
+          return _ue;
+        }
+        set
+        {
+          __isset.ue = true;
+          this._ue = value;
+        }
+      }
+
+      public TimedOutException Te
+      {
+        get
+        {
+          return _te;
+        }
+        set
+        {
+          __isset.te = true;
+          this._te = value;
+        }
+      }
+
+
+      public Isset __isset;
+      [Serializable]
+      public struct Isset {
+        public bool ire;
+        public bool ue;
+        public bool te;
+      }
+
+      public remove_counter_result() {
+      }
+
+      public void Read (TProtocol iprot)
+      {
+        TField field;
+        iprot.ReadStructBegin();
+        while (true)
+        {
+          field = iprot.ReadFieldBegin();
+          if (field.Type == TType.Stop) { 
+            break;
+          }
+          switch (field.ID)
+          {
+            case 1:
+              if (field.Type == TType.Struct) {
+                Ire = new InvalidRequestException();
+                Ire.Read(iprot);
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            case 2:
+              if (field.Type == TType.Struct) {
+                Ue = new UnavailableException();
+                Ue.Read(iprot);
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            case 3:
+              if (field.Type == TType.Struct) {
+                Te = new TimedOutException();
+                Te.Read(iprot);
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            default: 
+              TProtocolUtil.Skip(iprot, field.Type);
+              break;
+          }
+          iprot.ReadFieldEnd();
+        }
+        iprot.ReadStructEnd();
+      }
+
+      public void Write(TProtocol oprot) {
+        TStruct struc = new TStruct("remove_counter_result");
+        oprot.WriteStructBegin(struc);
+        TField field = new TField();
+
+        if (this.__isset.ire) {
+          if (Ire != null) {
+            field.Name = "Ire";
+            field.Type = TType.Struct;
+            field.ID = 1;
+            oprot.WriteFieldBegin(field);
+            Ire.Write(oprot);
+            oprot.WriteFieldEnd();
+          }
+        } else if (this.__isset.ue) {
+          if (Ue != null) {
+            field.Name = "Ue";
+            field.Type = TType.Struct;
+            field.ID = 2;
+            oprot.WriteFieldBegin(field);
+            Ue.Write(oprot);
+            oprot.WriteFieldEnd();
+          }
+        } else if (this.__isset.te) {
+          if (Te != null) {
+            field.Name = "Te";
+            field.Type = TType.Struct;
+            field.ID = 3;
+            oprot.WriteFieldBegin(field);
+            Te.Write(oprot);
+            oprot.WriteFieldEnd();
+          }
+        }
+        oprot.WriteFieldStop();
+        oprot.WriteStructEnd();
+      }
+
+      public override string ToString() {
+        StringBuilder sb = new StringBuilder("remove_counter_result(");
+        sb.Append("Ire: ");
+        sb.Append(Ire== null ? "<null>" : Ire.ToString());
+        sb.Append(",Ue: ");
+        sb.Append(Ue== null ? "<null>" : Ue.ToString());
+        sb.Append(",Te: ");
+        sb.Append(Te== null ? "<null>" : Te.ToString());
+        sb.Append(")");
+        return sb.ToString();
+      }
+
+    }
+
+
+    [Serializable]
     public partial class batch_mutate_args : TBase
     {
       private Dictionary<byte[], Dictionary<string, List<Mutation>>> _mutation_map;
@@ -5560,37 +6438,37 @@ namespace Apache.Cassandra
               if (field.Type == TType.Map) {
                 {
                   Mutation_map = new Dictionary<byte[], Dictionary<string, List<Mutation>>>();
-                  TMap _map72 = iprot.ReadMapBegin();
-                  for( int _i73 = 0; _i73 < _map72.Count; ++_i73)
+                  TMap _map84 = iprot.ReadMapBegin();
+                  for( int _i85 = 0; _i85 < _map84.Count; ++_i85)
                   {
-                    byte[] _key74;
-                    Dictionary<string, List<Mutation>> _val75;
-                    _key74 = iprot.ReadBinary();
+                    byte[] _key86;
+                    Dictionary<string, List<Mutation>> _val87;
+                    _key86 = iprot.ReadBinary();
                     {
-                      _val75 = new Dictionary<string, List<Mutation>>();
-                      TMap _map76 = iprot.ReadMapBegin();
-                      for( int _i77 = 0; _i77 < _map76.Count; ++_i77)
+                      _val87 = new Dictionary<string, List<Mutation>>();
+                      TMap _map88 = iprot.ReadMapBegin();
+                      for( int _i89 = 0; _i89 < _map88.Count; ++_i89)
                       {
-                        string _key78;
-                        List<Mutation> _val79;
-                        _key78 = iprot.ReadString();
+                        string _key90;
+                        List<Mutation> _val91;
+                        _key90 = iprot.ReadString();
                         {
-                          _val79 = new List<Mutation>();
-                          TList _list80 = iprot.ReadListBegin();
-                          for( int _i81 = 0; _i81 < _list80.Count; ++_i81)
+                          _val91 = new List<Mutation>();
+                          TList _list92 = iprot.ReadListBegin();
+                          for( int _i93 = 0; _i93 < _list92.Count; ++_i93)
                           {
-                            Mutation _elem82 = new Mutation();
-                            _elem82 = new Mutation();
-                            _elem82.Read(iprot);
-                            _val79.Add(_elem82);
+                            Mutation _elem94 = new Mutation();
+                            _elem94 = new Mutation();
+                            _elem94.Read(iprot);
+                            _val91.Add(_elem94);
                           }
                           iprot.ReadListEnd();
                         }
-                        _val75[_key78] = _val79;
+                        _val87[_key90] = _val91;
                       }
                       iprot.ReadMapEnd();
                     }
-                    Mutation_map[_key74] = _val75;
+                    Mutation_map[_key86] = _val87;
                   }
                   iprot.ReadMapEnd();
                 }
@@ -5625,19 +6503,19 @@ namespace Apache.Cassandra
           oprot.WriteFieldBegin(field);
           {
             oprot.WriteMapBegin(new TMap(TType.String, TType.Map, Mutation_map.Count));
-            foreach (byte[] _iter83 in Mutation_map.Keys)
+            foreach (byte[] _iter95 in Mutation_map.Keys)
             {
-              oprot.WriteBinary(_iter83);
+              oprot.WriteBinary(_iter95);
               {
-                oprot.WriteMapBegin(new TMap(TType.String, TType.List, Mutation_map[_iter83].Count));
-                foreach (string _iter84 in Mutation_map[_iter83].Keys)
+                oprot.WriteMapBegin(new TMap(TType.String, TType.List, Mutation_map[_iter95].Count));
+                foreach (string _iter96 in Mutation_map[_iter95].Keys)
                 {
-                  oprot.WriteString(_iter84);
+                  oprot.WriteString(_iter96);
                   {
-                    oprot.WriteListBegin(new TList(TType.Struct, Mutation_map[_iter83][_iter84].Count));
-                    foreach (Mutation _iter85 in Mutation_map[_iter83][_iter84])
+                    oprot.WriteListBegin(new TList(TType.Struct, Mutation_map[_iter95][_iter96].Count));
+                    foreach (Mutation _iter97 in Mutation_map[_iter95][_iter96])
                     {
-                      _iter85.Write(oprot);
+                      _iter97.Write(oprot);
                       oprot.WriteListEnd();
                     }
                   }
@@ -6136,24 +7014,24 @@ namespace Apache.Cassandra
               if (field.Type == TType.Map) {
                 {
                   Success = new Dictionary<string, List<string>>();
-                  TMap _map86 = iprot.ReadMapBegin();
-                  for( int _i87 = 0; _i87 < _map86.Count; ++_i87)
+                  TMap _map98 = iprot.ReadMapBegin();
+                  for( int _i99 = 0; _i99 < _map98.Count; ++_i99)
                   {
-                    string _key88;
-                    List<string> _val89;
-                    _key88 = iprot.ReadString();
+                    string _key100;
+                    List<string> _val101;
+                    _key100 = iprot.ReadString();
                     {
-                      _val89 = new List<string>();
-                      TList _list90 = iprot.ReadListBegin();
-                      for( int _i91 = 0; _i91 < _list90.Count; ++_i91)
+                      _val101 = new List<string>();
+                      TList _list102 = iprot.ReadListBegin();
+                      for( int _i103 = 0; _i103 < _list102.Count; ++_i103)
                       {
-                        string _elem92 = null;
-                        _elem92 = iprot.ReadString();
-                        _val89.Add(_elem92);
+                        string _elem104 = null;
+                        _elem104 = iprot.ReadString();
+                        _val101.Add(_elem104);
                       }
                       iprot.ReadListEnd();
                     }
-                    Success[_key88] = _val89;
+                    Success[_key100] = _val101;
                   }
                   iprot.ReadMapEnd();
                 }
@@ -6191,14 +7069,14 @@ namespace Apache.Cassandra
             oprot.WriteFieldBegin(field);
             {
               oprot.WriteMapBegin(new TMap(TType.String, TType.List, Success.Count));
-              foreach (string _iter93 in Success.Keys)
+              foreach (string _iter105 in Success.Keys)
               {
-                oprot.WriteString(_iter93);
+                oprot.WriteString(_iter105);
                 {
-                  oprot.WriteListBegin(new TList(TType.String, Success[_iter93].Count));
-                  foreach (string _iter94 in Success[_iter93])
+                  oprot.WriteListBegin(new TList(TType.String, Success[_iter105].Count));
+                  foreach (string _iter106 in Success[_iter105])
                   {
-                    oprot.WriteString(_iter94);
+                    oprot.WriteString(_iter106);
                     oprot.WriteListEnd();
                   }
                 }
@@ -6337,13 +7215,13 @@ namespace Apache.Cassandra
               if (field.Type == TType.List) {
                 {
                   Success = new List<KsDef>();
-                  TList _list95 = iprot.ReadListBegin();
-                  for( int _i96 = 0; _i96 < _list95.Count; ++_i96)
+                  TList _list107 = iprot.ReadListBegin();
+                  for( int _i108 = 0; _i108 < _list107.Count; ++_i108)
                   {
-                    KsDef _elem97 = new KsDef();
-                    _elem97 = new KsDef();
-                    _elem97.Read(iprot);
-                    Success.Add(_elem97);
+                    KsDef _elem109 = new KsDef();
+                    _elem109 = new KsDef();
+                    _elem109.Read(iprot);
+                    Success.Add(_elem109);
                   }
                   iprot.ReadListEnd();
                 }
@@ -6381,9 +7259,9 @@ namespace Apache.Cassandra
             oprot.WriteFieldBegin(field);
             {
               oprot.WriteListBegin(new TList(TType.Struct, Success.Count));
-              foreach (KsDef _iter98 in Success)
+              foreach (KsDef _iter110 in Success)
               {
-                _iter98.Write(oprot);
+                _iter110.Write(oprot);
                 oprot.WriteListEnd();
               }
             }
@@ -6818,13 +7696,13 @@ namespace Apache.Cassandra
               if (field.Type == TType.List) {
                 {
                   Success = new List<TokenRange>();
-                  TList _list99 = iprot.ReadListBegin();
-                  for( int _i100 = 0; _i100 < _list99.Count; ++_i100)
+                  TList _list111 = iprot.ReadListBegin();
+                  for( int _i112 = 0; _i112 < _list111.Count; ++_i112)
                   {
-                    TokenRange _elem101 = new TokenRange();
-                    _elem101 = new TokenRange();
-                    _elem101.Read(iprot);
-                    Success.Add(_elem101);
+                    TokenRange _elem113 = new TokenRange();
+                    _elem113 = new TokenRange();
+                    _elem113.Read(iprot);
+                    Success.Add(_elem113);
                   }
                   iprot.ReadListEnd();
                 }
@@ -6862,9 +7740,9 @@ namespace Apache.Cassandra
             oprot.WriteFieldBegin(field);
             {
               oprot.WriteListBegin(new TList(TType.Struct, Success.Count));
-              foreach (TokenRange _iter102 in Success)
+              foreach (TokenRange _iter114 in Success)
               {
-                _iter102.Write(oprot);
+                _iter114.Write(oprot);
                 oprot.WriteListEnd();
               }
             }
@@ -7578,6 +8456,7 @@ namespace Apache.Cassandra
     public partial class describe_splits_result : TBase
     {
       private List<string> _success;
+      private InvalidRequestException _ire;
 
       public List<string> Success
       {
@@ -7592,11 +8471,25 @@ namespace Apache.Cassandra
         }
       }
 
+      public InvalidRequestException Ire
+      {
+        get
+        {
+          return _ire;
+        }
+        set
+        {
+          __isset.ire = true;
+          this._ire = value;
+        }
+      }
+
 
       public Isset __isset;
       [Serializable]
       public struct Isset {
         public bool success;
+        public bool ire;
       }
 
       public describe_splits_result() {
@@ -7618,15 +8511,23 @@ namespace Apache.Cassandra
               if (field.Type == TType.List) {
                 {
                   Success = new List<string>();
-                  TList _list103 = iprot.ReadListBegin();
-                  for( int _i104 = 0; _i104 < _list103.Count; ++_i104)
+                  TList _list115 = iprot.ReadListBegin();
+                  for( int _i116 = 0; _i116 < _list115.Count; ++_i116)
                   {
-                    string _elem105 = null;
-                    _elem105 = iprot.ReadString();
-                    Success.Add(_elem105);
+                    string _elem117 = null;
+                    _elem117 = iprot.ReadString();
+                    Success.Add(_elem117);
                   }
                   iprot.ReadListEnd();
                 }
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            case 1:
+              if (field.Type == TType.Struct) {
+                Ire = new InvalidRequestException();
+                Ire.Read(iprot);
               } else { 
                 TProtocolUtil.Skip(iprot, field.Type);
               }
@@ -7653,12 +8554,21 @@ namespace Apache.Cassandra
             oprot.WriteFieldBegin(field);
             {
               oprot.WriteListBegin(new TList(TType.String, Success.Count));
-              foreach (string _iter106 in Success)
+              foreach (string _iter118 in Success)
               {
-                oprot.WriteString(_iter106);
+                oprot.WriteString(_iter118);
                 oprot.WriteListEnd();
               }
             }
+            oprot.WriteFieldEnd();
+          }
+        } else if (this.__isset.ire) {
+          if (Ire != null) {
+            field.Name = "Ire";
+            field.Type = TType.Struct;
+            field.ID = 1;
+            oprot.WriteFieldBegin(field);
+            Ire.Write(oprot);
             oprot.WriteFieldEnd();
           }
         }
@@ -7670,6 +8580,8 @@ namespace Apache.Cassandra
         StringBuilder sb = new StringBuilder("describe_splits_result(");
         sb.Append("Success: ");
         sb.Append(Success);
+        sb.Append(",Ire: ");
+        sb.Append(Ire== null ? "<null>" : Ire.ToString());
         sb.Append(")");
         return sb.ToString();
       }
@@ -7766,6 +8678,7 @@ namespace Apache.Cassandra
     {
       private string _success;
       private InvalidRequestException _ire;
+      private SchemaDisagreementException _sde;
 
       public string Success
       {
@@ -7793,12 +8706,26 @@ namespace Apache.Cassandra
         }
       }
 
+      public SchemaDisagreementException Sde
+      {
+        get
+        {
+          return _sde;
+        }
+        set
+        {
+          __isset.sde = true;
+          this._sde = value;
+        }
+      }
+
 
       public Isset __isset;
       [Serializable]
       public struct Isset {
         public bool success;
         public bool ire;
+        public bool sde;
       }
 
       public system_add_column_family_result() {
@@ -7827,6 +8754,14 @@ namespace Apache.Cassandra
               if (field.Type == TType.Struct) {
                 Ire = new InvalidRequestException();
                 Ire.Read(iprot);
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            case 2:
+              if (field.Type == TType.Struct) {
+                Sde = new SchemaDisagreementException();
+                Sde.Read(iprot);
               } else { 
                 TProtocolUtil.Skip(iprot, field.Type);
               }
@@ -7863,6 +8798,15 @@ namespace Apache.Cassandra
             Ire.Write(oprot);
             oprot.WriteFieldEnd();
           }
+        } else if (this.__isset.sde) {
+          if (Sde != null) {
+            field.Name = "Sde";
+            field.Type = TType.Struct;
+            field.ID = 2;
+            oprot.WriteFieldBegin(field);
+            Sde.Write(oprot);
+            oprot.WriteFieldEnd();
+          }
         }
         oprot.WriteFieldStop();
         oprot.WriteStructEnd();
@@ -7874,6 +8818,8 @@ namespace Apache.Cassandra
         sb.Append(Success);
         sb.Append(",Ire: ");
         sb.Append(Ire== null ? "<null>" : Ire.ToString());
+        sb.Append(",Sde: ");
+        sb.Append(Sde== null ? "<null>" : Sde.ToString());
         sb.Append(")");
         return sb.ToString();
       }
@@ -7969,6 +8915,7 @@ namespace Apache.Cassandra
     {
       private string _success;
       private InvalidRequestException _ire;
+      private SchemaDisagreementException _sde;
 
       public string Success
       {
@@ -7996,12 +8943,26 @@ namespace Apache.Cassandra
         }
       }
 
+      public SchemaDisagreementException Sde
+      {
+        get
+        {
+          return _sde;
+        }
+        set
+        {
+          __isset.sde = true;
+          this._sde = value;
+        }
+      }
+
 
       public Isset __isset;
       [Serializable]
       public struct Isset {
         public bool success;
         public bool ire;
+        public bool sde;
       }
 
       public system_drop_column_family_result() {
@@ -8030,6 +8991,14 @@ namespace Apache.Cassandra
               if (field.Type == TType.Struct) {
                 Ire = new InvalidRequestException();
                 Ire.Read(iprot);
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            case 2:
+              if (field.Type == TType.Struct) {
+                Sde = new SchemaDisagreementException();
+                Sde.Read(iprot);
               } else { 
                 TProtocolUtil.Skip(iprot, field.Type);
               }
@@ -8066,6 +9035,15 @@ namespace Apache.Cassandra
             Ire.Write(oprot);
             oprot.WriteFieldEnd();
           }
+        } else if (this.__isset.sde) {
+          if (Sde != null) {
+            field.Name = "Sde";
+            field.Type = TType.Struct;
+            field.ID = 2;
+            oprot.WriteFieldBegin(field);
+            Sde.Write(oprot);
+            oprot.WriteFieldEnd();
+          }
         }
         oprot.WriteFieldStop();
         oprot.WriteStructEnd();
@@ -8077,6 +9055,8 @@ namespace Apache.Cassandra
         sb.Append(Success);
         sb.Append(",Ire: ");
         sb.Append(Ire== null ? "<null>" : Ire.ToString());
+        sb.Append(",Sde: ");
+        sb.Append(Sde== null ? "<null>" : Sde.ToString());
         sb.Append(")");
         return sb.ToString();
       }
@@ -8173,6 +9153,7 @@ namespace Apache.Cassandra
     {
       private string _success;
       private InvalidRequestException _ire;
+      private SchemaDisagreementException _sde;
 
       public string Success
       {
@@ -8200,12 +9181,26 @@ namespace Apache.Cassandra
         }
       }
 
+      public SchemaDisagreementException Sde
+      {
+        get
+        {
+          return _sde;
+        }
+        set
+        {
+          __isset.sde = true;
+          this._sde = value;
+        }
+      }
+
 
       public Isset __isset;
       [Serializable]
       public struct Isset {
         public bool success;
         public bool ire;
+        public bool sde;
       }
 
       public system_add_keyspace_result() {
@@ -8234,6 +9229,14 @@ namespace Apache.Cassandra
               if (field.Type == TType.Struct) {
                 Ire = new InvalidRequestException();
                 Ire.Read(iprot);
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            case 2:
+              if (field.Type == TType.Struct) {
+                Sde = new SchemaDisagreementException();
+                Sde.Read(iprot);
               } else { 
                 TProtocolUtil.Skip(iprot, field.Type);
               }
@@ -8270,6 +9273,15 @@ namespace Apache.Cassandra
             Ire.Write(oprot);
             oprot.WriteFieldEnd();
           }
+        } else if (this.__isset.sde) {
+          if (Sde != null) {
+            field.Name = "Sde";
+            field.Type = TType.Struct;
+            field.ID = 2;
+            oprot.WriteFieldBegin(field);
+            Sde.Write(oprot);
+            oprot.WriteFieldEnd();
+          }
         }
         oprot.WriteFieldStop();
         oprot.WriteStructEnd();
@@ -8281,6 +9293,8 @@ namespace Apache.Cassandra
         sb.Append(Success);
         sb.Append(",Ire: ");
         sb.Append(Ire== null ? "<null>" : Ire.ToString());
+        sb.Append(",Sde: ");
+        sb.Append(Sde== null ? "<null>" : Sde.ToString());
         sb.Append(")");
         return sb.ToString();
       }
@@ -8376,6 +9390,7 @@ namespace Apache.Cassandra
     {
       private string _success;
       private InvalidRequestException _ire;
+      private SchemaDisagreementException _sde;
 
       public string Success
       {
@@ -8403,12 +9418,26 @@ namespace Apache.Cassandra
         }
       }
 
+      public SchemaDisagreementException Sde
+      {
+        get
+        {
+          return _sde;
+        }
+        set
+        {
+          __isset.sde = true;
+          this._sde = value;
+        }
+      }
+
 
       public Isset __isset;
       [Serializable]
       public struct Isset {
         public bool success;
         public bool ire;
+        public bool sde;
       }
 
       public system_drop_keyspace_result() {
@@ -8437,6 +9466,14 @@ namespace Apache.Cassandra
               if (field.Type == TType.Struct) {
                 Ire = new InvalidRequestException();
                 Ire.Read(iprot);
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            case 2:
+              if (field.Type == TType.Struct) {
+                Sde = new SchemaDisagreementException();
+                Sde.Read(iprot);
               } else { 
                 TProtocolUtil.Skip(iprot, field.Type);
               }
@@ -8473,6 +9510,15 @@ namespace Apache.Cassandra
             Ire.Write(oprot);
             oprot.WriteFieldEnd();
           }
+        } else if (this.__isset.sde) {
+          if (Sde != null) {
+            field.Name = "Sde";
+            field.Type = TType.Struct;
+            field.ID = 2;
+            oprot.WriteFieldBegin(field);
+            Sde.Write(oprot);
+            oprot.WriteFieldEnd();
+          }
         }
         oprot.WriteFieldStop();
         oprot.WriteStructEnd();
@@ -8484,6 +9530,8 @@ namespace Apache.Cassandra
         sb.Append(Success);
         sb.Append(",Ire: ");
         sb.Append(Ire== null ? "<null>" : Ire.ToString());
+        sb.Append(",Sde: ");
+        sb.Append(Sde== null ? "<null>" : Sde.ToString());
         sb.Append(")");
         return sb.ToString();
       }
@@ -8580,6 +9628,7 @@ namespace Apache.Cassandra
     {
       private string _success;
       private InvalidRequestException _ire;
+      private SchemaDisagreementException _sde;
 
       public string Success
       {
@@ -8607,12 +9656,26 @@ namespace Apache.Cassandra
         }
       }
 
+      public SchemaDisagreementException Sde
+      {
+        get
+        {
+          return _sde;
+        }
+        set
+        {
+          __isset.sde = true;
+          this._sde = value;
+        }
+      }
+
 
       public Isset __isset;
       [Serializable]
       public struct Isset {
         public bool success;
         public bool ire;
+        public bool sde;
       }
 
       public system_update_keyspace_result() {
@@ -8641,6 +9704,14 @@ namespace Apache.Cassandra
               if (field.Type == TType.Struct) {
                 Ire = new InvalidRequestException();
                 Ire.Read(iprot);
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            case 2:
+              if (field.Type == TType.Struct) {
+                Sde = new SchemaDisagreementException();
+                Sde.Read(iprot);
               } else { 
                 TProtocolUtil.Skip(iprot, field.Type);
               }
@@ -8677,6 +9748,15 @@ namespace Apache.Cassandra
             Ire.Write(oprot);
             oprot.WriteFieldEnd();
           }
+        } else if (this.__isset.sde) {
+          if (Sde != null) {
+            field.Name = "Sde";
+            field.Type = TType.Struct;
+            field.ID = 2;
+            oprot.WriteFieldBegin(field);
+            Sde.Write(oprot);
+            oprot.WriteFieldEnd();
+          }
         }
         oprot.WriteFieldStop();
         oprot.WriteStructEnd();
@@ -8688,6 +9768,8 @@ namespace Apache.Cassandra
         sb.Append(Success);
         sb.Append(",Ire: ");
         sb.Append(Ire== null ? "<null>" : Ire.ToString());
+        sb.Append(",Sde: ");
+        sb.Append(Sde== null ? "<null>" : Sde.ToString());
         sb.Append(")");
         return sb.ToString();
       }
@@ -8784,6 +9866,7 @@ namespace Apache.Cassandra
     {
       private string _success;
       private InvalidRequestException _ire;
+      private SchemaDisagreementException _sde;
 
       public string Success
       {
@@ -8811,12 +9894,26 @@ namespace Apache.Cassandra
         }
       }
 
+      public SchemaDisagreementException Sde
+      {
+        get
+        {
+          return _sde;
+        }
+        set
+        {
+          __isset.sde = true;
+          this._sde = value;
+        }
+      }
+
 
       public Isset __isset;
       [Serializable]
       public struct Isset {
         public bool success;
         public bool ire;
+        public bool sde;
       }
 
       public system_update_column_family_result() {
@@ -8845,6 +9942,14 @@ namespace Apache.Cassandra
               if (field.Type == TType.Struct) {
                 Ire = new InvalidRequestException();
                 Ire.Read(iprot);
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            case 2:
+              if (field.Type == TType.Struct) {
+                Sde = new SchemaDisagreementException();
+                Sde.Read(iprot);
               } else { 
                 TProtocolUtil.Skip(iprot, field.Type);
               }
@@ -8881,6 +9986,15 @@ namespace Apache.Cassandra
             Ire.Write(oprot);
             oprot.WriteFieldEnd();
           }
+        } else if (this.__isset.sde) {
+          if (Sde != null) {
+            field.Name = "Sde";
+            field.Type = TType.Struct;
+            field.ID = 2;
+            oprot.WriteFieldBegin(field);
+            Sde.Write(oprot);
+            oprot.WriteFieldEnd();
+          }
         }
         oprot.WriteFieldStop();
         oprot.WriteStructEnd();
@@ -8892,6 +10006,346 @@ namespace Apache.Cassandra
         sb.Append(Success);
         sb.Append(",Ire: ");
         sb.Append(Ire== null ? "<null>" : Ire.ToString());
+        sb.Append(",Sde: ");
+        sb.Append(Sde== null ? "<null>" : Sde.ToString());
+        sb.Append(")");
+        return sb.ToString();
+      }
+
+    }
+
+
+    [Serializable]
+    public partial class execute_cql_query_args : TBase
+    {
+      private byte[] _query;
+      private Compression _compression;
+
+      public byte[] Query
+      {
+        get
+        {
+          return _query;
+        }
+        set
+        {
+          __isset.query = true;
+          this._query = value;
+        }
+      }
+
+      public Compression Compression
+      {
+        get
+        {
+          return _compression;
+        }
+        set
+        {
+          __isset.compression = true;
+          this._compression = value;
+        }
+      }
+
+
+      public Isset __isset;
+      [Serializable]
+      public struct Isset {
+        public bool query;
+        public bool compression;
+      }
+
+      public execute_cql_query_args() {
+      }
+
+      public void Read (TProtocol iprot)
+      {
+        TField field;
+        iprot.ReadStructBegin();
+        while (true)
+        {
+          field = iprot.ReadFieldBegin();
+          if (field.Type == TType.Stop) { 
+            break;
+          }
+          switch (field.ID)
+          {
+            case 1:
+              if (field.Type == TType.String) {
+                Query = iprot.ReadBinary();
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            case 2:
+              if (field.Type == TType.I32) {
+                Compression = (Compression)iprot.ReadI32();
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            default: 
+              TProtocolUtil.Skip(iprot, field.Type);
+              break;
+          }
+          iprot.ReadFieldEnd();
+        }
+        iprot.ReadStructEnd();
+      }
+
+      public void Write(TProtocol oprot) {
+        TStruct struc = new TStruct("execute_cql_query_args");
+        oprot.WriteStructBegin(struc);
+        TField field = new TField();
+        if (Query != null && __isset.query) {
+          field.Name = "query";
+          field.Type = TType.String;
+          field.ID = 1;
+          oprot.WriteFieldBegin(field);
+          oprot.WriteBinary(Query);
+          oprot.WriteFieldEnd();
+        }
+        if (__isset.compression) {
+          field.Name = "compression";
+          field.Type = TType.I32;
+          field.ID = 2;
+          oprot.WriteFieldBegin(field);
+          oprot.WriteI32((int)Compression);
+          oprot.WriteFieldEnd();
+        }
+        oprot.WriteFieldStop();
+        oprot.WriteStructEnd();
+      }
+
+      public override string ToString() {
+        StringBuilder sb = new StringBuilder("execute_cql_query_args(");
+        sb.Append("Query: ");
+        sb.Append(Query);
+        sb.Append(",Compression: ");
+        sb.Append(Compression);
+        sb.Append(")");
+        return sb.ToString();
+      }
+
+    }
+
+
+    [Serializable]
+    public partial class execute_cql_query_result : TBase
+    {
+      private CqlResult _success;
+      private InvalidRequestException _ire;
+      private UnavailableException _ue;
+      private TimedOutException _te;
+      private SchemaDisagreementException _sde;
+
+      public CqlResult Success
+      {
+        get
+        {
+          return _success;
+        }
+        set
+        {
+          __isset.success = true;
+          this._success = value;
+        }
+      }
+
+      public InvalidRequestException Ire
+      {
+        get
+        {
+          return _ire;
+        }
+        set
+        {
+          __isset.ire = true;
+          this._ire = value;
+        }
+      }
+
+      public UnavailableException Ue
+      {
+        get
+        {
+          return _ue;
+        }
+        set
+        {
+          __isset.ue = true;
+          this._ue = value;
+        }
+      }
+
+      public TimedOutException Te
+      {
+        get
+        {
+          return _te;
+        }
+        set
+        {
+          __isset.te = true;
+          this._te = value;
+        }
+      }
+
+      public SchemaDisagreementException Sde
+      {
+        get
+        {
+          return _sde;
+        }
+        set
+        {
+          __isset.sde = true;
+          this._sde = value;
+        }
+      }
+
+
+      public Isset __isset;
+      [Serializable]
+      public struct Isset {
+        public bool success;
+        public bool ire;
+        public bool ue;
+        public bool te;
+        public bool sde;
+      }
+
+      public execute_cql_query_result() {
+      }
+
+      public void Read (TProtocol iprot)
+      {
+        TField field;
+        iprot.ReadStructBegin();
+        while (true)
+        {
+          field = iprot.ReadFieldBegin();
+          if (field.Type == TType.Stop) { 
+            break;
+          }
+          switch (field.ID)
+          {
+            case 0:
+              if (field.Type == TType.Struct) {
+                Success = new CqlResult();
+                Success.Read(iprot);
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            case 1:
+              if (field.Type == TType.Struct) {
+                Ire = new InvalidRequestException();
+                Ire.Read(iprot);
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            case 2:
+              if (field.Type == TType.Struct) {
+                Ue = new UnavailableException();
+                Ue.Read(iprot);
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            case 3:
+              if (field.Type == TType.Struct) {
+                Te = new TimedOutException();
+                Te.Read(iprot);
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            case 4:
+              if (field.Type == TType.Struct) {
+                Sde = new SchemaDisagreementException();
+                Sde.Read(iprot);
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            default: 
+              TProtocolUtil.Skip(iprot, field.Type);
+              break;
+          }
+          iprot.ReadFieldEnd();
+        }
+        iprot.ReadStructEnd();
+      }
+
+      public void Write(TProtocol oprot) {
+        TStruct struc = new TStruct("execute_cql_query_result");
+        oprot.WriteStructBegin(struc);
+        TField field = new TField();
+
+        if (this.__isset.success) {
+          if (Success != null) {
+            field.Name = "Success";
+            field.Type = TType.Struct;
+            field.ID = 0;
+            oprot.WriteFieldBegin(field);
+            Success.Write(oprot);
+            oprot.WriteFieldEnd();
+          }
+        } else if (this.__isset.ire) {
+          if (Ire != null) {
+            field.Name = "Ire";
+            field.Type = TType.Struct;
+            field.ID = 1;
+            oprot.WriteFieldBegin(field);
+            Ire.Write(oprot);
+            oprot.WriteFieldEnd();
+          }
+        } else if (this.__isset.ue) {
+          if (Ue != null) {
+            field.Name = "Ue";
+            field.Type = TType.Struct;
+            field.ID = 2;
+            oprot.WriteFieldBegin(field);
+            Ue.Write(oprot);
+            oprot.WriteFieldEnd();
+          }
+        } else if (this.__isset.te) {
+          if (Te != null) {
+            field.Name = "Te";
+            field.Type = TType.Struct;
+            field.ID = 3;
+            oprot.WriteFieldBegin(field);
+            Te.Write(oprot);
+            oprot.WriteFieldEnd();
+          }
+        } else if (this.__isset.sde) {
+          if (Sde != null) {
+            field.Name = "Sde";
+            field.Type = TType.Struct;
+            field.ID = 4;
+            oprot.WriteFieldBegin(field);
+            Sde.Write(oprot);
+            oprot.WriteFieldEnd();
+          }
+        }
+        oprot.WriteFieldStop();
+        oprot.WriteStructEnd();
+      }
+
+      public override string ToString() {
+        StringBuilder sb = new StringBuilder("execute_cql_query_result(");
+        sb.Append("Success: ");
+        sb.Append(Success== null ? "<null>" : Success.ToString());
+        sb.Append(",Ire: ");
+        sb.Append(Ire== null ? "<null>" : Ire.ToString());
+        sb.Append(",Ue: ");
+        sb.Append(Ue== null ? "<null>" : Ue.ToString());
+        sb.Append(",Te: ");
+        sb.Append(Te== null ? "<null>" : Te.ToString());
+        sb.Append(",Sde: ");
+        sb.Append(Sde== null ? "<null>" : Sde.ToString());
         sb.Append(")");
         return sb.ToString();
       }

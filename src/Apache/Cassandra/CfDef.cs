@@ -38,6 +38,11 @@ namespace Apache.Cassandra
     private int _memtable_flush_after_mins;
     private int _memtable_throughput_in_mb;
     private double _memtable_operations_in_millions;
+    private bool _replicate_on_write;
+    private double _merge_shards_chance;
+    private string _key_validation_class;
+    private string _row_cache_provider;
+    private byte[] _key_alias;
 
     public string Keyspace
     {
@@ -299,6 +304,71 @@ namespace Apache.Cassandra
       }
     }
 
+    public bool Replicate_on_write
+    {
+      get
+      {
+        return _replicate_on_write;
+      }
+      set
+      {
+        __isset.replicate_on_write = true;
+        this._replicate_on_write = value;
+      }
+    }
+
+    public double Merge_shards_chance
+    {
+      get
+      {
+        return _merge_shards_chance;
+      }
+      set
+      {
+        __isset.merge_shards_chance = true;
+        this._merge_shards_chance = value;
+      }
+    }
+
+    public string Key_validation_class
+    {
+      get
+      {
+        return _key_validation_class;
+      }
+      set
+      {
+        __isset.key_validation_class = true;
+        this._key_validation_class = value;
+      }
+    }
+
+    public string Row_cache_provider
+    {
+      get
+      {
+        return _row_cache_provider;
+      }
+      set
+      {
+        __isset.row_cache_provider = true;
+        this._row_cache_provider = value;
+      }
+    }
+
+    public byte[] Key_alias
+    {
+      get
+      {
+        return _key_alias;
+      }
+      set
+      {
+        __isset.key_alias = true;
+        this._key_alias = value;
+      }
+    }
+
 
     public Isset __isset;
     [Serializable]
@@ -323,6 +393,11 @@ namespace Apache.Cassandra
       public bool memtable_flush_after_mins;
       public bool memtable_throughput_in_mb;
       public bool memtable_operations_in_millions;
+      public bool replicate_on_write;
+      public bool merge_shards_chance;
+      public bool key_validation_class;
+      public bool row_cache_provider;
+      public bool key_alias;
     }
 
     public CfDef() {
@@ -331,6 +406,7 @@ namespace Apache.Cassandra
       this._row_cache_size = 0;
       this._key_cache_size = 200000;
       this._read_repair_chance = 1;
+      this._row_cache_provider = "org.apache.cassandra.cache.ConcurrentLinkedHashCacheProvider";
     }
 
     public void Read (TProtocol iprot)
@@ -412,13 +488,13 @@ namespace Apache.Cassandra
             if (field.Type == TType.List) {
               {
                 Column_metadata = new List<ColumnDef>();
-                TList _list25 = iprot.ReadListBegin();
-                for( int _i26 = 0; _i26 < _list25.Count; ++_i26)
+                TList _list29 = iprot.ReadListBegin();
+                for( int _i30 = 0; _i30 < _list29.Count; ++_i30)
                 {
-                  ColumnDef _elem27 = new ColumnDef();
-                  _elem27 = new ColumnDef();
-                  _elem27.Read(iprot);
-                  Column_metadata.Add(_elem27);
+                  ColumnDef _elem31 = new ColumnDef();
+                  _elem31 = new ColumnDef();
+                  _elem31.Read(iprot);
+                  Column_metadata.Add(_elem31);
                 }
                 iprot.ReadListEnd();
               }
@@ -492,6 +568,41 @@ namespace Apache.Cassandra
           case 23:
             if (field.Type == TType.Double) {
               Memtable_operations_in_millions = iprot.ReadDouble();
+            } else { 
+              TProtocolUtil.Skip(iprot, field.Type);
+            }
+            break;
+          case 24:
+            if (field.Type == TType.Bool) {
+              Replicate_on_write = iprot.ReadBool();
+            } else { 
+              TProtocolUtil.Skip(iprot, field.Type);
+            }
+            break;
+          case 25:
+            if (field.Type == TType.Double) {
+              Merge_shards_chance = iprot.ReadDouble();
+            } else { 
+              TProtocolUtil.Skip(iprot, field.Type);
+            }
+            break;
+          case 26:
+            if (field.Type == TType.String) {
+              Key_validation_class = iprot.ReadString();
+            } else { 
+              TProtocolUtil.Skip(iprot, field.Type);
+            }
+            break;
+          case 27:
+            if (field.Type == TType.String) {
+              Row_cache_provider = iprot.ReadString();
+            } else { 
+              TProtocolUtil.Skip(iprot, field.Type);
+            }
+            break;
+          case 28:
+            if (field.Type == TType.String) {
+              Key_alias = iprot.ReadBinary();
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
@@ -588,9 +699,9 @@ namespace Apache.Cassandra
         oprot.WriteFieldBegin(field);
         {
           oprot.WriteListBegin(new TList(TType.Struct, Column_metadata.Count));
-          foreach (ColumnDef _iter28 in Column_metadata)
+          foreach (ColumnDef _iter32 in Column_metadata)
           {
-            _iter28.Write(oprot);
+            _iter32.Write(oprot);
             oprot.WriteListEnd();
           }
         }
@@ -676,6 +787,46 @@ namespace Apache.Cassandra
         oprot.WriteDouble(Memtable_operations_in_millions);
         oprot.WriteFieldEnd();
       }
+      if (__isset.replicate_on_write) {
+        field.Name = "replicate_on_write";
+        field.Type = TType.Bool;
+        field.ID = 24;
+        oprot.WriteFieldBegin(field);
+        oprot.WriteBool(Replicate_on_write);
+        oprot.WriteFieldEnd();
+      }
+      if (__isset.merge_shards_chance) {
+        field.Name = "merge_shards_chance";
+        field.Type = TType.Double;
+        field.ID = 25;
+        oprot.WriteFieldBegin(field);
+        oprot.WriteDouble(Merge_shards_chance);
+        oprot.WriteFieldEnd();
+      }
+      if (Key_validation_class != null && __isset.key_validation_class) {
+        field.Name = "key_validation_class";
+        field.Type = TType.String;
+        field.ID = 26;
+        oprot.WriteFieldBegin(field);
+        oprot.WriteString(Key_validation_class);
+        oprot.WriteFieldEnd();
+      }
+      if (Row_cache_provider != null && __isset.row_cache_provider) {
+        field.Name = "row_cache_provider";
+        field.Type = TType.String;
+        field.ID = 27;
+        oprot.WriteFieldBegin(field);
+        oprot.WriteString(Row_cache_provider);
+        oprot.WriteFieldEnd();
+      }
+      if (Key_alias != null && __isset.key_alias) {
+        field.Name = "key_alias";
+        field.Type = TType.String;
+        field.ID = 28;
+        oprot.WriteFieldBegin(field);
+        oprot.WriteBinary(Key_alias);
+        oprot.WriteFieldEnd();
+      }
       oprot.WriteFieldStop();
       oprot.WriteStructEnd();
     }
@@ -722,6 +873,16 @@ namespace Apache.Cassandra
       sb.Append(Memtable_throughput_in_mb);
       sb.Append(",Memtable_operations_in_millions: ");
       sb.Append(Memtable_operations_in_millions);
+      sb.Append(",Replicate_on_write: ");
+      sb.Append(Replicate_on_write);
+      sb.Append(",Merge_shards_chance: ");
+      sb.Append(Merge_shards_chance);
+      sb.Append(",Key_validation_class: ");
+      sb.Append(Key_validation_class);
+      sb.Append(",Row_cache_provider: ");
+      sb.Append(Row_cache_provider);
+      sb.Append(",Key_alias: ");
+      sb.Append(Key_alias);
       sb.Append(")");
       return sb.ToString();
     }

@@ -16,10 +16,10 @@ namespace Apache.Cassandra
 {
 
   [Serializable]
-  public partial class KeySlice : TBase
+  public partial class CqlRow : TBase
   {
     private byte[] _key;
-    private List<ColumnOrSuperColumn> _columns;
+    private List<Column> _columns;
 
     public byte[] Key
     {
@@ -34,7 +34,7 @@ namespace Apache.Cassandra
       }
     }
 
-    public List<ColumnOrSuperColumn> Columns
+    public List<Column> Columns
     {
       get
       {
@@ -55,7 +55,7 @@ namespace Apache.Cassandra
       public bool columns;
     }
 
-    public KeySlice() {
+    public CqlRow() {
     }
 
     public void Read (TProtocol iprot)
@@ -80,14 +80,14 @@ namespace Apache.Cassandra
           case 2:
             if (field.Type == TType.List) {
               {
-                Columns = new List<ColumnOrSuperColumn>();
-                TList _list16 = iprot.ReadListBegin();
-                for( int _i17 = 0; _i17 < _list16.Count; ++_i17)
+                Columns = new List<Column>();
+                TList _list42 = iprot.ReadListBegin();
+                for( int _i43 = 0; _i43 < _list42.Count; ++_i43)
                 {
-                  ColumnOrSuperColumn _elem18 = new ColumnOrSuperColumn();
-                  _elem18 = new ColumnOrSuperColumn();
-                  _elem18.Read(iprot);
-                  Columns.Add(_elem18);
+                  Column _elem44 = new Column();
+                  _elem44 = new Column();
+                  _elem44.Read(iprot);
+                  Columns.Add(_elem44);
                 }
                 iprot.ReadListEnd();
               }
@@ -105,7 +105,7 @@ namespace Apache.Cassandra
     }
 
     public void Write(TProtocol oprot) {
-      TStruct struc = new TStruct("KeySlice");
+      TStruct struc = new TStruct("CqlRow");
       oprot.WriteStructBegin(struc);
       TField field = new TField();
       if (Key != null && __isset.key) {
@@ -123,9 +123,9 @@ namespace Apache.Cassandra
         oprot.WriteFieldBegin(field);
         {
           oprot.WriteListBegin(new TList(TType.Struct, Columns.Count));
-          foreach (ColumnOrSuperColumn _iter19 in Columns)
+          foreach (Column _iter45 in Columns)
           {
-            _iter19.Write(oprot);
+            _iter45.Write(oprot);
             oprot.WriteListEnd();
           }
         }
@@ -136,7 +136,7 @@ namespace Apache.Cassandra
     }
 
     public override string ToString() {
-      StringBuilder sb = new StringBuilder("KeySlice(");
+      StringBuilder sb = new StringBuilder("CqlRow(");
       sb.Append("Key: ");
       sb.Append(Key);
       sb.Append(",Columns: ");
