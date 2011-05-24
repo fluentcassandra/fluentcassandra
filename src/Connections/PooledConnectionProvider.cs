@@ -19,8 +19,9 @@ namespace FluentCassandra.Connections
 		public PooledConnectionProvider(ConnectionBuilder builder)
 			: base(builder)
 		{
-			PoolSize = builder.PoolSize;
-			Lifetime = builder.Lifetime;
+			MinPoolSize = builder.MinPoolSize;
+			MaxPoolSize = builder.MaxPoolSize;
+			ConnectionLifetime = builder.ConnectionLifetime;
 
 			_maintenanceTimer = new Timer(o => Cleanup(), null, 30000L, 30000L);
 		}
@@ -28,12 +29,17 @@ namespace FluentCassandra.Connections
 		/// <summary>
 		/// 
 		/// </summary>
-		public int PoolSize { get; private set; }
+		public int MinPoolSize { get; private set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public int Lifetime { get; private set; }
+		public int MaxPoolSize { get; private set; }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public int ConnectionLifetime { get; private set; }
 
 		/// <summary>
 		/// 
@@ -50,7 +56,7 @@ namespace FluentCassandra.Connections
 					conn = _freeConnections.Dequeue();
 					_usedConnections.Add(conn);
 				}
-				else if (_freeConnections.Count + _usedConnections.Count >= PoolSize)
+				else if (_freeConnections.Count + _usedConnections.Count >= MaxPoolSize)
 				{
 					if (!Monitor.Wait(_lock, TimeSpan.FromSeconds(30)))
 						throw new CassandraException("No connection could be made, timed out trying to aquire a connection from the connection pool.");
@@ -100,7 +106,7 @@ namespace FluentCassandra.Connections
 		/// <returns>True if alive; otherwise false.</returns>
 		private bool IsAlive(IConnection connection)
 		{
-			if (Lifetime > 0 && connection.Created.AddMilliseconds(Lifetime) < DateTime.Now)
+			if (ConnectionLifetime > 0 && connection.Created.AddSeconds(ConnectionLifetime) < DateTime.Now)
 				return false;
 
 			return connection.IsOpen;

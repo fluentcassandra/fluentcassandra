@@ -14,15 +14,15 @@ namespace FluentCassandra.Connections
 		/// <param name="host"></param>
 		/// <param name="port"></param>
 		/// <param name="timeout"></param>
-		/// <param name="provider"></param>
-		public ConnectionBuilder(string keyspace, string host, int port = 9160, int timeout = 0, bool pooled = false, int poolSize = 25, int lifetime = 0, string username = null, string password = null)
+		public ConnectionBuilder(string keyspace, string host, int port = Server.DefaultPort, int connectionTimeout = Server.DefaultTimeout, bool pooling = false, int minPoolSize = 0, int maxPoolSize = 100, int connectionLifetime = 0, string username = null, string password = null)
 		{
 			Keyspace = keyspace;
 			Servers = new List<Server>() { new Server(host, port) };
-			Timeout = timeout;
-			Pooled = pooled;
-			PoolSize = poolSize;
-			Lifetime = lifetime;
+			ConnectionTimeout = connectionTimeout;
+			Pooling = pooling;
+			MinPoolSize = minPoolSize;
+			MaxPoolSize = maxPoolSize;
+			ConnectionLifetime = connectionLifetime;
 			ConnectionString = GetConnectionString();
 			ReadConsistency = ConsistencyLevel.QUORUM;
 			WriteConsistency = ConsistencyLevel.QUORUM;
@@ -68,23 +68,23 @@ namespace FluentCassandra.Connections
 
 			#endregion
 
-			#region Timeout
+			#region ConnectionTimeout
 
-			if (!pairs.ContainsKey("Timeout"))
+			if (!pairs.ContainsKey("Connection Timeout"))
 			{
-				Timeout = 0;
+				ConnectionTimeout = 0;
 			}
 			else
 			{
-				int timeout;
+				int connectionTimeout;
 
-				if (!Int32.TryParse(pairs["Timeout"], out timeout))
-					throw new CassandraException("Timeout is not valid.");
+				if (!Int32.TryParse(pairs["Connection Timeout"], out connectionTimeout))
+					throw new CassandraException("Connection Timeout is not valid.");
 
-				if (timeout < 0)
-					timeout = 0;
+				if (connectionTimeout < 0)
+					connectionTimeout = 0;
 				
-				Timeout = timeout;
+				ConnectionTimeout = connectionTimeout;
 			}
 
 			#endregion
@@ -109,9 +109,9 @@ namespace FluentCassandra.Connections
 					{
 						int port;
 						if (Int32.TryParse(serverParts[1], out port))
-							Servers.Add(new Server(host: host, port: port, timeout: Timeout));
+							Servers.Add(new Server(host: host, port: port, timeout: ConnectionTimeout));
 						else
-							Servers.Add(new Server(host: host, timeout: Timeout));
+							Servers.Add(new Server(host: host, timeout: ConnectionTimeout));
 					}
 					else
 						Servers.Add(new Server(host));
@@ -120,59 +120,80 @@ namespace FluentCassandra.Connections
 
 			#endregion
 
-			#region Pooled
+			#region Pooling
 
-			if (!pairs.ContainsKey("Pooled"))
+			if (!pairs.ContainsKey("Pooling"))
 			{
-				Pooled = false;
+				Pooling = false;
 			}
 			else
 			{
-				bool pooled;
+				bool pooling;
 
-				if (!Boolean.TryParse(pairs["Pooled"], out pooled))
-					pooled = false;
+				if (!Boolean.TryParse(pairs["Pooling"], out pooling))
+					pooling = false;
 
-				Pooled = pooled;
+				Pooling = pooling;
 			}
 
 			#endregion
 
-			#region PoolSize
+			#region MinPoolSize
 
-			if (!pairs.ContainsKey("PoolSize"))
+			if (!pairs.ContainsKey("Min Pool Size"))
 			{
-				PoolSize = 25;
+				MinPoolSize = 0;
 			}
 			else
 			{
-				int poolSize;
+				int minPoolSize;
 
-				if (!Int32.TryParse(pairs["PoolSize"], out poolSize))
-					poolSize = 25;
+				if (!Int32.TryParse(pairs["Min Pool Size"], out minPoolSize))
+					minPoolSize = 0;
 
-				if (poolSize < 0)
-					poolSize = 25;
+				if (minPoolSize < 0)
+					minPoolSize = 0;
 
-				PoolSize = poolSize;
+				MinPoolSize = minPoolSize;
 			}
 
 			#endregion
 
-			#region Lifetime
+			#region MaxPoolSize
 
-			if (!pairs.ContainsKey("Lifetime"))
+			if (!pairs.ContainsKey("Max Pool Size"))
 			{
-				Lifetime = 0;
+				MaxPoolSize = 100;
+			}
+			else
+			{
+				int maxPoolSize;
+
+				if (!Int32.TryParse(pairs["Max Pool Size"], out maxPoolSize))
+					maxPoolSize = 100;
+
+				if (maxPoolSize < 0)
+					maxPoolSize = 100;
+
+				MaxPoolSize = maxPoolSize;
+			}
+
+			#endregion
+
+			#region ConnectionLifetime
+
+			if (!pairs.ContainsKey("Connection Lifetime"))
+			{
+				ConnectionLifetime = 0;
 			}
 			else
 			{
 				int lifetime;
 
-				if (!Int32.TryParse(pairs["Lifetime"], out lifetime))
+				if (!Int32.TryParse(pairs["Connection Lifetime"], out lifetime))
 					lifetime = 0;
 
-				Lifetime = lifetime;
+				ConnectionLifetime = lifetime;
 			}
 
 			#endregion
@@ -239,10 +260,11 @@ namespace FluentCassandra.Connections
 
 			b.AppendFormat(format, "Keyspace", Keyspace);
 			b.AppendFormat(format, "Server", String.Join(",", Servers));
-			b.AppendFormat(format, "Timeout", Timeout);
-			b.AppendFormat(format, "Pooled", Pooled);
-			b.AppendFormat(format, "PoolSize", PoolSize);
-			b.AppendFormat(format, "Lifetime", Lifetime);
+			b.AppendFormat(format, "Connection Timeout", ConnectionTimeout);
+			b.AppendFormat(format, "Pooling", Pooling);
+			b.AppendFormat(format, "Min Pool Size", MinPoolSize);
+			b.AppendFormat(format, "Max Pool Size", MaxPoolSize);
+			b.AppendFormat(format, "Connection Lifetime", ConnectionLifetime);
 			b.AppendFormat(format, "Read", ReadConsistency);
 			b.AppendFormat(format, "Write", WriteConsistency);
 			b.AppendFormat(format, "Username", Username);
@@ -257,24 +279,29 @@ namespace FluentCassandra.Connections
 		public string Keyspace { get; private set; }
 
 		/// <summary>
-		/// 
+		/// The length of time (in seconds) to wait for a connection to the server before terminating the attempt and generating an error.
 		/// </summary>
-		public int Timeout { get; private set; }
+		public int ConnectionTimeout { get; private set; }
 
 		/// <summary>
-		/// 
+		/// When true, the Connection object is drawn from the appropriate pool, or if necessary, is created and added to the appropriate pool. Recognized values are true, false, yes, and no.
 		/// </summary>
-		public int PoolSize { get; private set; }
+		public bool Pooling { get; private set; }
 
 		/// <summary>
-		/// 
+		/// (Not Currently Implimented) The minimum number of connections allowed in the pool.
 		/// </summary>
-		public int Lifetime { get; private set; }
+		public int MinPoolSize { get; private set; }
 
 		/// <summary>
-		/// 
+		/// The maximum number of connections allowed in the pool.
 		/// </summary>
-		public bool Pooled { get; private set; }
+		public int MaxPoolSize { get; private set; }
+
+		/// <summary>
+		/// When a connection is returned to the pool, its creation time is compared with the current time, and the connection is destroyed if that time span (in seconds) exceeds the value specified by Connection Lifetime. This is useful in clustered configurations to force load balancing between a running server and a server just brought online. A value of zero (0) causes pooled connections to have the maximum connection timeout.
+		/// </summary>
+		public int ConnectionLifetime { get; private set; }
 
 		/// <summary>
 		/// 

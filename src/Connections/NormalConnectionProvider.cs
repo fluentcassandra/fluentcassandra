@@ -13,16 +13,16 @@ namespace FluentCassandra.Connections
 		public NormalConnectionProvider(ConnectionBuilder builder)
 			: base(builder)
 		{
-			if (builder.Servers.Count > 1 && builder.Timeout == 0)
+			if (builder.Servers.Count > 1 && builder.ConnectionTimeout == 0)
 				throw new CassandraException("You must specify a timeout when using multiple servers.");
 
-			Timeout = builder.Timeout;
+			ConnectionTimeout = builder.ConnectionTimeout;
 		}
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public int Timeout { get; private set; }
+		public int ConnectionTimeout { get; private set; }
 
 		/// <summary>
 		/// 

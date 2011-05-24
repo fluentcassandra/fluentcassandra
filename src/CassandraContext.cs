@@ -37,7 +37,7 @@ namespace FluentCassandra
 		/// <param name="port"></param>
 		/// <param name="timeout"></param>
 		/// <param name="provider"></param>
-		public CassandraContext(string keyspace, string host, int port = 9160, int timeout = 0, string username = null, string password = null)
+		public CassandraContext(string keyspace, string host, int port = Server.DefaultPort, int timeout = Server.DefaultTimeout, string username = null, string password = null)
 			: this(new ConnectionBuilder(keyspace, host, port, timeout, username: username, password: password)) { }
 
 		/// <summary>
@@ -187,6 +187,7 @@ namespace FluentCassandra
 		public void Dispose()
 		{
 			Dispose(true);
+			GC.SuppressFinalize(this);
 		}
 
 		/// <summary>

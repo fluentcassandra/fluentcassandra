@@ -26,7 +26,7 @@ namespace FluentCassandra.Connections
 
 		private static IConnectionProvider CreateProvider(ConnectionBuilder builder)
 		{
-			if (builder.Pooled)
+			if (builder.Pooling)
 				return new PooledConnectionProvider(builder);
 			else
 				return new NormalConnectionProvider(builder);
