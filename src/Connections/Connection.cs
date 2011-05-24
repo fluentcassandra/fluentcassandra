@@ -27,7 +27,7 @@ namespace FluentCassandra.Connections
 			Created = DateTime.Now;
 			Server = server;
 
-			TTransport socket = new TSocket(server.Host, server.Port, server.Timeout);
+			TTransport socket = new TSocket(server.Host, server.Port, server.Timeout * 1000);
 
 			_transport = new TFramedTransport(socket);
 			_protocol = new TBinaryProtocol(_transport);
@@ -109,6 +109,7 @@ namespace FluentCassandra.Connections
 		public void Dispose()
 		{
 			Dispose(true);
+			GC.SuppressFinalize(this);
 		}
 
 		/// <summary>

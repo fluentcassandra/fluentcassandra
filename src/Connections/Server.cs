@@ -22,7 +22,7 @@ namespace FluentCassandra.Connections
 
 		public override string ToString()
 		{
-			return String.Concat(Host, ":", Port, "-", Timeout);
+			return String.Concat(Host, ":", Port, ",", Timeout, " secs");
 		}
 	}
 }

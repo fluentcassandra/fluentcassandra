@@ -1,14 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Thrift.Transport;
-using Thrift.Protocol;
-
-using FluentCassandra.Configuration;
-using FluentCassandra.Types;
 using System.Threading;
-using Apache.Cassandra;
+using FluentCassandra.Types;
 
 namespace FluentCassandra.Sandbox
 {
