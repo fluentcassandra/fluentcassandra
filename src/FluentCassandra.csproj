@@ -60,8 +60,14 @@
     <Compile Include="Apache\Cassandra\ColumnOrSuperColumn.cs" />
     <Compile Include="Apache\Cassandra\ColumnParent.cs" />
     <Compile Include="Apache\Cassandra\ColumnPath.cs" />
+    <Compile Include="Apache\Cassandra\Compression.cs" />
     <Compile Include="Apache\Cassandra\ConsistencyLevel.cs" />
     <Compile Include="Apache\Cassandra\Constants.cs" />
+    <Compile Include="Apache\Cassandra\CounterColumn.cs" />
+    <Compile Include="Apache\Cassandra\CounterSuperColumn.cs" />
+    <Compile Include="Apache\Cassandra\CqlResult.cs" />
+    <Compile Include="Apache\Cassandra\CqlResultType.cs" />
+    <Compile Include="Apache\Cassandra\CqlRow.cs" />
     <Compile Include="Apache\Cassandra\Deletion.cs" />
     <Compile Include="Apache\Cassandra\IndexClause.cs" />
     <Compile Include="Apache\Cassandra\IndexExpression.cs" />
@@ -74,6 +80,7 @@
     <Compile Include="Apache\Cassandra\KsDef.cs" />
     <Compile Include="Apache\Cassandra\Mutation.cs" />
     <Compile Include="Apache\Cassandra\NotFoundException.cs" />
+    <Compile Include="Apache\Cassandra\SchemaDisagreementException.cs" />
     <Compile Include="Apache\Cassandra\SlicePredicate.cs" />
     <Compile Include="Apache\Cassandra\SliceRange.cs" />
     <Compile Include="Apache\Cassandra\SuperColumn.cs" />
