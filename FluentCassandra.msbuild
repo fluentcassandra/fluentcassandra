@@ -61,7 +61,7 @@
 		<Copy SourceFiles="@(AssembliesToPackage)" DestinationFolder="$(PackageBuildPath)" />
 
 		<Exec Command="$(NuGetExe) update" />
-		<Exec Command="$(NuGetExe) pack src/$(AssemblyName).csproj -o $(PackageBuildPath)" />
+		<Exec Command="$(NuGetExe) pack -sym src/$(AssemblyName).csproj -o $(PackageBuildPath)" />
 	</Target>
 
 	<Target Name="Deploy" DependsOnTargets="Package">
