@@ -3,7 +3,7 @@ using NUnit.Framework;
 using FluentCassandra.Types;
 using System.Threading;
 
-namespace FluentCassandra.Test.TypesToDatabase
+namespace FluentCassandra.Tests.TypesToDatabase
 {
 	[TestFixture]
 	public class TimeUUIDTypeTest

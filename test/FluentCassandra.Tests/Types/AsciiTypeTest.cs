@@ -5,7 +5,7 @@ using System.ComponentModel;
 using System.Text;
 using System.Linq;
 
-namespace FluentCassandra.Test.Types
+namespace FluentCassandra.Tests.Types
 {
 	[TestFixture]
 	public class AsciiTypeTest

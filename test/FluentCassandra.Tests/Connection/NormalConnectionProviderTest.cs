@@ -5,7 +5,7 @@ using System.Linq;
 using NUnit.Framework;
 using FluentCassandra.Connections;
 
-namespace FluentCassandra.Test.Connections
+namespace FluentCassandra.Tests.Connections
 {
 	[TestFixture]
 	public class NormalConnectionProviderTest

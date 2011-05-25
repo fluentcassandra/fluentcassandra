@@ -6,7 +6,7 @@ using NUnit.Framework;
 using FluentCassandra.Types;
 using System.Collections;
 
-namespace FluentCassandra.Test
+namespace FluentCassandra.Tests
 {
 	[TestFixture]
 	public class FluentSuperColumnFamilyTest

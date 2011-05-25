@@ -5,7 +5,7 @@ using System.Text;
 using NUnit.Framework;
 using FluentCassandra.Types;
 
-namespace FluentCassandra.Test.TypesToDatabase
+namespace FluentCassandra.Tests.TypesToDatabase
 {
 	[TestFixture]
 	public class UTF8TypeTest

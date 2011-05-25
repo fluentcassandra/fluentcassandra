@@ -5,7 +5,7 @@ using System.Text;
 using NUnit.Framework;
 using FluentCassandra.Types;
 
-namespace FluentCassandra.Test.Types
+namespace FluentCassandra.Tests.Types
 {
 	[TestFixture]
 	public class LexicalUUIDTypeTest

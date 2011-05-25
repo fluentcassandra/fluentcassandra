@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using NUnit.Framework;
 
-namespace FluentCassandra.Test
+namespace FluentCassandra.Tests
 {
 	[TestFixture]
 	public class GuidGeneratorTest

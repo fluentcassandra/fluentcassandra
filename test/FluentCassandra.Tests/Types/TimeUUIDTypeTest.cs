@@ -5,7 +5,7 @@ using System.Text;
 using NUnit.Framework;
 using FluentCassandra.Types;
 
-namespace FluentCassandra.Test.Types.Types
+namespace FluentCassandra.Tests.Types.Types
 {
 	[TestFixture]
 	public class TimeUUIDTypeTest

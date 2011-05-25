@@ -6,7 +6,7 @@ using FluentCassandra.Types;
 using Apache.Cassandra;
 using FluentCassandra.Connections;
 
-namespace FluentCassandra.Test
+namespace FluentCassandra.Tests
 {
 	internal class _CassandraSetup
 	{

@@ -2,7 +2,7 @@
 using NUnit.Framework;
 using FluentCassandra.Types;
 
-namespace FluentCassandra.Test.Operations
+namespace FluentCassandra.Tests.Operations
 {
 	[TestFixture]
 	public class RemoveColumnTest

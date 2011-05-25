@@ -5,7 +5,7 @@ using System.Text;
 using NUnit.Framework;
 using FluentCassandra.Types;
 
-namespace FluentCassandra.Test
+namespace FluentCassandra.Tests
 {
 	[TestFixture]
 	public class CassandraQueryTest
