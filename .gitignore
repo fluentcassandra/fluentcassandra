@@ -8,4 +8,4 @@
 *.vsmdi
 *.vs*
 *.testsettings
-*.docstates
+*.sln.docstates
