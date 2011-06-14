@@ -30,7 +30,7 @@ namespace FluentCassandra.Tests.Connections
 		{
 			// arrange
 			var expected = typeof(PooledConnectionProvider);
-			var connectionString = "Keyspace=Testing;Pooled=True";
+			var connectionString = "Keyspace=Testing;Pooling=True";
 
 			// act
 			var result = new ConnectionBuilder(connectionString);
