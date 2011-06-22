@@ -64,7 +64,7 @@ namespace FluentCassandra.Connections
 				return null;
 
 			var server = Servers.Next();
-			var conn = new Connection(server);
+			var conn = new Connection(server, Builder);
 
 			return conn;
 		}

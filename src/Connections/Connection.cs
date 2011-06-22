@@ -22,14 +22,28 @@ namespace FluentCassandra.Connections
 		/// 
 		/// </summary>
 		/// <param name="builder"></param>
-		internal Connection(Server server)
+		internal Connection(Server server, ConnectionBuilder builder)
 		{
 			Created = DateTime.Now;
 			Server = server;
 
-			TTransport socket = new TSocket(server.Host, server.Port, server.Timeout * 1000);
+			var socket = new TSocket(server.Host, server.Port, server.Timeout * 1000);
 
-			_transport = new TFramedTransport(socket);
+			switch(builder.ConnectionType)
+			{
+				case ConnectionType.Simple:
+					_transport = socket;
+					break;
+
+				case ConnectionType.Buffered:
+					_transport = new TBufferedTransport(socket, builder.BufferSize);
+					break;
+
+				case ConnectionType.Framed:
+					_transport = new TFramedTransport(socket);
+					break;
+			}
+
 			_protocol = new TBinaryProtocol(_transport);
 			_client = new Cassandra.Client(_protocol);
 		}
