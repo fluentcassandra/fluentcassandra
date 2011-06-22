@@ -27,22 +27,6 @@ namespace FluentCassandra
 		public abstract IList<T> Columns { get; }
 
 		/// <summary>
-		/// Checks to see if a column exists.
-		/// </summary>
-		public virtual bool ColumnExists(string name)
-		{
-			return ColumnExists(name, StringComparison.InvariantCultureIgnoreCase);
-		}
-
-		/// <summary>
-		/// Checks to see if a column exists.
-		/// </summary>
-		public virtual bool ColumnExists(string name, StringComparison comparison)
-		{
-			return Columns.Any(c => String.Equals(c.ColumnName, name, comparison));
-		}
-
-		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
@@ -165,7 +149,7 @@ namespace FluentCassandra
 			var col = Columns.FirstOrDefault(c => c.ColumnName == name);
 
 			if (col != null)
-				OnColumnMutated(MutationType.Removed, col);
+				Columns.Remove(col);
 		}
 
 		protected void ResetMutation()

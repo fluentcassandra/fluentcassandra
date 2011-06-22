@@ -58,34 +58,37 @@ namespace FluentCassandra.Operations
 			return superCol;
 		}
 
-		public static Mutation CreateDeletedColumnMutation(IEnumerable<FluentMutation> mutation)
+		public static IEnumerable<Mutation> CreateDeletedColumnMutation(IEnumerable<FluentMutation> mutation)
 		{
-			var columnNames = mutation.Select(m => m.Column.ColumnName).ToList();
+			foreach (var col in mutation)
+			{
+				var deletion = new Deletion {
+					Timestamp = col.Timestamp.ToTimestamp(),
+					Predicate = CreateSlicePredicate(new[] { col.Column.ColumnName })
+				};
 
-			var deletion = new Deletion {
-				Timestamp = DateTimeOffset.Now.ToTimestamp(),
-				Predicate = CreateSlicePredicate(columnNames)
-			};
-
-			return new Mutation {
-				Deletion = deletion
-			};
+				yield return new Mutation {
+					Deletion = deletion
+				};
+			}
 		}
 
-		public static Mutation CreateDeletedSuperColumnMutation(IEnumerable<FluentMutation> mutation)
+		public static IEnumerable<Mutation> CreateDeletedSuperColumnMutation(IEnumerable<FluentMutation> mutation)
 		{
-			var superColumn = mutation.Select(m => m.Column.GetPath().SuperColumn.ColumnName).FirstOrDefault();
-			var columnNames = mutation.Select(m => m.Column.ColumnName).ToList();
+			foreach (var col in mutation)
+			{
+				var superColumn = col.Column.GetPath().SuperColumn.ColumnName;
 
-			var deletion = new Deletion {
-				Timestamp = DateTimeOffset.Now.ToTimestamp(),
-				Super_column = superColumn,
-				Predicate = CreateSlicePredicate(columnNames)
-			};
+				var deletion = new Deletion {
+					Timestamp = col.Timestamp.ToTimestamp(),
+					Super_column = superColumn,
+					Predicate = CreateSlicePredicate(new[] { col.Column.ColumnName })
+				};
 
-			return new Mutation {
-				Deletion = deletion
-			};
+				yield return new Mutation {
+					Deletion = deletion
+				};
+			}
 		}
 
 		public static Mutation CreateInsertedOrChangedMutation(FluentMutation mutation)
@@ -141,7 +144,7 @@ namespace FluentCassandra.Operations
 			}
 		}
 
-		public static SlicePredicate CreateSlicePredicate(List<CassandraType> columnNames)
+		public static SlicePredicate CreateSlicePredicate(IEnumerable<CassandraType> columnNames)
 		{
 			return new SlicePredicate {
 				Column_names = columnNames.Cast<byte[]>().ToList()

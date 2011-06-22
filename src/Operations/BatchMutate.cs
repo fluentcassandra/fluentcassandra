@@ -32,13 +32,13 @@ namespace FluentCassandra.Operations
 						.Where(m => m.Type == MutationType.Removed && m.Column.GetParent().SuperColumn != null);
 
 					foreach (var superColumn in superColumnsNeedingDeleted.GroupBy(x => x.Column.GetParent().SuperColumn.ColumnName))
-						columnFamilyMutations.Add(Helper.CreateDeletedSuperColumnMutation(superColumn));
+						columnFamilyMutations.AddRange(Helper.CreateDeletedSuperColumnMutation(superColumn));
 
 					var columnsNeedingDeleted = columnFamily
 						.Where(m => m.Type == MutationType.Removed && m.Column.GetParent().SuperColumn == null);
 
 					if (columnsNeedingDeleted.Count() > 0)
-						columnFamilyMutations.Add(Helper.CreateDeletedColumnMutation(columnsNeedingDeleted));
+						columnFamilyMutations.AddRange(Helper.CreateDeletedColumnMutation(columnsNeedingDeleted));
 
 					keyMutations.Add(columnFamily.Key, columnFamilyMutations);
 				}

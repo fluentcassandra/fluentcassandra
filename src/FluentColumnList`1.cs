@@ -85,6 +85,28 @@ namespace FluentCassandra
 			OnColumnMutated(MutationType.Changed, item);
 		}
 
+		public void Set(int index, T item)
+		{
+			if (index >= Columns.Count)
+				throw new ArgumentOutOfRangeException("index");
+
+			var oldItem = Columns[index];
+			var mutationType = MutationType.Added;
+
+			item.SetParent(Parent);
+			Columns[index] = item;
+
+			if (oldItem != null)
+			{
+				if (oldItem.ColumnName == item.ColumnName)
+					mutationType = MutationType.Changed;
+				else
+					OnColumnMutated(MutationType.Removed, oldItem);
+			}
+
+			OnColumnMutated(mutationType, item);
+		}
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -105,7 +127,7 @@ namespace FluentCassandra
 		public T this[int index]
 		{
 			get { return Columns[index]; }
-			set { Columns.Insert(index, value); }
+			set { Set(index, value); }
 		}
 
 		/// <summary>

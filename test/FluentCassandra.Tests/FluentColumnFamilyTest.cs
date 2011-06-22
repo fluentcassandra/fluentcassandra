@@ -148,5 +148,143 @@ namespace FluentCassandra.Tests
 			Assert.AreSame(actual, mut1.Column.GetParent().ColumnFamily);
 			Assert.AreSame(actual, mut2.Column.GetParent().ColumnFamily);
 		}
+
+		[Test]
+		public void Mutation_Added()
+		{
+			// arrange
+			var col1 = new FluentColumn<AsciiType> { ColumnName = "Test1", ColumnValue = 300M };
+			var col2 = new FluentColumn<AsciiType> { ColumnName = "Test2", ColumnValue = "Hello" };
+
+			// act
+			var actual = new FluentColumnFamily<AsciiType>("Keyspace1", "Standard1");
+			actual.Columns.Add(col1);
+			actual.Columns.Add(col2);
+
+			// assert
+			var mutations = actual.MutationTracker.GetMutations();
+
+			Assert.AreEqual(2, mutations.Count());
+			Assert.AreEqual(2, mutations.Count(x => x.Type == MutationType.Added));
+		}
+
+		[Test]
+		public void Mutation_Changed()
+		{
+			// arrange
+			var col1 = new FluentColumn<AsciiType> { ColumnName = "Test1", ColumnValue = 300M };
+			var col2 = new FluentColumn<AsciiType> { ColumnName = "Test1", ColumnValue = "Hello" };
+
+			// act
+			var actual = new FluentColumnFamily<AsciiType>("Keyspace1", "Standard1");
+			actual.Columns.Add(col1);
+			actual.Columns[0] = col2;
+
+			// assert
+			var mutations = actual.MutationTracker.GetMutations().ToList();
+
+			Assert.AreEqual(2, mutations.Count());
+			Assert.AreEqual(MutationType.Added, mutations[0].Type);
+			Assert.AreEqual(MutationType.Changed, mutations[1].Type);
+		}
+
+
+		[Test]
+		public void Mutation_Replaced()
+		{
+			// arrange
+			var col1 = new FluentColumn<AsciiType> { ColumnName = "Test1", ColumnValue = 300M };
+			var col2 = new FluentColumn<AsciiType> { ColumnName = "Test2", ColumnValue = "Hello" };
+
+			// act
+			var actual = new FluentColumnFamily<AsciiType>("Keyspace1", "Standard1");
+			actual.Columns.Add(col1);
+			actual.Columns[0] = col2;
+
+			// assert
+			var mutations = actual.MutationTracker.GetMutations().ToList();
+
+			Assert.AreEqual(3, mutations.Count());
+			Assert.AreEqual(MutationType.Added, mutations[0].Type);
+			Assert.AreEqual(MutationType.Removed, mutations[1].Type);
+			Assert.AreEqual(MutationType.Added, mutations[2].Type);
+		}
+
+		[Test]
+		public void Mutation_Removed()
+		{
+			// arrange
+			var col1 = new FluentColumn<AsciiType> { ColumnName = "Test1", ColumnValue = 300M };
+
+			// act
+			var actual = new FluentColumnFamily<AsciiType>("Keyspace1", "Standard1");
+			actual.Columns.Add(col1);
+			actual.RemoveColumn("Test1");
+
+			// assert
+			var mutations = actual.MutationTracker.GetMutations().ToList();
+
+			Assert.AreEqual(2, mutations.Count());
+			Assert.AreEqual(MutationType.Added, mutations[0].Type);
+			Assert.AreEqual(MutationType.Removed, mutations[1].Type);
+		}
+
+		[Test]
+		public void Dynamic_Mutation_Added()
+		{
+			// arrange
+			var colValue1 = 300M;
+			var colValue2 = "Hello";
+
+			// act
+			dynamic actual = new FluentColumnFamily<AsciiType>("Keyspace1", "Standard1");
+			actual.Test1 = colValue1;
+			actual.Test2 = colValue2;
+
+			// assert
+			var mutations = ((IFluentRecord)actual).MutationTracker.GetMutations();
+
+			Assert.AreEqual(2, mutations.Count());
+			Assert.AreEqual(2, mutations.Count(x => x.Type == MutationType.Added));
+		}
+
+		[Test]
+		public void Dynamic_Mutation_Changed()
+		{
+			// arrange
+			var colValue1 = 300M;
+			var colValue2 = "Hello";
+
+			// act
+			dynamic actual = new FluentColumnFamily<AsciiType>("Keyspace1", "Standard1");
+			actual.Test1 = colValue1;
+			actual.Test1 = colValue2;
+
+			// assert
+			var mutations = ((IFluentRecord)actual).MutationTracker.GetMutations().ToList();
+
+			Assert.AreEqual(2, mutations.Count());
+			Assert.AreEqual(MutationType.Added, mutations[0].Type);
+			Assert.AreEqual(MutationType.Changed, mutations[1].Type);
+		}
+
+		[Test]
+		public void Dynamic_Mutation_Removed()
+		{
+			// arrange
+			var colValue1 = 300M;
+
+			// act
+			dynamic actual = new FluentColumnFamily<AsciiType>("Keyspace1", "Standard1");
+			actual.Test1 = colValue1;
+			actual.RemoveColumn("Test1");
+
+			// assert
+			var mutations = ((IFluentRecord)actual).MutationTracker.GetMutations().ToList();
+
+			Assert.AreEqual(2, mutations.Count());
+			Assert.AreEqual(MutationType.Added, mutations[0].Type);
+			Assert.AreEqual(MutationType.Removed, mutations[1].Type);
+		}
 	}
 }
