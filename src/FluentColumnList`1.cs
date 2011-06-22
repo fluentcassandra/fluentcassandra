@@ -164,7 +164,7 @@ namespace FluentCassandra
 		/// </summary>
 		public bool IsReadOnly
 		{
-			get { return ((IList<T>)Columns).IsReadOnly; }
+			get { return Columns.IsReadOnly; }
 		}
 
 		/// <summary>

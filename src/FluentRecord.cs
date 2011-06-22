@@ -160,6 +160,14 @@ namespace FluentCassandra
 			private set;
 		}
 
+		public void RemoveColumn(object name)
+		{
+			var col = Columns.FirstOrDefault(c => c.ColumnName == name);
+
+			if (col != null)
+				OnColumnMutated(MutationType.Removed, col);
+		}
+
 		protected void ResetMutation()
 		{
 			MutationTracker.Clear();
