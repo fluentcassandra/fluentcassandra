@@ -27,7 +27,7 @@ namespace FluentCassandra.Tests
 
 			if (!CassandraSession.KeyspaceExists(server, keyspaceName))
 				CassandraSession.AddKeyspace(server, new KsDef {
-					Name = "Testing",
+					Name = keyspaceName,
 					Replication_factor = 1,
 					Strategy_class = "org.apache.cassandra.locator.SimpleStrategy",
 					Cf_defs = new List<CfDef>()
