@@ -55,7 +55,7 @@ namespace FluentCassandra.Blog.Models
 
 		public IEnumerable<IFluentColumnFamily<AsciiType>> GetTop(int count)
 		{
-			return _family.Get(null, null, null, null, count);
+			return _family.Get(null, null, null, null, count).ToList();
 		}
 	}
 }
