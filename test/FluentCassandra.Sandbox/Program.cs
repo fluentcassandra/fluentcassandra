@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using FluentCassandra.Types;
+using FluentCassandra.Connections;
+using Apache.Cassandra;
 
 namespace FluentCassandra.Sandbox
 {
@@ -9,7 +12,40 @@ namespace FluentCassandra.Sandbox
 	{
 		private static void Main(string[] args)
 		{
-			using (var db = new CassandraContext(keyspace: "Blog", host: "localhost"))
+			var keyspaceName = "Blog";
+			var server = new Server("localhost");
+
+			if (!CassandraSession.KeyspaceExists(server, keyspaceName))
+				CassandraSession.AddKeyspace(server, new KsDef {
+					Name = keyspaceName,
+					Replication_factor = 1,
+					Strategy_class = "org.apache.cassandra.locator.SimpleStrategy",
+					Cf_defs = new List<CfDef>()
+				});
+
+			var keyspace = new CassandraKeyspace(keyspaceName);
+
+			if (!keyspace.ColumnFamilyExists(server, "Posts"))
+				keyspace.AddColumnFamily(server, new CfDef {
+					Name = "Posts",
+					Keyspace = keyspaceName,
+					Column_type = "Super",
+					Comparator_type = "UTF8Type",
+					Subcomparator_type = "UTF8Type",
+					Comment = "Used for blog posts."
+				});
+
+			if (!keyspace.ColumnFamilyExists(server, "Comments"))
+				keyspace.AddColumnFamily(server, new CfDef {
+					Name = "Comments",
+					Keyspace = keyspaceName,
+					Column_type = "Super",
+					Comparator_type = "TimeUUIDType",
+					Subcomparator_type = "UTF8Type",
+					Comment = "Used for blog post comments."
+				});
+
+			using (var db = new CassandraContext(keyspace: keyspaceName, server: server))
 			{
 				var family = db.GetColumnFamily<UTF8Type, UTF8Type>("Posts");
 
