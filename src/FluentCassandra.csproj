@@ -162,6 +162,10 @@
     <Compile Include="IFluentSuperColumn.cs" />
     <Compile Include="IFluentSuperColumnFamily`1.cs" />
     <Compile Include="CassandraColumnFamilyOperations.cs" />
+    <Compile Include="Linq\CqlMapperQuery.cs" />
+    <Compile Include="Linq\CqlMapperQueryEvaluator.cs" />
+    <Compile Include="Linq\CqlMapperQueryExtensions.cs" />
+    <Compile Include="Linq\CqlMapperQueryProvider.cs" />
     <Compile Include="Operations\BatchMutate.cs" />
     <Compile Include="Operations\CassandraIndexClause.cs" />
     <Compile Include="Operations\CassandraQueryable.cs" />
