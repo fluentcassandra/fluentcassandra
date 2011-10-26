@@ -43,6 +43,7 @@
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Numerics" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -65,6 +66,7 @@
     <Compile Include="Apache\Cassandra\Constants.cs" />
     <Compile Include="Apache\Cassandra\CounterColumn.cs" />
     <Compile Include="Apache\Cassandra\CounterSuperColumn.cs" />
+    <Compile Include="Apache\Cassandra\CqlMetadata.cs" />
     <Compile Include="Apache\Cassandra\CqlResult.cs" />
     <Compile Include="Apache\Cassandra\CqlResultType.cs" />
     <Compile Include="Apache\Cassandra\CqlRow.cs" />
@@ -231,6 +233,7 @@
     <Compile Include="Thrift\Transport\TBufferedTransport.cs" />
     <Compile Include="Thrift\Transport\TFramedTransport.cs" />
     <Compile Include="Thrift\Transport\THttpClient.cs" />
+    <Compile Include="Thrift\Transport\THttpHandler.cs" />
     <Compile Include="Thrift\Transport\TServerSocket.cs" />
     <Compile Include="Thrift\Transport\TServerTransport.cs" />
     <Compile Include="Thrift\Transport\TSocket.cs" />

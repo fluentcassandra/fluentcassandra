@@ -23,6 +23,7 @@ using System.Text;
 using System.Collections.Generic;
 
 using Thrift.Transport;
+using System.Globalization;
 
 namespace Thrift.Protocol
 {
@@ -503,7 +504,7 @@ namespace Thrift.Protocol
 		private void WriteJSONDouble(double num)
 		{
 			context.Write();
-			String str = num.ToString();
+			String str = num.ToString(CultureInfo.InvariantCulture);
 			bool special = false;
 
 			switch (str[0])
@@ -744,7 +745,7 @@ namespace Thrift.Protocol
 					}
 					else
 					{
-						int off = Array.IndexOf(ESCAPE_CHARS, ch);
+						int off = Array.IndexOf(ESCAPE_CHARS, (char)ch);
 						if (off == -1)
 						{
 							throw new TProtocolException(TProtocolException.INVALID_DATA,
@@ -840,7 +841,7 @@ namespace Thrift.Protocol
 			if (reader.Peek() == QUOTE[0])
 			{
 				byte[] arr = ReadJSONString(true);
-				double dub = Double.Parse(utf8Encoding.GetString(arr));
+				double dub = Double.Parse(utf8Encoding.GetString(arr), CultureInfo.InvariantCulture);
 
 				if (!context.EscapeNumbers() && !Double.IsNaN(dub) &&
 					!Double.IsInfinity(dub))
@@ -1058,7 +1059,7 @@ namespace Thrift.Protocol
 
 		public override String ReadString()
 		{
-			return ReadJSONString(false).ToString();
+			return utf8Encoding.GetString(ReadJSONString(false));
 		}
 
 		public override byte[] ReadBinary()
