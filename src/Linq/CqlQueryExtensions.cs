@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace FluentCassandra.Linq
 {
-	public static class CqlMapperQueryExtensions
+	internal static class CqlQueryExtensions
 	{
 		public static Boolean IsAnonymousType(this Type type)
 		{
@@ -19,8 +19,8 @@ namespace FluentCassandra.Linq
 
 		public static IQueryable AsTypelessQuery(this IQueryable queryable)
 		{
-			if (queryable is CqlMapperQuery)
-				return new CqlMapperQuery(queryable.Expression, (CqlMapperQueryProvider)queryable.Provider);
+			if (queryable is CqlQuery)
+				return new CqlQuery(queryable.Expression, (CqlQueryProvider)queryable.Provider);
 
 			return queryable;
 		}

@@ -6,9 +6,8 @@ using System.Linq.Expressions;
 
 namespace FluentCassandra.Linq
 {
-	internal class CqlMapperQueryEvaluator
+	internal class CqlQueryEvaluator
 	{
-		private DynamicParameters _parameters;
 		private int _parameterCount;
 		private IList<string> _fields;
 		private IList<string> _groupBy;
@@ -16,9 +15,8 @@ namespace FluentCassandra.Linq
 
 		private string _table;
 
-		internal CqlMapperQueryEvaluator()
+		internal CqlQueryEvaluator()
 		{
-			_parameters = new DynamicParameters();
 			_parameterCount = 0;
 
 			_fields = new List<string>();
@@ -55,14 +53,6 @@ namespace FluentCassandra.Linq
 					query += " \nORDER BY " + orderBy;
 
 				return query;
-			}
-		}
-
-		public DynamicParameters Parameters
-		{
-			get
-			{
-				return _parameters;
 			}
 		}
 
@@ -105,7 +95,7 @@ namespace FluentCassandra.Linq
 
 		private string HavingCriteria { get; set; }
 
-		private void AddTable(CqlMapperQueryProvider provider)
+		private void AddTable(CqlQueryProvider provider)
 		{
 			_table = provider.Table;
 		}
@@ -205,9 +195,9 @@ namespace FluentCassandra.Linq
 			return eval.Query;
 		}
 
-		public static CqlMapperQueryEvaluator GetEvaluator(Expression expression)
+		public static CqlQueryEvaluator GetEvaluator(Expression expression)
 		{
-			var eval = new CqlMapperQueryEvaluator();
+			var eval = new CqlQueryEvaluator();
 			eval.Evaluate(expression);
 
 			return eval;
@@ -238,7 +228,7 @@ namespace FluentCassandra.Linq
 					break;
 
 				case ExpressionType.Constant:
-					AddTable(((ConstantExpression)exp).Value as CqlMapperQueryProvider);
+					AddTable(((ConstantExpression)exp).Value as CqlQueryProvider);
 					break;
 			}
 		}

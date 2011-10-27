@@ -1,23 +1,22 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
 namespace FluentCassandra.Linq
 {
 	/// <see href="https://github.com/apache/cassandra/blob/trunk/doc/cql/CQL.textile"/>
-	public class CqlMapperQuery : IOrderedQueryable
+	public class CqlQuery : IQueryable
 	{
 		private readonly Expression _expression;
-		private readonly CqlMapperQueryProvider _provider;
+		private readonly CqlQueryProvider _provider;
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="CqlMapperQuery&lt;T&gt;"/> class.
+		/// Initializes a new instance of the <see cref="CqlQuery&lt;T&gt;"/> class.
 		/// </summary>
 		/// <param name="expression">The expression.</param>
 		/// <param name="provider">The provider.</param>
-		public CqlMapperQuery(Expression expression, CqlMapperQueryProvider provider)
+		public CqlQuery(Expression expression, CqlQueryProvider provider)
 		{
 			_expression = expression;
 			_provider = provider;
@@ -72,11 +71,14 @@ namespace FluentCassandra.Linq
 		/// <returns>
 		/// The <see cref="T:System.Linq.IQueryProvider"/> that is associated with this data source.
 		/// </returns>
-		public CqlMapperQueryProvider Provider
+		public CqlQueryProvider Provider
 		{
 			get { return _provider; }
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
 		IQueryProvider IQueryable.Provider
 		{
 			get { return Provider; }
@@ -84,56 +86,13 @@ namespace FluentCassandra.Linq
 
 		#endregion
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
 		public override string ToString()
 		{
-			return CqlMapperQueryEvaluator.GetSql(Expression);
+			return CqlQueryEvaluator.GetSql(Expression);
 		}
-	}
-
-	public class CqlMapperQuery<TQuery> : CqlMapperQuery, IOrderedQueryable<TQuery>
-	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="CqlMapperQuery&lt;T&gt;"/> class.
-		/// </summary>
-		/// <param name="expression">The expression.</param>
-		/// <param name="provider">The provider.</param>
-		public CqlMapperQuery(Expression expression, CqlMapperQueryProvider provider)
-			: base(expression, provider) { }
-
-		#region IEnumerable<TQuery> Members
-
-		/// <summary>
-		/// Returns an enumerator that iterates through the collection.
-		/// </summary>
-		/// <returns>
-		/// A <see cref="T:System.Collections.Generic.IEnumerator`1"/> that can be used to iterate through the collection.
-		/// </returns>
-		public IEnumerator<TQuery> GetEnumerator()
-		{
-			if (ElementType.IsAnonymousType())
-				throw new NotSupportedException("Please call the AsTypelessQuery() on this query, because anonymous types are not supported.");
-
-			return Provider.Get<TQuery>(Expression).GetEnumerator();
-		}
-
-		#endregion
-
-		#region IQueryable Members
-
-		/// <summary>
-		/// Gets the type of the element(s) that are returned when the expression tree associated with this instance of <see cref="T:System.Linq.IQueryable"/> is executed.
-		/// </summary>
-		/// <value></value>
-		/// <returns>
-		/// A <see cref="T:System.Type"/> that represents the type of the element(s) that are returned when the expression tree associated with this object is executed.
-		/// </returns>
-		public override Type ElementType
-		{
-			get
-			{
-				return typeof(TQuery);
-			}
-		}
-		#endregion
 	}
 }

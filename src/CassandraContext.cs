@@ -148,7 +148,7 @@ namespace FluentCassandra
 		/// <param name="action"></param>
 		/// <param name="throwOnError"></param>
 		/// <returns></returns>
-		public TResult ExecuteOperation<TResult>(ContextOperation<TResult> action, bool? throwOnError = null)
+		public TResult ExecuteOperation<TResult>(Operation<TResult> action, bool? throwOnError = null)
 		{
 			if (!throwOnError.HasValue)
 				throwOnError = ThrowErrors;
@@ -162,7 +162,7 @@ namespace FluentCassandra
 				LastError = null;
 	
 				TResult result;
-				bool success = action.TryExecute(this, out result);
+				bool success = action.TryExecute(out result);
 
 				if (!success)
 					LastError = action.Error;
