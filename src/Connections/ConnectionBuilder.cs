@@ -14,7 +14,7 @@ namespace FluentCassandra.Connections
 		/// <param name="host"></param>
 		/// <param name="port"></param>
 		/// <param name="timeout"></param>
-		public ConnectionBuilder(string keyspace, string host, int port = Server.DefaultPort, int connectionTimeout = Server.DefaultTimeout, bool pooling = false, int minPoolSize = 0, int maxPoolSize = 100, int connectionLifetime = 0, ConnectionType connectionType = ConnectionType.Framed, int bufferSize = 1024, ConsistencyLevel read = ConsistencyLevel.QUORUM, ConsistencyLevel write = ConsistencyLevel.QUORUM, string username = null, string password = null)
+		public ConnectionBuilder(string keyspace, string host, int port = Server.DefaultPort, int connectionTimeout = Server.DefaultTimeout, bool pooling = false, int minPoolSize = 0, int maxPoolSize = 100, int connectionLifetime = 0, ConnectionType connectionType = ConnectionType.Framed, int bufferSize = 1024, ConsistencyLevel read = ConsistencyLevel.QUORUM, ConsistencyLevel write = ConsistencyLevel.QUORUM, bool compressCqlQueries = true, string username = null, string password = null)
 		{
 			Keyspace = keyspace;
 			Servers = new List<Server>() { new Server(host, port) };
@@ -27,6 +27,7 @@ namespace FluentCassandra.Connections
 			BufferSize = bufferSize;
 			ReadConsistency = read;
 			WriteConsistency = write;
+			CompressCqlQueries = compressCqlQueries;
 			Username = username;
 			Password = password;
 
@@ -276,6 +277,22 @@ namespace FluentCassandra.Connections
 
 			#endregion
 
+			#region CompressCqlQueries
+
+			if (!pairs.ContainsKey("Compress CQL Queries"))
+			{
+				CompressCqlQueries = true;
+			}
+			else
+			{
+				string compressCqlQueriesValue = pairs["Compress CQL Queries"];
+
+				// YES or TRUE is a positive response everything else is a negative response
+				CompressCqlQueries = String.Equals("yes", compressCqlQueriesValue, StringComparison.OrdinalIgnoreCase) || String.Equals("true", compressCqlQueriesValue, StringComparison.OrdinalIgnoreCase);
+			}
+
+			#endregion
+
 			#region Username
 
 			if (pairs.ContainsKey("Username"))
@@ -371,6 +388,11 @@ namespace FluentCassandra.Connections
 		/// 
 		/// </summary>
 		public IList<Server> Servers { get; private set; }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public bool CompressCqlQueries { get; private set; }
 
 		/// <summary>
 		/// 

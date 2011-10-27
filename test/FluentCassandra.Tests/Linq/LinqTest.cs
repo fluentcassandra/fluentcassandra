@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using Dapper.Contrib.Linq;
 using NUnit.Framework;
 
 namespace FluentCassandra.Tests.Linq

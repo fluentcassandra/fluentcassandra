@@ -5,7 +5,7 @@ using Apache.Cassandra;
 
 namespace FluentCassandra.Operations
 {
-	public class BatchMutate : ContextOperation<Void>
+	public class BatchMutate : Operation<Void>
 	{
 		/*
 		 * batch_mutate(keyspace, mutation_map, consistency_level)
@@ -13,7 +13,7 @@ namespace FluentCassandra.Operations
 
 		public IEnumerable<FluentMutation> Mutations { get; private set; }
 
-		public override Void Execute(CassandraContext context)
+		public override Void Execute()
 		{
 			var mutationMap = new Dictionary<byte[], Dictionary<string, List<Mutation>>>();
 

@@ -3,22 +3,25 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Data;
+using FluentCassandra.Types;
 
 namespace FluentCassandra.Linq
 {
-	public class CqlMapperQueryProvider : IOrderedQueryable, IQueryProvider
+	public class CqlQueryProvider : IQueryable, IQueryProvider
 	{
-		private IDbConnection _conn;
-		private string _table;
+		private CassandraSession _session;
+		private string _family;
 
-		public CqlMapperQueryProvider(IDbConnection conn, string table)
+		public CqlQueryProvider(string family)
+			: this(new CassandraSession(), family) { }
+
+		public CqlQueryProvider(CassandraSession session, string family)
 		{
-			if (conn == null)
-				throw new ArgumentNullException("conn");
+			if (session == null)
+				throw new ArgumentNullException("session");
 
-			_conn = conn;
-			_table = table;
+			_session = session;
+			_family = family;
 		}
 
 		public object Get(Expression expression)
@@ -26,8 +29,10 @@ namespace FluentCassandra.Linq
 			if (expression == null)
 				throw new ArgumentNullException("expression");
 
-			var result = CqlMapperQueryEvaluator.GetEvaluator(expression);
-			var obj = CqlMapper.Query(_conn, result.Query, result.Parameters);
+			var result = CqlQueryEvaluator.GetEvaluator(expression);
+			var query = (UTF8Type)result.Query;
+			var client = _session.GetClient();
+			var obj = client.execute_cql_query(query, Apache.Cassandra.Compression.GZIP);
 
 			return obj;
 		}
@@ -37,7 +42,7 @@ namespace FluentCassandra.Linq
 			if (expression == null)
 				throw new ArgumentNullException("expression");
 
-			var result = CqlMapperQueryEvaluator.GetEvaluator(expression);
+			var result = CqlQueryEvaluator.GetEvaluator(expression);
 			var obj = CqlMapper.Query<TResult>(_conn, result.Query, result.Parameters);
 
 			return obj;
@@ -48,29 +53,26 @@ namespace FluentCassandra.Linq
 			if (expression == null)
 				throw new ArgumentNullException("expression");
 
-			var result = CqlMapperQueryEvaluator.GetEvaluator(expression);
+			var result = CqlQueryEvaluator.GetEvaluator(expression);
 			var obj = CqlMapper.Query<TResult>(_conn, result.Query, result.Parameters).FirstOrDefault();
 
 			return obj;
 		}
 
-		public string Table
+		public string ColumnFamily
 		{
-			get
-			{
-				return _table;
-			}
+			get { return _family; }
 		}
 
-		public CqlMapperQuery ToQuery()
+		public CqlQuery ToQuery()
 		{
 			var queryable = (IQueryable)this;
-			return new CqlMapperQuery(queryable.Expression, this);
+			return new CqlQuery(queryable.Expression, this);
 		}
 
 		public override string ToString()
 		{
-			return _table;
+			return _family;
 		}
 
 		#region IEnumerable Members
@@ -145,7 +147,7 @@ namespace FluentCassandra.Linq
 			if (!typeof(IQueryable<TElement>).IsAssignableFrom(expression.Type))
 				throw new ApplicationException("'expression' is not assignable from this type of repository.");
 
-			return new CqlMapperQuery<TElement>(expression, this);
+			return new CqlQuery<TElement>(expression, this);
 		}
 
 		/// <summary>
@@ -160,7 +162,7 @@ namespace FluentCassandra.Linq
 			if (expression == null)
 				throw new ArgumentNullException("expression");
 
-			return new CqlMapperQuery(expression, this);
+			return new CqlQuery(expression, this);
 		}
 
 		/// <summary>
@@ -184,43 +186,6 @@ namespace FluentCassandra.Linq
 		object IQueryProvider.Execute(Expression expression)
 		{
 			return Get(expression);
-		}
-		#endregion
-	}
-
-	public class CqlMapperQueryProvider<T> : CqlMapperQueryProvider, IOrderedQueryable<T>
-	{
-		public CqlMapperQueryProvider(IDbConnection conn, string table = null)
-			: base(conn, table ?? typeof(T).Name) { }
-
-		#region IEnumerable<T> Members
-
-		/// <summary>
-		/// Returns an enumerator that iterates through the collection.
-		/// </summary>
-		/// <returns>
-		/// A <see cref="T:System.Collections.Generic.IEnumerator`1"/> that can be used to iterate through the collection.
-		/// </returns>
-		public IEnumerator<T> GetEnumerator()
-		{
-			var queryable = (IQueryable)this;
-			return Get<T>(queryable.Expression).GetEnumerator();
-		}
-
-		#endregion
-
-		#region IQueryable Members
-
-		/// <summary>
-		/// Gets the type of the element(s) that are returned when the expression tree associated with this instance of <see cref="T:System.Linq.IQueryable"/> is executed.
-		/// </summary>
-		/// <value></value>
-		/// <returns>
-		/// A <see cref="T:System.Type"/> that represents the type of the element(s) that are returned when the expression tree associated with this object is executed.
-		/// </returns>
-		public override Type ElementType
-		{
-			get { return typeof(T); }
 		}
 
 		#endregion

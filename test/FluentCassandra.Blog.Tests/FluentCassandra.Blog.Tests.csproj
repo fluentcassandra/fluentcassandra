@@ -64,12 +64,6 @@
     <Content Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FluentCassandra.Blog\FluentCassandra.Blog.csproj">
-      <Project>{BC6FFA50-8828-4C68-8895-6A684FAD2F99}</Project>
-      <Name>FluentCassandra.Blog</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
