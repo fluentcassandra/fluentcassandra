@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using FluentCassandra.Types;
+using FluentCassandra.Operations;
 
 namespace FluentCassandra.Linq
 {
@@ -24,39 +25,52 @@ namespace FluentCassandra.Linq
 			_family = family;
 		}
 
-		public object Get(Expression expression)
+		/// <summary>
+		/// The last error that occured during the execution of an operation.
+		/// </summary>
+		public CassandraException LastError { get; private set; }
+
+		/// <summary>
+		/// Indicates if errors should be thrown when occuring on opperation.
+		/// </summary>
+		public bool ThrowErrors { get; set; }
+
+		/// <summary>
+		/// Execute the column family operation against the connection to the server.
+		/// </summary>
+		/// <typeparam name="TResult"></typeparam>
+		/// <param name="action"></param>
+		/// <param name="throwOnError"></param>
+		/// <returns></returns>
+		public TResult ExecuteOperation<TResult>(Operation<TResult> action, bool? throwOnError = null)
 		{
-			if (expression == null)
-				throw new ArgumentNullException("expression");
+			if (!throwOnError.HasValue)
+				throwOnError = ThrowErrors;
 
-			var result = CqlQueryEvaluator.GetEvaluator(expression);
-			var query = (UTF8Type)result.Query;
-			var client = _session.GetClient();
-			var obj = client.execute_cql_query(query, Apache.Cassandra.Compression.GZIP);
+			CassandraSession _localSession = null;
+			if (CassandraSession.Current == null)
+				_localSession = new CassandraSession();
 
-			return obj;
-		}
+			try
+			{
+				LastError = null;
 
-		public IEnumerable<TResult> Get<TResult>(Expression expression)
-		{
-			if (expression == null)
-				throw new ArgumentNullException("expression");
+				TResult result;
+				bool success = action.TryExecute(out result);
 
-			var result = CqlQueryEvaluator.GetEvaluator(expression);
-			var obj = CqlMapper.Query<TResult>(_conn, result.Query, result.Parameters);
+				if (!success)
+					LastError = action.Error;
 
-			return obj;
-		}
+				if (!success && (throwOnError ?? ThrowErrors))
+					throw action.Error;
 
-		public TResult GetFirst<TResult>(Expression expression)
-		{
-			if (expression == null)
-				throw new ArgumentNullException("expression");
-
-			var result = CqlQueryEvaluator.GetEvaluator(expression);
-			var obj = CqlMapper.Query<TResult>(_conn, result.Query, result.Parameters).FirstOrDefault();
-
-			return obj;
+				return result;
+			}
+			finally
+			{
+				if (_localSession != null)
+					_localSession.Dispose();
+			}
 		}
 
 		public string ColumnFamily
@@ -144,10 +158,13 @@ namespace FluentCassandra.Linq
 			if (expression == null)
 				throw new ArgumentNullException("expression");
 
+			if (!typeof(TElement).IsAssignableFrom(typeof(IFluentBaseColumnFamily)))
+				throw new CassandraException("'TElement' must inherit from IFluentBaseColumnFamily");
+
 			if (!typeof(IQueryable<TElement>).IsAssignableFrom(expression.Type))
 				throw new ApplicationException("'expression' is not assignable from this type of repository.");
 
-			return new CqlQuery<TElement>(expression, this);
+			return (IQueryable<TElement>)new CqlQuery(expression, this);
 		}
 
 		/// <summary>
@@ -173,7 +190,10 @@ namespace FluentCassandra.Linq
 		/// <returns></returns>
 		TResult IQueryProvider.Execute<TResult>(Expression expression)
 		{
-			return GetFirst<TResult>(expression);
+			if (!typeof(TResult).IsAssignableFrom(typeof(IFluentBaseColumnFamily)))
+				throw new CassandraException("'TElement' must inherit from IFluentBaseColumnFamily");
+
+			return (TResult)Execute(expression).FirstOrDefault();
 		}
 
 		/// <summary>
@@ -185,9 +205,19 @@ namespace FluentCassandra.Linq
 		/// </returns>
 		object IQueryProvider.Execute(Expression expression)
 		{
-			return Get(expression);
+			return Execute(expression);
 		}
 
 		#endregion
+
+		public IEnumerable<IFluentBaseColumnFamily> Execute(Expression expression)
+		{
+			if (expression == null)
+				throw new ArgumentNullException("expression");
+
+			var result = CqlQueryEvaluator.GetEvaluator(expression);
+			var op = new ExecuteCqlQuery(result.Query);
+			return ExecuteOperation(op);
+		}
 	}
 }

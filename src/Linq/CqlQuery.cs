@@ -1,12 +1,12 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
 namespace FluentCassandra.Linq
 {
-	/// <see href="https://github.com/apache/cassandra/blob/trunk/doc/cql/CQL.textile"/>
-	public class CqlQuery : IQueryable
+	public class CqlQuery : IQueryable, IQueryable<IFluentBaseColumnFamily>
 	{
 		private readonly Expression _expression;
 		private readonly CqlQueryProvider _provider;
@@ -32,8 +32,20 @@ namespace FluentCassandra.Linq
 		/// </returns>
 		IEnumerator IEnumerable.GetEnumerator()
 		{
-			var queryable = (IQueryable)this;
-			return ((IEnumerable)queryable.Provider.Execute(queryable.Expression)).GetEnumerator();
+			return GetEnumerator();
+		}
+
+		#endregion
+
+		#region IEnumerable<IFluentBaseColumnFamily> Members
+
+		public IEnumerator<IFluentBaseColumnFamily> GetEnumerator()
+		{
+			if (ElementType.IsAnonymousType())
+				throw new NotSupportedException(
+					"Please call the AsTypelessQuery() on this query, because anonymous types are not supported.");
+
+			return Provider.Execute(Expression).GetEnumerator();
 		}
 
 		#endregion
@@ -92,7 +104,7 @@ namespace FluentCassandra.Linq
 		/// <returns></returns>
 		public override string ToString()
 		{
-			return CqlQueryEvaluator.GetSql(Expression);
+			return CqlQueryEvaluator.GetCql(Expression);
 		}
 	}
 }
