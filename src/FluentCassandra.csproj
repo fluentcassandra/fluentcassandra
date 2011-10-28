@@ -166,6 +166,7 @@
     <Compile Include="Linq\CqlQueryEvaluator.cs" />
     <Compile Include="Linq\CqlQueryExtensions.cs" />
     <Compile Include="Linq\CqlQueryProvider.cs" />
+    <Compile Include="Linq\List.cs" />
     <Compile Include="Operations\BatchMutate.cs" />
     <Compile Include="Operations\CassandraIndexClause.cs" />
     <Compile Include="Operations\CassandraQueryable.cs" />

@@ -8,7 +8,7 @@ using System.IO.Compression;
 
 namespace FluentCassandra.Operations
 {
-	public class ExecuteCqlQuery<T> : Operation<IEnumerable<IFluentBaseColumnFamily>>
+	public class ExecuteCqlQuery : Operation<IEnumerable<IFluentBaseColumnFamily>>
 	{
 		public UTF8Type CqlQuery { get; private set; }
 
