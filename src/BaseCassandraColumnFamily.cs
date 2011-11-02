@@ -79,7 +79,8 @@ namespace FluentCassandra
 				LastError = null;
 
 				TResult result;
-				bool success = action.TryExecute(this, out result);
+				action.ColumnFamily = this;
+				bool success = action.TryExecute(out result);
 
 				if (!success)
 					LastError = action.Error;
@@ -116,5 +117,10 @@ namespace FluentCassandra
 		}
 
 		#endregion
+
+		public override string ToString()
+		{
+			return FamilyName;
+		}
 	}
 }

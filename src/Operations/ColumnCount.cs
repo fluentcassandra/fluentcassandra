@@ -18,10 +18,10 @@ namespace FluentCassandra.Operations
 
 		#region ICassandraAction<int> Members
 
-		public override int Execute(BaseCassandraColumnFamily columnFamily)
+		public override int Execute()
 		{
 			var parent = new ColumnParent {
-				Column_family = columnFamily.FamilyName
+				Column_family = ColumnFamily.FamilyName
 			};
 
 			if (SuperColumnName != null)

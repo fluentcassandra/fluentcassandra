@@ -18,7 +18,7 @@ namespace FluentCassandra.Operations
 
 		public CassandraType SuperColumnName { get; private set; }
 
-		public override IEnumerable<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>> Execute(BaseCassandraColumnFamily columnFamily)
+		public override IEnumerable<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>> Execute()
 		{
 			CassandraSession _localSession = null;
 			if (CassandraSession.Current == null)
@@ -27,7 +27,7 @@ namespace FluentCassandra.Operations
 			try
 			{
 				var parent = new ColumnParent {
-					Column_family = columnFamily.FamilyName
+					Column_family = ColumnFamily.FamilyName
 				};
 
 				if (SuperColumnName != null)
@@ -45,7 +45,7 @@ namespace FluentCassandra.Operations
 					var r = new FluentSuperColumn<CompareWith, CompareSubcolumnWith>(result.Value.Select(col => {
 						return Helper.ConvertColumnToFluentColumn<CompareSubcolumnWith>(col.Column);
 					}));
-					columnFamily.Context.Attach(r);
+					ColumnFamily.Context.Attach(r);
 					r.MutationTracker.Clear();
 
 					yield return r;

@@ -3,11 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using FluentCassandra.Types;
 
 namespace FluentCassandra.Linq
 {
 	/// <see href="https://github.com/apache/cassandra/blob/trunk/doc/cql/CQL.textile"/>
-	internal class CqlQueryEvaluator
+	internal class CqlQueryEvaluator<CompareWith>
+		where CompareWith : CassandraType
 	{
 		private string _columnFamily;
 
@@ -48,9 +50,10 @@ namespace FluentCassandra.Linq
 
 		private string WhereCriteria { get; set; }
 
-		private void AddTable(CqlQueryProvider provider)
+		private void AddTable<CompareWith>(CassandraColumnFamily<CompareWith> provider)
+			where CompareWith : CassandraType
 		{
-			_columnFamily = provider.ColumnFamily;
+			_columnFamily = provider.FamilyName;
 		}
 
 		private void AddField(Expression exp)
@@ -105,15 +108,17 @@ namespace FluentCassandra.Linq
 
 		#region Expression Parsing
 
-		public static string GetCql(Expression expression)
+		public static string GetCql<CompareWith>(Expression expression)
+			where CompareWith : CassandraType
 		{
-			var eval = GetEvaluator(expression);
+			var eval = GetEvaluator<CompareWith>(expression);
 			return eval.Query;
 		}
 
-		public static CqlQueryEvaluator GetEvaluator(Expression expression)
+		public static CqlQueryEvaluator<CompareWith> GetEvaluator<CompareWith>(Expression expression)
+			where CompareWith : CassandraType
 		{
-			var eval = new CqlQueryEvaluator();
+			var eval = new CqlQueryEvaluator<CompareWith>();
 			eval.Evaluate(expression);
 
 			return eval;
@@ -144,7 +149,7 @@ namespace FluentCassandra.Linq
 					break;
 
 				case ExpressionType.Constant:
-					AddTable(((ConstantExpression)exp).Value as CqlQueryProvider);
+					AddTable(((ConstantExpression)exp).Value as CassandraColumnFamily<CompareWith>);
 					break;
 			}
 		}

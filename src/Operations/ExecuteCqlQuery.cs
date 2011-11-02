@@ -1,20 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using FluentCassandra.Types;
 using System.IO;
 using System.IO.Compression;
+using FluentCassandra.Linq;
 
 namespace FluentCassandra.Operations
 {
-	public class ExecuteCqlQuery : Operation<IEnumerable<IFluentBaseColumnFamily>>
+	public class ExecuteCqlQuery<CompareWith> : ColumnFamilyOperation<IEnumerable<ICqlRow<CompareWith>>>
+		where CompareWith : CassandraType
 	{
 		public UTF8Type CqlQuery { get; private set; }
 
 		public bool CompressCqlQuery { get; private set; }
 
-		public override IEnumerable<IFluentBaseColumnFamily> Execute()
+		public override IEnumerable<ICqlRow<CompareWith>> Execute()
 		{
 			byte[] query = CqlQuery;
 

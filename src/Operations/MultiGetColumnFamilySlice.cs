@@ -15,7 +15,7 @@ namespace FluentCassandra.Operations
 
 		public List<BytesType> Keys { get; private set; }
 
-		public override IEnumerable<IFluentColumnFamily<CompareWith>> Execute(BaseCassandraColumnFamily columnFamily)
+		public override IEnumerable<IFluentColumnFamily<CompareWith>> Execute()
 		{
 			CassandraSession _localSession = null;
 			if (CassandraSession.Current == null)
@@ -24,7 +24,7 @@ namespace FluentCassandra.Operations
 			try
 			{
 				var parent = new ColumnParent {
-					Column_family = columnFamily.FamilyName
+					Column_family = ColumnFamily.FamilyName
 				};
 
 				var output = CassandraSession.Current.GetClient().multiget_slice(
@@ -36,10 +36,10 @@ namespace FluentCassandra.Operations
 
 				foreach (var result in output)
 				{
-					var r = new FluentColumnFamily<CompareWith>(result.Key, columnFamily.FamilyName, result.Value.Select(col => {
+					var r = new FluentColumnFamily<CompareWith>(result.Key, ColumnFamily.FamilyName, result.Value.Select(col => {
 						return Helper.ConvertColumnToFluentColumn<CompareWith>(col.Column);
 					}));
-					columnFamily.Context.Attach(r);
+					ColumnFamily.Context.Attach(r);
 					r.MutationTracker.Clear();
 
 					yield return r;

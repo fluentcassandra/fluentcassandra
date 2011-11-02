@@ -19,10 +19,10 @@ namespace FluentCassandra.Operations
 
 		public CassandraSlicePredicate SlicePredicate { get; private set; }
 
-		public override FluentSuperColumn<CompareWith, CompareSubcolumnWith> Execute(BaseCassandraColumnFamily columnFamily)
+		public override FluentSuperColumn<CompareWith, CompareSubcolumnWith> Execute()
 		{
-			var result = new FluentSuperColumn<CompareWith, CompareSubcolumnWith>(GetColumns(columnFamily));
-			columnFamily.Context.Attach(result);
+			var result = new FluentSuperColumn<CompareWith, CompareSubcolumnWith>(GetColumns(ColumnFamily));
+			ColumnFamily.Context.Attach(result);
 			result.MutationTracker.Clear();
 
 			return result;
