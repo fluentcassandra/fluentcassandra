@@ -99,9 +99,6 @@ namespace FluentCassandra
 			if (expression == null)
 				throw new ArgumentNullException("expression");
 
-			if (!typeof(TElement).IsAssignableFrom(typeof(IFluentBaseColumnFamily)))
-				throw new CassandraException("'TElement' must inherit from IFluentBaseColumnFamily");
-
 			if (!typeof(IQueryable<TElement>).IsAssignableFrom(expression.Type))
 				throw new ApplicationException("'expression' is not assignable from this type of repository.");
 
