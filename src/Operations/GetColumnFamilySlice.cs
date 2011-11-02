@@ -16,10 +16,10 @@ namespace FluentCassandra.Operations
 
 		public CassandraSlicePredicate SlicePredicate { get; private set; }
 
-		public override IFluentColumnFamily<CompareWith> Execute(BaseCassandraColumnFamily columnFamily)
+		public override IFluentColumnFamily<CompareWith> Execute()
 		{
-			var result = new FluentColumnFamily<CompareWith>(Key, columnFamily.FamilyName, GetColumns(columnFamily));
-			columnFamily.Context.Attach(result);
+			var result = new FluentColumnFamily<CompareWith>(Key, ColumnFamily.FamilyName, GetColumns(ColumnFamily));
+			ColumnFamily.Context.Attach(result);
 			result.MutationTracker.Clear();
 
 			return result;

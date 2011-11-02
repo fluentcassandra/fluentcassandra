@@ -3,90 +3,19 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using FluentCassandra.Types;
 using FluentCassandra.Operations;
+using FluentCassandra.Types;
+using FluentCassandra.Linq;
 
-namespace FluentCassandra.Linq
+namespace FluentCassandra
 {
-	public class CqlQueryProvider : IQueryable, IQueryProvider
+	public partial class CassandraColumnFamily<CompareWith> : IQueryable, IQueryable<ICqlRow<CompareWith>>, IQueryProvider
+		where CompareWith : CassandraType
 	{
-		private CassandraSession _session;
-		private string _family;
-
-		public CqlQueryProvider(string family)
-			: this(new CassandraSession(), family) { }
-
-		public CqlQueryProvider(CassandraSession session, string family)
-		{
-			if (session == null)
-				throw new ArgumentNullException("session");
-
-			_session = session;
-			_family = family;
-		}
-
-		/// <summary>
-		/// The last error that occured during the execution of an operation.
-		/// </summary>
-		public CassandraException LastError { get; private set; }
-
-		/// <summary>
-		/// Indicates if errors should be thrown when occuring on opperation.
-		/// </summary>
-		public bool ThrowErrors { get; set; }
-
-		/// <summary>
-		/// Execute the column family operation against the connection to the server.
-		/// </summary>
-		/// <typeparam name="TResult"></typeparam>
-		/// <param name="action"></param>
-		/// <param name="throwOnError"></param>
-		/// <returns></returns>
-		public TResult ExecuteOperation<TResult>(Operation<TResult> action, bool? throwOnError = null)
-		{
-			if (!throwOnError.HasValue)
-				throwOnError = ThrowErrors;
-
-			CassandraSession _localSession = null;
-			if (CassandraSession.Current == null)
-				_localSession = new CassandraSession();
-
-			try
-			{
-				LastError = null;
-
-				TResult result;
-				bool success = action.TryExecute(out result);
-
-				if (!success)
-					LastError = action.Error;
-
-				if (!success && (throwOnError ?? ThrowErrors))
-					throw action.Error;
-
-				return result;
-			}
-			finally
-			{
-				if (_localSession != null)
-					_localSession.Dispose();
-			}
-		}
-
-		public string ColumnFamily
-		{
-			get { return _family; }
-		}
-
-		public CqlQuery ToQuery()
+		public CqlQuery<CompareWith> ToQuery()
 		{
 			var queryable = (IQueryable)this;
-			return new CqlQuery(queryable.Expression, this);
-		}
-
-		public override string ToString()
-		{
-			return _family;
+			return new CqlQuery<CompareWith>(queryable.Expression, this);
 		}
 
 		#region IEnumerable Members
@@ -99,8 +28,20 @@ namespace FluentCassandra.Linq
 		/// </returns>
 		IEnumerator IEnumerable.GetEnumerator()
 		{
-			var queryable = (IQueryable)this;
-			return ((IEnumerable)queryable.Provider.Execute(queryable.Expression)).GetEnumerator();
+			return ((IEnumerable<IFluentBaseColumnFamily>)this).GetEnumerator();
+		}
+
+		#endregion
+
+		#region IEnumerable<IFluentBaseColumnFamily> Members
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		IEnumerator<ICqlRow<CompareWith>> IEnumerable<ICqlRow<CompareWith>>.GetEnumerator()
+		{
+			return ToQuery().GetEnumerator();
 		}
 
 		#endregion
@@ -116,7 +57,7 @@ namespace FluentCassandra.Linq
 		/// </returns>
 		public virtual Type ElementType
 		{
-			get { return typeof(object); }
+			get { return typeof(IFluentBaseColumnFamily); }
 		}
 
 		/// <summary>
@@ -164,7 +105,7 @@ namespace FluentCassandra.Linq
 			if (!typeof(IQueryable<TElement>).IsAssignableFrom(expression.Type))
 				throw new ApplicationException("'expression' is not assignable from this type of repository.");
 
-			return (IQueryable<TElement>)new CqlQuery(expression, this);
+			return (IQueryable<TElement>)new CqlQuery<CompareWith>(expression, this);
 		}
 
 		/// <summary>
@@ -179,7 +120,7 @@ namespace FluentCassandra.Linq
 			if (expression == null)
 				throw new ArgumentNullException("expression");
 
-			return new CqlQuery(expression, this);
+			return new CqlQuery<CompareWith>(expression, this);
 		}
 
 		/// <summary>
@@ -193,7 +134,7 @@ namespace FluentCassandra.Linq
 			if (!typeof(TResult).IsAssignableFrom(typeof(IFluentBaseColumnFamily)))
 				throw new CassandraException("'TElement' must inherit from IFluentBaseColumnFamily");
 
-			return (TResult)Execute(expression).FirstOrDefault();
+			return (TResult)new CqlQuery<CompareWith>(expression, this).FirstOrDefault();
 		}
 
 		/// <summary>
@@ -205,19 +146,9 @@ namespace FluentCassandra.Linq
 		/// </returns>
 		object IQueryProvider.Execute(Expression expression)
 		{
-			return Execute(expression);
+			return new CqlQuery<CompareWith>(expression, this).GetEnumerator();
 		}
 
 		#endregion
-
-		public IEnumerable<IFluentBaseColumnFamily> Execute(Expression expression)
-		{
-			if (expression == null)
-				throw new ArgumentNullException("expression");
-
-			var result = CqlQueryEvaluator.GetEvaluator(expression);
-			var op = new ExecuteCqlQuery(result.Query);
-			return ExecuteOperation(op);
-		}
 	}
 }

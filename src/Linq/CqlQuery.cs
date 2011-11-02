@@ -3,20 +3,23 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using FluentCassandra.Types;
+using FluentCassandra.Operations;
 
 namespace FluentCassandra.Linq
 {
-	public class CqlQuery : IQueryable, IQueryable<IFluentBaseColumnFamily>
+	public class CqlQuery<CompareWith> : IQueryable, IQueryable<ICqlRow<CompareWith>>
+		where CompareWith : CassandraType
 	{
 		private readonly Expression _expression;
-		private readonly CqlQueryProvider _provider;
+		private readonly CassandraColumnFamily<CompareWith> _provider;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="CqlQuery&lt;T&gt;"/> class.
 		/// </summary>
 		/// <param name="expression">The expression.</param>
 		/// <param name="provider">The provider.</param>
-		public CqlQuery(Expression expression, CqlQueryProvider provider)
+		public CqlQuery(Expression expression, CassandraColumnFamily<CompareWith> provider)
 		{
 			_expression = expression;
 			_provider = provider;
@@ -37,15 +40,17 @@ namespace FluentCassandra.Linq
 
 		#endregion
 
-		#region IEnumerable<IFluentBaseColumnFamily> Members
+		#region IEnumerable<ICqlRow<CompareWith>> Members
 
-		public IEnumerator<IFluentBaseColumnFamily> GetEnumerator()
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		public IEnumerator<ICqlRow<CompareWith>> GetEnumerator()
 		{
-			if (ElementType.IsAnonymousType())
-				throw new NotSupportedException(
-					"Please call the AsTypelessQuery() on this query, because anonymous types are not supported.");
-
-			return Provider.Execute(Expression).GetEnumerator();
+			var result = CqlQueryEvaluator<CompareWith>.GetEvaluator<CompareWith>(Expression);
+			var op = new ExecuteCqlQuery<CompareWith>(result.Query);
+			return Provider.ExecuteOperation(op).GetEnumerator();
 		}
 
 		#endregion
@@ -61,7 +66,7 @@ namespace FluentCassandra.Linq
 		/// </returns>
 		public virtual Type ElementType
 		{
-			get { return typeof(object); }
+			get { return typeof(IFluentBaseColumnFamily); }
 		}
 
 		/// <summary>
@@ -83,7 +88,7 @@ namespace FluentCassandra.Linq
 		/// <returns>
 		/// The <see cref="T:System.Linq.IQueryProvider"/> that is associated with this data source.
 		/// </returns>
-		public CqlQueryProvider Provider
+		public CassandraColumnFamily<CompareWith> Provider
 		{
 			get { return _provider; }
 		}
@@ -104,7 +109,7 @@ namespace FluentCassandra.Linq
 		/// <returns></returns>
 		public override string ToString()
 		{
-			return CqlQueryEvaluator.GetCql(Expression);
+			return CqlQueryEvaluator<CompareWith>.GetCql<CompareWith>(Expression);
 		}
 	}
 }

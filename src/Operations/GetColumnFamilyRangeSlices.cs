@@ -15,9 +15,9 @@ namespace FluentCassandra.Operations
 
 		public CassandraKeyRange KeyRange { get; private set; }
 
-		public override IEnumerable<IFluentColumnFamily<CompareWith>> Execute(BaseCassandraColumnFamily columnFamily)
+		public override IEnumerable<IFluentColumnFamily<CompareWith>> Execute()
 		{
-			return GetFamilies(columnFamily);
+			return GetFamilies(ColumnFamily);
 		}
 
 		private IEnumerable<IFluentColumnFamily<CompareWith>> GetFamilies(BaseCassandraColumnFamily columnFamily)

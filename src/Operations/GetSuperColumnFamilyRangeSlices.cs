@@ -16,7 +16,7 @@ namespace FluentCassandra.Operations
 
 		public CassandraKeyRange KeyRange { get; private set; }
 
-		public override IEnumerable<IFluentSuperColumnFamily<CompareWith, CompareSubcolumnWith>> Execute(BaseCassandraColumnFamily columnFamily)
+		public override IEnumerable<IFluentSuperColumnFamily<CompareWith, CompareSubcolumnWith>> Execute()
 		{
 			CassandraSession _localSession = null;
 			if (CassandraSession.Current == null)
@@ -25,7 +25,7 @@ namespace FluentCassandra.Operations
 			try
 			{
 				var parent = new ColumnParent {
-					Column_family = columnFamily.FamilyName
+					Column_family = ColumnFamily.FamilyName
 				};
 
 				var output = CassandraSession.Current.GetClient().get_range_slices(
@@ -37,14 +37,14 @@ namespace FluentCassandra.Operations
 
 				foreach (var result in output)
 				{
-					var r = new FluentSuperColumnFamily<CompareWith, CompareSubcolumnWith>(result.Key, columnFamily.FamilyName, result.Columns.Select(col => {
+					var r = new FluentSuperColumnFamily<CompareWith, CompareSubcolumnWith>(result.Key, ColumnFamily.FamilyName, result.Columns.Select(col => {
 						var superCol = Helper.ConvertSuperColumnToFluentSuperColumn<CompareWith, CompareSubcolumnWith>(col.Super_column);
-						columnFamily.Context.Attach(superCol);
+						ColumnFamily.Context.Attach(superCol);
 						superCol.MutationTracker.Clear();
 
 						return superCol;
 					}));
-					columnFamily.Context.Attach(r);
+					ColumnFamily.Context.Attach(r);
 					r.MutationTracker.Clear();
 
 					yield return r;

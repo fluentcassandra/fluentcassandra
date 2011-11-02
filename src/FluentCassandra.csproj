@@ -164,9 +164,8 @@
     <Compile Include="CassandraColumnFamilyOperations.cs" />
     <Compile Include="Linq\CqlQuery.cs" />
     <Compile Include="Linq\CqlQueryEvaluator.cs" />
-    <Compile Include="Linq\CqlQueryExtensions.cs" />
-    <Compile Include="Linq\CqlQueryProvider.cs" />
-    <Compile Include="Linq\List.cs" />
+    <Compile Include="Linq\CassandraColumnFamily`1+QueryProvider.cs" />
+    <Compile Include="Linq\ICqlRow.cs" />
     <Compile Include="Operations\BatchMutate.cs" />
     <Compile Include="Operations\CassandraIndexClause.cs" />
     <Compile Include="Operations\CassandraQueryable.cs" />

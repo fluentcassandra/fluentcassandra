@@ -17,10 +17,10 @@ namespace FluentCassandra.Operations
 
 		public CassandraType ColumnName { get; private set; }
 
-		public override IFluentColumn<CompareWith> Execute(BaseCassandraColumnFamily columnFamily)
+		public override IFluentColumn<CompareWith> Execute()
 		{
 			var path = new ColumnPath {
-				Column_family = columnFamily.FamilyName
+				Column_family = ColumnFamily.FamilyName
 			};
 
 			if (SuperColumnName != null)

@@ -4,9 +4,9 @@ namespace FluentCassandra.Operations
 {
 	public class Truncate : ColumnFamilyOperation<Void>
 	{
-		public override Void Execute(BaseCassandraColumnFamily columnFamily)
+		public override Void Execute()
 		{
-			CassandraSession.Current.GetClient().truncate(columnFamily.FamilyName);
+			CassandraSession.Current.GetClient().truncate(ColumnFamily.FamilyName);
 
 			return new Void();
 		}

@@ -3,7 +3,7 @@ using FluentCassandra.Types;
 
 namespace FluentCassandra
 {
-	public class CassandraColumnFamily<CompareWith> : BaseCassandraColumnFamily
+	public partial class CassandraColumnFamily<CompareWith> : BaseCassandraColumnFamily
 		where CompareWith : CassandraType
 	{
 		public CassandraColumnFamily(CassandraContext context, string columnFamily)

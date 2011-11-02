@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using FluentCassandra.Types;
-using FluentCassandra.Connections;
 using Apache.Cassandra;
+using FluentCassandra.Connections;
+using FluentCassandra.Types;
 
 namespace FluentCassandra.Sandbox
 {
@@ -48,7 +48,7 @@ namespace FluentCassandra.Sandbox
 			using (var db = new CassandraContext(keyspace: keyspaceName, server: server))
 			{
 				var family = db.GetColumnFamily<UTF8Type, UTF8Type>("Posts");
-
+				
 				// create post
 				dynamic post = family.CreateRecord(key: "first-blog-post");
 

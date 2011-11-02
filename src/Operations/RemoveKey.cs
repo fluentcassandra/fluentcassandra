@@ -12,10 +12,10 @@ namespace FluentCassandra.Operations
 
 		public BytesType Key { get; private set; }
 
-		public override Void Execute(BaseCassandraColumnFamily columnFamily)
+		public override Void Execute()
 		{
 			var path = new ColumnPath {
-				Column_family = columnFamily.FamilyName
+				Column_family = ColumnFamily.FamilyName
 			};
 
 			CassandraSession.Current.GetClient().remove(

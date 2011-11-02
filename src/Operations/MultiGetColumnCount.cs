@@ -14,7 +14,7 @@ namespace FluentCassandra.Operations
 
 		public CassandraSlicePredicate SlicePredicate { get; internal protected set; }
 
-		public override IDictionary<BytesType, int> Execute(BaseCassandraColumnFamily columnFamily)
+		public override IDictionary<BytesType, int> Execute()
 		{
 			CassandraSession _localSession = null;
 			if (CassandraSession.Current == null)
@@ -23,7 +23,7 @@ namespace FluentCassandra.Operations
 			try
 			{
 				var parent = new ColumnParent {
-					Column_family = columnFamily.FamilyName
+					Column_family = ColumnFamily.FamilyName
 				};
 
 				if (SuperColumnName != null)
