@@ -1,8 +1,7 @@
-﻿using FluentCassandra.Types;
+﻿using System;
 using NUnit.Framework;
-using System;
 
-namespace FluentCassandra.Tests.Types
+namespace FluentCassandra.Types
 {
 	[TestFixture]
 	public class NullTypeTest

@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Text;
-using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using FluentCassandra.Types;
 using Apache.Cassandra;
 
-namespace FluentCassandra.Operations.Test
+namespace FluentCassandra.Operations
 {
 	[TestFixture]
 	public class CassandraIndexClauseTest

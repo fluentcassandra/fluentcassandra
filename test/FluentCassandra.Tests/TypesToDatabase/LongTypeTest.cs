@@ -2,7 +2,7 @@
 using NUnit.Framework;
 using FluentCassandra.Types;
 
-namespace FluentCassandra.Tests.TypesToDatabase
+namespace FluentCassandra.TypesToDatabase
 {
 	[TestFixture]
 	public class LongTypeTest

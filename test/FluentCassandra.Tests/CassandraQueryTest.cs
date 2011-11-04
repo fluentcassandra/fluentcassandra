@@ -1,21 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using NUnit.Framework;
 using FluentCassandra.Types;
 
-namespace FluentCassandra.Tests
+namespace FluentCassandra
 {
 	[TestFixture]
 	public class CassandraQueryTest
 	{
 		private CassandraContext _db;
 		private CassandraColumnFamily<AsciiType> _family;
-		private CassandraSuperColumnFamily<AsciiType, AsciiType> _superFamily;
 		private const string _testKey = "Test1";
 		private const string _testName = "Test1";
-		private const string _testSuperName = "SubTest1";
 
 		[SetUp]
 		public void TestInit()
@@ -23,7 +19,6 @@ namespace FluentCassandra.Tests
 			var setup = new _CassandraSetup();
 			_db = setup.DB;
 			_family = setup.Family;
-			_superFamily = setup.SuperFamily;
 		}
 
 		[TearDown]

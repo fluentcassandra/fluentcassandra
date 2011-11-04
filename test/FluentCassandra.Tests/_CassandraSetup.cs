@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using FluentCassandra.Types;
 using Apache.Cassandra;
 using FluentCassandra.Connections;
 
-namespace FluentCassandra.Tests
+namespace FluentCassandra
 {
 	internal class _CassandraSetup
 	{

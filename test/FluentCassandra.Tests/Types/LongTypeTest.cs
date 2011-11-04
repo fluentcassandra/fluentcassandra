@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Linq;
 using NUnit.Framework;
-using FluentCassandra.Types;
-using System.Numerics;
 
-namespace FluentCassandra.Tests.Types
+namespace FluentCassandra.Types
 {
 	[TestFixture]
 	public class LongTypeTest

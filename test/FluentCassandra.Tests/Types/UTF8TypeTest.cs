@@ -1,11 +1,9 @@
-﻿using FluentCassandra.Types;
-using NUnit.Framework;
-using System;
-using System.ComponentModel;
+﻿using System;
 using System.Text;
 using System.Linq;
+using NUnit.Framework;
 
-namespace FluentCassandra.Tests.Types
+namespace FluentCassandra.Types
 {
 	[TestFixture]
 	public class UTF8TypeTest

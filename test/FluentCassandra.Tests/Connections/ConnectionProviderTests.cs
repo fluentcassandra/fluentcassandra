@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Text;
-using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
-using FluentCassandra.Connections;
 
-namespace FluentCassandra.Tests.Connections
+namespace FluentCassandra.Connections
 {
 	[TestFixture]
-	public class ConnectionProviderTest
+	public class ConnectionProviderTests
 	{
 		[Test]
 		public void NormalConnectionProvider()
