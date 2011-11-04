@@ -1,9 +1,8 @@
 ﻿using System;
 using NUnit.Framework;
 using FluentCassandra.Types;
-using System.Threading;
 
-namespace FluentCassandra.Tests.TypesToDatabase
+namespace FluentCassandra.TypesToDatabase
 {
 	[TestFixture]
 	public class TimeUUIDTypeTest
@@ -53,7 +52,7 @@ namespace FluentCassandra.Tests.TypesToDatabase
 			var actual = ((DateTime)actualColumn.ColumnName).ToLocalTime();
 
 			// assert
-			Assert.AreEqual(expected, (DateTime)actual);
+			Assert.AreEqual(expected, actual);
 		}
 
 		[Test]

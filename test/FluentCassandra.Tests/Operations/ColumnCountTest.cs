@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using NUnit.Framework;
 using FluentCassandra.Types;
 
-namespace FluentCassandra.Tests.Operations
+namespace FluentCassandra.Operations
 {
 	[TestFixture]
 	public class ColumnCountTest
@@ -14,7 +12,6 @@ namespace FluentCassandra.Tests.Operations
 		private CassandraColumnFamily<AsciiType> _family;
 		private CassandraSuperColumnFamily<AsciiType, AsciiType> _superFamily;
 		private const string _testKey = "Test1";
-		private const string _testName = "Test1";
 		private const string _testSuperName = "SubTest1";
 
 		[SetUp]

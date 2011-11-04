@@ -9,7 +9,7 @@
     <ProjectGuid>{9DAF7022-5820-4214-B13E-AC0A1B37691F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>FluentCassandra.Tests</RootNamespace>
+    <RootNamespace>FluentCassandra</RootNamespace>
     <AssemblyName>FluentCassandra.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -54,8 +54,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CassandraQueryTest.cs" />
-    <Compile Include="Connection\ConnectionProviderTest.cs" />
-    <Compile Include="Connection\NormalConnectionProviderTest.cs" />
+    <Compile Include="Connections\ConnectionProviderTests.cs" />
+    <Compile Include="Connections\NormalConnectionProviderTests.cs" />
     <Compile Include="Linq\LinqTests.cs" />
     <Compile Include="Operations\CassandraIndexClauseTest.cs" />
     <Compile Include="TypesToDatabase\AsciiTypeTest.cs" />

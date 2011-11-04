@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using NUnit.Framework;
 using FluentCassandra.Types;
 
-namespace FluentCassandra.Tests.TypesToDatabase
+namespace FluentCassandra.TypesToDatabase
 {
 	[TestFixture]
 	public class BytesTypeTest

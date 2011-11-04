@@ -3,7 +3,7 @@ using FluentCassandra.Connections;
 using NUnit.Framework;
 using FluentCassandra.Types;
 
-namespace FluentCassandra.Tests.Linq
+namespace FluentCassandra.Linq
 {
 	[TestFixture]
 	public class LinqTests
