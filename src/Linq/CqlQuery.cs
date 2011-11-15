@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using FluentCassandra.Types;
-using FluentCassandra.Operations;
 
 namespace FluentCassandra.Linq
 {
@@ -49,8 +48,7 @@ namespace FluentCassandra.Linq
 		public IEnumerator<ICqlRow<CompareWith>> GetEnumerator()
 		{
 			var result = CqlQueryEvaluator<CompareWith>.GetEvaluator<CompareWith>(Expression);
-			var op = new ExecuteCqlQuery<CompareWith>(result.Query);
-			return Provider.ExecuteOperation(op).GetEnumerator();
+			return Provider.Cql(result.Query).GetEnumerator();
 		}
 
 		#endregion
@@ -66,7 +64,7 @@ namespace FluentCassandra.Linq
 		/// </returns>
 		public virtual Type ElementType
 		{
-			get { return typeof(IFluentBaseColumnFamily); }
+			get { return typeof(ICqlRow<CompareWith>); }
 		}
 
 		/// <summary>

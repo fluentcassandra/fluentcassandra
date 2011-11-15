@@ -27,12 +27,12 @@ namespace FluentCassandra
 		/// </returns>
 		IEnumerator IEnumerable.GetEnumerator()
 		{
-			return ((IEnumerable<IFluentBaseColumnFamily>)this).GetEnumerator();
+			return ToQuery().GetEnumerator();
 		}
 
 		#endregion
 
-		#region IEnumerable<IFluentBaseColumnFamily> Members
+		#region IEnumerable<ICqlRow<CompareWith>> Members
 
 		/// <summary>
 		/// 
@@ -98,8 +98,8 @@ namespace FluentCassandra
 			if (expression == null)
 				throw new ArgumentNullException("expression");
 
-			if (!typeof(IQueryable<TElement>).IsAssignableFrom(expression.Type))
-				throw new ApplicationException("'expression' is not assignable from this type of repository.");
+			if (typeof(ICqlRow<CompareWith>) != typeof(TElement))
+				throw new ApplicationException("The resulting column type must be " + typeof(CompareWith).ToString());
 
 			return (IQueryable<TElement>)new CqlQuery<CompareWith>(expression, this);
 		}

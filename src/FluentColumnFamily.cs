@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using FluentCassandra.Types;
+using FluentCassandra.Linq;
 
 namespace FluentCassandra
 {
-	public class FluentColumnFamily<CompareWith> : FluentRecord<IFluentColumn<CompareWith>>, IFluentColumnFamily<CompareWith>
+	public class FluentColumnFamily<CompareWith> : FluentRecord<IFluentColumn<CompareWith>>, IFluentColumnFamily<CompareWith>, ICqlRow<CompareWith>
 		where CompareWith : CassandraType
 	{
 		private FluentColumnList<IFluentColumn<CompareWith>> _columns;
