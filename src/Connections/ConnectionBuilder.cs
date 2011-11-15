@@ -18,11 +18,11 @@ namespace FluentCassandra.Connections
 		{
 			Keyspace = keyspace;
 			Servers = new List<Server>() { new Server(host, port) };
-			ConnectionTimeout = connectionTimeout;
+			ConnectionTimeout = TimeSpan.FromSeconds(connectionTimeout);
 			Pooling = pooling;
 			MinPoolSize = minPoolSize;
 			MaxPoolSize = maxPoolSize;
-			ConnectionLifetime = connectionLifetime;
+			ConnectionLifetime = TimeSpan.FromSeconds(connectionLifetime);
 			ConnectionType = connectionType;
 			BufferSize = bufferSize;
 			ReadConsistency = read;
@@ -76,7 +76,7 @@ namespace FluentCassandra.Connections
 
 			if (!pairs.ContainsKey("Connection Timeout"))
 			{
-				ConnectionTimeout = 0;
+				ConnectionTimeout = TimeSpan.Zero;
 			}
 			else
 			{
@@ -88,7 +88,7 @@ namespace FluentCassandra.Connections
 				if (connectionTimeout < 0)
 					connectionTimeout = 0;
 				
-				ConnectionTimeout = connectionTimeout;
+				ConnectionTimeout = TimeSpan.FromSeconds(connectionTimeout);
 			}
 
 			#endregion
@@ -113,9 +113,9 @@ namespace FluentCassandra.Connections
 					{
 						int port;
 						if (Int32.TryParse(serverParts[1], out port))
-							Servers.Add(new Server(host: host, port: port, timeout: ConnectionTimeout));
+							Servers.Add(new Server(host: host, port: port, timeout: ConnectionTimeout.Seconds));
 						else
-							Servers.Add(new Server(host: host, timeout: ConnectionTimeout));
+							Servers.Add(new Server(host: host, timeout: ConnectionTimeout.Seconds));
 					}
 					else
 						Servers.Add(new Server(host));
@@ -188,7 +188,7 @@ namespace FluentCassandra.Connections
 
 			if (!pairs.ContainsKey("Connection Lifetime"))
 			{
-				ConnectionLifetime = 0;
+				ConnectionLifetime = TimeSpan.Zero;
 			}
 			else
 			{
@@ -197,7 +197,7 @@ namespace FluentCassandra.Connections
 				if (!Int32.TryParse(pairs["Connection Lifetime"], out lifetime))
 					lifetime = 0;
 
-				ConnectionLifetime = lifetime;
+				ConnectionLifetime = TimeSpan.FromSeconds(lifetime);
 			}
 
 			#endregion
@@ -325,6 +325,7 @@ namespace FluentCassandra.Connections
 			b.AppendFormat(format, "Max Pool Size", MaxPoolSize);
 			b.AppendFormat(format, "Connection Lifetime", ConnectionLifetime);
 			b.AppendFormat(format, "Connection Type", ConnectionType);
+
 			b.AppendFormat(format, "Buffer Size", BufferSize);
 			b.AppendFormat(format, "Read", ReadConsistency);
 			b.AppendFormat(format, "Write", WriteConsistency);
@@ -342,7 +343,7 @@ namespace FluentCassandra.Connections
 		/// <summary>
 		/// The length of time (in seconds) to wait for a connection to the server before terminating the attempt and generating an error.
 		/// </summary>
-		public int ConnectionTimeout { get; private set; }
+		public TimeSpan ConnectionTimeout { get; private set; }
 
 		/// <summary>
 		/// When true, the Connection object is drawn from the appropriate pool, or if necessary, is created and added to the appropriate pool. Recognized values are true, false, yes, and no.
@@ -362,7 +363,7 @@ namespace FluentCassandra.Connections
 		/// <summary>
 		/// When a connection is returned to the pool, its creation time is compared with the current time, and the connection is destroyed if that time span (in seconds) exceeds the value specified by Connection Lifetime. This is useful in clustered configurations to force load balancing between a running server and a server just brought online. A value of zero (0) causes pooled connections to have the maximum connection timeout.
 		/// </summary>
-		public int ConnectionLifetime { get; private set; }
+		public TimeSpan ConnectionLifetime { get; private set; }
 
 		/// <summary>
 		/// 

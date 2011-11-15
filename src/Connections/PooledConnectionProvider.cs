@@ -39,7 +39,7 @@ namespace FluentCassandra.Connections
 		/// <summary>
 		/// 
 		/// </summary>
-		public int ConnectionLifetime { get; private set; }
+		public TimeSpan ConnectionLifetime { get; private set; }
 
 		/// <summary>
 		/// 
@@ -49,7 +49,7 @@ namespace FluentCassandra.Connections
 		{
 			IConnection conn = null;
 
-			using (TimedLock.Lock(_lock))
+			lock (_lock)
 			{
 				if (_freeConnections.Count > 0)
 				{
@@ -80,7 +80,7 @@ namespace FluentCassandra.Connections
 		/// <returns></returns>
 		public override bool Close(IConnection connection)
 		{
-			using (TimedLock.Lock(_lock))
+			lock (_lock)
 			{
 				_usedConnections.Remove(connection);
 
@@ -106,7 +106,7 @@ namespace FluentCassandra.Connections
 		/// <returns>True if alive; otherwise false.</returns>
 		private bool IsAlive(IConnection connection)
 		{
-			if (ConnectionLifetime > 0 && connection.Created.AddSeconds(ConnectionLifetime) < DateTime.Now)
+			if (ConnectionLifetime > TimeSpan.Zero && connection.Created.Add(ConnectionLifetime) < DateTime.Now)
 				return false;
 
 			return connection.IsOpen;
@@ -117,7 +117,7 @@ namespace FluentCassandra.Connections
 		/// </summary>
 		private void CheckFreeConnectionsAlive()
 		{
-			using (TimedLock.Lock(_lock))
+			lock (_lock)
 			{
 				var freeConnections = _freeConnections.ToArray();
 				_freeConnections.Clear();
