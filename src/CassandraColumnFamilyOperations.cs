@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using FluentCassandra.Types;
 using FluentCassandra.Operations;
 using System.Linq.Expressions;
+using FluentCassandra.Linq;
 
 namespace FluentCassandra
 {
@@ -209,5 +210,12 @@ namespace FluentCassandra
 		}
 
 		#endregion
+
+		public static IEnumerable<ICqlRow<CompareWith>> Cql<CompareWith>(this CassandraColumnFamily<CompareWith> family, UTF8Type cqlQuery)
+			where CompareWith : CassandraType
+		{
+			var op = new ExecuteCqlQuery<CompareWith>(cqlQuery);
+			return family.ExecuteOperation(op);
+		}
 	}
 }

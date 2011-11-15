@@ -98,23 +98,6 @@
     <Compile Include="CassandraSuperColumnFamilyOperations.cs" />
     <Compile Include="CassandraSuperColumnFamily`1.cs" />
     <Compile Include="CassandraTokenRange.cs" />
-    <Compile Include="Configuration\CassandraConfiguration.cs" />
-    <Compile Include="Configuration\CassandraConfigurationContainer.cs" />
-    <Compile Include="Configuration\CassandraConfigurationMap.cs" />
-    <Compile Include="Configuration\CassandraTypeConfiguration.cs" />
-    <Compile Include="Configuration\ICassandraConfigurationMap.cs" />
-    <Compile Include="Configuration\IConfigurationContainer.cs" />
-    <Compile Include="Configuration\IKeyGetMapping.cs" />
-    <Compile Include="Configuration\IKeyMapping.cs" />
-    <Compile Include="Configuration\IKeySetMapping.cs" />
-    <Compile Include="Configuration\IPropertyGetMapping.cs" />
-    <Compile Include="Configuration\IPropertyMapping.cs" />
-    <Compile Include="Configuration\IPropertySetMapping.cs" />
-    <Compile Include="Configuration\ITypeConfiguration.cs" />
-    <Compile Include="Configuration\ITypeGetConfiguration.cs" />
-    <Compile Include="Configuration\ITypeSetConfiguration.cs" />
-    <Compile Include="Configuration\KeyMappingExpression.cs" />
-    <Compile Include="Configuration\PropertyMappingExpression.cs" />
     <Compile Include="Connections\Connection.cs" />
     <Compile Include="Connections\ConnectionBuilder.cs" />
     <Compile Include="Connections\ConnectionProvider.cs" />
@@ -127,7 +110,9 @@
     <Compile Include="Connections\Server.cs" />
     <Compile Include="Connections\IServerManager.cs" />
     <Compile Include="Connections\RoundRobinServerManager.cs" />
-    <Compile Include="Connections\TimedLock.cs" />
+    <Compile Include="Connections\TimedLock.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="FluentCassandraException.cs" />
     <Compile Include="FluentColumn.cs">
       <SubType>Code</SubType>
@@ -165,6 +150,7 @@
     <Compile Include="Linq\CqlQuery.cs" />
     <Compile Include="Linq\CqlQueryEvaluator.cs" />
     <Compile Include="Linq\CassandraColumnFamily`1+QueryProvider.cs" />
+    <Compile Include="Linq\CqlQueryExtensions.cs" />
     <Compile Include="Linq\ICqlRow.cs" />
     <Compile Include="Operations\BatchMutate.cs" />
     <Compile Include="Operations\CassandraIndexClause.cs" />

@@ -61,10 +61,18 @@ namespace FluentCassandra.Linq
 		{
 			var expected = "SELECT Age FROM Users";
 
-			var query =
-				from f in _family
-				select new { Age = f["Age"] };
+			var query = _family.Select("Age");
+			var actual = query.ToString();
 
+			AreEqual(expected, actual);
+		}
+
+		[Test]
+		public void SELECT_Two_Columns()
+		{
+			var expected = "SELECT Age, Name FROM Users";
+
+			var query = _family.Select("Age", "Name");
 			var actual = query.ToString();
 
 			AreEqual(expected, actual);
@@ -124,6 +132,20 @@ namespace FluentCassandra.Linq
 				from f in _family
 				where (f["Id"] == 1234 || f["Age"] == 10) && f["Name"] == "Adama"
 				select f;
+
+			var actual = query.ToString();
+
+			AreEqual(expected, actual);
+		}
+
+		[Test]
+		public void SELECT_Two_Columns_WHERE_Three_Complex_Parameter()
+		{
+			var expected = "SELECT Age, Name FROM Users WHERE ((Id = 1234 OR Age = 10) AND Name = 'Adama')";
+
+			var query = _family
+				.Where(f => (f["Id"] == 1234 || f["Age"] == 10) && f["Name"] == "Adama")
+				.Select("Age", "Name");
 
 			var actual = query.ToString();
 

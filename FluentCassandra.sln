@@ -12,6 +12,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		FluentCassandra.msbuild = FluentCassandra.msbuild
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentCassandra.StressTest", "test\FluentCassandra.StressTest\FluentCassandra.StressTest.csproj", "{AC3818E2-E260-4193-A3D1-6E3FF87383F6}"
+EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = FluentCassandra.vsmdi
@@ -55,6 +57,16 @@ Global
 		{9DAF7022-5820-4214-B13E-AC0A1B37691F}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{9DAF7022-5820-4214-B13E-AC0A1B37691F}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{9DAF7022-5820-4214-B13E-AC0A1B37691F}.Release|x86.ActiveCfg = Release|Any CPU
+		{AC3818E2-E260-4193-A3D1-6E3FF87383F6}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{AC3818E2-E260-4193-A3D1-6E3FF87383F6}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{AC3818E2-E260-4193-A3D1-6E3FF87383F6}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{AC3818E2-E260-4193-A3D1-6E3FF87383F6}.Debug|x86.ActiveCfg = Debug|x86
+		{AC3818E2-E260-4193-A3D1-6E3FF87383F6}.Debug|x86.Build.0 = Debug|x86
+		{AC3818E2-E260-4193-A3D1-6E3FF87383F6}.Release|Any CPU.ActiveCfg = Release|x86
+		{AC3818E2-E260-4193-A3D1-6E3FF87383F6}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{AC3818E2-E260-4193-A3D1-6E3FF87383F6}.Release|Mixed Platforms.Build.0 = Release|x86
+		{AC3818E2-E260-4193-A3D1-6E3FF87383F6}.Release|x86.ActiveCfg = Release|x86
+		{AC3818E2-E260-4193-A3D1-6E3FF87383F6}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

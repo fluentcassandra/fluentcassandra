@@ -58,17 +58,13 @@ namespace FluentCassandra.Linq
 
 		private void AddField(Expression exp)
 		{
-			Evaluate(exp, AddField);
-		}
-
-		private void AddField(string field)
-		{
-			FieldsArray.Add(field);
+			foreach (var f in VisitSelectExpression(exp))
+				FieldsArray.Add(f);
 		}
 
 		private void AddCriteria(Expression exp)
 		{
-			string newCriteria = VisitExpression(exp);
+			string newCriteria = VisitWhereExpression(exp);
 
 			if (!String.IsNullOrEmpty(WhereCriteria))
 				WhereCriteria = "(" + WhereCriteria + " AND " + newCriteria + ")";
@@ -98,10 +94,15 @@ namespace FluentCassandra.Linq
 		{
 			exp = SimplifyExpression(exp);
 
-			if (exp.NodeType != ExpressionType.MemberAccess)
+			if (exp.NodeType != ExpressionType.Call)
 				throw new NotSupportedException(exp.NodeType.ToString() + " is not supported.");
 
-			return ((MemberExpression)exp).Member.Name;
+			var field = SimplifyExpression(((MethodCallExpression)exp).Arguments[0]);
+
+			if (field.NodeType != ExpressionType.Constant)
+				throw new NotSupportedException(exp.NodeType.ToString() + " is not supported.");
+
+			return ((ConstantExpression)field).Value.ToString();
 		}
 
 		#endregion
@@ -185,17 +186,37 @@ namespace FluentCassandra.Linq
 				throw new NotSupportedException("Method call to " + exp.Method.Name + " is not supported.");
 		}
 
-		private string VisitExpression(Expression exp)
+		private IEnumerable<CompareWith> VisitSelectExpression(Expression exp)
+		{
+			switch (exp.NodeType)
+			{
+				case ExpressionType.Parameter:
+					return new CompareWith[0];
+
+				case ExpressionType.Constant:
+					return VisitSelectColumnExpression((ConstantExpression)exp);
+
+				default:
+					throw new NotSupportedException(exp.NodeType.ToString() + " is not supported.");
+			}
+		}
+
+		private IEnumerable<CompareWith> VisitSelectColumnExpression(ConstantExpression exp)
+		{
+			return (IEnumerable<CompareWith>)exp.Value;
+		}
+
+		private string VisitWhereExpression(Expression exp)
 		{
 			switch (exp.NodeType)
 			{
 				case ExpressionType.Convert:
 				case ExpressionType.Lambda:
 				case ExpressionType.Quote:
-					return VisitExpression(SimplifyExpression(exp));
+					return VisitWhereExpression(SimplifyExpression(exp));
 
 				case ExpressionType.Not:
-					return VisitUnaryExpression((UnaryExpression)exp);
+					return VisitWhereUnaryExpression((UnaryExpression)exp);
 
 				case ExpressionType.Equal:
 				case ExpressionType.NotEqual:
@@ -203,28 +224,28 @@ namespace FluentCassandra.Linq
 				case ExpressionType.GreaterThanOrEqual:
 				case ExpressionType.LessThan:
 				case ExpressionType.LessThanOrEqual:
-					return VisitRelationalExpression((BinaryExpression)exp);
+					return VisitWhereRelationalExpression((BinaryExpression)exp);
 
 				case ExpressionType.And:
 				case ExpressionType.AndAlso:
 				case ExpressionType.Or:
 				case ExpressionType.OrElse:
-					return VisitConditionalExpression((BinaryExpression)exp);
+					return VisitWhereConditionalExpression((BinaryExpression)exp);
 
 				case ExpressionType.Call:
-					return VisitMethodCallExpression((MethodCallExpression)exp);
+					return VisitWhereMethodCallExpression((MethodCallExpression)exp);
 
 				default:
 					throw new NotSupportedException(exp.NodeType.ToString() + " is not supported.");
 			}
 		}
 
-		private string VisitUnaryExpression(UnaryExpression exp)
+		private string VisitWhereUnaryExpression(UnaryExpression exp)
 		{
 			switch (exp.NodeType)
 			{
 				case ExpressionType.Not:
-					return "NOT (" + VisitExpression(exp.Operand) + ")";
+					return "NOT (" + VisitWhereExpression(exp.Operand) + ")";
 
 				default:
 					throw new NotSupportedException(exp.NodeType.ToString() + " is not a supported unary criteria.");
@@ -239,7 +260,7 @@ namespace FluentCassandra.Linq
 			return value;
 		}
 
-		private string VisitMethodCallExpression(MethodCallExpression exp)
+		private string VisitWhereMethodCallExpression(MethodCallExpression exp)
 		{
 			if (exp.Method.Name == "Contains")
 			{
@@ -256,7 +277,7 @@ namespace FluentCassandra.Linq
 				throw new NotSupportedException("Method call to " + exp.Method.Name + " is not supported.");
 		}
 
-		private string VisitRelationalExpression(BinaryExpression exp)
+		private string VisitWhereRelationalExpression(BinaryExpression exp)
 		{
 			string criteria;
 
@@ -299,7 +320,7 @@ namespace FluentCassandra.Linq
 			return criteria;
 		}
 
-		private string VisitConditionalExpression(BinaryExpression exp)
+		private string VisitWhereConditionalExpression(BinaryExpression exp)
 		{
 			string criteria;
 
@@ -307,11 +328,11 @@ namespace FluentCassandra.Linq
 			{
 				case ExpressionType.And:
 				case ExpressionType.AndAlso:
-					criteria = "(" + VisitExpression(exp.Left) + " AND " + VisitExpression(exp.Right) + ")";
+					criteria = "(" + VisitWhereExpression(exp.Left) + " AND " + VisitWhereExpression(exp.Right) + ")";
 					break;
 				case ExpressionType.Or:
 				case ExpressionType.OrElse:
-					criteria = "(" + VisitExpression(exp.Left) + " OR " + VisitExpression(exp.Right) + ")";
+					criteria = "(" + VisitWhereExpression(exp.Left) + " OR " + VisitWhereExpression(exp.Right) + ")";
 					break;
 
 				default:
