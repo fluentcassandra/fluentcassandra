@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net.Sockets;
+using System.Threading;
 
 namespace FluentCassandra.Connections
 {
@@ -13,7 +13,7 @@ namespace FluentCassandra.Connections
 		public NormalConnectionProvider(ConnectionBuilder builder)
 			: base(builder)
 		{
-			if (builder.Servers.Count > 1 && builder.ConnectionTimeout == 0)
+			if (builder.Servers.Count > 1 && builder.ConnectionTimeout == TimeSpan.Zero)
 				throw new CassandraException("You must specify a timeout when using multiple servers.");
 
 			ConnectionTimeout = builder.ConnectionTimeout;
@@ -22,7 +22,7 @@ namespace FluentCassandra.Connections
 		/// <summary>
 		/// 
 		/// </summary>
-		public int ConnectionTimeout { get; private set; }
+		public TimeSpan ConnectionTimeout { get; private set; }
 
 		/// <summary>
 		/// 
@@ -40,10 +40,10 @@ namespace FluentCassandra.Connections
 					conn.Open();
 					break;
 				}
-				catch (SocketException)
+				catch (SocketException exc)
 				{
+					Servers.ErrorOccurred(conn.Server, exc);
 					Close(conn);
-					Servers.Remove(conn.Server);
 					conn = null;
 				}
 			}

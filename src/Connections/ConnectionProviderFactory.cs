@@ -10,7 +10,7 @@ namespace FluentCassandra.Connections
 
 		public static IConnectionProvider Get(ConnectionBuilder connectionBuilder)
 		{
-			using (TimedLock.Lock(_lock))
+			lock(_lock)
 			{
 				IConnectionProvider provider;
 	

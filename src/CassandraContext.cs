@@ -103,7 +103,7 @@ namespace FluentCassandra
 		/// </summary>
 		public void SaveChanges()
 		{
-			using (TimedLock.Lock(_trackers))
+			lock (_trackers)
 			{
 				var mutations = new List<FluentMutation>();
 

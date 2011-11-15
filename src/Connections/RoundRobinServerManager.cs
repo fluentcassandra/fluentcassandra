@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace FluentCassandra.Connections
 {
@@ -9,31 +10,43 @@ namespace FluentCassandra.Connections
 
 		private List<Server> _servers;
 		private Queue<Server> _serverQueue;
+		private HashSet<Server> _blackListed;
 
 		public RoundRobinServerManager(ConnectionBuilder builder)
 		{
 			_servers = new List<Server>(builder.Servers);
 			_serverQueue = new Queue<Server>(_servers);
+			_blackListed = new HashSet<Server>();
+		}
+
+		private bool IsBlackListed(Server server)
+		{
+			return _blackListed.Contains(server);
 		}
 
 		#region IServerManager Members
 
-		/// <summary>
-		/// Gets if there are any more connections left to try.
-		/// </summary>
 		public bool HasNext
 		{
-			get { return _servers.Count > 0; }
+			get { lock (_lock) { return _serverQueue.Count > 0; } }
 		}
 
 		public Server Next()
 		{
 			Server server;
 
-			using (TimedLock.Lock(_lock))
+			lock (_lock)
 			{
-				server = _serverQueue.Dequeue();
-				_serverQueue.Enqueue(server);
+				do
+				{
+					server = _serverQueue.Dequeue();
+
+					if (IsBlackListed(server))
+						server = null;
+					else
+						_serverQueue.Enqueue(server);
+				}
+				while (_serverQueue.Count > 0 && server == null);	
 			}
 
 			return server;
@@ -41,19 +54,41 @@ namespace FluentCassandra.Connections
 
 		public void Add(Server server)
 		{
-			using (TimedLock.Lock(_lock))
+			lock (_lock)
 			{
 				_servers.Add(server);
 				_serverQueue.Enqueue(server);
 			}
 		}
 
+		public void ErrorOccurred(Server server, Exception exc = null)
+		{
+			Debug.WriteLineIf(exc != null, exc, "connection");
+			BlackList(server);
+		}
+
+		public void BlackList(Server server)
+		{
+			Debug.WriteLine(server + " has been blacklisted", "connection");
+			lock (_lock)
+			{
+				_blackListed.Add(server);
+			}
+		}
+
 		public void Remove(Server server)
 		{
-			using (TimedLock.Lock(_lock))
+			lock (_lock)
 			{
 				_servers.Remove(server);
-				_serverQueue = new Queue<Server>(_servers);
+				_serverQueue = new Queue<Server>();
+				_blackListed.RemoveWhere(x => x == server);
+
+				foreach (var s in _servers)
+				{
+					if (!_blackListed.Contains(s))
+						_serverQueue.Enqueue(s);
+				}
 			}
 		}
 
