@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Apache.Cassandra;
 using FluentCassandra.Connections;
+using System.Diagnostics;
+using FluentCassandra.Types;
 
 namespace FluentCassandra
 {
@@ -38,6 +40,60 @@ namespace FluentCassandra
 		}
 
 		private KsDef _cachedKeyspaceDescription;
+
+		public void TryCreateSelf(Server server)
+		{
+			if (CassandraSession.KeyspaceExists(server, KeyspaceName))
+			{
+				Debug.WriteLine(KeyspaceName + " already exists", "keyspace");
+				return;
+			}
+
+			string result = CassandraSession.AddKeyspace(server, new KsDef {
+				Name = KeyspaceName,
+				Strategy_class = "org.apache.cassandra.locator.SimpleStrategy",
+				Replication_factor = 1,
+				Cf_defs = new List<CfDef>(0)
+			});
+			Debug.WriteLine(result, "keyspace setup");
+		}
+
+		public void TryCreateColumnFamily<CompareWith>(Server server, string columnFamilyName)
+			where CompareWith : CassandraType
+		{
+			if (ColumnFamilyExists(server, columnFamilyName))
+			{
+				Debug.WriteLine(columnFamilyName + " already exists", "keyspace setup");
+				return;
+			}
+
+			string result = AddColumnFamily(server, new CfDef {
+				Name = columnFamilyName,
+				Keyspace = KeyspaceName,
+				Comparator_type = typeof(CompareWith).Name
+			});
+			Debug.WriteLine(result, "keyspace setup");
+		}
+
+		public void TryCreateColumnFamily<CompareWith, CompareSubcolumnWith>(Server server, string columnFamilyName)
+			where CompareWith : CassandraType
+			where CompareSubcolumnWith : CassandraType
+		{
+			if (ColumnFamilyExists(server, columnFamilyName))
+			{
+				Debug.WriteLine(columnFamilyName + " already exists", "keyspace setup");
+				return;
+			}
+
+			string result = AddColumnFamily(server, new CfDef {
+				Name = columnFamilyName,
+				Keyspace = KeyspaceName,
+				Column_type = "Super",
+				Comparator_type = typeof(CompareWith).Name,
+				Subcomparator_type = typeof(CompareSubcolumnWith).Name
+			});
+			Debug.WriteLine(result, "keyspace setup");
+		}
 
 		#region Cassandra System For Server
 

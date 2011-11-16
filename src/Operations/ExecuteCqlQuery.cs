@@ -28,9 +28,13 @@ namespace FluentCassandra.Operations
 			);
 
 			foreach (var row in result.Rows)
-			{
-				yield return null;
-			}
+				yield return new FluentColumnFamily<CompareWith>(row.Key, ColumnFamily.FamilyName, GetColumns(row));
+		}
+
+		private IEnumerable<IFluentColumn<CompareWith>> GetColumns(Apache.Cassandra.CqlRow row)
+		{
+			foreach (var col in row.Columns)
+				yield return Helper.ConvertColumnToFluentColumn<CompareWith>(col);
 		}
 
 		private byte[] GzipCompress(byte[] cqlQuery)

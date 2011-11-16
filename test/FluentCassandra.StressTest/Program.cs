@@ -105,9 +105,7 @@ namespace FluentCassandra.StressTest
 					details.Body = data;
 
 					db.Attach(post);
-
-					if (i % 10 == 0)
-						db.SaveChanges();
+					db.SaveChanges();
 				}
 
 				double rate = count / watch.Elapsed.TotalSeconds;
