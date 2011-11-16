@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using Apache.Cassandra;
 using FluentCassandra.Connections;
 using FluentCassandra.Types;
 
@@ -10,97 +8,124 @@ namespace FluentCassandra.Sandbox
 {
 	internal class Program
 	{
-		private static void Main(string[] args)
-		{
-			var keyspaceName = "Blog";
-			var server = new Server("localhost");
+		private static string keyspaceName = "Blog";
+		private static Server server = new Server("localhost");
 
-			if (!CassandraSession.KeyspaceExists(server, keyspaceName))
-				CassandraSession.AddKeyspace(server, new KsDef {
-					Name = keyspaceName,
-					Replication_factor = 1,
-					Strategy_class = "org.apache.cassandra.locator.SimpleStrategy",
-					Cf_defs = new List<CfDef>()
-				});
+		#region Setup
+
+		private static void SetupKeyspace()
+		{
+			if (CassandraSession.KeyspaceExists(server, keyspaceName))
+				CassandraSession.DropKeyspace(server, keyspaceName);
 
 			var keyspace = new CassandraKeyspace(keyspaceName);
+			keyspace.TryCreateSelf(server);
+			keyspace.TryCreateColumnFamily<UTF8Type>(server, "Posts");
+			keyspace.TryCreateColumnFamily<LongType>(server, "Tags");
+			keyspace.TryCreateColumnFamily<TimeUUIDType, UTF8Type>(server, "Comments");
+		}
 
-			if (!keyspace.ColumnFamilyExists(server, "Posts"))
-				keyspace.AddColumnFamily(server, new CfDef {
-					Name = "Posts",
-					Keyspace = keyspaceName,
-					Column_type = "Super",
-					Comparator_type = "UTF8Type",
-					Subcomparator_type = "UTF8Type",
-					Comment = "Used for blog posts."
-				});
+		#endregion
 
-			if (!keyspace.ColumnFamilyExists(server, "Comments"))
-				keyspace.AddColumnFamily(server, new CfDef {
-					Name = "Comments",
-					Keyspace = keyspaceName,
-					Column_type = "Super",
-					Comparator_type = "TimeUUIDType",
-					Subcomparator_type = "UTF8Type",
-					Comment = "Used for blog post comments."
-				});
+		#region Console Helpers
 
+		private static void ConsoleHeader(string header)
+		{
+			Console.WriteLine(@"
+************************************************
+** " + header + @"
+************************************************");
+		}
+
+		#endregion
+
+		#region Create Post
+
+		private static void CreatePost()
+		{
 			using (var db = new CassandraContext(keyspace: keyspaceName, server: server))
 			{
-				var family = db.GetColumnFamily<UTF8Type, UTF8Type>("Posts");
-				
+				var key = "first-blog-post";
+
+				var postFamily = db.GetColumnFamily<UTF8Type>("Posts");
+				var tagsFamily = db.GetColumnFamily<LongType>("Tags");
+
 				// create post
-				dynamic post = family.CreateRecord(key: "first-blog-post");
+				ConsoleHeader("create post");
+				dynamic post = postFamily.CreateRecord(key: key);
+				post.Title = "My First Cassandra Post";
+				post.Body = "Blah. Blah. Blah. about my first post on how great Cassandra is to work with.";
+				post.Author = "Nick Berardi";
+				post.PostedOn = DateTimeOffset.Now;
 
-				// create post details
-				dynamic postDetails = post.CreateSuperColumn();
-				postDetails.Title = "My First Cassandra Post";
-				postDetails.Body = "Blah. Blah. Blah. about my first post on how great Cassandra is to work with.";
-				postDetails.Author = "Nick Berardi";
-				postDetails.PostedOn = DateTimeOffset.Now;
-
-				// create post tags
-				dynamic tags = post.CreateSuperColumn();
+				// create tags
+				ConsoleHeader("create post tags");
+				dynamic tags = tagsFamily.CreateRecord(key: key);
 				tags[0] = "Cassandra";
 				tags[1] = ".NET";
 				tags[2] = "Database";
 				tags[3] = "NoSQL";
 
-				// add properties to post
-				post.Details = postDetails;
-				post.Tags = tags;
-
 				// attach the post to the database
-				Console.WriteLine("attaching record");
+				ConsoleHeader("attaching record");
 				db.Attach(post);
+				db.Attach(tags);
 
 				// save the changes
-				Console.WriteLine("saving changes");
+				ConsoleHeader("saving changes");
 				db.SaveChanges();
+			}
+		}
+
+		#endregion
+
+		#region Read Post
+
+		private static void ReadPost()
+		{
+			using (var db = new CassandraContext(keyspace: keyspaceName, server: server))
+			{
+				var key = "first-blog-post";
+
+				var postFamily = db.GetColumnFamily<UTF8Type>("Posts");
+				var tagsFamily = db.GetColumnFamily<LongType>("Tags");
 
 				// get the post back from the database
-				Console.WriteLine("getting 'first-blog-post'");
-				dynamic getPost = family.Get("first-blog-post").FirstOrDefault();
+				ConsoleHeader("getting 'first-blog-post'");
+				dynamic post = postFamily.Get(key).FirstOrDefault();
+				dynamic tags = tagsFamily.Get(key).FirstOrDefault();
 
 				// show details
-				dynamic getPostDetails = getPost.Details;
+				ConsoleHeader("showing post");
 				Console.WriteLine(
-					String.Format("=={0} by {1}==\n{2}", 
-						getPostDetails.Title, 
-						getPostDetails.Author, 
-						getPostDetails.Body
+					String.Format("=={0} by {1}==\n{2}",
+						post.Title,
+						post.Author,
+						post.Body
 					));
-				
+
 				// show tags
-				Console.Write("tags:");
-				foreach (var tag in getPost.Tags)
-					Console.Write(String.Format("{0}:{1},", tag.ColumnName, tag.ColumnValue));
-				Console.WriteLine();
+				ConsoleHeader("showing tags");
+				foreach (var tag in tags)
+					Console.WriteLine(String.Format("{0}:{1},", (long)tag.ColumnName, tag.ColumnValue));
+			}
+		}
+
+		#endregion
+
+		#region Create Comments
+
+		private static void CreateComments()
+		{
+			using (var db = new CassandraContext(keyspace: keyspaceName, server: server))
+			{
+				var key = "first-blog-post";
 
 				// get the comments family
 				var commentsFamily = db.GetColumnFamily<TimeUUIDType, UTF8Type>("Comments");
 
-				dynamic postComments = commentsFamily.CreateRecord(key: "first-blog-post");
+				ConsoleHeader("create comments");
+				dynamic postComments = commentsFamily.CreateRecord(key: key);
 
 				// lets attach it to the database before we add the comments
 				db.Attach(postComments);
@@ -109,30 +134,45 @@ namespace FluentCassandra.Sandbox
 				for (int i = 0; i < 5; i++)
 				{
 					dynamic comment = postComments.CreateSuperColumn();
-					comment.Name = i + " Nick Berardi";
-					comment.Email = i + " nick@coderjournal.com";
-					comment.Website = i + " www.coderjournal.com";
-					comment.Comment = i + " Wow fluent cassandra is really great and easy to use.";
+					comment.Name = "Nick Berardi";
+					comment.Email = "nick@coderjournal.com";
+					comment.Website = "www.coderjournal.com";
+					comment.Comment = "Wow fluent cassandra is really great and easy to use.";
 
-					postComments[GuidGenerator.GenerateTimeBasedGuid()] = comment;
+					var commentPostedOn = DateTime.Now;
+					postComments[commentPostedOn] = comment;
 
-					Console.WriteLine("Comment " + i + " Done");
-					Thread.Sleep(TimeSpan.FromSeconds(5));
+					Console.WriteLine("Comment " + (i + 1) + " Posted On " + commentPostedOn.ToLongTimeString());
+					Thread.Sleep(TimeSpan.FromSeconds(2));
 				}
 
 				// save the comments
 				db.SaveChanges();
+			}
+		}
 
-				DateTime lastDate = DateTime.Now;
+		#endregion
+
+		#region Read Comments
+
+		private static void ReadComments()
+		{
+			using (var db = new CassandraContext(keyspace: keyspaceName, server: server))
+			{
+				var key = "first-blog-post";
+				var lastDate = DateTime.Now;
+
+				// get the comments family
+				var commentsFamily = db.GetColumnFamily<TimeUUIDType, UTF8Type>("Comments");
 
 				for (int page = 0; page < 2; page++)
 				{
 					// lets back the date off by a millisecond so we don't get paging overlaps
 					lastDate = lastDate.AddMilliseconds(-1D);
 
-					Console.WriteLine("Showing page " + page + " starting at " + lastDate.ToLocalTime());
+					ConsoleHeader("showing page " + page + " of comments starting at " + lastDate.ToLocalTime());
 
-					var comments = commentsFamily.Get("first-blog-post")
+					var comments = commentsFamily.Get(key)
 						.Reverse()
 						.Fetch(lastDate)
 						.Take(3)
@@ -140,7 +180,7 @@ namespace FluentCassandra.Sandbox
 
 					foreach (dynamic comment in comments)
 					{
-						var dateTime = GuidGenerator.GetDateTime((Guid)comment.ColumnName);
+						var dateTime = (DateTime)comment.ColumnName;
 
 						Console.WriteLine(String.Format("{0:T} : {1} ({2} - {3})",
 							dateTime.ToLocalTime(),
@@ -153,6 +193,21 @@ namespace FluentCassandra.Sandbox
 					}
 				}
 			}
+		}
+
+		#endregion
+
+		private static void Main(string[] args)
+		{
+			SetupKeyspace();
+
+			CreatePost();
+
+			ReadPost();
+
+			CreateComments();
+
+			ReadComments();
 
 			Console.Read();
 		}
