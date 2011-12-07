@@ -99,7 +99,7 @@ namespace FluentCassandra.StressTest
 
 					var family = db.GetColumnFamily<UTF8Type, UTF8Type>("Posts");
 
-					var post = family.CreateRecord(postId);
+					dynamic post = family.CreateRecord(postId);
 					dynamic details = post.CreateSuperColumn();
 
 					details.Body = data;
