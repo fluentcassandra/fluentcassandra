@@ -104,6 +104,7 @@ namespace FluentCassandra.StressTest
 
 					details.Body = data;
 
+					post[DateTime.Now] = details;
 					db.Attach(post);
 					db.SaveChanges();
 				}
