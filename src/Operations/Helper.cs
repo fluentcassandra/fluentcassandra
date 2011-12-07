@@ -33,14 +33,16 @@ namespace FluentCassandra.Operations
 				return null;
 		}
 
-		public static FluentColumn<CompareWith> ConvertColumnToFluentColumn<CompareWith>(Column col)
+		public static FluentColumn<CompareWith> ConvertColumnToFluentColumn<CompareWith>(Column col, FluentColumnFamily<CompareWith> family = null)
 			where CompareWith : CassandraType
 		{
+
 			return new FluentColumn<CompareWith> {
 				ColumnName = CassandraType.GetType<CompareWith>(col.Name),
 				ColumnValue = col.Value,
 				ColumnTimestamp = new DateTimeOffset(col.Timestamp, TimeSpan.Zero),
-				ColumnTimeToLive = col.Ttl
+				ColumnTimeToLive = col.Ttl,
+				Family = family
 			};
 		}
 

@@ -113,6 +113,35 @@ namespace FluentCassandra.Sandbox
 
 		#endregion
 
+
+		#region Update Post
+		private static void UpdatePost()
+		{
+			using (var db = new CassandraContext(keyspace: keyspaceName, server: server))
+			{
+				var key = "first-blog-post";
+
+				var postFamily = db.GetColumnFamily<UTF8Type>("Posts");
+				// get the post back from the database
+				ConsoleHeader("getting 'first-blog-post' for update");
+				dynamic post = postFamily.Get(key).FirstOrDefault();
+
+				post.Title = post.Title + "(updated)";
+				post.Body = post.Body + "(updated)";
+				post.Author = post.Author + "(updated)";
+				post.PostedOn = DateTimeOffset.Now;
+
+				// attach the post to the database
+				ConsoleHeader("attaching record");
+				db.Attach(post);
+
+				// save the changes
+				ConsoleHeader("saving changes");
+				db.SaveChanges();
+			}
+		}
+		#endregion
+
 		#region Create Comments
 
 		private static void CreateComments()
@@ -202,6 +231,10 @@ namespace FluentCassandra.Sandbox
 			SetupKeyspace();
 
 			CreatePost();
+
+			ReadPost();
+
+			UpdatePost();
 
 			ReadPost();
 
