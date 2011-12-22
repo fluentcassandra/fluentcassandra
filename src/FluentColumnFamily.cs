@@ -75,7 +75,7 @@ namespace FluentCassandra
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		public IFluentColumn<CompareWith> CreateColumn()
+		public FluentColumn<CompareWith> CreateColumn()
 		{
 			return new FluentColumn<CompareWith>();
 		}

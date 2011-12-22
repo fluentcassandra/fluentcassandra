@@ -30,14 +30,14 @@ namespace FluentCassandra.Operations
 			else if (col.Column != null)
 				return ConvertColumnToFluentColumn<CompareWith>(col.Column);
 			else if (col.Counter_super_column != null)
-				return ConvertCounterSuperColumnToFluentSuperColumn<CompareWith, CompareSubcolumnWith>(col.Counter_super_column);
+				throw new NotSupportedException("Reading CounterSuperColumns isn't supported yet.");
 			else if (col.Counter_column != null)
-				return ConvertCounterColumnToFluentColumn<CompareWith>(col.Counter_column);
+				throw new NotSupportedException("Reading CounterSuperColumns isn't supported yet.");
 			else
 				return null;
 		}
 
-		public static FluentColumn<CompareWith> ConvertColumnToFluentColumn<CompareWith>(Column col, FluentColumnFamily<CompareWith> family = null)
+		public static FluentColumn<CompareWith> ConvertColumnToFluentColumn<CompareWith>(Column col)
 			where CompareWith : CassandraType
 		{
 
@@ -45,8 +45,7 @@ namespace FluentCassandra.Operations
 				ColumnName = CassandraType.GetType<CompareWith>(col.Name),
 				ColumnValue = col.Value,
 				ColumnTimestamp = new DateTimeOffset(col.Timestamp, TimeSpan.Zero),
-				ColumnTimeToLive = col.Ttl,
-				Family = family
+				ColumnTimeToLive = col.Ttl
 			};
 		}
 
@@ -60,30 +59,6 @@ namespace FluentCassandra.Operations
 
 			foreach (var xcol in col.Columns)
 				superCol.Columns.Add(ConvertColumnToFluentColumn<CompareSubcolumnWith>(xcol));
-
-			return superCol;
-		}
-
-		public static FluentColumn<CompareWith> ConvertCounterColumnToFluentColumn<CompareWith>(CounterColumn col, FluentColumnFamily<CompareWith> family = null)
-			where CompareWith : CassandraType
-		{
-			return new FluentColumn<CompareWith> {
-				ColumnName = CassandraType.GetType<CompareWith>(col.Name),
-				ColumnValue = col.Value,
-				Family = family
-			};
-		}
-
-		public static FluentSuperColumn<CompareWith, CompareSubcolumnWith> ConvertCounterSuperColumnToFluentSuperColumn<CompareWith, CompareSubcolumnWith>(CounterSuperColumn col)
-			where CompareWith : CassandraType
-			where CompareSubcolumnWith : CassandraType
-		{
-			var superCol = new FluentSuperColumn<CompareWith, CompareSubcolumnWith> {
-				ColumnName = CassandraType.GetType<CompareWith>(col.Name)
-			};
-
-			foreach (var xcol in col.Columns)
-				superCol.Columns.Add(ConvertCounterColumnToFluentColumn<CompareSubcolumnWith>(xcol));
 
 			return superCol;
 		}

@@ -1,17 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Collections.Specialized;
-using System.Collections;
+using System.Linq;
 
 namespace FluentCassandra
 {
 	internal class FluentColumnList<T> : IList<T>, INotifyCollectionChanged
 		where T : IFluentBaseColumn
 	{
-		private List<T> _columns;
-		private IEnumerable<T> _query;
-
 		/// <summary>
 		/// 
 		/// </summary>
@@ -19,8 +15,7 @@ namespace FluentCassandra
 		public FluentColumnList(FluentColumnParent parent)
 		{
 			Parent = parent;
-			_columns = new List<T>();
-			_query = _columns;
+			Columns = new List<T>();
 			SupressChangeNotification = false;
 		}
 
@@ -32,7 +27,13 @@ namespace FluentCassandra
 		public FluentColumnList(FluentColumnParent parent, IEnumerable<T> columns)
 		{
 			Parent = parent;
-			_query = columns;
+
+			// make sure all columns have the same parent
+			foreach (var col in columns)
+				col.SetParent(Parent);
+
+			Columns = columns.ToList();
+
 			SupressChangeNotification = false;
 		}
 
@@ -41,13 +42,8 @@ namespace FluentCassandra
 		/// </summary>
 		private IList<T> Columns
 		{
-			get
-			{
-				if (_columns == null)
-					_columns = _query.ToList();
-
-				return _columns;
-			}
+			get;
+			set;
 		}
 
 		/// <summary>
