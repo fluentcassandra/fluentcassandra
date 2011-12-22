@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Text;
-using System.ComponentModel;
 
 namespace FluentCassandra.Types
 {
-	internal class BytesTypeConverter : ArrayConverter
+	internal class BytesTypeConverter : CassandraTypeConverter<byte[]>
 	{
-		public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
+		public override bool CanConvertFrom(Type sourceType)
 		{
 			if (sourceType == typeof(Guid))
 				return true;
@@ -41,7 +40,7 @@ namespace FluentCassandra.Types
 			}
 		}
 
-		public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
+		public override bool CanConvertTo(Type destinationType)
 		{
 			if (destinationType == typeof(Guid))
 				return true;
@@ -76,7 +75,7 @@ namespace FluentCassandra.Types
 			}
 		}
 
-		public override object ConvertFrom(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value)
+		public override byte[] ConvertFrom(object value)
 		{
 			if (value is Guid)
 				return CassandraConversionHelper.ConvertGuidToBytes((Guid)value);
@@ -133,11 +132,8 @@ namespace FluentCassandra.Types
 			return CassandraConversionHelper.ConvertEndian(bytes);
 		}
 
-		public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType)
+		public override object ConvertTo(byte[] value, Type destinationType)
 		{
-			if (!(value is byte[]))
-				return null;
-
 			if (destinationType == typeof(Guid))
 				return CassandraConversionHelper.ConvertBytesToGuid((byte[])value);
 

@@ -1,12 +1,11 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Numerics;
 
 namespace FluentCassandra.Types
 {
-	class IntegerTypeConverter : TypeConverter
+	class IntegerTypeConverter : CassandraTypeConverter<BigInteger>
 	{
-		public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
+		public override bool CanConvertFrom(Type sourceType)
 		{
 			switch (Type.GetTypeCode(sourceType))
 			{
@@ -25,7 +24,7 @@ namespace FluentCassandra.Types
 			}
 		}
 
-		public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
+		public override bool CanConvertTo(Type destinationType)
 		{
 			switch (Type.GetTypeCode(destinationType))
 			{
@@ -44,7 +43,7 @@ namespace FluentCassandra.Types
 			}
 		}
 
-		public override object ConvertFrom(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value)
+		public override BigInteger ConvertFrom(object value)
 		{
 			if (value is byte[])
 			{
@@ -63,30 +62,30 @@ namespace FluentCassandra.Types
 			if (value is uint) return (BigInteger)(uint)value;
 			if (value is ulong) return (BigInteger)(ulong)value;
 
-			return null;
+			return default(BigInteger);
 		}
 
-		public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType)
+		public override object ConvertTo(BigInteger value, Type destinationType)
 		{
 			if (!(value is BigInteger))
 				return null;
 
 			if (destinationType == typeof(byte[]))
 			{
-				var buffer = ((BigInteger)value).ToByteArray();
+				var buffer = value.ToByteArray();
 				return CassandraConversionHelper.ConvertEndian(buffer);
 			}
 
-			if (destinationType == typeof(BigInteger)) return (BigInteger)value;
+			if (destinationType == typeof(BigInteger)) return value;
 
-			if (destinationType == typeof(byte)) return (byte)(BigInteger)value;
-			if (destinationType == typeof(short)) return (short)(BigInteger)value;
-			if (destinationType == typeof(int)) return (int)(BigInteger)value;
-			if (destinationType == typeof(long)) return (long)(BigInteger)value;
-			if (destinationType == typeof(sbyte)) return (sbyte)(BigInteger)value;
-			if (destinationType == typeof(ushort)) return (ushort)(BigInteger)value;
-			if (destinationType == typeof(uint)) return (uint)(BigInteger)value;
-			if (destinationType == typeof(ulong)) return (ulong)(BigInteger)value;
+			if (destinationType == typeof(byte)) return (byte)value;
+			if (destinationType == typeof(short)) return (short)value;
+			if (destinationType == typeof(int)) return (int)value;
+			if (destinationType == typeof(long)) return (long)value;
+			if (destinationType == typeof(sbyte)) return (sbyte)value;
+			if (destinationType == typeof(ushort)) return (ushort)value;
+			if (destinationType == typeof(uint)) return (uint)value;
+			if (destinationType == typeof(ulong)) return (ulong)value;
 
 			return null;
 		}

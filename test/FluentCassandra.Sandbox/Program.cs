@@ -113,7 +113,6 @@ namespace FluentCassandra.Sandbox
 
 		#endregion
 
-
 		#region Update Post
 		private static void UpdatePost()
 		{

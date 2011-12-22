@@ -4,9 +4,9 @@ using System.ComponentModel;
 
 namespace FluentCassandra.Types
 {
-	internal class UTF8TypeConverter : TypeConverter
+	internal class UTF8TypeConverter : CassandraTypeConverter<string>
 	{
-		public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
+		public override bool CanConvertFrom(Type sourceType)
 		{
 			if (Type.GetTypeCode(sourceType) != TypeCode.Object)
 				return true;
@@ -14,7 +14,7 @@ namespace FluentCassandra.Types
 			return sourceType == typeof(byte[]);
 		}
 
-		public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
+		public override bool CanConvertTo(Type destinationType)
 		{
 			if (Type.GetTypeCode(destinationType) != TypeCode.Object)
 				return true;
@@ -22,21 +22,21 @@ namespace FluentCassandra.Types
 			return destinationType == typeof(byte[]);
 		}
 
-		public override object ConvertFrom(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value)
+		public override string ConvertFrom(object value)
 		{
 			if (value is byte[])
 				return Encoding.UTF8.GetString((byte[])value);
 
-			return Convert.ChangeType(value, typeof(string));
+			return (string)Convert.ChangeType(value, typeof(string));
 		}
 
-		public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType)
+		public override object ConvertTo(string value, Type destinationType)
 		{
 			if (!(value is string))
 				return null;
 
 			if (destinationType == typeof(byte[]))
-				return Encoding.UTF8.GetBytes((string)value);
+				return Encoding.UTF8.GetBytes(value);
 
 			return Convert.ChangeType(value, destinationType);
 		}

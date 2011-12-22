@@ -158,6 +158,7 @@
     <Compile Include="Operations\CassandraQuerySetup.cs" />
     <Compile Include="Operations\CassandraSlicePredicateBuilder.cs" />
     <Compile Include="Operations\ColumnSlicePredicate.cs" />
+    <Compile Include="Operations\AddColumn.cs" />
     <Compile Include="Operations\ExecuteCqlQuery.cs" />
     <Compile Include="Operations\Operation.cs" />
     <Compile Include="Operations\CassandraIndexClauseBuilder.cs" />
@@ -241,10 +242,14 @@
     <Compile Include="IFluentRecord.cs" />
     <Compile Include="Types\CassandraType.cs" />
     <Compile Include="Types\CassandraConversionHelper.cs" />
-    <Compile Include="Types\CompositeType.cs" />
-    <Compile Include="Types\CounterColumnType.cs" />
+    <Compile Include="Types\CassandraTypeConverter.cs" />
+    <Compile Include="Types\CompositeType.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Types\CompositeTypeConverter.cs" />
     <Compile Include="Types\DynamicCompositeType.cs" />
     <Compile Include="Types\DynamicCompositeTypeConverter.cs" />
+    <Compile Include="Types\CompositeExtensions.cs" />
     <Compile Include="Types\IntegerTypeConverter.cs" />
     <Compile Include="Types\IntegerType.cs" />
     <Compile Include="Types\LexicalUUIDTypeConverter.cs" />

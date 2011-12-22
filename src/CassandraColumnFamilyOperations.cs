@@ -62,6 +62,17 @@ namespace FluentCassandra
 
 		#endregion
 
+		#region AddColumn
+
+		public static void InsertColumn<CompareWith>(this CassandraColumnFamily<CompareWith> family, BytesType key, CompareWith columnName, long columnValue)
+			where CompareWith : CassandraType
+		{
+			var op = new AddColumn(key, columnName, columnValue);
+			family.ExecuteOperation(op);
+		}
+
+		#endregion
+
 		#region GetColumn
 
 		public static IFluentColumn<CompareWith> GetColumn<CompareWith>(this CassandraColumnFamily<CompareWith> family, BytesType key, FluentColumnPath path)

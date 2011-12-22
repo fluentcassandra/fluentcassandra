@@ -1,21 +1,20 @@
 ﻿using System;
-using System.ComponentModel;
 
 namespace FluentCassandra.Types
 {
-	internal class UUIDTypeConverter : TypeConverter
+	internal class UUIDTypeConverter : CassandraTypeConverter<Guid>
 	{
-		public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
+		public override bool CanConvertFrom(Type sourceType)
 		{
 			return sourceType == typeof(byte[]) || sourceType == typeof(Guid);
 		}
 
-		public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
+		public override bool CanConvertTo(Type destinationType)
 		{
 			return destinationType == typeof(byte[]) || destinationType == typeof(Guid);
 		}
 
-		public override object ConvertFrom(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value)
+		public override Guid ConvertFrom(object value)
 		{
 			if (value is byte[] && ((byte[])value).Length == 16)
 				return CassandraConversionHelper.ConvertBytesToGuid((byte[])value);
@@ -23,19 +22,19 @@ namespace FluentCassandra.Types
 			if (value is Guid)
 				return (Guid)value;
 
-			return null;
+			return default(Guid);
 		}
 
-		public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType)
+		public override object ConvertTo(Guid value, Type destinationType)
 		{
 			if (!(value is Guid))
 				return null;
 
 			if (destinationType == typeof(byte[]))
-				return CassandraConversionHelper.ConvertGuidToBytes((Guid)value);
+				return CassandraConversionHelper.ConvertGuidToBytes(value);
 
 			if (destinationType == typeof(Guid))
-				return (Guid)value;
+				return value;
 
 			return null;
 		}

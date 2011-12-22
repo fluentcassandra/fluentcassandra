@@ -11,7 +11,7 @@ namespace FluentCassandra.Types
 			return (T)GetValue(typeof(T));
 		}
 
-		protected object GetValue(object value, Type type, TypeConverter converter)
+		protected object GetValue<T>(T value, Type type, CassandraTypeConverter<T> converter)
 		{
 			if (type.IsGenericType && type.GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
 			{
@@ -25,7 +25,7 @@ namespace FluentCassandra.Types
 			return converter.ConvertTo(value, type);
 		}
 
-		protected object SetValue(object obj, TypeConverter converter)
+		protected T SetValue<T>(object obj, CassandraTypeConverter<T> converter)
 		{
 			if (!converter.CanConvertFrom(obj.GetType()))
 				throw new InvalidCastException(String.Format("{0} cannot be cast to {1}", obj.GetType(), TypeCode));
@@ -164,12 +164,23 @@ namespace FluentCassandra.Types
 			return type;
 		}
 
-		internal static T GetValue<T>(object obj, TypeConverter converter)
+		internal static CassandraType GetType(object obj, Type cassandraType)
+		{
+			CassandraType type = Activator.CreateInstance(cassandraType) as CassandraType;
+
+			if (type == null)
+				return null;
+
+			type.SetValue(obj);
+			return type;
+		}
+
+		internal static T GetValue<T>(object obj, CassandraTypeConverter<T> converter)
 		{
 			return (T)GetValue(obj, converter, typeof(T));
 		}
 
-		internal static object GetValue(object obj, TypeConverter converter, Type destinationType)
+		internal static object GetValue<T>(object obj, CassandraTypeConverter<T> converter, Type destinationType)
 		{
 			var objType = obj.GetType();
 

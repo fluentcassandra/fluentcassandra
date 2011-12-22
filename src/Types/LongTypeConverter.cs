@@ -1,11 +1,10 @@
 ﻿using System;
-using System.ComponentModel;
 
 namespace FluentCassandra.Types
 {
-	class LongTypeConverter : TypeConverter
+	class LongTypeConverter : CassandraTypeConverter<long>
 	{
-		public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
+		public override bool CanConvertFrom(Type sourceType)
 		{
 			switch (Type.GetTypeCode(sourceType))
 			{
@@ -24,7 +23,7 @@ namespace FluentCassandra.Types
 			}
 		}
 
-		public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
+		public override bool CanConvertTo(Type destinationType)
 		{
 			switch (Type.GetTypeCode(destinationType))
 			{
@@ -43,7 +42,7 @@ namespace FluentCassandra.Types
 			}
 		}
 
-		public override object ConvertFrom(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value)
+		public override long ConvertFrom(object value)
 		{
 			if (value is byte[])
 			{
@@ -62,30 +61,30 @@ namespace FluentCassandra.Types
 			if (value is uint) return Convert.ToInt64((uint)value);
 			if (value is ulong) return Convert.ToInt64((ulong)value);
 
-			return null;
+			return default(long);
 		}
 
-		public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType)
+		public override object ConvertTo(long value, Type destinationType)
 		{
 			if (!(value is long))
 				return null;
 
 			if (destinationType == typeof(byte[]))
 			{
-				var buffer = BitConverter.GetBytes((long)value);
+				var buffer = BitConverter.GetBytes(value);
 				return CassandraConversionHelper.ConvertEndian(buffer);
 			}
 
-			if (destinationType == typeof(long)) return (long)value;
+			if (destinationType == typeof(long)) return value;
 
-			if (destinationType == typeof(byte)) return (byte)(long)value;
-			if (destinationType == typeof(short)) return (short)(long)value;
-			if (destinationType == typeof(int)) return (int)(long)value;
+			if (destinationType == typeof(byte)) return (byte)value;
+			if (destinationType == typeof(short)) return (short)value;
+			if (destinationType == typeof(int)) return (int)value;
 
-			if (destinationType == typeof(sbyte)) return (sbyte)(long)value;
-			if (destinationType == typeof(ushort)) return (ushort)(long)value;
-			if (destinationType == typeof(uint)) return (uint)(long)value;
-			if (destinationType == typeof(ulong)) return (ulong)(long)value;
+			if (destinationType == typeof(sbyte)) return (sbyte)value;
+			if (destinationType == typeof(ushort)) return (ushort)value;
+			if (destinationType == typeof(uint)) return (uint)value;
+			if (destinationType == typeof(ulong)) return (ulong)value;
 
 			return null;
 		}

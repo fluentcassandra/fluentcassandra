@@ -5,15 +5,8 @@ using System.Linq;
 
 namespace FluentCassandra.Types
 {
-	internal class DynamicCompositeTypeConverter : CassandraTypeConverter<List<CassandraType>>
+	internal class CompositeTypeConverter : CassandraTypeConverter<List<CassandraType>>
 	{
-		private readonly IDictionary<char, Type> _aliases;
-
-		public DynamicCompositeTypeConverter(IDictionary<char, Type> aliases)
-		{
-			this._aliases = aliases;
-		}
-
 		public override bool CanConvertFrom(Type sourceType)
 		{
 			return sourceType == typeof(byte[]) || sourceType.GetInterfaces().Contains(typeof(IEnumerable<CassandraType>));
@@ -34,12 +27,6 @@ namespace FluentCassandra.Types
 				{
 					while (true)
 					{
-						if (bytes.ReadByte() != 1)
-							break; // we don't yet support full comparator names
-
-						var aliasType = (char)bytes.ReadByte();
-						var type = _aliases[aliasType];
-						
 						// value length
 						var byteLength = new byte[2];
 						if (bytes.Read(byteLength, 0, 2) <= 0)
@@ -50,7 +37,7 @@ namespace FluentCassandra.Types
 						var buffer = new byte[length];
 
 						bytes.Read(buffer, 0, length);
-						components.Add(CassandraType.GetType(buffer, type));
+						components.Add((BytesType)buffer);
 
 						// end of component
 						if (bytes.ReadByte() != 0)
@@ -86,16 +73,12 @@ namespace FluentCassandra.Types
 						var b = (byte[])c;
 						var length = (ushort)b.Length;
 
-						// comparator part
-						bytes.WriteByte((byte)1);
-						bytes.WriteByte((byte)_aliases.FirstOrDefault(x => x.Value == c.GetType()).Key);
-
 						// value length
 						bytes.Write(BitConverter.GetBytes(length), 0, 2);
-						
+
 						// value
 						bytes.Write(b, 0, length);
-						
+
 						// end of component
 						bytes.WriteByte((byte)0);
 					}

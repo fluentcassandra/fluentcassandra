@@ -1,21 +1,20 @@
 ﻿using System;
-using System.ComponentModel;
 
 namespace FluentCassandra.Types
 {
-	internal class TimeUUIDTypeConverter : TypeConverter
+	internal class TimeUUIDTypeConverter : CassandraTypeConverter<Guid>
 	{
-		public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
+		public override bool CanConvertFrom(Type sourceType)
 		{
 			return sourceType == typeof(byte[]) || sourceType == typeof(Guid) || sourceType == typeof(DateTime) || sourceType == typeof(DateTimeOffset);
 		}
 
-		public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
+		public override bool CanConvertTo(Type destinationType)
 		{
 			return destinationType == typeof(byte[]) || destinationType == typeof(Guid) || destinationType == typeof(DateTime) || destinationType == typeof(DateTimeOffset);
 		}
 
-		public override object ConvertFrom(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value)
+		public override Guid ConvertFrom(object value)
 		{
 			if (value is DateTime)
 				return GuidGenerator.GenerateTimeBasedGuid((DateTime)value);
@@ -29,15 +28,15 @@ namespace FluentCassandra.Types
 			if (value is Guid)
 				return (Guid)value;
 
-			return null;
+			return default(Guid);
 		}
 
-		public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType)
+		public override object ConvertTo(Guid value, Type destinationType)
 		{
 			if (!(value is Guid))
 				return null;
 
-			Guid guid = ((Guid)value);
+			Guid guid = value;
 
 			if (destinationType == typeof(DateTime))
 				return GuidGenerator.GetDateTime(guid);
@@ -46,7 +45,7 @@ namespace FluentCassandra.Types
 				return GuidGenerator.GetDateTimeOffset(guid);
 
 			if (destinationType == typeof(byte[]))
-				return CassandraConversionHelper.ConvertGuidToBytes((Guid)value);
+				return CassandraConversionHelper.ConvertGuidToBytes(value);
 
 			if (destinationType == typeof(Guid))
 				return guid;

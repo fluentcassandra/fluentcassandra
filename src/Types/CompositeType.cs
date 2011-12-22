@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace FluentCassandra.Types
 {
-	public class CompositeType : CassandraType
+	public class CompositeType : CassandraType, IList<CassandraType>
 	{
 		private static readonly CompositeTypeConverter Converter = new CompositeTypeConverter();
 
@@ -18,7 +18,7 @@ namespace FluentCassandra.Types
 
 		public override void SetValue(object obj)
 		{
-			_value = (List<CassandraType>)SetValue(obj, Converter);
+			_value = SetValue(obj, Converter);
 		}
 
 		protected override TypeCode TypeCode
@@ -85,6 +85,16 @@ namespace FluentCassandra.Types
 			return new CompositeType { _value = s };
 		}
 
+		public static implicit operator CompositeType(object[] s)
+		{
+			return new CompositeType { _value = new List<CassandraType>(s.Cast<BytesType>()) };
+		}
+
+		public static implicit operator CompositeType(List<object> s)
+		{
+			return new CompositeType { _value = new List<CassandraType>(s.Cast<BytesType>()) };
+		}
+
 		public static implicit operator byte[](CompositeType o) { return ConvertTo<byte[]>(o); }
 		public static implicit operator CompositeType(byte[] o) { return ConvertFrom(o); }
 
@@ -101,6 +111,88 @@ namespace FluentCassandra.Types
 			var type = new CompositeType();
 			type.SetValue(o);
 			return type;
+		}
+
+		#endregion
+
+		#region IList<CassandraType> Members
+
+		int IList<CassandraType>.IndexOf(CassandraType item)
+		{
+			return _value.IndexOf(item);
+		}
+
+		void IList<CassandraType>.Insert(int index, CassandraType item)
+		{
+			_value.Insert(index, item);
+		}
+
+		void IList<CassandraType>.RemoveAt(int index)
+		{
+			_value.RemoveAt(index);
+		}
+
+		public CassandraType this[int index]
+		{
+			get { return _value[index]; }
+			set { _value[index] = value; }
+		}
+
+		#endregion
+
+		#region ICollection<CassandraType> Members
+
+		public void Add(CassandraType item)
+		{
+			_value.Add(item);
+		}
+
+		public void Clear()
+		{
+			_value.Clear();
+		}
+
+		public bool Contains(CassandraType item)
+		{
+			return _value.Contains(item);
+		}
+
+		void ICollection<CassandraType>.CopyTo(CassandraType[] array, int arrayIndex)
+		{
+			_value.CopyTo(array, arrayIndex);
+		}
+
+		public int Count
+		{
+			get { return _value.Count; }
+		}
+
+		bool ICollection<CassandraType>.IsReadOnly
+		{
+			get { return ((ICollection<CassandraType>)_value).IsReadOnly; }
+		}
+
+		public bool Remove(CassandraType item)
+		{
+			return _value.Remove(item);
+		}
+
+		#endregion
+
+		#region IEnumerable<CassandraType> Members
+
+		public IEnumerator<CassandraType> GetEnumerator()
+		{
+			return _value.GetEnumerator();
+		}
+
+		#endregion
+
+		#region IEnumerable Members
+
+		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+		{
+			return _value.GetEnumerator();
 		}
 
 		#endregion
