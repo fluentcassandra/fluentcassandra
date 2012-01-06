@@ -18,7 +18,6 @@ namespace FluentCassandra
 		}
 
 		private IList<IFluentMutationTracker> _trackers;
-		private bool _disposed;
 
 		/// <summary>
 		/// 
@@ -181,6 +180,12 @@ namespace FluentCassandra
 
 		#region IDisposable Members
 
+		public bool WasDisposed
+		{
+			get;
+			private set;
+		}
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -198,13 +203,13 @@ namespace FluentCassandra
 		/// </param>
 		protected virtual void Dispose(bool disposing)
 		{
-			if (!_disposed && disposing && CassandraSession.Current != null)
+			if (!WasDisposed && disposing && CassandraSession.Current != null)
 			{
 				CassandraSession.Current.Dispose();
 				CassandraSession.Current = null;
 			}
 
-			_disposed = true;
+			WasDisposed = true;
 		}
 
 		/// <summary>

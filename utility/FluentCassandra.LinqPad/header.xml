@@ -1,0 +1,5 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<DataContextDriver>
+    <MainAssembly>FluentCassandra.LinqPad.dll</MainAssembly>
+    <SupportUri>https://github.com/managedfusion/fluentcassandra</SupportUri>
+</DataContextDriver>

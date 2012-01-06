@@ -1,0 +1,45 @@
+﻿<Window x:Class="FluentCassandra.LinqPad.CassandraConectionDialog"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:local="clr-namespace:FluentCassandra.LinqPad"
+		mc:Ignorable="d" Title="Cassandra Connection" Height="345" Width="574">
+
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+		
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="281*" />
+		</Grid.ColumnDefinitions>
+
+		<TextBlock Grid.Row="0" Text="Keyspace *" Margin="6" VerticalAlignment="Center" />
+		<TextBox   Grid.Row="0" Grid.Column="1" Name="KeyspaceValue" Margin="6" Text="{Binding Keyspace, Mode=TwoWay,ValidatesOnDataErrors=True,ValidatesOnExceptions=True,NotifyOnValidationError=True,UpdateSourceTrigger=PropertyChanged}" />
+
+		<TextBlock Grid.Row="1" Text="Host *" Margin="6" VerticalAlignment="Center" />
+		<TextBox   Grid.Row="1" Grid.Column="1" Name="HostValue" Margin="6" Text="{Binding Host, Mode=TwoWay,ValidatesOnDataErrors=True,ValidatesOnExceptions=True,NotifyOnValidationError=True,UpdateSourceTrigger=PropertyChanged}" />
+
+		<TextBlock Grid.Row="2" Text="Port" Margin="6" VerticalAlignment="Center" />
+		<TextBox   Grid.Row="2" Grid.Column="1" Name="PortValue" Margin="6" Text="{Binding Port, Mode=TwoWay,ValidatesOnDataErrors=True,ValidatesOnExceptions=True,NotifyOnValidationError=True}" />
+		
+		<TextBlock Grid.Row="3" Text="Timeout" Margin="6" VerticalAlignment="Center" />
+		<TextBox   Grid.Row="3" Grid.Column="1" Name="TimeoutValue" Margin="6" Text="{Binding Timeout, Mode=TwoWay,ValidatesOnDataErrors=True,ValidatesOnExceptions=True,NotifyOnValidationError=True}" />
+
+		<TextBlock Grid.Row="4" Text="Username" Margin="6" VerticalAlignment="Center" />
+		<TextBox   Grid.Row="4" Grid.Column="1" Name="UsernameValue" Margin="6" Text="{Binding Username, Mode=TwoWay,ValidatesOnDataErrors=True,ValidatesOnExceptions=True,NotifyOnValidationError=True}" />
+		
+		<TextBlock Grid.Row="5" Text="Password" Margin="6" VerticalAlignment="Center" />
+		<PasswordBox  Grid.Row="5" Grid.Column="1" Name="PasswordValue" Margin="6" PasswordChanged="PasswordValue_PasswordChanged" />
+
+		<Button Grid.Row="9" Grid.Column="1" Content="OK" Name="OkButton" HorizontalAlignment="Right" Margin="6" Width="60" Click="OkButton_Click" Command="{Binding SaveCommand}" />
+	</Grid>
+</Window>
