@@ -1,6 +1,5 @@
 ﻿using System;
 using FluentCassandra.Types;
-using Apache.Cassandra;
 
 namespace FluentCassandra.Operations
 {
@@ -26,17 +25,17 @@ namespace FluentCassandra.Operations
 
 		public override Void Execute()
 		{
-			var parent = new ColumnParent {
-				Column_family = ColumnFamily.FamilyName,
+			var parent = new CassandraColumnParent {
+				ColumnFamily = ColumnFamily.FamilyName,
 			};
 
 			if (SuperColumnName != null)
-				parent.Super_column = SuperColumnName;
+				parent.SuperColumn = SuperColumnName;
 
-			var column = new Column {
+			var column = new CassandraColumn {
 				Name = ColumnName,
 				Value = ColumnValue,
-				Timestamp = Timestamp.ToTimestamp(),
+				Timestamp = Timestamp,
 				Ttl = TimeToLive
 			};
 

@@ -1,5 +1,4 @@
 using System;
-using Apache.Cassandra;
 using FluentCassandra.Types;
 
 namespace FluentCassandra.Operations
@@ -21,17 +20,5 @@ namespace FluentCassandra.Operations
 		public bool Reversed { get; internal set; }
 
 		public int Count { get; internal set; }
-
-		internal override SlicePredicate CreateSlicePredicate()
-		{
-			return new SlicePredicate {
-				Slice_range = new SliceRange {
-					Start = (byte[])Start ?? new byte[0],
-					Finish = (byte[])Finish ?? new byte[0],
-					Reversed = Reversed,
-					Count = Count
-				}
-			};
-		}
 	}
 }

@@ -15,6 +15,9 @@ namespace FluentCassandra.Operations
 
 		public override Void Execute()
 		{
+			if (Mutations.Count() == 0)
+				return new Void();
+
 			var mutationMap = new Dictionary<byte[], Dictionary<string, List<Mutation>>>();
 
 			foreach (var key in Mutations.GroupBy(x => x.Column.Family.Key))
@@ -43,7 +46,7 @@ namespace FluentCassandra.Operations
 					keyMutations.Add(columnFamily.Key, columnFamilyMutations);
 				}
 
-				mutationMap.Add(key.Key, keyMutations);
+				mutationMap.Add(key.Key.TryToBigEndian(), keyMutations);
 			}
 
 			// Dictionary<string : key, Dicationary<string : columnFamily, List<Mutation>>>

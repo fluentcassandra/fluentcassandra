@@ -3,8 +3,43 @@ using System.Linq;
 
 namespace FluentCassandra.Types
 {
-	public static class CompositeExtensions
+	public static class CassandraTypeExtensions
 	{
+		public static AsciiType ToAsciiType(this object o)
+		{
+			return CassandraType.GetType<AsciiType>(o);
+		}
+
+		public static BytesType ToBytesType(this object o)
+		{
+			return CassandraType.GetType<BytesType>(o);
+		}
+
+		public static IntegerType ToIntegerType(this object o)
+		{
+			return CassandraType.GetType<IntegerType>(o);
+		}
+
+		public static LexicalUUIDType ToLexicalUUIDType(this object o)
+		{
+			return CassandraType.GetType<LexicalUUIDType>(o);
+		}
+
+		public static LongType ToLongType(this object o)
+		{
+			return CassandraType.GetType<LongType>(o);
+		}
+
+		public static UTF8Type ToUTF8Type(this object o)
+		{
+			return CassandraType.GetType<UTF8Type>(o);
+		}
+
+		public static UUIDType ToUUIDType(this object o)
+		{
+			return CassandraType.GetType<UUIDType>(o);
+		}
+
 		public static void AddAscii(this DynamicCompositeType type, AsciiType value)
 		{
 			type.Add(value);

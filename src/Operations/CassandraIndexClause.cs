@@ -1,8 +1,7 @@
 ﻿using System;
-using Apache.Cassandra;
-using FluentCassandra.Types;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using FluentCassandra.Types;
 
 namespace FluentCassandra.Operations
 {
@@ -37,15 +36,6 @@ namespace FluentCassandra.Operations
 
 				return _compiledExpressions;
 			}
-		}
-
-		internal IndexClause CreateIndexClause()
-		{
-			return new IndexClause {
-				Start_key = StartKey,
-				Count = Count,
-				Expressions = CompiledExpressions
-			};
 		}
 	}
 }

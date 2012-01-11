@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Text;
-using System.ComponentModel;
 
 namespace FluentCassandra.Types
 {
@@ -25,7 +23,7 @@ namespace FluentCassandra.Types
 		public override string ConvertFrom(object value)
 		{
 			if (value is byte[])
-				return Encoding.UTF8.GetString((byte[])value);
+				return ((byte[])value).FromBytes<string>();
 
 			return (string)Convert.ChangeType(value, typeof(string));
 		}
@@ -36,7 +34,7 @@ namespace FluentCassandra.Types
 				return null;
 
 			if (destinationType == typeof(byte[]))
-				return Encoding.UTF8.GetBytes(value);
+				return value.ToBytes();
 
 			return Convert.ChangeType(value, destinationType);
 		}

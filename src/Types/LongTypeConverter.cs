@@ -45,10 +45,7 @@ namespace FluentCassandra.Types
 		public override long ConvertFrom(object value)
 		{
 			if (value is byte[])
-			{
-				var buffer = CassandraConversionHelper.ConvertEndian((byte[])value);
-				return BitConverter.ToInt64(buffer, 0);
-			}
+				return ((byte[])value).FromBytes<long>();
 
 			if (value is long) return (long)value;
 
@@ -66,14 +63,8 @@ namespace FluentCassandra.Types
 
 		public override object ConvertTo(long value, Type destinationType)
 		{
-			if (!(value is long))
-				return null;
-
 			if (destinationType == typeof(byte[]))
-			{
-				var buffer = BitConverter.GetBytes(value);
-				return CassandraConversionHelper.ConvertEndian(buffer);
-			}
+				return value.ToBytes();
 
 			if (destinationType == typeof(long)) return value;
 

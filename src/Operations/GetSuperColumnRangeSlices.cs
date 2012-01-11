@@ -26,17 +26,17 @@ namespace FluentCassandra.Operations
 
 			try
 			{
-				var parent = new ColumnParent {
-					Column_family = ColumnFamily.FamilyName
+				var parent = new CassandraColumnParent {
+					ColumnFamily = ColumnFamily.FamilyName
 				};
 
 				if (SuperColumnName != null)
-					parent.Super_column = SuperColumnName;
+					parent.SuperColumn = SuperColumnName;
 
 				var output = CassandraSession.Current.GetClient().get_range_slices(
 					parent,
-					SlicePredicate.CreateSlicePredicate(),
-					KeyRange.CreateKeyRange(),
+					SlicePredicate,
+					KeyRange,
 					CassandraSession.Current.ReadConsistency
 				);
 

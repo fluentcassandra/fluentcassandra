@@ -34,14 +34,14 @@ namespace FluentCassandra.Operations
 
 			try
 			{
-				var parent = new ColumnParent {
-					Column_family = columnFamily.FamilyName
+				var parent = new CassandraColumnParent {
+					ColumnFamily = columnFamily.FamilyName
 				};
 
 				var output = CassandraSession.Current.GetClient().get_slice(
 					Key,
 					parent,
-					SlicePredicate.CreateSlicePredicate(),
+					SlicePredicate,
 					CassandraSession.Current.ReadConsistency
 				);
 

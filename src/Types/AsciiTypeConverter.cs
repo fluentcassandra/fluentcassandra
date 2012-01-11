@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text;
 
 namespace FluentCassandra.Types
 {
@@ -24,15 +23,18 @@ namespace FluentCassandra.Types
 		public override string ConvertFrom(object value)
 		{
 			if (value is byte[])
-				return Encoding.ASCII.GetString((byte[])value);
+				return ((byte[])value).FromBytes<string>();
 
 			return (string)Convert.ChangeType(value, typeof(string));
 		}
 
 		public override object ConvertTo(string value, Type destinationType)
 		{
+			if (!(value is string))
+				return null;
+
 			if (destinationType == typeof(byte[]))
-				return Encoding.ASCII.GetBytes(value);
+				return value.ToBytes();
 
 			return Convert.ChangeType(value, destinationType);
 		}

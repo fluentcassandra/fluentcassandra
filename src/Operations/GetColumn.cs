@@ -19,12 +19,12 @@ namespace FluentCassandra.Operations
 
 		public override IFluentColumn<CompareWith> Execute()
 		{
-			var path = new ColumnPath {
-				Column_family = ColumnFamily.FamilyName
+			var path = new CassandraColumnPath {
+				ColumnFamily = ColumnFamily.FamilyName
 			};
 
 			if (SuperColumnName != null)
-				path.Super_column = SuperColumnName;
+				path.SuperColumn = SuperColumnName;
 
 			if (ColumnName != null)
 				path.Column = ColumnName;

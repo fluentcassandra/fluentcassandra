@@ -155,6 +155,11 @@
     <Compile Include="Linq\CqlQueryExtensions.cs" />
     <Compile Include="Linq\ICqlRow.cs" />
     <Compile Include="Operations\BatchMutate.cs" />
+    <Compile Include="Operations\CassandraClientWrapper.cs" />
+    <Compile Include="Operations\CassandraColumn.cs" />
+    <Compile Include="Operations\CassandraColumnParent.cs" />
+    <Compile Include="Operations\CassandraColumnPath.cs" />
+    <Compile Include="Operations\CassandraCounterColumn.cs" />
     <Compile Include="Operations\CassandraIndexClause.cs" />
     <Compile Include="Operations\CassandraQueryable.cs" />
     <Compile Include="Operations\CassandraQuerySetup.cs" />
@@ -251,7 +256,7 @@
     <Compile Include="Types\CompositeTypeConverter.cs" />
     <Compile Include="Types\DynamicCompositeType.cs" />
     <Compile Include="Types\DynamicCompositeTypeConverter.cs" />
-    <Compile Include="Types\CompositeExtensions.cs" />
+    <Compile Include="Types\CassandraTypeExtensions.cs" />
     <Compile Include="Types\IntegerTypeConverter.cs" />
     <Compile Include="Types\IntegerType.cs" />
     <Compile Include="Types\LexicalUUIDTypeConverter.cs" />

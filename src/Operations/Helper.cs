@@ -10,9 +10,97 @@ namespace FluentCassandra.Operations
 	{
 		private static readonly DateTimeOffset UnixStart = new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero);
 
-		public static List<byte[]> ToByteArrayList(this List<BytesType> list)
+		public static List<byte[]> ToByteArrayList(List<BytesType> list)
 		{
-			return list.Select(x => (byte[])x).ToList();
+			return list.Select(x => x.TryToBigEndian()).ToList();
+		}
+
+		public static KeyRange CreateKeyRange(CassandraKeyRange range)
+		{
+			return new KeyRange {
+				Start_key = range.StartKey.TryToBigEndian(),
+				End_key = range.EndKey.TryToBigEndian(),
+				Start_token = range.StartToken,
+				End_token = range.EndToken,
+				Count = range.Count
+			};
+		}
+
+		public static IndexClause CreateIndexClause(CassandraIndexClause index)
+		{
+			return new IndexClause {
+				Start_key = index.StartKey.TryToBigEndian(),
+				Count = index.Count,
+				Expressions = index.CompiledExpressions
+			};
+		}
+
+		public static ColumnParent CreateColumnParent(CassandraColumnParent parent)
+		{
+			return new ColumnParent {
+				Column_family = parent.ColumnFamily,
+				Super_column = parent.SuperColumn.TryToBigEndian()
+			};
+		}
+
+		public static ColumnPath CreateColumnPath(CassandraColumnPath path)
+		{
+			return new ColumnPath {
+				Column = path.Column.TryToBigEndian(),
+				Column_family = path.ColumnFamily,
+				Super_column = path.SuperColumn.TryToBigEndian()
+			};
+		}
+
+		public static SlicePredicate CreateSlicePredicate(CassandraSlicePredicate predicate)
+		{
+			if (predicate is RangeSlicePredicate)
+			{
+				var x = (RangeSlicePredicate)predicate;
+				return new SlicePredicate {
+					Slice_range = new SliceRange {
+						Start = x.Start.TryToBigEndian() ?? new byte[0],
+						Finish = x.Finish.TryToBigEndian() ?? new byte[0],
+						Reversed = x.Reversed,
+						Count = x.Count
+					}
+				};
+			}
+			else if (predicate is ColumnSlicePredicate)
+			{
+				var x = (ColumnSlicePredicate)predicate;
+				return new SlicePredicate {
+					Column_names = x.Columns.Select(o => o.TryToBigEndian()).ToList()
+				};
+			}
+
+			return null;
+		}
+
+		public static Column CreateColumn(CassandraColumn column)
+		{
+			return new Column {
+				Name = column.Name.TryToBigEndian(),
+				Value = column.Value.TryToBigEndian(),
+				Ttl = column.Ttl,
+				Timestamp = column.Timestamp.ToTimestamp()
+			};
+		}
+
+		public static CounterColumn CreateCounterColumn(CassandraCounterColumn column)
+		{
+			return new CounterColumn {
+				Name = column.Name.TryToBigEndian(),
+				Value = column.Value
+			};
+		}
+
+		public static byte[] TryToBigEndian(this CassandraType value)
+		{
+			if (value == null)
+				return null;
+
+			return value.ToBigEndian();
 		}
 
 		public static long ToTimestamp(this DateTimeOffset dt)
@@ -42,8 +130,8 @@ namespace FluentCassandra.Operations
 		{
 
 			return new FluentColumn<CompareWith> {
-				ColumnName = CassandraType.GetType<CompareWith>(col.Name),
-				ColumnValue = col.Value,
+				ColumnName = CassandraType.FromBigEndian<CompareWith>(col.Name),
+				ColumnValue = CassandraType.FromBigEndian<BytesType>(col.Value),
 				ColumnTimestamp = new DateTimeOffset(col.Timestamp, TimeSpan.Zero),
 				ColumnTimeToLive = col.Ttl
 			};
@@ -54,7 +142,7 @@ namespace FluentCassandra.Operations
 			where CompareSubcolumnWith : CassandraType
 		{
 			var superCol = new FluentSuperColumn<CompareWith, CompareSubcolumnWith> {
-				ColumnName = CassandraType.GetType<CompareWith>(col.Name)
+				ColumnName = CassandraType.FromBigEndian<CompareWith>(col.Name)
 			};
 
 			foreach (var xcol in col.Columns)
@@ -82,7 +170,7 @@ namespace FluentCassandra.Operations
 		{
 			foreach (var col in mutation)
 			{
-				var superColumn = col.Column.GetPath().SuperColumn.ColumnName;
+				var superColumn = col.Column.GetPath().SuperColumn.ColumnName.TryToBigEndian();
 
 				var deletion = new Deletion {
 					Timestamp = col.Timestamp.ToTimestamp(),
@@ -114,8 +202,8 @@ namespace FluentCassandra.Operations
 		public static Column CreateColumn(IFluentColumn column)
 		{
 			return new Column {
-				Name = column.ColumnName,
-				Value = column.ColumnValue,
+				Name = column.ColumnName.TryToBigEndian(),
+				Value = column.ColumnValue.TryToBigEndian(),
 				Timestamp = column.ColumnTimestamp.ToTimestamp()
 			};
 		}
@@ -132,7 +220,7 @@ namespace FluentCassandra.Operations
 			{
 				var colY = (IFluentSuperColumn)column;
 				var superColumn = new SuperColumn {
-					Name = colY.ColumnName,
+					Name = colY.ColumnName.TryToBigEndian(),
 					Columns = new List<Column>()
 				};
 
@@ -152,19 +240,7 @@ namespace FluentCassandra.Operations
 		public static SlicePredicate CreateSlicePredicate(IEnumerable<CassandraType> columnNames)
 		{
 			return new SlicePredicate {
-				Column_names = columnNames.Cast<byte[]>().ToList()
-			};
-		}
-
-		public static SlicePredicate CreateSlicePredicate(byte[] start, byte[] finish, bool reversed = false, int count = 100)
-		{
-			return new SlicePredicate {
-				Slice_range = new SliceRange {
-					Start = start,
-					Finish = finish,
-					Reversed = reversed,
-					Count = count
-				}
+				Column_names = columnNames.Select(o => o.TryToBigEndian()).ToList()
 			};
 		}
 	}

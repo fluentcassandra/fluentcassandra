@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Numerics;
 using System.Text;
 
 namespace FluentCassandra.Types
@@ -78,13 +79,17 @@ namespace FluentCassandra.Types
 		public override byte[] ConvertFrom(object value)
 		{
 			if (value is Guid)
-				return CassandraConversionHelper.ConvertGuidToBytes((Guid)value);
+				return ConvertGuidToBytes((Guid)value);
+
+			if (value is byte[])
+				return (byte[])value;
 
 			byte[] bytes = null;
 
-			if (value is byte[])
-				bytes = (byte[])value;
-			else if (value is DateTimeOffset)
+			if (value is BigInteger)
+				bytes = ((BigInteger)value).ToByteArray();
+
+			if (value is DateTimeOffset)
 				bytes = BitConverter.GetBytes(((DateTimeOffset)value).UtcTicks);
 
 			if (bytes == null)
@@ -129,21 +134,24 @@ namespace FluentCassandra.Types
 			if (bytes == null)
 				return null;
 
-			return CassandraConversionHelper.ConvertEndian(bytes);
+			return bytes;
 		}
 
 		public override object ConvertTo(byte[] value, Type destinationType)
 		{
 			if (destinationType == typeof(Guid))
-				return CassandraConversionHelper.ConvertBytesToGuid((byte[])value);
-
-			var bytes = CassandraConversionHelper.ConvertEndian((byte[])value);
+				return ConvertBytesToGuid(value);
 
 			if (destinationType == typeof(byte[]))
-				return bytes;
+				return value;
+
+			var bytes = value;
 
 			if (destinationType == typeof(DateTimeOffset))
 				return new DateTimeOffset(BitConverter.ToInt64(bytes, 0), new TimeSpan(0L));
+
+			if (destinationType == typeof(BigInteger))
+				return new BigInteger(bytes);
 
 			switch (Type.GetTypeCode(destinationType))
 			{
@@ -221,6 +229,39 @@ namespace FluentCassandra.Types
 			bits[3] = ((bytes[12] | (bytes[13] << 8)) | (bytes[14] << 0x10)) | (bytes[15] << 0x18); //flags
 
 			return new decimal(bits);
+		}
+
+		private static void ReverseLowFieldTimestamp(byte[] guid)
+		{
+			Array.Reverse(guid, 0, 4);
+		}
+
+		private static void ReverseMiddleFieldTimestamp(byte[] guid)
+		{
+			Array.Reverse(guid, 4, 2);
+		}
+
+		private static void ReverseHighFieldTimestamp(byte[] guid)
+		{
+			Array.Reverse(guid, 6, 2);
+		}
+
+		private static byte[] ConvertGuidToBytes(Guid value)
+		{
+			var bytes = value.ToByteArray();
+			ReverseLowFieldTimestamp(bytes);
+			ReverseMiddleFieldTimestamp(bytes);
+			ReverseHighFieldTimestamp(bytes);
+			return bytes;
+		}
+
+		private static Guid ConvertBytesToGuid(byte[] value)
+		{
+			var buffer = (byte[])value.Clone();
+			ReverseLowFieldTimestamp(buffer);
+			ReverseMiddleFieldTimestamp(buffer);
+			ReverseHighFieldTimestamp(buffer);
+			return new Guid(buffer);
 		}
 	}
 }

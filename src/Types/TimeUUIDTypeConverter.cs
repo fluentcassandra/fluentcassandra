@@ -23,7 +23,7 @@ namespace FluentCassandra.Types
 				return GuidGenerator.GenerateTimeBasedGuid((DateTimeOffset)value);
 
 			if (value is byte[] && ((byte[])value).Length == 16)
-				return CassandraConversionHelper.ConvertBytesToGuid((byte[])value);
+				return ((byte[])value).FromBytes<Guid>();
 
 			if (value is Guid)
 				return (Guid)value;
@@ -33,9 +33,6 @@ namespace FluentCassandra.Types
 
 		public override object ConvertTo(Guid value, Type destinationType)
 		{
-			if (!(value is Guid))
-				return null;
-
 			Guid guid = value;
 
 			if (destinationType == typeof(DateTime))
@@ -45,12 +42,24 @@ namespace FluentCassandra.Types
 				return GuidGenerator.GetDateTimeOffset(guid);
 
 			if (destinationType == typeof(byte[]))
-				return CassandraConversionHelper.ConvertGuidToBytes(value);
+				return value.ToBytes();
 
 			if (destinationType == typeof(Guid))
 				return guid;
 
 			return null;
+		}
+
+		public override byte[] ToBigEndian(Guid value)
+		{
+			var bytes = ConvertTo<byte[]>(value);
+			return bytes;
+		}
+
+		public override Guid FromBigEndian(byte[] value)
+		{
+			var obj = ConvertFrom(value);
+			return obj;
 		}
 	}
 }

@@ -1,6 +1,5 @@
 ﻿using System;
 using FluentCassandra.Types;
-using Apache.Cassandra;
 
 namespace FluentCassandra.Operations
 {
@@ -18,14 +17,14 @@ namespace FluentCassandra.Operations
 
 		public override Void Execute()
 		{
-			var parent = new ColumnParent {
-				Column_family = ColumnFamily.FamilyName,
+			var parent = new CassandraColumnParent {
+				ColumnFamily = ColumnFamily.FamilyName,
 			};
 
 			if (SuperColumnName != null)
-				parent.Super_column = SuperColumnName;
+				parent.SuperColumn = SuperColumnName;
 
-			var column = new CounterColumn {
+			var column = new CassandraCounterColumn {
 				Name = ColumnName,
 				Value = ColumnValue
 			};

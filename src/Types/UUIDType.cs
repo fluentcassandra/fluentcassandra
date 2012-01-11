@@ -1,5 +1,4 @@
 ﻿using System;
-using System;
 using System.Linq;
 
 namespace FluentCassandra.Types
@@ -17,7 +16,17 @@ namespace FluentCassandra.Types
 
 		public override void SetValue(object obj)
 		{
-			_value = (Guid)SetValue(obj, Converter);
+			_value = SetValue(obj, Converter);
+		}
+
+		internal override byte[] ToBigEndian()
+		{
+			return Converter.ToBigEndian(_value);
+		}
+
+		internal override void SetValueFromBigEndian(byte[] value)
+		{
+			_value = Converter.FromBigEndian(value);
 		}
 
 		protected override TypeCode TypeCode

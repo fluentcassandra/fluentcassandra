@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Numerics;
+using System.Collections.Generic;
 
 namespace FluentCassandra.Types
 {
@@ -37,6 +38,9 @@ namespace FluentCassandra.Types
 		public abstract object GetValue(Type type);
 
 		protected abstract TypeCode TypeCode { get; }
+
+		internal abstract byte[] ToBigEndian();
+		internal abstract void SetValueFromBigEndian(byte[] value);
 
 		#region Equality
 
@@ -124,6 +128,11 @@ namespace FluentCassandra.Types
 		public static implicit operator DateTimeOffset?(CassandraType o) { return Convert<DateTimeOffset?>(o); }
 		public static implicit operator BigInteger?(CassandraType o) { return Convert<BigInteger?>(o); }
 
+		public static implicit operator object[](CassandraType o) { return Convert<object[]>(o); }
+		public static implicit operator List<object>(CassandraType o) { return Convert<List<object>>(o); }
+		public static implicit operator CassandraType[](CassandraType o) { return Convert<CassandraType[]>(o); }
+		public static implicit operator List<CassandraType>(CassandraType o) { return Convert<List<CassandraType>>(o); }
+
 		#endregion
 
 		#region IConvertible Members
@@ -156,6 +165,14 @@ namespace FluentCassandra.Types
 
 		#endregion
 
+		internal static T FromBigEndian<T>(byte[] value)
+			where T : CassandraType
+		{
+			T type = Activator.CreateInstance<T>();
+			type.SetValueFromBigEndian(value);
+			return type;
+		}
+
 		internal static T GetType<T>(object obj)
 			where T : CassandraType
 		{
@@ -177,15 +194,13 @@ namespace FluentCassandra.Types
 
 		internal static T GetValue<T>(object obj, CassandraTypeConverter<T> converter)
 		{
-			return (T)GetValue(obj, converter, typeof(T));
-		}
+			if (obj is CassandraType)
+				return ((CassandraType)obj).GetValue<T>();
 
-		internal static object GetValue<T>(object obj, CassandraTypeConverter<T> converter, Type destinationType)
-		{
 			var objType = obj.GetType();
 
 			if (!converter.CanConvertFrom(objType))
-				throw new InvalidCastException(String.Format("{0} cannot be cast to {1}", objType, destinationType));
+				throw new InvalidCastException(String.Format("{0} cannot be cast to {1}", objType, typeof(T)));
 
 			return converter.ConvertFrom(obj);
 		}

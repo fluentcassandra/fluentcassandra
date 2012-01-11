@@ -20,17 +20,17 @@ namespace FluentCassandra.Operations
 
 		public override int Execute()
 		{
-			var parent = new ColumnParent {
-				Column_family = ColumnFamily.FamilyName
+			var parent = new CassandraColumnParent {
+				ColumnFamily = ColumnFamily.FamilyName
 			};
 
 			if (SuperColumnName != null)
-				parent.Super_column = SuperColumnName;
+				parent.SuperColumn = SuperColumnName;
 
 			var result = CassandraSession.Current.GetClient().get_count(
 				Key,
 				parent,
-				SlicePredicate.CreateSlicePredicate(),
+				SlicePredicate,
 				CassandraSession.Current.ReadConsistency
 			);
 

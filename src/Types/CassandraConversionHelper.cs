@@ -4,49 +4,21 @@ namespace FluentCassandra.Types
 {
 	internal static class CassandraConversionHelper
 	{
-		public static byte[] ConvertEndian(byte[] value)
-		{
-			if (BitConverter.IsLittleEndian)
-			{
-				var buffer = (byte[])value.Clone();
-				Array.Reverse(buffer);
-				return buffer;
-			}
+		private static readonly BytesTypeConverter BitConverter = new BytesTypeConverter();
 
-			return value;
+		public static byte[] ToBytes(this object value)
+		{
+			return BitConverter.ConvertFrom(value);
 		}
 
-		private static void ReverseLowFieldTimestamp(byte[] guid)
+		public static T FromBytes<T>(this byte[] value)
 		{
-			Array.Reverse(guid, 0, 4);
+			return (T)FromBytes(value, typeof(T));
 		}
 
-		private static void ReverseMiddleFieldTimestamp(byte[] guid)
+		public static object FromBytes(this byte[] value, Type destinationType)
 		{
-			Array.Reverse(guid, 4, 2);
-		}
-
-		private static void ReverseHighFieldTimestamp(byte[] guid)
-		{
-			Array.Reverse(guid, 6, 2);
-		}
-
-		public static byte[] ConvertGuidToBytes(Guid value)
-		{
-			var bytes = value.ToByteArray();
-			ReverseLowFieldTimestamp(bytes);
-			ReverseMiddleFieldTimestamp(bytes);
-			ReverseHighFieldTimestamp(bytes);
-			return bytes;
-		}
-
-		public static Guid ConvertBytesToGuid(byte[] value)
-		{
-			var buffer = (byte[])value.Clone();
-			ReverseLowFieldTimestamp(buffer);
-			ReverseMiddleFieldTimestamp(buffer);
-			ReverseHighFieldTimestamp(buffer);
-			return new Guid(buffer);
+			return BitConverter.ConvertTo(value, destinationType);
 		}
 	}
 }

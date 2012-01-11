@@ -17,5 +17,30 @@ namespace FluentCassandra.Types
 		{
 			return (TDestination)ConvertTo(value, typeof(TDestination));
 		}
+
+		public virtual byte[] ToBigEndian(T value)
+		{
+			var bytes = ConvertTo<byte[]>(value);
+			return ConvertEndian(bytes);
+		}
+
+		public virtual T FromBigEndian(byte[] value)
+		{
+			var bytes = ConvertEndian(value);
+			var obj = ConvertFrom(bytes);
+			return obj;
+		}
+
+		protected byte[] ConvertEndian(byte[] value)
+		{
+			if (System.BitConverter.IsLittleEndian)
+			{
+				var buffer = (byte[])value.Clone();
+				Array.Reverse(buffer);
+				return buffer;
+			}
+
+			return value;
+		}
 	}
 }

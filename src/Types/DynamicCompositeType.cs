@@ -1,5 +1,4 @@
 ﻿using System;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -7,7 +6,7 @@ namespace FluentCassandra.Types
 {
 	public class DynamicCompositeType : CassandraType, IList<CassandraType>
 	{
-		private readonly DynamicCompositeTypeConverter _converter;
+		private readonly DynamicCompositeTypeConverter Converter;
 
 		public DynamicCompositeType()
 			: this(new Dictionary<char, Type> {
@@ -23,19 +22,29 @@ namespace FluentCassandra.Types
 
 		public DynamicCompositeType(IDictionary<char, Type> aliases)
 		{
-			_converter = new DynamicCompositeTypeConverter(aliases);
+			Converter = new DynamicCompositeTypeConverter(aliases);
 		}
 
 		#region Implimentation
 
 		public override object GetValue(Type type)
 		{
-			return GetValue(_value, type, _converter);
+			return GetValue(_value, type, Converter);
 		}
 
 		public override void SetValue(object obj)
 		{
-			_value = SetValue(obj, _converter);
+			_value = SetValue(obj, Converter);
+		}
+
+		internal override byte[] ToBigEndian()
+		{
+			return Converter.ToBigEndian(_value);
+		}
+
+		internal override void SetValueFromBigEndian(byte[] value)
+		{
+			_value = Converter.FromBigEndian(value);
 		}
 
 		protected override TypeCode TypeCode
@@ -61,7 +70,7 @@ namespace FluentCassandra.Types
 			if (obj is DynamicCompositeType)
 				objArray = ((DynamicCompositeType)obj)._value;
 			else
-				objArray = CassandraType.GetValue<List<CassandraType>>(obj, _converter);
+				objArray = CassandraType.GetValue<List<CassandraType>>(obj, Converter);
 
 			if (objArray == null)
 				return false;
@@ -87,6 +96,16 @@ namespace FluentCassandra.Types
 
 		#region Conversion
 
+		public static implicit operator CompositeType(DynamicCompositeType type)
+		{
+			return (CompositeType)type._value;
+		}
+
+		public static implicit operator DynamicCompositeType(CompositeType type)
+		{
+			return new DynamicCompositeType { _value = type.GetValue<List<CassandraType>>() };
+		}
+
 		public static implicit operator List<CassandraType>(DynamicCompositeType type)
 		{
 			return type._value;
@@ -100,6 +119,16 @@ namespace FluentCassandra.Types
 		public static implicit operator DynamicCompositeType(List<CassandraType> s)
 		{
 			return new DynamicCompositeType { _value = s };
+		}
+
+		public static implicit operator DynamicCompositeType(object[] s)
+		{
+			return new DynamicCompositeType { _value = new List<CassandraType>(s.Select(o => CassandraType.GetType<BytesType>(o))) };
+		}
+
+		public static implicit operator DynamicCompositeType(List<object> s)
+		{
+			return new DynamicCompositeType { _value = new List<CassandraType>(s.Select(o => CassandraType.GetType<BytesType>(o))) };
 		}
 
 		public static implicit operator byte[](DynamicCompositeType o) { return ConvertTo<byte[]>(o); }

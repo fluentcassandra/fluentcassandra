@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using FluentCassandra.Types;
-using Apache.Cassandra;
 using FluentCassandra.Connections;
+using FluentCassandra.Types;
 
 namespace FluentCassandra
 {
@@ -24,97 +22,20 @@ namespace FluentCassandra
 			var keyspaceName = "Testing";
 			var server = new Server("localhost");
 
-			if (!CassandraSession.KeyspaceExists(server, keyspaceName))
-				CassandraSession.AddKeyspace(server, new KsDef {
-					Name = keyspaceName,
-					Replication_factor = 1,
-					Strategy_class = "org.apache.cassandra.locator.SimpleStrategy",
-					Cf_defs = new List<CfDef>()
-				});
+			if (CassandraSession.KeyspaceExists(server, keyspaceName))
+				CassandraSession.DropKeyspace(server, keyspaceName);
 
 			var keyspace = new CassandraKeyspace(keyspaceName);
-
-			if (!keyspace.ColumnFamilyExists(server, "Standard"))
-				keyspace.AddColumnFamily(server, new CfDef {
-					Name = "Standard",
-					Keyspace = "Testing",
-					Column_type = "Standard",
-					Comparator_type = "AsciiType",
-					Comment = "Used for testing Standard family."
-				});
-
-			if (!keyspace.ColumnFamilyExists(server, "StandardAsciiType"))
-				keyspace.AddColumnFamily(server, new CfDef {
-					Name = "StandardAsciiType",
-					Keyspace = "Testing",
-					Column_type = "Standard",
-					Comparator_type = "AsciiType",
-					Comment = "Used for testing Standard family."
-				});
-
-			if (!keyspace.ColumnFamilyExists(server, "StandardBytesType"))
-				keyspace.AddColumnFamily(server, new CfDef {
-					Name = "StandardBytesType",
-					Keyspace = "Testing",
-					Column_type = "Standard",
-					Comparator_type = "BytesType",
-					Comment = "Used for testing BytesType family."
-				});
-
-			if (!keyspace.ColumnFamilyExists(server, "StandardIntegerType"))
-				keyspace.AddColumnFamily(server, new CfDef {
-					Name = "StandardIntegerType",
-					Keyspace = "Testing",
-					Column_type = "Standard",
-					Comparator_type = "IntegerType",
-					Comment = "Used for testing IntegerType family."
-				});
-
-			if (!keyspace.ColumnFamilyExists(server, "StandardLexicalUUIDType"))
-				keyspace.AddColumnFamily(server, new CfDef {
-					Name = "StandardLexicalUUIDType",
-					Keyspace = "Testing",
-					Column_type = "Standard",
-					Comparator_type = "LexicalUUIDType",
-					Comment = "Used for testing LexicalUUIDType family."
-				});
-
-			if (!keyspace.ColumnFamilyExists(server, "StandardLongType"))
-				keyspace.AddColumnFamily(server, new CfDef {
-					Name = "StandardLongType",
-					Keyspace = "Testing",
-					Column_type = "Standard",
-					Comparator_type = "LongType",
-					Comment = "Used for testing LongType family."
-				});
-
-			if (!keyspace.ColumnFamilyExists(server, "StandardTimeUUIDType"))
-				keyspace.AddColumnFamily(server, new CfDef {
-					Name = "StandardTimeUUIDType",
-					Keyspace = "Testing",
-					Column_type = "Standard",
-					Comparator_type = "TimeUUIDType",
-					Comment = "Used for testing TimeUUIDType family."
-				});
-
-			if (!keyspace.ColumnFamilyExists(server, "StandardUTF8Type"))
-				keyspace.AddColumnFamily(server, new CfDef {
-					Name = "StandardUTF8Type",
-					Keyspace = "Testing",
-					Column_type = "Standard",
-					Comparator_type = "UTF8Type",
-					Comment = "Used for testing UTF8Type family."
-				});
-
-			if (!keyspace.ColumnFamilyExists(server, "Super"))
-				keyspace.AddColumnFamily(server, new CfDef {
-					Name = "Super",
-					Keyspace = "Testing",
-					Column_type = "Super",
-					Comparator_type = "AsciiType",
-					Subcomparator_type = "AsciiType",
-					Comment = "Used for testing Super family."
-				});
+			keyspace.TryCreateSelf(server);
+			keyspace.TryCreateColumnFamily<AsciiType>(server, "Standard");
+			keyspace.TryCreateColumnFamily<AsciiType>(server, "StandardAsciiType");
+			keyspace.TryCreateColumnFamily<BytesType>(server, "StandardBytesType");
+			keyspace.TryCreateColumnFamily<IntegerType>(server, "StandardIntegerType");
+			keyspace.TryCreateColumnFamily<LexicalUUIDType>(server, "StandardLexicalUUIDType");
+			keyspace.TryCreateColumnFamily<LongType>(server, "StandardLongType");
+			keyspace.TryCreateColumnFamily<TimeUUIDType>(server, "StandardTimeUUIDType");
+			keyspace.TryCreateColumnFamily<UTF8Type>(server, "StandardUTF8Type");
+			keyspace.TryCreateColumnFamily<AsciiType, AsciiType>(server, "Super");
 
 			DB = new CassandraContext(keyspaceName, server);
 			DB.ThrowErrors = true;

@@ -9,12 +9,19 @@ namespace FluentCassandra.Types
 	{
 		public override bool CanConvertFrom(Type sourceType)
 		{
-			return sourceType == typeof(byte[]) || sourceType.GetInterfaces().Contains(typeof(IEnumerable<CassandraType>));
+			return sourceType == typeof(byte[]) || 
+				sourceType.GetInterfaces().Contains(typeof(IEnumerable<CassandraType>)) || 
+				sourceType.GetInterfaces().Contains(typeof(IEnumerable<object>));
 		}
 
 		public override bool CanConvertTo(Type destinationType)
 		{
-			return destinationType == typeof(byte[]) || destinationType == typeof(List<CassandraType>) || destinationType == typeof(CassandraType[]) || destinationType == typeof(string);
+			return destinationType == typeof(byte[]) || 
+				destinationType == typeof(List<CassandraType>) || 
+				destinationType == typeof(CassandraType[]) || 
+				destinationType == typeof(List<object>) || 
+				destinationType == typeof(object[]) || 
+				destinationType == typeof(string);
 		}
 
 		public override List<CassandraType> ConvertFrom(object value)
@@ -48,6 +55,9 @@ namespace FluentCassandra.Types
 				return components;
 			}
 
+			if (value.GetType().GetInterfaces().Contains(typeof(IEnumerable<object>)))
+				return new List<CassandraType>(((IEnumerable<object>)value).Cast<BytesType>());
+
 			if (value.GetType().GetInterfaces().Contains(typeof(IEnumerable<CassandraType>)))
 				return new List<CassandraType>((IEnumerable<CassandraType>)value);
 
@@ -56,9 +66,6 @@ namespace FluentCassandra.Types
 
 		public override object ConvertTo(List<CassandraType> value, Type destinationType)
 		{
-			if (!(value is List<CassandraType>))
-				return null;
-
 			if (destinationType == typeof(string))
 				return String.Join(":", value);
 
@@ -90,8 +97,14 @@ namespace FluentCassandra.Types
 			if (destinationType == typeof(CassandraType[]))
 				return value.ToArray();
 
+			if (destinationType == typeof(object[]))
+				return value.Cast<object>().ToArray();
+
 			if (destinationType == typeof(List<CassandraType>))
 				return value;
+
+			if (destinationType == typeof(List<object>))
+				return value.Cast<object>().ToList();
 
 			return null;
 		}

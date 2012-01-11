@@ -1,7 +1,6 @@
 ﻿using System;
-using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace FluentCassandra.Types
 {
@@ -19,6 +18,16 @@ namespace FluentCassandra.Types
 		public override void SetValue(object obj)
 		{
 			_value = SetValue(obj, Converter);
+		}
+
+		internal override byte[] ToBigEndian()
+		{
+			return Converter.ToBigEndian(_value);
+		}
+
+		internal override void SetValueFromBigEndian(byte[] value)
+		{
+			_value = Converter.FromBigEndian(value);
 		}
 
 		protected override TypeCode TypeCode
@@ -70,6 +79,16 @@ namespace FluentCassandra.Types
 
 		#region Conversion
 
+		public static implicit operator DynamicCompositeType(CompositeType type)
+		{
+			return (DynamicCompositeType)type._value;
+		}
+
+		public static implicit operator CompositeType(DynamicCompositeType type)
+		{
+			return new CompositeType { _value = type.GetValue<List<CassandraType>>() };
+		}
+
 		public static implicit operator List<CassandraType>(CompositeType type)
 		{
 			return type._value;
@@ -87,12 +106,12 @@ namespace FluentCassandra.Types
 
 		public static implicit operator CompositeType(object[] s)
 		{
-			return new CompositeType { _value = new List<CassandraType>(s.Cast<BytesType>()) };
+			return new CompositeType { _value = new List<CassandraType>(s.Select(o => CassandraType.GetType<BytesType>(o))) };
 		}
 
 		public static implicit operator CompositeType(List<object> s)
 		{
-			return new CompositeType { _value = new List<CassandraType>(s.Cast<BytesType>()) };
+			return new CompositeType { _value = new List<CassandraType>(s.Select(o => CassandraType.GetType<BytesType>(o))) };
 		}
 
 		public static implicit operator byte[](CompositeType o) { return ConvertTo<byte[]>(o); }

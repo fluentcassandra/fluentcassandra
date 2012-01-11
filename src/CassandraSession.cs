@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Apache.Cassandra;
 using FluentCassandra.Connections;
+using FluentCassandra.Operations;
 
 namespace FluentCassandra
 {
@@ -146,7 +147,7 @@ namespace FluentCassandra
 
 		public bool IsAuthenticated { get; private set; }
 
-		internal Cassandra.Client GetClient(bool setKeyspace = true)
+		internal CassandraClientWrapper GetClient(bool setKeyspace = true)
 		{
 			if (_connection == null)
 				_connection = ConnectionProvider.Open();
@@ -157,7 +158,7 @@ namespace FluentCassandra
 			if (setKeyspace)
 				_connection.SetKeyspace(Keyspace.KeyspaceName);
 
-			return _connection.Client;
+			return new CassandraClientWrapper(_connection.Client);
 		}
 
 		public void Login(string username, string password)

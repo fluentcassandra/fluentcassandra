@@ -14,8 +14,8 @@ namespace FluentCassandra.Operations
 
 		public override Void Execute()
 		{
-			var path = new ColumnPath {
-				Column_family = ColumnFamily.FamilyName
+			var path = new CassandraColumnPath {
+				ColumnFamily = ColumnFamily.FamilyName
 			};
 
 			CassandraSession.Current.GetClient().remove(

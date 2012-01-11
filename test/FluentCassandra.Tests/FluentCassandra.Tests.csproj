@@ -74,6 +74,8 @@
     <Compile Include="TypesToDatabase\IntegerTypeTest.cs" />
     <Compile Include="TypesToDatabase\LongTypeTest.cs" />
     <Compile Include="TypesToDatabase\UTF8TypeTest.cs" />
+    <Compile Include="Types\CompositeTypeTest.cs" />
+    <Compile Include="Types\DynamicCompositeTypeTest.cs" />
     <Compile Include="Types\IntegerTypeTest.cs" />
     <Compile Include="_CassandraSetup.cs" />
     <Compile Include="FluentSuperColumnFamilyTest.cs" />

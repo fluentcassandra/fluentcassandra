@@ -18,12 +18,12 @@ namespace FluentCassandra.Operations
 
 		public override IFluentSuperColumn<CompareWith, CompareSubcolumnWith> Execute()
 		{
-			var path = new ColumnPath {
-				Column_family = ColumnFamily.FamilyName
+			var path = new CassandraColumnPath {
+				ColumnFamily = ColumnFamily.FamilyName
 			};
 
 			if (SuperColumnName != null)
-				path.Super_column = SuperColumnName;
+				path.SuperColumn = SuperColumnName;
 
 			var output = CassandraSession.Current.GetClient().get(
 				Key,

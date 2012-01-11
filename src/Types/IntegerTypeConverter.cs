@@ -46,10 +46,7 @@ namespace FluentCassandra.Types
 		public override BigInteger ConvertFrom(object value)
 		{
 			if (value is byte[])
-			{
-				var buffer = CassandraConversionHelper.ConvertEndian((byte[])value);
-				return new BigInteger(buffer);
-			}
+				return ((byte[])value).FromBytes<BigInteger>();
 
 			if (value is BigInteger) return (BigInteger)value;
 
@@ -67,14 +64,8 @@ namespace FluentCassandra.Types
 
 		public override object ConvertTo(BigInteger value, Type destinationType)
 		{
-			if (!(value is BigInteger))
-				return null;
-
 			if (destinationType == typeof(byte[]))
-			{
-				var buffer = value.ToByteArray();
-				return CassandraConversionHelper.ConvertEndian(buffer);
-			}
+				return value.ToBytes();
 
 			if (destinationType == typeof(BigInteger)) return value;
 

@@ -22,6 +22,15 @@ namespace FluentCassandra.Types
 			get { return TypeCode.Empty; }
 		}
 
+		internal override byte[] ToBigEndian()
+		{
+			return new byte[0];
+		}
+
+		internal override void SetValueFromBigEndian(byte[] value)
+		{
+		}
+
 		public static implicit operator byte?(NullType o) { return null; }
 		public static implicit operator sbyte?(NullType o) { return null; }
 		public static implicit operator short?(NullType o) { return null; }
