@@ -28,6 +28,7 @@ namespace FluentCassandra
 			var keyspace = new CassandraKeyspace(keyspaceName);
 			keyspace.TryCreateSelf(server);
 			keyspace.TryCreateColumnFamily<AsciiType>(server, "Standard");
+			keyspace.TryCreateColumnFamily<AsciiType, AsciiType>(server, "Super");
 			keyspace.TryCreateColumnFamily<AsciiType>(server, "StandardAsciiType");
 			keyspace.TryCreateColumnFamily<BytesType>(server, "StandardBytesType");
 			keyspace.TryCreateColumnFamily<IntegerType>(server, "StandardIntegerType");
@@ -35,7 +36,9 @@ namespace FluentCassandra
 			keyspace.TryCreateColumnFamily<LongType>(server, "StandardLongType");
 			keyspace.TryCreateColumnFamily<TimeUUIDType>(server, "StandardTimeUUIDType");
 			keyspace.TryCreateColumnFamily<UTF8Type>(server, "StandardUTF8Type");
-			keyspace.TryCreateColumnFamily<AsciiType, AsciiType>(server, "Super");
+			keyspace.TryCreateColumnFamily<UUIDType>(server, "StandardUUIDType");
+			keyspace.TryCreateColumnFamily<CompositeType<LongType, UTF8Type>>(server, "StandardCompositeType");
+			keyspace.TryCreateColumnFamily<DynamicCompositeType>(server, "StandardDynamicCompositeType");
 
 			DB = new CassandraContext(keyspaceName, server);
 			DB.ThrowErrors = true;

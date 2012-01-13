@@ -14,6 +14,36 @@ namespace FluentCassandra.Operations
 			_client = client;
 		}
 
+		/// <summary>
+		/// Execute the column family operation against the connection to the server.
+		/// </summary>
+		/// <typeparam name="TResult"></typeparam>
+		/// <param name="action"></param>
+		/// <param name="throwOnError"></param>
+		/// <returns></returns>
+		private TResult ExecuteOperation<TResult>(Operation<TResult> action)
+		{
+			CassandraSession _localSession = null;
+			if (CassandraSession.Current == null)
+				_localSession = new CassandraSession();
+
+			try
+			{
+				TResult result;
+				bool success = action.TryExecute(out result);
+
+				if (!success)
+					throw action.Error;
+
+				return result;
+			}
+			finally
+			{
+				if (_localSession != null)
+					_localSession.Dispose();
+			}
+		}
+
 		#region Iface Members
 
 		public void login(Apache.Cassandra.AuthenticationRequest auth_request)
@@ -125,87 +155,120 @@ namespace FluentCassandra.Operations
 
 		public void batch_mutate(Dictionary<byte[], Dictionary<string, List<Apache.Cassandra.Mutation>>> mutation_map, Apache.Cassandra.ConsistencyLevel consistency_level)
 		{
-			throw new NotImplementedException();
+			_client.batch_mutate(mutation_map, consistency_level);
 		}
 
 		public void truncate(string cfname)
 		{
-			_client.truncate(cfname);
+			ExecuteOperation(new SimpleOperation<Void>(delegate {
+				_client.truncate(cfname);
+				return new Void();
+			}));
 		}
 
 		public Dictionary<string, List<string>> describe_schema_versions()
 		{
-			return _client.describe_schema_versions();
+			return ExecuteOperation(new SimpleOperation<Dictionary<string, List<string>>>(delegate {
+				return _client.describe_schema_versions();
+			}));
 		}
 
 		public List<Apache.Cassandra.KsDef> describe_keyspaces()
 		{
-			return _client.describe_keyspaces();
+			return ExecuteOperation(new SimpleOperation<List<Apache.Cassandra.KsDef>>(delegate {
+				return _client.describe_keyspaces();
+			}));
 		}
 
 		public string describe_cluster_name()
 		{
-			return _client.describe_cluster_name();
+			return ExecuteOperation(new SimpleOperation<string>(delegate {
+				return _client.describe_cluster_name();
+			}));
 		}
 
 		public string describe_version()
 		{
-			return _client.describe_version();
+			return ExecuteOperation(new SimpleOperation<string>(delegate {
+				return _client.describe_version();
+			}));
 		}
 
 		public List<Apache.Cassandra.TokenRange> describe_ring(string keyspace)
 		{
-			return _client.describe_ring(keyspace);
+			return ExecuteOperation(new SimpleOperation<List<Apache.Cassandra.TokenRange>>(delegate {
+				return _client.describe_ring(keyspace);
+			}));
 		}
 
 		public string describe_partitioner()
 		{
-			return _client.describe_partitioner();
+			return ExecuteOperation(new SimpleOperation<string>(delegate {
+				return _client.describe_partitioner();
+			}));
 		}
 
 		public string describe_snitch()
 		{
-			return _client.describe_snitch();
+			return ExecuteOperation(new SimpleOperation<string>(delegate {
+				return _client.describe_snitch();
+			}));
 		}
 
 		public Apache.Cassandra.KsDef describe_keyspace(string keyspace)
 		{
-			return _client.describe_keyspace(keyspace);
+			return ExecuteOperation(new SimpleOperation<Apache.Cassandra.KsDef>(delegate {
+				return _client.describe_keyspace(keyspace);
+			}));
 		}
 
 		public List<string> describe_splits(string cfName, string start_token, string end_token, int keys_per_split)
 		{
-			return _client.describe_splits(cfName, start_token, end_token, keys_per_split);
+			return ExecuteOperation(new SimpleOperation<List<string>>(delegate {
+				return _client.describe_splits(cfName, start_token, end_token, keys_per_split);
+			}));
 		}
 
 		public string system_add_column_family(Apache.Cassandra.CfDef cf_def)
 		{
-			return _client.system_add_column_family(cf_def);
+			return ExecuteOperation(new SimpleOperation<string>(delegate {
+				return _client.system_add_column_family(cf_def);
+			}));
 		}
 
 		public string system_drop_column_family(string column_family)
 		{
-			return _client.system_drop_column_family(column_family);
+			return ExecuteOperation(new SimpleOperation<string>(delegate {
+				return _client.system_drop_column_family(column_family);
+			}));
 		}
 
 		public string system_add_keyspace(Apache.Cassandra.KsDef ks_def)
 		{
-			return _client.system_add_keyspace(ks_def);
+			return ExecuteOperation(new SimpleOperation<string>(delegate {
+				return _client.system_add_keyspace(ks_def);
+			}));
 		}
 
 		public string system_drop_keyspace(string keyspace)
 		{
-			return _client.system_drop_keyspace(keyspace);
+			return ExecuteOperation(new SimpleOperation<string>(delegate {
+				return _client.system_drop_keyspace(keyspace);
+			}));
 		}
 
 		public string system_update_keyspace(Apache.Cassandra.KsDef ks_def)
 		{
-			return _client.system_update_keyspace(ks_def);
+			return ExecuteOperation(new SimpleOperation<string>(delegate {
+				return _client.system_update_keyspace(ks_def);
+			}));
 		}
 
 		public string system_update_column_family(Apache.Cassandra.CfDef cf_def)
 		{
-			return _client.system_update_column_family(cf_def);
+			return ExecuteOperation(new SimpleOperation<string>(delegate {
+				return _client.system_update_column_family(cf_def);
+			}));
 		}
 
 		public Apache.Cassandra.CqlResult execute_cql_query(byte[] query, Apache.Cassandra.Compression compression)

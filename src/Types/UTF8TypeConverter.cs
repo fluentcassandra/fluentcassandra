@@ -38,5 +38,17 @@ namespace FluentCassandra.Types
 
 			return Convert.ChangeType(value, destinationType);
 		}
+
+		public override byte[] ToBigEndian(string value)
+		{
+			var bytes = ConvertTo<byte[]>(value);
+			return bytes;
+		}
+
+		public override string FromBigEndian(byte[] value)
+		{
+			var obj = ConvertFrom(value);
+			return obj;
+		}
 	}
 }

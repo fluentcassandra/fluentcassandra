@@ -89,7 +89,7 @@ namespace FluentCassandra.Types
 			LexicalUUIDType actual = guid;
 
 			// assert
-			Assert.IsTrue(actual.GetValue<byte[]>().SequenceEqual(javaByteOrder));
+			Assert.IsTrue(actual.ToBigEndian().SequenceEqual(javaByteOrder));
 		}
 
 		[Test]
@@ -99,7 +99,7 @@ namespace FluentCassandra.Types
 
 			// act
 			LexicalUUIDType actual = new LexicalUUIDType();
-			actual.SetValue(javaByteOrder);
+			actual.SetValueFromBigEndian(javaByteOrder);
 
 			// assert
 			Assert.AreEqual(guid, (Guid)actual);

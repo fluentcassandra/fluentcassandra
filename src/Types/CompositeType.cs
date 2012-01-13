@@ -8,6 +8,60 @@ namespace FluentCassandra.Types
 	{
 		private static readonly CompositeTypeConverter Converter = new CompositeTypeConverter();
 
+		#region Create
+
+		public static CompositeType<T1> Create<T1>(T1 t1) 
+			where T1 : CassandraType
+		{
+			return new CompositeType<T1>(t1);
+		}
+
+		public static CompositeType<T1, T2> Create<T1, T2>(T1 t1, T2 t2)
+			where T1 : CassandraType
+			where T2 : CassandraType
+		{
+			return new CompositeType<T1, T2>(t1, t2);
+		}
+
+		public static CompositeType<T1, T2, T3> Create<T1, T2, T3>(T1 t1, T2 t2, T3 t3)
+			where T1 : CassandraType
+			where T2 : CassandraType
+			where T3 : CassandraType
+		{
+			return new CompositeType<T1, T2, T3>(t1, t2, t3);
+		}
+
+		public static CompositeType<T1, T2, T3, T4> Create<T1, T2, T3, T4>(T1 t1, T2 t2, T3 t3, T4 t4)
+			where T1 : CassandraType
+			where T2 : CassandraType
+			where T3 : CassandraType
+			where T4 : CassandraType
+		{
+			return new CompositeType<T1, T2, T3, T4>(t1, t2, t3, t4);
+		}
+
+		public static CompositeType<T1, T2, T3, T4, T5> Create<T1, T2, T3, T4, T5>(T1 t1, T2 t2, T3 t3, T4 t4, T5 t5)
+			where T1 : CassandraType
+			where T2 : CassandraType
+			where T3 : CassandraType
+			where T4 : CassandraType
+			where T5 : CassandraType
+		{
+			return new CompositeType<T1, T2, T3, T4, T5>(t1, t2, t3, t4, t5);
+		}
+
+		public static CompositeType Create(params CassandraType[] types)
+		{
+			return new CompositeType { _value = types.ToList() };
+		}
+
+		#endregion
+
+		public CompositeType()
+		{
+			ComponentTypeHints = new List<Type>();
+		}
+
 		#region Implimentation
 
 		public override object GetValue(Type type)
@@ -17,17 +71,20 @@ namespace FluentCassandra.Types
 
 		public override void SetValue(object obj)
 		{
+			if (obj != null && obj.GetType().GetInterfaces().Contains(typeof(IEnumerable<CassandraType>)))
+				ComponentTypeHints = ((IEnumerable<CassandraType>)obj).Select(t => t.GetType()).ToList();
+
 			_value = SetValue(obj, Converter);
 		}
 
-		internal override byte[] ToBigEndian()
+		public override byte[] ToBigEndian()
 		{
 			return Converter.ToBigEndian(_value);
 		}
 
-		internal override void SetValueFromBigEndian(byte[] value)
+		public override void SetValueFromBigEndian(byte[] value)
 		{
-			_value = Converter.FromBigEndian(value);
+			_value = Converter.FromBigEndian(value, ComponentTypeHints);
 		}
 
 		protected override TypeCode TypeCode
@@ -41,6 +98,8 @@ namespace FluentCassandra.Types
 		}
 
 		#endregion
+
+		public List<Type> ComponentTypeHints { get; set; }
 
 		private List<CassandraType> _value;
 
@@ -86,7 +145,12 @@ namespace FluentCassandra.Types
 
 		public static implicit operator CompositeType(DynamicCompositeType type)
 		{
-			return new CompositeType { _value = type.GetValue<List<CassandraType>>() };
+			var value =  type.GetValue<List<CassandraType>>();
+
+			return new CompositeType { 
+				_value = value,
+				ComponentTypeHints = value.Select(t => t.GetType()).ToList()
+			};
 		}
 
 		public static implicit operator List<CassandraType>(CompositeType type)
@@ -96,12 +160,22 @@ namespace FluentCassandra.Types
 
 		public static implicit operator CompositeType(CassandraType[] s)
 		{
-			return new CompositeType { _value = new List<CassandraType>(s) };
+			var value = new List<CassandraType>(s);
+
+			return new CompositeType {
+				_value = value,
+				ComponentTypeHints = value.Select(t => t.GetType()).ToList()
+			};
 		}
 
 		public static implicit operator CompositeType(List<CassandraType> s)
 		{
-			return new CompositeType { _value = s };
+			var value = s;
+
+			return new CompositeType {
+				_value = value,
+				ComponentTypeHints = value.Select(t => t.GetType()).ToList()
+			};
 		}
 
 		public static implicit operator CompositeType(object[] s)

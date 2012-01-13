@@ -20,5 +20,38 @@ namespace FluentCassandra.Types
 		{
 			return BitConverter.ConvertTo(value, destinationType);
 		}
+
+		private static void ReverseLowFieldTimestamp(byte[] guid)
+		{
+			Array.Reverse(guid, 0, 4);
+		}
+
+		private static void ReverseMiddleFieldTimestamp(byte[] guid)
+		{
+			Array.Reverse(guid, 4, 2);
+		}
+
+		private static void ReverseHighFieldTimestamp(byte[] guid)
+		{
+			Array.Reverse(guid, 6, 2);
+		}
+
+		internal static byte[] ToBigEndianBytes(this Guid value)
+		{
+			var bytes = value.ToByteArray();
+			ReverseLowFieldTimestamp(bytes);
+			ReverseMiddleFieldTimestamp(bytes);
+			ReverseHighFieldTimestamp(bytes);
+			return bytes;
+		}
+
+		internal static Guid ToGuidFromBigEndianBytes(this byte[] value)
+		{
+			var buffer = (byte[])value.Clone();
+			ReverseLowFieldTimestamp(buffer);
+			ReverseMiddleFieldTimestamp(buffer);
+			ReverseHighFieldTimestamp(buffer);
+			return new Guid(buffer);
+		}
 	}
 }

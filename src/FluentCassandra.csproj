@@ -161,6 +161,7 @@
     <Compile Include="Operations\CassandraColumnPath.cs" />
     <Compile Include="Operations\CassandraCounterColumn.cs" />
     <Compile Include="Operations\CassandraIndexClause.cs" />
+    <Compile Include="Operations\CassandraOperationException.cs" />
     <Compile Include="Operations\CassandraQueryable.cs" />
     <Compile Include="Operations\CassandraQuerySetup.cs" />
     <Compile Include="Operations\CassandraSlicePredicateBuilder.cs" />
@@ -202,6 +203,7 @@
     <Compile Include="Operations\RemoveColumn.cs" />
     <Compile Include="Operations\RemoveKey.cs" />
     <Compile Include="Operations\RemoveSuperColumn.cs" />
+    <Compile Include="Operations\SimpleOperation.cs" />
     <Compile Include="Operations\Truncate.cs" />
     <Compile Include="Operations\Void.cs">
       <SubType>Code</SubType>
@@ -254,6 +256,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Types\CompositeTypeConverter.cs" />
+    <Compile Include="Types\CompositeType`1.cs" />
     <Compile Include="Types\DynamicCompositeType.cs" />
     <Compile Include="Types\DynamicCompositeTypeConverter.cs" />
     <Compile Include="Types\CassandraTypeExtensions.cs" />

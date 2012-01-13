@@ -37,12 +37,12 @@ namespace FluentCassandra.Types
 			throw new NotImplementedException();
 		}
 
-		internal override void SetValueFromBigEndian(byte[] value)
+		public override void SetValueFromBigEndian(byte[] value)
 		{
 			throw new NotImplementedException();
 		}
 
-		internal override byte[] ToBigEndian()
+		public override byte[] ToBigEndian()
 		{
 			throw new NotImplementedException();
 		}

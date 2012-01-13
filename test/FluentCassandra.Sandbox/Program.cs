@@ -8,21 +8,21 @@ namespace FluentCassandra.Sandbox
 {
 	internal class Program
 	{
-		private static string keyspaceName = "Blog";
-		private static Server server = new Server("localhost");
+		private const string KeyspaceName = "Blog";
+		private static readonly Server Server = new Server("localhost");
 
 		#region Setup
 
 		private static void SetupKeyspace()
 		{
-			if (CassandraSession.KeyspaceExists(server, keyspaceName))
-				CassandraSession.DropKeyspace(server, keyspaceName);
+			if (CassandraSession.KeyspaceExists(Server, KeyspaceName))
+				CassandraSession.DropKeyspace(Server, KeyspaceName);
 
-			var keyspace = new CassandraKeyspace(keyspaceName);
-			keyspace.TryCreateSelf(server);
-			keyspace.TryCreateColumnFamily<UTF8Type>(server, "Posts");
-			keyspace.TryCreateColumnFamily<LongType>(server, "Tags");
-			keyspace.TryCreateColumnFamily<TimeUUIDType, UTF8Type>(server, "Comments");
+			var keyspace = new CassandraKeyspace(KeyspaceName);
+			keyspace.TryCreateSelf(Server);
+			keyspace.TryCreateColumnFamily<UTF8Type>(Server, "Posts");
+			keyspace.TryCreateColumnFamily<LongType>(Server, "Tags");
+			keyspace.TryCreateColumnFamily<TimeUUIDType, UTF8Type>(Server, "Comments");
 		}
 
 		#endregion
@@ -43,7 +43,7 @@ namespace FluentCassandra.Sandbox
 
 		private static void CreatePost()
 		{
-			using (var db = new CassandraContext(keyspace: keyspaceName, server: server))
+			using (var db = new CassandraContext(keyspace: KeyspaceName, server: Server))
 			{
 				var key = "first-blog-post";
 
@@ -83,7 +83,7 @@ namespace FluentCassandra.Sandbox
 
 		private static void ReadPost()
 		{
-			using (var db = new CassandraContext(keyspace: keyspaceName, server: server))
+			using (var db = new CassandraContext(keyspace: KeyspaceName, server: Server))
 			{
 				var key = "first-blog-post";
 
@@ -116,7 +116,7 @@ namespace FluentCassandra.Sandbox
 		#region Update Post
 		private static void UpdatePost()
 		{
-			using (var db = new CassandraContext(keyspace: keyspaceName, server: server))
+			using (var db = new CassandraContext(keyspace: KeyspaceName, server: Server))
 			{
 				var key = "first-blog-post";
 
@@ -145,7 +145,7 @@ namespace FluentCassandra.Sandbox
 
 		private static void CreateComments()
 		{
-			using (var db = new CassandraContext(keyspace: keyspaceName, server: server))
+			using (var db = new CassandraContext(keyspace: KeyspaceName, server: Server))
 			{
 				var key = "first-blog-post";
 
@@ -185,7 +185,7 @@ namespace FluentCassandra.Sandbox
 
 		private static void ReadComments()
 		{
-			using (var db = new CassandraContext(keyspace: keyspaceName, server: server))
+			using (var db = new CassandraContext(keyspace: KeyspaceName, server: Server))
 			{
 				var key = "first-blog-post";
 				var lastDate = DateTime.Now;

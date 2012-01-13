@@ -22,12 +22,12 @@ namespace FluentCassandra.Types
 			get { return TypeCode.Empty; }
 		}
 
-		internal override byte[] ToBigEndian()
+		public override byte[] ToBigEndian()
 		{
 			return new byte[0];
 		}
 
-		internal override void SetValueFromBigEndian(byte[] value)
+		public override void SetValueFromBigEndian(byte[] value)
 		{
 		}
 

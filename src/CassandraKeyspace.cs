@@ -5,6 +5,7 @@ using Apache.Cassandra;
 using FluentCassandra.Connections;
 using System.Diagnostics;
 using FluentCassandra.Types;
+using System.Text;
 
 namespace FluentCassandra
 {
@@ -67,10 +68,12 @@ namespace FluentCassandra
 				return;
 			}
 
+			var comparatorType = GetCassandraComparatorType(typeof(CompareWith));
+
 			string result = AddColumnFamily(server, new CfDef {
 				Name = columnFamilyName,
 				Keyspace = KeyspaceName,
-				Comparator_type = typeof(CompareWith).Name
+				Comparator_type = comparatorType
 			});
 			Debug.WriteLine(result, "keyspace setup");
 		}
@@ -85,14 +88,38 @@ namespace FluentCassandra
 				return;
 			}
 
+			var comparatorType = GetCassandraComparatorType(typeof(CompareWith));
+			var subComparatorType = GetCassandraComparatorType(typeof(CompareSubcolumnWith));
+
 			string result = AddColumnFamily(server, new CfDef {
 				Name = columnFamilyName,
 				Keyspace = KeyspaceName,
 				Column_type = "Super",
-				Comparator_type = typeof(CompareWith).Name,
-				Subcomparator_type = typeof(CompareSubcolumnWith).Name
+				Comparator_type = comparatorType,
+				Subcomparator_type = subComparatorType
 			});
 			Debug.WriteLine(result, "keyspace setup");
+		}
+
+		private string GetCassandraComparatorType(Type comparatorType)
+		{
+			var comparatorTypeName = comparatorType.Name;
+
+			// need to ignore generic dynamic composite types
+			if (comparatorType.IsGenericType && comparatorTypeName.StartsWith("CompositeType"))
+			{
+				var compositeTypes = comparatorType.GetGenericArguments();
+				var typeBuilder = new StringBuilder();
+
+				typeBuilder.Append(comparatorTypeName.Substring(0, comparatorTypeName.IndexOf('`')));
+				typeBuilder.Append("(");
+				typeBuilder.Append(String.Join(",", compositeTypes.Select(t => t.Name)));
+				typeBuilder.Append(")");
+
+				comparatorTypeName = typeBuilder.ToString();
+			}
+
+			return comparatorTypeName;
 		}
 
 		#region Cassandra System For Server

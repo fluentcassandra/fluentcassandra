@@ -1,6 +1,5 @@
 ﻿using System;
 using FluentCassandra.Types;
-using Apache.Cassandra;
 
 namespace FluentCassandra.Operations
 {

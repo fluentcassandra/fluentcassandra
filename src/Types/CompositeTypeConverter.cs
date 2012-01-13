@@ -108,5 +108,69 @@ namespace FluentCassandra.Types
 
 			return null;
 		}
+
+		public override byte[] ToBigEndian(List<CassandraType> value)
+		{
+			var components = value;
+
+			using (var bytes = new MemoryStream())
+			{
+				foreach (var c in components)
+				{
+					var b = c.ToBigEndian();
+					var length = (ushort)b.Length;
+
+					// value length
+					bytes.Write(ConvertEndian(BitConverter.GetBytes(length)), 0, 2);
+
+					// value
+					bytes.Write(b, 0, length);
+
+					// end of component
+					bytes.WriteByte((byte)0);
+				}
+
+				return bytes.ToArray();
+			}
+		}
+
+		public override List<CassandraType> FromBigEndian(byte[] value)
+		{
+			return FromBigEndian(value, null);
+		}
+
+		public List<CassandraType> FromBigEndian(byte[] value, List<Type> hints)
+		{
+			var components = new List<CassandraType>();
+			var hintIndex = 0;
+
+			hints = hints ?? new List<Type>();
+
+			using (var bytes = new MemoryStream(value))
+			{
+				while (true)
+				{
+					// value length
+					var byteLength = new byte[2];
+					if (bytes.Read(byteLength, 0, 2) <= 0)
+						break;
+
+					// value
+					var length = BitConverter.ToUInt16(ConvertEndian(byteLength), 0);
+					var buffer = new byte[length];
+					var typeHint = (hints.Count >= (hintIndex + 1)) ? hints[hintIndex++] : typeof(BytesType);
+					bytes.Read(buffer, 0, length);
+
+					var component = CassandraType.FromBigEndian(buffer, typeHint);
+					components.Add(component);
+
+					// end of component
+					if (bytes.ReadByte() != 0)
+						break;
+				}
+			}
+
+			return components;
+		}
 	}
 }

@@ -19,12 +19,12 @@ namespace FluentCassandra.Types
 			_value = SetValue(obj, Converter);
 		}
 
-		internal override byte[] ToBigEndian()
+		public override byte[] ToBigEndian()
 		{
 			return Converter.ToBigEndian(_value);
 		}
 
-		internal override void SetValueFromBigEndian(byte[] value)
+		public override void SetValueFromBigEndian(byte[] value)
 		{
 			_value = Converter.FromBigEndian(value);
 		}
@@ -82,6 +82,9 @@ namespace FluentCassandra.Types
 
 		public static implicit operator BytesType(byte[] o) { return ConvertFrom(o); }
 		public static implicit operator byte[](BytesType o) { return ConvertTo<byte[]>(o); }
+
+		public static implicit operator BytesType(char[] o) { return ConvertFrom(o); }
+		public static implicit operator char[](BytesType o) { return ConvertTo<char[]>(o); }
 
 		public static implicit operator BytesType(byte o) { return ConvertFrom(o); }
 		public static implicit operator BytesType(sbyte o) { return ConvertFrom(o); }

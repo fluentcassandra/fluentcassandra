@@ -38,14 +38,12 @@ namespace FluentCassandra.Types
 
 		public override byte[] ToBigEndian(Guid value)
 		{
-			var bytes = ConvertTo<byte[]>(value);
-			return bytes;
+			return value.ToBigEndianBytes();
 		}
 
 		public override Guid FromBigEndian(byte[] value)
 		{
-			var obj = ConvertFrom(value);
-			return obj;
+			return value.ToGuidFromBigEndianBytes();
 		}
 	}
 }

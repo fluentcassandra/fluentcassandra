@@ -37,13 +37,18 @@ namespace FluentCassandra.Operations
 
 				foreach (var result in output)
 				{
-					var r = new FluentSuperColumnFamily<CompareWith, CompareSubcolumnWith>(result.Key, ColumnFamily.FamilyName, result.Value.Select(col => {
+					var key = CassandraType.FromBigEndian<BytesType>(result.Key);
+
+					var superColumns = result.Value.Select(col => {
 						var superCol = Helper.ConvertSuperColumnToFluentSuperColumn<CompareWith, CompareSubcolumnWith>(col.Super_column);
 						ColumnFamily.Context.Attach(superCol);
 						superCol.MutationTracker.Clear();
 
 						return superCol;
-					}));
+					});
+
+					var familyName = superColumns.Count() > 0 ? superColumns.FirstOrDefault().Family.FamilyName : "[Unknown]";
+					var r = new FluentSuperColumnFamily<CompareWith, CompareSubcolumnWith>(key, familyName, superColumns);
 					ColumnFamily.Context.Attach(r);
 					r.MutationTracker.Clear();
 

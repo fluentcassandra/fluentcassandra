@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Apache.Cassandra;
 using FluentCassandra.Types;
 
 namespace FluentCassandra.Operations
@@ -36,7 +35,9 @@ namespace FluentCassandra.Operations
 
 				foreach (var result in output)
 				{
-					var r = new FluentColumnFamily<CompareWith>(result.Key, ColumnFamily.FamilyName, result.Value.Select(col => {
+					var key = CassandraType.FromBigEndian<BytesType>(result.Key);
+
+					var r = new FluentColumnFamily<CompareWith>(key, ColumnFamily.FamilyName, result.Value.Select(col => {
 						return Helper.ConvertColumnToFluentColumn<CompareWith>(col.Column);
 					}));
 					ColumnFamily.Context.Attach(r);

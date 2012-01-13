@@ -21,21 +21,36 @@ namespace FluentCassandra.Operations
 			{
 				result = Execute();
 			}
+			catch (AuthenticationException exc)
+			{
+				ExceptionOccurred(new CassandraOperationException(exc));
+				result = default(TResult);
+			}
+			catch (AuthorizationException exc)
+			{
+				ExceptionOccurred(new CassandraOperationException(exc));
+				result = default(TResult);
+			}
+			catch (InvalidRequestException exc)
+			{
+				ExceptionOccurred(new CassandraOperationException(exc));
+				result = default(TResult);
+			}
 			catch (Exception exc)
 			{
-				Debug.WriteLine(exc);
-
-				string message = exc.Message;
-
-				if (exc is InvalidRequestException)
-					message = ((InvalidRequestException)exc).Why;
-
+				ExceptionOccurred(new CassandraException(exc.Message, exc));
 				result = default(TResult);
-				HasError = true;
-				Error = new CassandraException(message, exc);
 			}
 
 			return !HasError;
+		}
+
+		private void ExceptionOccurred(CassandraException exc)
+		{
+			Debug.WriteLine(exc);
+
+			HasError = true;
+			Error = exc;
 		}
 
 		public abstract TResult Execute();

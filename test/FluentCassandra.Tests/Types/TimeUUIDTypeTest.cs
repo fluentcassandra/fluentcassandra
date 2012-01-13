@@ -130,7 +130,7 @@ namespace FluentCassandra.Types
 			TimeUUIDType actual = guid;
 
 			// assert
-			Assert.IsTrue(actual.GetValue<byte[]>().SequenceEqual(javaByteOrder));
+			Assert.IsTrue(actual.ToBigEndian().SequenceEqual(javaByteOrder));
 		}
 
 		[Test]
@@ -140,7 +140,7 @@ namespace FluentCassandra.Types
 
 			// act
 			TimeUUIDType actual = new TimeUUIDType();
-			actual.SetValue(javaByteOrder);
+			actual.SetValueFromBigEndian(javaByteOrder);
 
 			// assert
 			Assert.AreEqual(guid, (Guid)actual);

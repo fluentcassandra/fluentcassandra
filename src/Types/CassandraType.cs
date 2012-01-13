@@ -39,8 +39,8 @@ namespace FluentCassandra.Types
 
 		protected abstract TypeCode TypeCode { get; }
 
-		internal abstract byte[] ToBigEndian();
-		internal abstract void SetValueFromBigEndian(byte[] value);
+		public abstract byte[] ToBigEndian();
+		public abstract void SetValueFromBigEndian(byte[] value);
 
 		#region Equality
 
@@ -89,6 +89,8 @@ namespace FluentCassandra.Types
 		}
 
 		public static implicit operator byte[](CassandraType o) { return Convert<byte[]>(o); }
+
+		public static implicit operator char[](CassandraType o) { return Convert<char[]>(o); }
 
 		public static implicit operator byte(CassandraType o) { return Convert<byte>(o); }
 		public static implicit operator sbyte(CassandraType o) { return Convert<sbyte>(o); }
@@ -169,6 +171,17 @@ namespace FluentCassandra.Types
 			where T : CassandraType
 		{
 			T type = Activator.CreateInstance<T>();
+			type.SetValueFromBigEndian(value);
+			return type;
+		}
+
+		internal static CassandraType FromBigEndian(byte[] value, Type cassandraType)
+		{
+			CassandraType type = Activator.CreateInstance(cassandraType) as CassandraType;
+
+			if (type == null)
+				return null;
+
 			type.SetValueFromBigEndian(value);
 			return type;
 		}

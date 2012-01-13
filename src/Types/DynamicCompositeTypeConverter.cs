@@ -112,5 +112,17 @@ namespace FluentCassandra.Types
 
 			return null;
 		}
+
+		public override byte[] ToBigEndian(List<CassandraType> value)
+		{
+			var bytes = ConvertTo<byte[]>(value);
+			return bytes;
+		}
+
+		public override List<CassandraType> FromBigEndian(byte[] value)
+		{
+			var obj = ConvertFrom(value);
+			return obj;
+		}
 	}
 }

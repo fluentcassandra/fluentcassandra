@@ -69,6 +69,8 @@
     <Compile Include="Operations\CassandraIndexClauseTest.cs" />
     <Compile Include="TypesToDatabase\AsciiTypeTest.cs" />
     <Compile Include="TypesToDatabase\BytesTypeTest.cs" />
+    <Compile Include="TypesToDatabase\CompositeTypeTest.cs" />
+    <Compile Include="TypesToDatabase\DynamicCompositeTypeTest.cs" />
     <Compile Include="TypesToDatabase\TimeUUIDTypeTest.cs" />
     <Compile Include="TypesToDatabase\LexicalUUIDTypeTest.cs" />
     <Compile Include="TypesToDatabase\IntegerTypeTest.cs" />
