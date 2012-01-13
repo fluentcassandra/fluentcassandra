@@ -40,6 +40,11 @@ namespace FluentCassandra
 			get { return _keyspaceName; }
 		}
 
+		public override string ToString()
+		{
+			return KeyspaceName;
+		}
+
 		private KsDef _cachedKeyspaceDescription;
 
 		public void TryCreateSelf(Server server)

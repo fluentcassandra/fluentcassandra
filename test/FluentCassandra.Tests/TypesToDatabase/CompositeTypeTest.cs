@@ -39,7 +39,7 @@ namespace FluentCassandra.TypesToDatabase
 			var actual = value.FirstOrDefault().Columns.FirstOrDefault();
 
 			// assert
-			Assert.AreEqual(expected, (string)actual.ColumnName);
+			Assert.AreEqual((object)expected, (object)actual.ColumnName);
 		}
 	}
 }

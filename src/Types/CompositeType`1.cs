@@ -12,7 +12,10 @@ namespace FluentCassandra.Types
 			SetValue(new CassandraType[] { t1 });
 		}
 
-		public CompositeType() { }
+		public CompositeType()
+		{
+			ComponentTypeHints = GetType().GetGenericArguments().ToList();
+		}
 
 		public T1 Item1 { get { return (T1)GetValue<List<CassandraType>>()[0]; } }
 	}
@@ -26,7 +29,10 @@ namespace FluentCassandra.Types
 			SetValue(new CassandraType[] { t1, t2 });
 		}
 
-		public CompositeType() { }
+		public CompositeType()
+		{
+			ComponentTypeHints = GetType().GetGenericArguments().ToList();
+		}
 
 		public T1 Item1 { get { return (T1)GetValue<List<CassandraType>>()[0]; } }
 		public T2 Item2 { get { return (T2)GetValue<List<CassandraType>>()[1]; } }
@@ -42,7 +48,10 @@ namespace FluentCassandra.Types
 			SetValue(new CassandraType[] { t1, t2, t3 });
 		}
 
-		public CompositeType() { }
+		public CompositeType()
+		{
+			ComponentTypeHints = GetType().GetGenericArguments().ToList();
+		}
 
 		public T1 Item1 { get { return (T1)GetValue<List<CassandraType>>()[0]; } }
 		public T2 Item2 { get { return (T2)GetValue<List<CassandraType>>()[1]; } }
@@ -60,7 +69,10 @@ namespace FluentCassandra.Types
 			SetValue(new CassandraType[] { t1, t2, t3, t4 });
 		}
 
-		public CompositeType() { }
+		public CompositeType()
+		{
+			ComponentTypeHints = GetType().GetGenericArguments().ToList();
+		}
 
 		public T1 Item1 { get { return (T1)GetValue<List<CassandraType>>()[0]; } }
 		public T2 Item2 { get { return (T2)GetValue<List<CassandraType>>()[1]; } }
@@ -80,7 +92,10 @@ namespace FluentCassandra.Types
 			SetValue(new CassandraType[] { t1, t2, t3, t4, t5 });
 		}
 
-		public CompositeType() { }
+		public CompositeType()
+		{
+			ComponentTypeHints = GetType().GetGenericArguments().ToList();
+		}
 
 		public T1 Item1 { get { return (T1)GetValue<List<CassandraType>>()[0]; } }
 		public T2 Item2 { get { return (T2)GetValue<List<CassandraType>>()[1]; } }
