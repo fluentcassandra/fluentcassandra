@@ -34,7 +34,15 @@ namespace FluentCassandra.TypesToDatabase
 			var expected = new CompositeType<LongType, UTF8Type>(300L, "string1");
 
 			// act
-			family.InsertColumn(TestKey, expected, Math.PI);
+		    var record = family.CreateRecord(TestKey);
+		    var column = record.CreateColumn();
+		    column.ColumnName = expected;
+		    column.ColumnValue = Math.PI;
+
+            record.Columns.Add(column);
+            _db.Attach(record);
+            _db.SaveChanges();
+
 			var value = family.Get(TestKey).Execute();
 			var actual = value.FirstOrDefault().Columns.FirstOrDefault();
 
