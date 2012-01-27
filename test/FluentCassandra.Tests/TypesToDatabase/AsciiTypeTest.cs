@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Linq;
-using System.Threading;
-using NUnit.Framework;
 using FluentCassandra.Types;
+using NUnit.Framework;
 
 namespace FluentCassandra.TypesToDatabase
 {

@@ -9,6 +9,6 @@ namespace FluentCassandra.Operations
 		public CassandraType Name { get; set; }
 		public BytesType Value { get; set; }
 		public DateTimeOffset Timestamp { get; set; }
-		public int Ttl { get; set; }
+		public int? Ttl { get; set; }
 	}
 }

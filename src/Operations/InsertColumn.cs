@@ -17,7 +17,7 @@ namespace FluentCassandra.Operations
 
 		public BytesType ColumnValue { get; private set; }
 
-		public int TimeToLive { get; private set; }
+		public int? TimeToLive { get; private set; }
 
 		public DateTimeOffset Timestamp { get; private set; }
 
@@ -51,7 +51,7 @@ namespace FluentCassandra.Operations
 
 		#endregion
 
-		public InsertColumn(BytesType key, CassandraType name, BytesType value, DateTimeOffset timestamp, int timeToLive)
+		public InsertColumn(BytesType key, CassandraType name, BytesType value, DateTimeOffset timestamp, int? timeToLive)
 		{
 			Key = key;
 			ColumnName = name;
@@ -60,7 +60,7 @@ namespace FluentCassandra.Operations
 			TimeToLive = timeToLive;
 		}
 
-		public InsertColumn(BytesType key, CassandraType superColumnName, CassandraType name, BytesType value, DateTimeOffset timestamp, int timeToLive)
+		public InsertColumn(BytesType key, CassandraType superColumnName, CassandraType name, BytesType value, DateTimeOffset timestamp, int? timeToLive)
 		{
 			Key = key;
 			SuperColumnName = superColumnName;

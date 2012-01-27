@@ -61,7 +61,7 @@ namespace FluentCassandra
 			var name = path.Column.ColumnName;
 			var value = path.Column.ColumnValue;
 			var timestamp = path.Column.ColumnTimestamp;
-			var timeToLive = path.Column.ColumnTimeToLive;
+			var timeToLive = path.Column.ColumnSecondsUntilDeleted;
 
 			var op = new InsertColumn(key, superColumnName, name, value, timestamp, timeToLive);
 			family.ExecuteOperation(op);
@@ -71,10 +71,10 @@ namespace FluentCassandra
 			where CompareWith : CassandraType
 			where CompareSubcolumnWith : CassandraType
 		{
-			InsertColumn<CompareWith, CompareSubcolumnWith>(family, key, superColumnName, name, value, DateTimeOffset.UtcNow, 1);
+			InsertColumn<CompareWith, CompareSubcolumnWith>(family, key, superColumnName, name, value, DateTimeOffset.UtcNow, null);
 		}
 
-		public static void InsertColumn<CompareWith, CompareSubcolumnWith>(this CassandraSuperColumnFamily<CompareWith, CompareSubcolumnWith> family, BytesType key, CompareWith superColumnName, CompareSubcolumnWith name, BytesType value, DateTimeOffset timestamp, int timeToLive)
+		public static void InsertColumn<CompareWith, CompareSubcolumnWith>(this CassandraSuperColumnFamily<CompareWith, CompareSubcolumnWith> family, BytesType key, CompareWith superColumnName, CompareSubcolumnWith name, BytesType value, DateTimeOffset timestamp, int? timeToLive)
 			where CompareWith : CassandraType
 			where CompareSubcolumnWith : CassandraType
 		{

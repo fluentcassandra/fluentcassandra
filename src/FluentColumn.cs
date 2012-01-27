@@ -13,11 +13,12 @@ namespace FluentCassandra
 		private BytesType _value;
 		private FluentColumnParent _parent;
 		private IFluentBaseColumnFamily _family;
+		private int? _ttl;
 
 		public FluentColumn()
 		{
 			ColumnTimestamp = DateTimeOffset.UtcNow;
-			ColumnTimeToLive = 1;
+			ColumnSecondsUntilDeleted = null;
 		}
 
 		/// <summary>
@@ -66,10 +67,16 @@ namespace FluentCassandra
 		/// <summary>
 		/// 
 		/// </summary>
-		public int ColumnTimeToLive
+		public int? ColumnSecondsUntilDeleted
 		{
-			get;
-			set;
+			get { return _ttl; }
+			set
+			{
+				if (value.HasValue && value <= 0)
+					throw new CassandraException("ColumnSecondsUntilDeleted needs to be set to a postive value that is greater than zero");
+
+				_ttl = value;
+			}
 		}
 
 		/// <summary>

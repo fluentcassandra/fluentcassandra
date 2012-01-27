@@ -79,12 +79,16 @@ namespace FluentCassandra.Operations
 
 		public static Column CreateColumn(CassandraColumn column)
 		{
-			return new Column {
+			var ccol = new Column {
 				Name = column.Name.TryToBigEndian(),
 				Value = column.Value.TryToBigEndian(),
-				Ttl = column.Ttl,
 				Timestamp = column.Timestamp.ToTimestamp()
 			};
+
+			if (column.Ttl.HasValue && column.Ttl.Value > 0)
+				ccol.Ttl = column.Ttl.Value;
+
+			return ccol;
 		}
 
 		public static CounterColumn CreateCounterColumn(CassandraCounterColumn column)
@@ -129,12 +133,16 @@ namespace FluentCassandra.Operations
 			where CompareWith : CassandraType
 		{
 
-			return new FluentColumn<CompareWith> {
+			var fcol = new FluentColumn<CompareWith> {
 				ColumnName = CassandraType.FromBigEndian<CompareWith>(col.Name),
 				ColumnValue = CassandraType.FromBigEndian<BytesType>(col.Value),
 				ColumnTimestamp = new DateTimeOffset(col.Timestamp, TimeSpan.Zero),
-				ColumnTimeToLive = col.Ttl
 			};
+
+			if (col.__isset.ttl)
+				fcol.ColumnSecondsUntilDeleted = col.Ttl;
+
+			return fcol;
 		}
 
 		public static FluentSuperColumn<CompareWith, CompareSubcolumnWith> ConvertSuperColumnToFluentSuperColumn<CompareWith, CompareSubcolumnWith>(SuperColumn col)
