@@ -61,7 +61,27 @@ namespace FluentCassandra.Types
 		public override bool Equals(object obj)
 		{
 			if (obj is BytesType)
-				return _value.SequenceEqual(((BytesType)obj)._value);
+			{
+				BytesType b1 = this;
+				BytesType b2 = (BytesType)obj;
+
+				if (b1._bigEndianValue != null && b2._bigEndianValue != null)
+					return b1._bigEndianValue.SequenceEqual(b2._bigEndianValue);
+
+				if (b1._sourceType != null && b2._sourceType == null)
+					b2.GetValue(b1._sourceType);
+
+				if (b2._sourceType != null && b1._sourceType == null)
+					b1.GetValue(b2._sourceType);
+
+				if (b1._value == null && b2._value == null && b1._bigEndianValue != null && b2._bigEndianValue != null)
+				{
+					b1.GetValue(typeof(byte[]));
+					b2.GetValue(typeof(byte[]));
+				}
+
+				return b1._value.SequenceEqual(b2._value);
+			}
 
 			return _value.SequenceEqual(CassandraType.GetValue<byte[]>(obj, Converter));
 		}
