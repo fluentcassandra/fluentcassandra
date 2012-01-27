@@ -295,36 +295,43 @@ namespace FluentCassandra.Linq
 			object rightObj = Expression.Lambda(exp.Right).Compile().DynamicInvoke();
 			string right = RightObjectToString(rightObj);
 
-			switch (exp.NodeType)
+			if (left == "KEY")
 			{
-				case ExpressionType.Equal:
-					if (rightObj == null)
-						criteria = left + " IS NULL";
-					else
+				switch (exp.NodeType)
+				{
+					case ExpressionType.Equal:
 						criteria = left + " = " + right;
-					break;
-				case ExpressionType.NotEqual:
-					if (rightObj == null)
-						criteria = left + " IS NOT NULL";
-					else
-						criteria = left + " != " + right;
-					break;
-				case ExpressionType.GreaterThan:
-					criteria = left + " > " + right;
-					break;
-				case ExpressionType.GreaterThanOrEqual:
-					criteria = left + " >= " + right;
-					break;
-				case ExpressionType.LessThan:
-					criteria = left + " < " + right;
-					break;
-				case ExpressionType.LessThanOrEqual:
-					criteria = left + " <= " + right;
-					break;
+						break;
+					case ExpressionType.GreaterThan:
+						criteria = left + " > " + right;
+						break;
+					case ExpressionType.GreaterThanOrEqual:
+						criteria = left + " >= " + right;
+						break;
+					case ExpressionType.LessThan:
+						criteria = left + " < " + right;
+						break;
+					case ExpressionType.LessThanOrEqual:
+						criteria = left + " <= " + right;
+						break;
 
-				default:
-					throw new NotSupportedException(
-						exp.NodeType.ToString() + " is not a supported relational criteria.");
+					default:
+						throw new NotSupportedException(
+							exp.NodeType.ToString() + " is not a supported relational criteria for KEY.");
+				}
+			}
+			else
+			{
+				switch (exp.NodeType)
+				{
+					case ExpressionType.Equal:
+						criteria = left + " = " + right;
+						break;
+
+					default:
+						throw new NotSupportedException(
+							exp.NodeType.ToString() + " is not a supported relational criteria for Columns.");
+				}
 			}
 
 			return criteria;
@@ -340,10 +347,6 @@ namespace FluentCassandra.Linq
 				case ExpressionType.AndAlso:
 					criteria = VisitWhereExpression(exp.Left) + " AND " + VisitWhereExpression(exp.Right);
 					break;
-				//case ExpressionType.Or:
-				//case ExpressionType.OrElse:
-				//    criteria = "(" + VisitWhereExpression(exp.Left) + " OR " + VisitWhereExpression(exp.Right) + ")";
-				//    break;
 
 				default:
 					throw new NotSupportedException(exp.NodeType.ToString() + " is not a supported conditional criteria.");
