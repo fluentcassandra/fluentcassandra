@@ -40,8 +40,12 @@ namespace FluentCassandra.Operations
 
 			// act
 			_family.InsertColumn(_testKey, _testName, value, timestamp, timeToLive);
+			var column = _family.Get(_testKey).Execute();
+			var actual = column.FirstOrDefault().Columns.FirstOrDefault();
 
 			// assert
+			Assert.AreEqual(_testName, (string)actual.ColumnName);
+			Assert.AreEqual(value, (double)actual.ColumnValue);
 		}
 
 		[Test]
@@ -54,8 +58,12 @@ namespace FluentCassandra.Operations
 
 			// act
 			_superFamily.InsertColumn(_testKey, _testSuperName, _testName, value, timestamp, timeToLive);
+			var column = _family.Get(_testKey).Execute();
+			var actual = column.FirstOrDefault().Columns.FirstOrDefault();
 
 			// assert
+			Assert.AreEqual(_testName, (string)actual.ColumnName);
+			Assert.AreEqual(value, (double)actual.ColumnValue);
 		}
 	}
 }
