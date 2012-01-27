@@ -13,6 +13,9 @@ namespace FluentCassandra
 
 		public FluentColumnFamily<CompareWith> CreateRecord(BytesType key)
 		{
+			if (key.Length == 0)
+				throw new ArgumentException("'key' is not allowed to be zero length.", "key");
+
 			return new FluentColumnFamily<CompareWith>(key, FamilyName);
 		}
 	}

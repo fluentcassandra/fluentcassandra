@@ -51,6 +51,8 @@ namespace FluentCassandra.Types
 
 		#endregion
 
+		public int Length { get { return _value != null ? _value.Length : _bigEndianValue.Length; } }
+
 		private Type _sourceType;
 		private bool _hasBeenConverted;
 		private byte[] _bigEndianValue;
