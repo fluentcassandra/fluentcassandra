@@ -66,8 +66,9 @@
     <Compile Include="Connections\ConnectionProviderTests.cs" />
     <Compile Include="Connections\NormalConnectionProviderTests.cs" />
     <Compile Include="Linq\LinqTests.cs" />
+    <Compile Include="Linq\LinqToCassandraTests.cs" />
     <Compile Include="Operations\CassandraIndexClauseTest.cs" />
-    <Compile Include="ReportedIssuesTest.cs" />
+    <Compile Include="ReportedIssuesTests.cs" />
     <Compile Include="TypesToDatabase\AsciiTypeTest.cs" />
     <Compile Include="TypesToDatabase\BytesTypeTest.cs" />
     <Compile Include="TypesToDatabase\CompositeTypeTest.cs" />

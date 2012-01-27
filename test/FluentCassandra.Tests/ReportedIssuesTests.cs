@@ -6,7 +6,7 @@ using NUnit.Framework;
 namespace FluentCassandra
 {
 	[TestFixture]
-	public class ReportedIssuesTest
+	public class ReportedIssuesTests
 	{
 		public const string FamilyName = "Standard";
 		public const string TestKey = "Test1";

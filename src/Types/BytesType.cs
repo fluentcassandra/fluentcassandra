@@ -11,11 +11,10 @@ namespace FluentCassandra.Types
 
 		public override object GetValue(Type type)
 		{
-			if (!_hasBeenConverted)
+			if (_sourceType != type)
 			{
 				_value = Converter.FromBigEndian(_bigEndianValue, type);
 				_sourceType = type;
-				_hasBeenConverted = true;
 			}
 
 			return GetValue(_value, type, Converter);
@@ -23,7 +22,6 @@ namespace FluentCassandra.Types
 
 		public override void SetValue(object obj)
 		{
-			_hasBeenConverted = true;
 			_sourceType = obj.GetType();
 			_value = SetValue(obj, Converter);
 		}
@@ -36,7 +34,6 @@ namespace FluentCassandra.Types
 		public override void SetValueFromBigEndian(byte[] value)
 		{
 			_bigEndianValue = value;
-			_hasBeenConverted = false;
 		}
 
 		protected override TypeCode TypeCode
@@ -54,7 +51,6 @@ namespace FluentCassandra.Types
 		public int Length { get { return _value != null ? _value.Length : _bigEndianValue.Length; } }
 
 		private Type _sourceType;
-		private bool _hasBeenConverted;
 		private byte[] _bigEndianValue;
 		private byte[] _value;
 
