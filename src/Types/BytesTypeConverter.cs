@@ -203,6 +203,22 @@ namespace FluentCassandra.Types
 			}
 		}
 
+		public byte[] ToBigEndian(byte[] value, Type sourceType)
+		{
+			if (sourceType == typeof(string))
+				return value;
+
+			return base.ToBigEndian(value);
+		}
+
+		public byte[] FromBigEndian(byte[] value, Type destinationType)
+		{
+			if (destinationType == typeof(string))
+				return value;
+
+			return base.FromBigEndian(value);
+		}
+
 		private static byte[] FromDecimal(decimal d)
 		{
 			byte[] bytes = new byte[16];
