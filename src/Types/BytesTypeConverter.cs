@@ -207,6 +207,8 @@ namespace FluentCassandra.Types
 		{
 			if (sourceType == typeof(string))
 				return value;
+			else if (sourceType == typeof(Guid))
+				return new Guid(value).ToBigEndianBytes();
 
 			return base.ToBigEndian(value);
 		}
@@ -215,6 +217,8 @@ namespace FluentCassandra.Types
 		{
 			if (destinationType == typeof(string))
 				return value;
+			else if (destinationType == typeof(Guid))
+				return value.ToGuidFromBigEndianBytes().ToByteArray();
 
 			return base.FromBigEndian(value);
 		}

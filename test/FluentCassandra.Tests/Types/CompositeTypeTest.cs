@@ -80,7 +80,7 @@ namespace FluentCassandra.Types
 		public void JavaBytes_To_CompositeType()
 		{
 			// arrange
-			var expected = new CassandraType[] { (BytesType)compositeType[0].GetValue<string>().Reverse().ToArray(), (BytesType)compositeType[1].GetValue<long>() };
+			var expected = new CassandraType[] { (BytesType)compositeType[0].GetValue<string>(), (BytesType)compositeType[1].GetValue<long>() };
 
 			// act
 			var actual = new CompositeType();
