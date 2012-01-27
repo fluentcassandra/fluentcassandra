@@ -2,6 +2,7 @@
 using System.Linq;
 using FluentCassandra.Types;
 using System.Dynamic;
+using System.Collections.Generic;
 
 namespace FluentCassandra.Linq
 {
@@ -10,5 +11,7 @@ namespace FluentCassandra.Linq
 	{
 		BytesType Key { get; set; }
 		BytesType this[CompareWith columnName] { get; }
+
+		IList<IFluentColumn<CompareWith>> Columns { get; }
 	}
 }

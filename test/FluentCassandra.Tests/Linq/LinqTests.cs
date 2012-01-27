@@ -2,6 +2,7 @@
 using FluentCassandra.Connections;
 using NUnit.Framework;
 using FluentCassandra.Types;
+using System;
 
 namespace FluentCassandra.Linq
 {
@@ -73,6 +74,49 @@ namespace FluentCassandra.Linq
 			var expected = "SELECT Age, Name FROM Users";
 
 			var query = _family.Select("Age", "Name");
+			var actual = query.ToString();
+
+			AreEqual(expected, actual);
+		}
+
+		[Test]
+		public void Cannot_Use_Columns_Property()
+		{
+			var query =
+				from f in _family
+				where f.Columns.Count > 0
+				select f;
+
+			Assert.Throws<NotSupportedException>(delegate {
+				query.ToString();
+			});
+		}
+
+		[Test]
+		public void WHERE_Using_KEY()
+		{
+			var expected = "SELECT * FROM Users WHERE KEY = 1234";
+
+			var query =
+				from f in _family
+				where f.Key == 1234
+				select f;
+
+			var actual = query.ToString();
+
+			AreEqual(expected, actual);
+		}
+
+		[Test]
+		public void WHERE_Using_KEY_And_One_Parameter()
+		{
+			var expected = "SELECT * FROM Users WHERE (KEY = 1234 AND Age = 10)";
+
+			var query =
+				from f in _family
+				where f.Key == 1234 && f["Age"] == 10
+				select f;
+
 			var actual = query.ToString();
 
 			AreEqual(expected, actual);

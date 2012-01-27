@@ -94,8 +94,18 @@ namespace FluentCassandra.Linq
 		{
 			exp = SimplifyExpression(exp);
 
-			if (exp.NodeType != ExpressionType.Call)
+			if (exp.NodeType != ExpressionType.Call && exp.NodeType != ExpressionType.MemberAccess)
 				throw new NotSupportedException(exp.NodeType.ToString() + " is not supported.");
+
+			if (exp.NodeType == ExpressionType.MemberAccess)
+			{
+				var name = ((MemberExpression)exp).Member.Name;
+
+				if (name != "Key")
+					throw new NotSupportedException(name + " is not a supported property.");
+
+				return "KEY";
+			}
 
 			var field = SimplifyExpression(((MethodCallExpression)exp).Arguments[0]);
 
@@ -328,12 +338,12 @@ namespace FluentCassandra.Linq
 			{
 				case ExpressionType.And:
 				case ExpressionType.AndAlso:
-					criteria = "(" + VisitWhereExpression(exp.Left) + " AND " + VisitWhereExpression(exp.Right) + ")";
+					criteria = VisitWhereExpression(exp.Left) + " AND " + VisitWhereExpression(exp.Right);
 					break;
-				case ExpressionType.Or:
-				case ExpressionType.OrElse:
-					criteria = "(" + VisitWhereExpression(exp.Left) + " OR " + VisitWhereExpression(exp.Right) + ")";
-					break;
+				//case ExpressionType.Or:
+				//case ExpressionType.OrElse:
+				//    criteria = "(" + VisitWhereExpression(exp.Left) + " OR " + VisitWhereExpression(exp.Right) + ")";
+				//    break;
 
 				default:
 					throw new NotSupportedException(exp.NodeType.ToString() + " is not a supported conditional criteria.");

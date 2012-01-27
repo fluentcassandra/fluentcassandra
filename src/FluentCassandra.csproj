@@ -167,6 +167,7 @@
     <Compile Include="Operations\CassandraSlicePredicateBuilder.cs" />
     <Compile Include="Operations\ColumnSlicePredicate.cs" />
     <Compile Include="Operations\AddColumn.cs" />
+    <Compile Include="Operations\ExecuteCqlNonQuery.cs" />
     <Compile Include="Operations\ExecuteCqlQuery.cs" />
     <Compile Include="Operations\Operation.cs" />
     <Compile Include="Operations\CassandraIndexClauseBuilder.cs" />

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using FluentCassandra.Linq;
 using FluentCassandra.Types;
 using FluentCassandra.Operations;
 using FluentCassandra.Connections;
@@ -127,6 +128,26 @@ namespace FluentCassandra
 		{
 			var mutations = record.MutationTracker.GetMutations();
 			var op = new BatchMutate(mutations);
+			ExecuteOperation(op);
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="cqlQuery"></param>
+		public IEnumerable<ICqlRow<BytesType>> ExecuteQuery(UTF8Type cqlQuery)
+		{
+			var op = new ExecuteCqlQuery<BytesType>(cqlQuery);
+			return ExecuteOperation(op);
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="cqlQuery"></param>
+		public void ExecuteNonQuery(UTF8Type cqlQuery)
+		{
+			var op = new ExecuteCqlNonQuery(cqlQuery);
 			ExecuteOperation(op);
 		}
 

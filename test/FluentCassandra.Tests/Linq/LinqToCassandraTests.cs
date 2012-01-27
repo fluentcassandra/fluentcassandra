@@ -21,10 +21,20 @@ namespace FluentCassandra.Linq
 
 			var keyspace = new CassandraKeyspace(keyspaceName);
 			keyspace.TryCreateSelf(server);
-			keyspace.TryCreateColumnFamily<AsciiType>(server, "Users");
 
 			_db = new CassandraContext(keyspace: keyspaceName, server: server);
 			_db.ThrowErrors = true;
+
+			_db.ExecuteNonQuery(@"DROP COLUMNFAMILY Users;");
+			_db.ExecuteNonQuery(@"
+CREATE COLUMNFAMILY Users (
+	KEY int PRIMARY KEY,
+	Name ascii,
+	Email ascii,
+	Age int
+);");
+			_db.ExecuteNonQuery(@"CREATE INDEX User_Age ON Users (Age);");
+
 			_family = _db.GetColumnFamily<AsciiType>("Users");
 			_family.RemoveAllRows();
 
@@ -59,15 +69,11 @@ namespace FluentCassandra.Linq
 		[Test]
 		public void SELECT()
 		{
-			// arrange
-
-			// act
 			var query =
 				from f in _family
 				select f;
 			var actual = query.ToList().OrderBy(x => (int)x.Key).ToList();
 
-			// assert
 			Assert.AreEqual(_users.Length, actual.Count);
 			for (int i = 0; i < _users.Length; i++)
 			{
@@ -79,6 +85,98 @@ namespace FluentCassandra.Linq
 				Assert.AreEqual(objUser.Email, (string)dbUser.Email);
 				Assert.AreEqual(objUser.Age, (int)dbUser.Age);
 			}
+		}
+
+		[Test]
+		public void SELECT_One_Column()
+		{
+			var query = _family.Select("Age");
+			var actual = query.ToList().OrderBy(x => (int)x.Key).ToList();
+
+			Assert.AreEqual(_users.Length, actual.Count);
+			for (int i = 0; i < _users.Length; i++)
+			{
+				var objUser = _users[i];
+				var dbUser = actual[i];
+
+				Assert.AreEqual(1, dbUser.Columns.Count);
+				Assert.AreEqual(objUser.Age, (int)dbUser["Age"]);
+			}
+		}
+
+		[Test]
+		public void SELECT_Two_Columns()
+		{
+			var query = _family.Select("Age", "Name");
+			var actual = query.ToList().OrderBy(x => (int)x.Key).ToList();
+
+			Assert.AreEqual(_users.Length, actual.Count);
+			for (int i = 0; i < _users.Length; i++)
+			{
+				var objUser = _users[i];
+				var dbUser = actual[i];
+
+				Assert.AreEqual(2, dbUser.Columns.Count);
+				Assert.AreEqual(objUser.Age, (int)dbUser["Age"]);
+				Assert.AreEqual(objUser.Name, (string)dbUser["Name"]);
+			}
+		}
+
+		[Test]
+		public void WHERE_Using_KEY()
+		{
+			var expected = _users.Where(x => x.Id == 2).FirstOrDefault();
+
+			var query =
+				from f in _family
+				where f.Key == 2
+				select f;
+			var response = query.ToList();
+			dynamic actual = response.FirstOrDefault();
+
+			Assert.AreEqual(1, response.Count);
+			Assert.AreEqual(expected.Id, actual.Key);
+			Assert.AreEqual(expected.Name, (string)actual.Name);
+			Assert.AreEqual(expected.Email, (string)actual.Email);
+			Assert.AreEqual(expected.Age, (int)actual.Age);
+		}
+
+		[Test]
+		public void WHERE_Using_KEY_And_One_Parameter()
+		{
+			var expected = _users.Where(x => x.Id == 2).FirstOrDefault();
+
+			var query =
+				from f in _family
+				where f.Key == 2 && f["Age"] == 23
+				select f;
+			var response = query.ToList();
+			dynamic actual = response.FirstOrDefault();
+
+			Assert.AreEqual(1, response.Count);
+			Assert.AreEqual(expected.Id, actual.Key);
+			Assert.AreEqual(expected.Name, (string)actual.Name);
+			Assert.AreEqual(expected.Email, (string)actual.Email);
+			Assert.AreEqual(expected.Age, (int)actual.Age);
+		}
+
+		[Test]
+		public void WHERE_One_Parameter()
+		{
+			var expected = _users.Where(x => x.Id == 2).FirstOrDefault();
+
+			var query =
+				from f in _family
+				where f["Age"] == 23
+				select f;
+			var response = query.ToList();
+			dynamic actual = response.FirstOrDefault();
+
+			Assert.AreEqual(1, response.Count);
+			Assert.AreEqual(expected.Id, actual.Key);
+			Assert.AreEqual(expected.Name, (string)actual.Name);
+			Assert.AreEqual(expected.Email, (string)actual.Email);
+			Assert.AreEqual(expected.Age, (int)actual.Age);
 		}
 	}
 }
