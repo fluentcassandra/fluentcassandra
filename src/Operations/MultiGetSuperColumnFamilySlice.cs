@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using FluentCassandra.Types;
-using Apache.Cassandra;
 
 namespace FluentCassandra.Operations
 {
@@ -47,7 +46,7 @@ namespace FluentCassandra.Operations
 						return superCol;
 					});
 
-					var familyName = superColumns.Count() > 0 ? superColumns.FirstOrDefault().Family.FamilyName : "[Unknown]";
+					var familyName = ColumnFamily.FamilyName;
 					var r = new FluentSuperColumnFamily<CompareWith, CompareSubcolumnWith>(key, familyName, superColumns);
 					ColumnFamily.Context.Attach(r);
 					r.MutationTracker.Clear();

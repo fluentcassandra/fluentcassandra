@@ -23,6 +23,7 @@ namespace FluentCassandra.Types
 
 		public override void SetValue(object obj)
 		{
+			_hasBeenConverted = true;
 			_sourceType = obj.GetType();
 			_value = SetValue(obj, Converter);
 		}
@@ -35,6 +36,7 @@ namespace FluentCassandra.Types
 		public override void SetValueFromBigEndian(byte[] value)
 		{
 			_bigEndianValue = value;
+			_hasBeenConverted = false;
 		}
 
 		protected override TypeCode TypeCode

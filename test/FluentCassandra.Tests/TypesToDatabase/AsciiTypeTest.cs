@@ -36,7 +36,6 @@ namespace FluentCassandra.TypesToDatabase
 			// act
 			family.InsertColumn(TestKey, expected, Math.PI);
 			_db.SaveChanges();
-			Thread.Sleep(5000);
 			var actual = family.GetColumn(TestKey, expected);
 
 			// assert
