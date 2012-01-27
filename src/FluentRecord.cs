@@ -30,6 +30,7 @@ namespace FluentCassandra
 		/// 
 		/// </summary>
 		/// <returns></returns>
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public override IEnumerable<string> GetDynamicMemberNames()
 		{
 			return Columns.Select(x => x.ColumnName.GetValue<string>());
@@ -41,6 +42,7 @@ namespace FluentCassandra
 		/// <param name="binder"></param>
 		/// <param name="result"></param>
 		/// <returns></returns>
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public override bool TryGetMember(GetMemberBinder binder, out object result)
 		{
 			return TryGetColumn(binder.Name, out result);
@@ -53,6 +55,7 @@ namespace FluentCassandra
 		/// <param name="indexes"></param>
 		/// <param name="result"></param>
 		/// <returns></returns>
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public override bool TryGetIndex(GetIndexBinder binder, object[] indexes, out object result)
 		{
 			object index0 = indexes[0];
@@ -65,6 +68,7 @@ namespace FluentCassandra
 		/// <param name="name"></param>
 		/// <param name="result"></param>
 		/// <returns></returns>
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public abstract bool TryGetColumn(object name, out object result);
 
 		/// <summary>
@@ -73,6 +77,7 @@ namespace FluentCassandra
 		/// <param name="binder"></param>
 		/// <param name="value"></param>
 		/// <returns></returns>
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public override bool TrySetMember(SetMemberBinder binder, object value)
 		{
 			return TrySetColumn(binder.Name, value);
@@ -85,6 +90,7 @@ namespace FluentCassandra
 		/// <param name="indexes"></param>
 		/// <param name="value"></param>
 		/// <returns></returns>
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public override bool TrySetIndex(SetIndexBinder binder, object[] indexes, object value)
 		{
 			object index0 = indexes[0];
@@ -97,6 +103,7 @@ namespace FluentCassandra
 		/// <param name="binder"></param>
 		/// <param name="value"></param>
 		/// <returns></returns>
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public abstract bool TrySetColumn(object name, object value);
 
 		#region IEnumerable<T> Members
