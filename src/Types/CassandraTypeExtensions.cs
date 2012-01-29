@@ -7,37 +7,37 @@ namespace FluentCassandra.Types
 	{
 		public static AsciiType ToAsciiType(this object o)
 		{
-			return CassandraType.GetType<AsciiType>(o);
+			return CassandraType.GetTypeFromObject<AsciiType>(o);
 		}
 
 		public static BytesType ToBytesType(this object o)
 		{
-			return CassandraType.GetType<BytesType>(o);
+			return CassandraType.GetTypeFromObject<BytesType>(o);
 		}
 
 		public static IntegerType ToIntegerType(this object o)
 		{
-			return CassandraType.GetType<IntegerType>(o);
+			return CassandraType.GetTypeFromObject<IntegerType>(o);
 		}
 
 		public static LexicalUUIDType ToLexicalUUIDType(this object o)
 		{
-			return CassandraType.GetType<LexicalUUIDType>(o);
+			return CassandraType.GetTypeFromObject<LexicalUUIDType>(o);
 		}
 
 		public static LongType ToLongType(this object o)
 		{
-			return CassandraType.GetType<LongType>(o);
+			return CassandraType.GetTypeFromObject<LongType>(o);
 		}
 
 		public static UTF8Type ToUTF8Type(this object o)
 		{
-			return CassandraType.GetType<UTF8Type>(o);
+			return CassandraType.GetTypeFromObject<UTF8Type>(o);
 		}
 
 		public static UUIDType ToUUIDType(this object o)
 		{
-			return CassandraType.GetType<UUIDType>(o);
+			return CassandraType.GetTypeFromObject<UUIDType>(o);
 		}
 
 		public static void AddAscii(this DynamicCompositeType type, AsciiType value)

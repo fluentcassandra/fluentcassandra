@@ -1,1 +1,1 @@
-robocopy "C:\Code\RavenLinqpadDriver\RavenLinqpadDriver\bin\Debug" "C:\ProgramData\LINQPad\Drivers\DataContext\4.0\RavenLinqpadDriver (585b2b0c3c4c2d89)" /mir
+robocopy "C:\development\projects\FluentCassandra\utility\FluentCassandra.LinqPad\bin\Debug" "C:\ProgramData\LINQPad\Drivers\DataContext\4.0\FluentCassandra.LinqPad (94b0de35caac94d0)" /mir

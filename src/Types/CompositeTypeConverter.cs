@@ -161,7 +161,7 @@ namespace FluentCassandra.Types
 					var typeHint = (hints.Count >= (hintIndex + 1)) ? hints[hintIndex++] : typeof(BytesType);
 					bytes.Read(buffer, 0, length);
 
-					var component = CassandraType.FromBigEndian(buffer, typeHint);
+					var component = CassandraType.GetTypeFromDatabaseValue(buffer, typeHint);
 					components.Add(component);
 
 					// end of component

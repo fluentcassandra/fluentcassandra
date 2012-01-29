@@ -319,11 +319,11 @@ namespace FluentCassandra.Connections
 
 			b.AppendFormat(format, "Keyspace", Keyspace);
 			b.AppendFormat(format, "Server", String.Join(",", Servers));
-			b.AppendFormat(format, "Connection Timeout", ConnectionTimeout);
+			b.AppendFormat(format, "Connection Timeout", Convert.ToInt32(ConnectionTimeout.TotalSeconds));
 			b.AppendFormat(format, "Pooling", Pooling);
 			b.AppendFormat(format, "Min Pool Size", MinPoolSize);
 			b.AppendFormat(format, "Max Pool Size", MaxPoolSize);
-			b.AppendFormat(format, "Connection Lifetime", ConnectionLifetime);
+			b.AppendFormat(format, "Connection Lifetime", Convert.ToInt32(ConnectionLifetime.TotalSeconds));
 			b.AppendFormat(format, "Connection Type", ConnectionType);
 
 			b.AppendFormat(format, "Buffer Size", BufferSize);

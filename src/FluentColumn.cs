@@ -19,6 +19,7 @@ namespace FluentCassandra
 		{
 			ColumnTimestamp = DateTimeOffset.UtcNow;
 			ColumnSecondsUntilDeleted = null;
+			ColumnTimeUntilDeleted = null;
 		}
 
 		/// <summary>
@@ -72,10 +73,34 @@ namespace FluentCassandra
 			get { return _ttl; }
 			set
 			{
-				if (value.HasValue && value <= 0)
-					throw new CassandraException("ColumnSecondsUntilDeleted needs to be set to a postive value that is greater than zero");
+				if (value.HasValue && value < 1)
+					throw new CassandraException("ColumnSecondsUntilDeleted needs to be set to a postive value that is greater than zero.");
 
 				_ttl = value;
+			}
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public TimeSpan? ColumnTimeUntilDeleted
+		{
+			get
+			{
+				if (ColumnSecondsUntilDeleted.HasValue)
+					return TimeSpan.FromSeconds(ColumnSecondsUntilDeleted.Value);
+
+				return null;
+			}
+			set
+			{
+				if (value.HasValue && value.Value < TimeSpan.FromSeconds(1))
+					throw new CassandraException("ColumnTimeUntilDeleted needs to be set to a postive TimeSpan that is greater than or equal to 1 second.");
+
+				if (value.HasValue)
+					ColumnSecondsUntilDeleted = Convert.ToInt32(value.Value.TotalSeconds);
+
+				ColumnSecondsUntilDeleted = null;
 			}
 		}
 

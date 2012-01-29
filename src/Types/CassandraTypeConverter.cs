@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace FluentCassandra.Types
 {
-	public abstract class CassandraTypeConverter<T>
+	internal abstract class CassandraTypeConverter<T>
 	{
 		public abstract bool CanConvertFrom(Type sourceType);
 

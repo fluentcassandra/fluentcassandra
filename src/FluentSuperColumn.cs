@@ -143,7 +143,7 @@ namespace FluentCassandra
 				mutationType = MutationType.Added;
 
 				col = new FluentColumn<CompareSubcolumnWith>();
-				((FluentColumn<CompareSubcolumnWith>)col).ColumnName = CassandraType.GetType<CompareSubcolumnWith>(name);
+				((FluentColumn<CompareSubcolumnWith>)col).ColumnName = CassandraType.GetTypeFromObject<CompareSubcolumnWith>(name);
 
 				_columns.SupressChangeNotification = true;
 				_columns.Add(col);
@@ -151,7 +151,7 @@ namespace FluentCassandra
 			}
 
 			// set the column value
-			col.ColumnValue = CassandraType.GetType<BytesType>(value);
+			col.ColumnValue = CassandraType.GetTypeFromObject<BytesType>(value);
 
 			// notify the tracker that the column has changed
 			OnColumnMutated(mutationType, col);

@@ -39,6 +39,12 @@
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>FluentCassandra.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core">
@@ -258,6 +264,18 @@
     </Compile>
     <Compile Include="Types\CompositeTypeConverter.cs" />
     <Compile Include="Types\CompositeType`1.cs" />
+    <Compile Include="Types\BooleanType.cs" />
+    <Compile Include="Types\BooleanTypeConverter.cs" />
+    <Compile Include="Types\DateType.cs" />
+    <Compile Include="Types\DateTypeConverter.cs" />
+    <Compile Include="Types\Int32Type.cs" />
+    <Compile Include="Types\Int32TypeConverter.cs" />
+    <Compile Include="Types\FloatType.cs" />
+    <Compile Include="Types\FloatTypeConverter.cs" />
+    <Compile Include="Types\DoubleType.cs" />
+    <Compile Include="Types\DoubleTypeConverter.cs" />
+    <Compile Include="Types\DecimalType.cs" />
+    <Compile Include="Types\DecimalTypeConverter.cs" />
     <Compile Include="Types\DynamicCompositeType.cs" />
     <Compile Include="Types\DynamicCompositeTypeConverter.cs" />
     <Compile Include="Types\CassandraTypeExtensions.cs" />
@@ -287,6 +305,7 @@
     <None Include="FluentCassandra.nuspec">
       <SubType>Designer</SubType>
     </None>
+    <None Include="FluentCassandra.snk" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -53,7 +53,7 @@ namespace FluentCassandra.Operations
 			var familyName = TryGetFamilyName();
 			foreach (var row in result.Rows)
 				yield return new FluentColumnFamily<CompareWith>(
-					CassandraType.FromBigEndian<BytesType>(row.Key),
+					CassandraType.GetTypeFromDatabaseValue<BytesType>(row.Key),
 					familyName, 
 					GetColumns(row));
 		}

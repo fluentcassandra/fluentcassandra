@@ -50,7 +50,7 @@ namespace FluentCassandra.Types
 						var buffer = new byte[length];
 
 						bytes.Read(buffer, 0, length);
-						components.Add(CassandraType.GetType(buffer, type));
+						components.Add(CassandraType.GetTypeFromObject(buffer, type));
 
 						// end of component
 						if (bytes.ReadByte() != 0)

@@ -109,7 +109,7 @@ namespace FluentCassandra
 		public override bool TryGetColumn(object name, out object result)
 		{
 			var col = Columns.FirstOrDefault(c => c.ColumnName == name);
-			result = (col == null) ? CreateSuperColumn(CassandraType.GetType<CompareWith>(name)) : col;
+			result = (col == null) ? CreateSuperColumn(CassandraType.GetTypeFromObject<CompareWith>(name)) : col;
 
 			return true;
 		}
@@ -129,7 +129,7 @@ namespace FluentCassandra
 			var mutationType = col == null ? MutationType.Added : MutationType.Changed;
 
 			col = (FluentSuperColumn<CompareWith, CompareSubcolumnWith>)value;
-			((FluentSuperColumn<CompareWith, CompareSubcolumnWith>)col).ColumnName = CassandraType.GetType<CompareWith>(name);
+			((FluentSuperColumn<CompareWith, CompareSubcolumnWith>)col).ColumnName = CassandraType.GetTypeFromObject<CompareWith>(name);
 
 			int index = Columns.IndexOf(col);
 

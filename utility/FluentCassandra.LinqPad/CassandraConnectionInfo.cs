@@ -1,27 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.IO;
 using System.Linq;
-using System.Net;
-using System.Reflection;
 using System.Xml.Linq;
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
-using LINQPad.Extensibility.DataContext;
 using FluentCassandra.Connections;
+using LINQPad.Extensibility.DataContext;
 
 namespace FluentCassandra.LinqPad
 {
-	public class CassandraConnectionInfo : ViewModelBase
+	public class CassandraConnectionInfo
 	{
 		public const string CassandraConnectionInfoKey = "CassandraConnectionInfo";
 
 		public IConnectionInfo ConntectionInfo { get; set; }
 
-		public RelayCommand SaveCommand { get; set; }
-
-		public const string HostPropertyName = "Host";
 		private string _host = "127.0.0.1";
 		[Required]
 		public string Host
@@ -39,12 +30,9 @@ namespace FluentCassandra.LinqPad
 				}
 
 				_host = value;
-
-				RaisePropertyChanged(HostPropertyName);
 			}
 		}
 
-		public const string PortPropertyName = "Port";
 		private int _port = Server.DefaultPort;
 		[Required]
 		public int Port
@@ -62,12 +50,9 @@ namespace FluentCassandra.LinqPad
 				}
 
 				_port = value;
-
-				RaisePropertyChanged(PortPropertyName);
 			}
 		}
 
-		public const string TimeoutPropertyName = "Timeout";
 		private int _timeout = Server.DefaultTimeout;
 		public int Timeout
 		{
@@ -83,12 +68,9 @@ namespace FluentCassandra.LinqPad
 					return;
 				}
 				_timeout = value;
-
-				RaisePropertyChanged(TimeoutPropertyName);
 			}
 		}
 
-		public const string KeyspacePropertyName = "Keyspace";
 		private string _keyspace = null;
 		public string Keyspace
 		{
@@ -105,12 +87,9 @@ namespace FluentCassandra.LinqPad
 				}
 
 				_keyspace = value;
-
-				RaisePropertyChanged(KeyspacePropertyName);
 			}
 		}
 
-		public const string UsernamePropertyName = "Username";
 		private string _username = null;
 		public string Username
 		{
@@ -127,12 +106,9 @@ namespace FluentCassandra.LinqPad
 				}
 
 				_username = value;
-
-				RaisePropertyChanged(UsernamePropertyName);
 			}
 		}
 
-		public const string PasswordPropertyName = "Password";
 		private string _password = null;
 		public string Password
 		{
@@ -147,22 +123,11 @@ namespace FluentCassandra.LinqPad
 					return;
 
 				_password = value;
-
-				RaisePropertyChanged(PasswordPropertyName);
 			}
-		}
-
-		public CassandraConnectionInfo()
-		{
-			SaveCommand = new RelayCommand(Save, CanSave);
 		}
 
 		public void Save()
 		{
-			string pw = Password;
-			if (!Password.IsNullOrWhitespace())
-				Password = ConntectionInfo.Encrypt(Password);
-
 			var builder = new ConnectionBuilder(
 				keyspace: Keyspace,
 				host: Host,
@@ -172,19 +137,17 @@ namespace FluentCassandra.LinqPad
 				password: Password);
 			
 			ConntectionInfo.DriverData.SetElementValue(CassandraConnectionInfoKey, builder.ConnectionString);
-
-			Password = pw;
 		}
 
 		public bool CanSave()
 		{
-			return !Host.IsNullOrWhitespace()
-				&& !Keyspace.IsNullOrWhitespace();
+			return !String.IsNullOrWhiteSpace(Host)
+				&& !String.IsNullOrWhiteSpace(Keyspace);
 		}
 
-		public CassandraContext CreateContext()
+		public FluentCassandra.CassandraContext CreateContext()
 		{
-			return new CassandraContext(
+			return new FluentCassandra.CassandraContext(
 				keyspace: Keyspace,
 				host: Host,
 				port: Port,

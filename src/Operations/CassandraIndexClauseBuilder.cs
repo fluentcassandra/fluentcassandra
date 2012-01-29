@@ -118,7 +118,7 @@ namespace FluentCassandra.Operations
 			Cassandra.IndexExpression indexExpression;
 
 			var columnName = GetColumnName(exp.Left);
-			var value = CassandraType.GetType<BytesType>(Expression.Lambda(exp.Right).Compile().DynamicInvoke());
+			var value = CassandraType.GetTypeFromObject<BytesType>(Expression.Lambda(exp.Right).Compile().DynamicInvoke());
 
 			indexExpression = new Cassandra.IndexExpression {
 				Column_name = columnName,

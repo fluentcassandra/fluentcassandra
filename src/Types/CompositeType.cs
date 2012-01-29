@@ -180,12 +180,12 @@ namespace FluentCassandra.Types
 
 		public static implicit operator CompositeType(object[] s)
 		{
-			return new CompositeType { _value = new List<CassandraType>(s.Select(o => CassandraType.GetType<BytesType>(o))) };
+			return new CompositeType { _value = new List<CassandraType>(s.Select(o => CassandraType.GetTypeFromObject<BytesType>(o))) };
 		}
 
 		public static implicit operator CompositeType(List<object> s)
 		{
-			return new CompositeType { _value = new List<CassandraType>(s.Select(o => CassandraType.GetType<BytesType>(o))) };
+			return new CompositeType { _value = new List<CassandraType>(s.Select(o => CassandraType.GetTypeFromObject<BytesType>(o))) };
 		}
 
 		public static implicit operator byte[](CompositeType o) { return ConvertTo<byte[]>(o); }

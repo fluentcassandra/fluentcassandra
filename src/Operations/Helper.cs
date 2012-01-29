@@ -110,7 +110,7 @@ namespace FluentCassandra.Operations
 		public static long ToTimestamp(this DateTimeOffset dt)
 		{
 			// this was changed from .NET Ticks to the Unix Epoch to be compatible with other cassandra libraries
-			return Convert.ToInt64((DateTimeOffset.UtcNow - UnixStart).TotalMilliseconds);
+			return Convert.ToInt64((dt - UnixStart).TotalMilliseconds);
 		}
 
 		public static IFluentBaseColumn<CompareWith> ConvertToFluentBaseColumn<CompareWith, CompareSubcolumnWith>(ColumnOrSuperColumn col)
@@ -134,8 +134,8 @@ namespace FluentCassandra.Operations
 		{
 
 			var fcol = new FluentColumn<CompareWith> {
-				ColumnName = CassandraType.FromBigEndian<CompareWith>(col.Name),
-				ColumnValue = CassandraType.FromBigEndian<BytesType>(col.Value),
+				ColumnName = CassandraType.GetTypeFromDatabaseValue<CompareWith>(col.Name),
+				ColumnValue = CassandraType.GetTypeFromDatabaseValue<BytesType>(col.Value),
 				ColumnTimestamp = new DateTimeOffset(col.Timestamp, TimeSpan.Zero),
 			};
 
@@ -150,7 +150,7 @@ namespace FluentCassandra.Operations
 			where CompareSubcolumnWith : CassandraType
 		{
 			var superCol = new FluentSuperColumn<CompareWith, CompareSubcolumnWith> {
-				ColumnName = CassandraType.FromBigEndian<CompareWith>(col.Name)
+				ColumnName = CassandraType.GetTypeFromDatabaseValue<CompareWith>(col.Name)
 			};
 
 			foreach (var xcol in col.Columns)

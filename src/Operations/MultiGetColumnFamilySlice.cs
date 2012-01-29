@@ -35,7 +35,7 @@ namespace FluentCassandra.Operations
 
 				foreach (var result in output)
 				{
-					var key = CassandraType.FromBigEndian<BytesType>(result.Key);
+					var key = CassandraType.GetTypeFromDatabaseValue<BytesType>(result.Key);
 
 					var r = new FluentColumnFamily<CompareWith>(key, ColumnFamily.FamilyName, result.Value.Select(col => {
 						return Helper.ConvertColumnToFluentColumn<CompareWith>(col.Column);

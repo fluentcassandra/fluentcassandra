@@ -12,7 +12,7 @@ namespace FluentCassandra.Types
 			return (T)GetValue(typeof(T));
 		}
 
-		protected object GetValue<T>(T value, Type type, CassandraTypeConverter<T> converter)
+		internal object GetValue<T>(T value, Type type, CassandraTypeConverter<T> converter)
 		{
 			if (type.IsGenericType && type.GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
 			{
@@ -26,7 +26,7 @@ namespace FluentCassandra.Types
 			return converter.ConvertTo(value, type);
 		}
 
-		protected T SetValue<T>(object obj, CassandraTypeConverter<T> converter)
+		internal T SetValue<T>(object obj, CassandraTypeConverter<T> converter)
 		{
 			if (!converter.CanConvertFrom(obj.GetType()))
 				throw new InvalidCastException(String.Format("{0} cannot be cast to {1}", obj.GetType(), TypeCode));
@@ -89,7 +89,6 @@ namespace FluentCassandra.Types
 		}
 
 		public static implicit operator byte[](CassandraType o) { return Convert<byte[]>(o); }
-
 		public static implicit operator char[](CassandraType o) { return Convert<char[]>(o); }
 
 		public static implicit operator byte(CassandraType o) { return Convert<byte>(o); }
@@ -167,7 +166,7 @@ namespace FluentCassandra.Types
 
 		#endregion
 
-		internal static T FromBigEndian<T>(byte[] value)
+		public static T GetTypeFromDatabaseValue<T>(byte[] value)
 			where T : CassandraType
 		{
 			T type = Activator.CreateInstance<T>();
@@ -175,7 +174,7 @@ namespace FluentCassandra.Types
 			return type;
 		}
 
-		internal static CassandraType FromBigEndian(byte[] value, Type cassandraType)
+		public static CassandraType GetTypeFromDatabaseValue(byte[] value, Type cassandraType)
 		{
 			CassandraType type = Activator.CreateInstance(cassandraType) as CassandraType;
 
@@ -186,7 +185,12 @@ namespace FluentCassandra.Types
 			return type;
 		}
 
-		internal static T GetType<T>(object obj)
+		public static CassandraType GetTypeFromDatabaseValue(byte[] value, string type)
+		{
+			return GetTypeFromDatabaseValue(value, GetCassandraType(type));
+		}
+
+		public static T GetTypeFromObject<T>(object obj)
 			where T : CassandraType
 		{
 			T type = Activator.CreateInstance<T>();
@@ -194,7 +198,7 @@ namespace FluentCassandra.Types
 			return type;
 		}
 
-		internal static CassandraType GetType(object obj, Type cassandraType)
+		public static CassandraType GetTypeFromObject(object obj, Type cassandraType)
 		{
 			CassandraType type = Activator.CreateInstance(cassandraType) as CassandraType;
 
@@ -203,6 +207,39 @@ namespace FluentCassandra.Types
 
 			type.SetValue(obj);
 			return type;
+		}
+
+		public static CassandraType GetTypeFromObject(object obj, string type)
+		{
+			return GetTypeFromObject(obj, GetCassandraType(type));
+		}
+
+		public static Type GetCassandraType(string type)
+		{
+			if (type == null || type.Length == 0)
+				throw new ArgumentNullException("type");
+
+			Type cassandraType;
+			switch (type.Substring(type.LastIndexOf('.') + 1).ToLower())
+			{
+				case "asciitype": cassandraType = typeof(AsciiType); break;
+				case "booleantype": cassandraType = typeof(BooleanType); break;
+				case "bytestype": cassandraType = typeof(BytesType); break;
+				case "datetype": cassandraType = typeof(DateType); break;
+				case "decimaltype": cassandraType = typeof(DecimalType); break;
+				case "doubletype": cassandraType = typeof(DoubleType); break;
+				case "floattype": cassandraType = typeof(FloatType); break;
+				case "int32type": cassandraType = typeof(Int32Type); break;
+				case "integertype": cassandraType = typeof(IntegerType); break;
+				case "lexicaluuidtype": cassandraType = typeof(LexicalUUIDType); break;
+				case "longtype": cassandraType = typeof(LongType); break;
+				case "timeuuidtype": cassandraType = typeof(TimeUUIDType); break;
+				case "utf8type": cassandraType = typeof(UTF8Type); break;
+				case "uuidtype": cassandraType = typeof(UUIDType); break;
+				default: throw new CassandraException("Type '" + type + "' not found.");
+			}
+
+			return cassandraType;
 		}
 
 		internal static T GetValue<T>(object obj, CassandraTypeConverter<T> converter)
