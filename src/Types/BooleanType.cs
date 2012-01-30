@@ -30,7 +30,7 @@ namespace FluentCassandra.Types
 
 		protected override TypeCode TypeCode
 		{
-			get { return TypeCode.String; }
+			get { return TypeCode.Boolean; }
 		}
 
 		public override string ToString()

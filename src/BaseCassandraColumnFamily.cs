@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using FluentCassandra.Operations;
 using System.Linq.Expressions;
+using FluentCassandra.Operations;
 
 namespace FluentCassandra
 {

@@ -30,7 +30,7 @@ namespace FluentCassandra.Types
 
 		public override object ConvertTo(bool value, Type destinationType)
 		{
-			if (!(value is string))
+			if (!(value is bool))
 				return null;
 
 			if (destinationType == typeof(byte[]))

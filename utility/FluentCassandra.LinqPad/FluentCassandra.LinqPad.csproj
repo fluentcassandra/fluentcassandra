@@ -67,6 +67,7 @@
     <Compile Include="ConnectionDialog.xaml.cs">
       <DependentUpon>ConnectionDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="FluentCassandraMemberProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CassandraDriver.cs" />
     <Compile Include="SchemaBuilder.cs" />

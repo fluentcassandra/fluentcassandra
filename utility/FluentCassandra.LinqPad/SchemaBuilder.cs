@@ -115,7 +115,7 @@ using FluentCassandra.Types;");
 				var family = new ExplorerItem(familyDef.Name, ExplorerItemKind.QueryableObject, ExplorerIcon.Table);
 				family.IsEnumerable = true;
 				family.Children = new List<ExplorerItem>();
-				family.Children.Add(new ExplorerItem("Key", ExplorerItemKind.Property, ExplorerIcon.Key));
+				family.Children.Add(new ExplorerItem("KEY", ExplorerItemKind.Property, ExplorerIcon.Key));
 
 				foreach (var colDef in familyDef.Column_metadata)
 				{

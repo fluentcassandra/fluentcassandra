@@ -2,7 +2,7 @@
 
 namespace FluentCassandra.Types
 {
-	internal class Int32TypeConverter : CassandraTypeConverter<Int32>
+	internal class Int32TypeConverter : CassandraTypeConverter<int>
 	{
 		public override bool CanConvertFrom(Type sourceType)
 		{
@@ -20,17 +20,17 @@ namespace FluentCassandra.Types
 			return destinationType == typeof(byte[]);
 		}
 
-		public override Int32 ConvertFrom(object value)
+		public override int ConvertFrom(object value)
 		{
 			if (value is byte[])
-				return ((byte[])value).FromBytes<Int32>();
+				return ((byte[])value).FromBytes<int>();
 
-			return (Int32)Convert.ChangeType(value, typeof(Int32));
+			return (int)Convert.ChangeType(value, typeof(int));
 		}
 
-		public override object ConvertTo(Int32 value, Type destinationType)
+		public override object ConvertTo(int value, Type destinationType)
 		{
-			if (!(value is string))
+			if (!(value is int))
 				return null;
 
 			if (destinationType == typeof(byte[]))

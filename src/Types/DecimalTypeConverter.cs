@@ -30,7 +30,7 @@ namespace FluentCassandra.Types
 
 		public override object ConvertTo(decimal value, Type destinationType)
 		{
-			if (!(value is string))
+			if (!(value is decimal))
 				return null;
 
 			if (destinationType == typeof(byte[]))
