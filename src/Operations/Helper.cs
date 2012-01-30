@@ -136,7 +136,7 @@ namespace FluentCassandra.Operations
 			var fcol = new FluentColumn<CompareWith> {
 				ColumnName = CassandraType.GetTypeFromDatabaseValue<CompareWith>(col.Name),
 				ColumnValue = CassandraType.GetTypeFromDatabaseValue<BytesType>(col.Value),
-				ColumnTimestamp = new DateTimeOffset(col.Timestamp, TimeSpan.Zero),
+				ColumnTimestamp = UnixStart.AddMilliseconds(col.Timestamp),
 			};
 
 			if (col.__isset.ttl)
