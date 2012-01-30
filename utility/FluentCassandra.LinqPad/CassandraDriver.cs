@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using FluentCassandra.Types;
 using LINQPad.Extensibility.DataContext;
-using FluentCassandra.Connections;
 
 namespace FluentCassandra.LinqPad
 {
@@ -12,7 +10,7 @@ namespace FluentCassandra.LinqPad
 	/// This static driver let users query any data source that looks like a Data Context - in other words,
 	/// that exposes properties of type IEnumerable of T.
 	/// </summary>
-	public class CassandraStaticDriver : StaticDataContextDriver
+	public class CassandraDriver : DynamicDataContextDriver
 	{
 		public override string Name { get { return "Cassandra"; } }
 
@@ -40,35 +38,27 @@ namespace FluentCassandra.LinqPad
 			var result = win.ShowDialog() == true;
 
 			if (result)
-			{
 				conn.Save();
-				cxInfo.CustomTypeInfo.CustomAssemblyPath = Assembly.GetAssembly(typeof(CassandraContext)).Location;
-				cxInfo.CustomTypeInfo.CustomTypeName = "FluentCassandra.LinqPad.CassandraContext";
-			}
 
 			return result;
 		}
 
-		public override void InitializeContext(IConnectionInfo cxInfo, object context, QueryExecutionManager executionManager)
-		{
-			base.InitializeContext(cxInfo, context, executionManager);
-		}
-
 		public override ParameterDescriptor[] GetContextConstructorParameters(IConnectionInfo cxInfo)
 		{
-			return new[] { new ParameterDescriptor("connInfo", "FluentCassandra.LinqPad.CassandraConnectionInfo") };
+			return new[] { new ParameterDescriptor("context", "FluentCassandra.CassandraContext") };
 		}
 
 		public override object[] GetContextConstructorArguments(IConnectionInfo cxInfo)
 		{
-			CassandraConnectionInfo connInfo = CassandraConnectionInfo.Load(cxInfo);
-			return new[] { connInfo };
+			var connInfo = CassandraConnectionInfo.Load(cxInfo);
+			return new[] { connInfo.CreateContext() };
 		}
 
 		public override IEnumerable<string> GetAssembliesToAdd()
 		{
 			return new[] { 
-				"FluentCassandra"
+				"System.Numerics.dll",
+				"FluentCassandra.dll"
 			};
 		}
 
@@ -83,35 +73,20 @@ namespace FluentCassandra.LinqPad
 			return base.GetNamespacesToAdd().Union(new[] {
 				"FluentCassandra",
 				"FluentCassandra.Types",
-				"FluentCassandra.Connections"
+				"FluentCassandra.Connections",
+				"System.Numerics"
 			});
 		}
 
-		public override List<ExplorerItem> GetSchema(IConnectionInfo cxInfo, Type customType)
+		public override List<ExplorerItem> GetSchemaAndBuildAssembly(IConnectionInfo cxInfo, AssemblyName assemblyToBuild, ref string nameSpace, ref string typeName)
 		{
 			var connInfo = CassandraConnectionInfo.Load(cxInfo);
-			var server = new Server(connInfo.Host, connInfo.Port, connInfo.Timeout);
-			var keyspace = new CassandraKeyspace(connInfo.Keyspace);
-
-			var description = keyspace.Describe(server);
-			var families = new List<ExplorerItem>();
-
-			foreach (var familyDef in description.Cf_defs)
-			{
-				var family = new ExplorerItem(familyDef.Name, ExplorerItemKind.QueryableObject, ExplorerIcon.Table);
-				family.Children = new List<ExplorerItem>();
-				family.Children.Add(new ExplorerItem("Key", ExplorerItemKind.Property, ExplorerIcon.Key));
-
-				foreach (var colDef in familyDef.Column_metadata)
-				{
-					var col = new ExplorerItem(CassandraType.GetTypeFromDatabaseValue(colDef.Name, colDef.Validation_class).GetValue<string>(), ExplorerItemKind.Property, ExplorerIcon.Column);
-					family.Children.Add(col);
-				}
-
-				families.Add(family);
-			}
-
-			return families;
-		}
+			return SchemaBuilder.GetSchemaAndBuildAssembly(
+				connInfo,
+				GetDriverFolder(),
+				assemblyToBuild,
+				ref nameSpace,
+				ref typeName);
+		}		
 	}
 }
