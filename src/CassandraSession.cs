@@ -18,97 +18,6 @@ namespace FluentCassandra
 			internal set { _current = value; }
 		}
 
-		#region Cassandra System For Server
-
-		public static KsDef GetKeyspace(Server server, string keyspace)
-		{
-			using (var session = new CassandraSession(new ConnectionBuilder(keyspace, server.Host, server.Port)))
-				return session.GetClient().describe_keyspace(keyspace);
-		}
-
-		public static string AddKeyspace(Server server, KsDef definition)
-		{
-			using (var session = new CassandraSession(new ConnectionBuilder(null, server.Host, server.Port)))
-				return session.GetClient(setKeyspace: false).system_add_keyspace(definition);
-		}
-
-		public static string UpdateKeyspace(Server server, KsDef definition)
-		{
-			using (var session = new CassandraSession(new ConnectionBuilder(null, server.Host, server.Port)))
-				return session.GetClient(setKeyspace: false).system_update_keyspace(definition);
-		}
-
-		public static string DropKeyspace(Server server, string keyspace)
-		{
-			using (var session = new CassandraSession(new ConnectionBuilder(null, server.Host, server.Port)))
-				return session.GetClient(setKeyspace: false).system_drop_keyspace(keyspace);
-		}
-
-		#endregion
-
-		#region Cassandra Descriptions For Server
-
-		public static bool KeyspaceExists(Server server, string keyspaceName)
-		{
-			return DescribeKeyspaces(server).Any(keyspace => keyspace.KeyspaceName == keyspaceName);
-		}
-
-		public static IEnumerable<CassandraKeyspace> DescribeKeyspaces(Server server)
-		{
-			using (var session = new CassandraSession(new ConnectionBuilder(null, server.Host, server.Port)))
-			{
-				IEnumerable<KsDef> keyspaces = session.GetClient(setKeyspace: false).describe_keyspaces();
-				return keyspaces.Select(keyspace => new CassandraKeyspace(keyspace)).ToList();
-			}
-		}
-
-		public static string DescribeClusterName(Server server)
-		{
-			using (var session = new CassandraSession(new ConnectionBuilder(null, server.Host, server.Port)))
-			{
-				string response = session.GetClient(setKeyspace: false).describe_cluster_name();
-				return response;
-			}
-		}
-
-		public static Dictionary<string, List<string>> DescribeSchemaVersions(Server server)
-		{
-			using (var session = new CassandraSession(new ConnectionBuilder(null, server.Host, server.Port)))
-			{
-				var response = session.GetClient(setKeyspace: false).describe_schema_versions();
-				return response;
-			}
-		}
-
-		public static string DescribeVersion(Server server)
-		{
-			using (var session = new CassandraSession(new ConnectionBuilder(null, server.Host, server.Port)))
-			{
-				string response = session.GetClient(setKeyspace: false).describe_version();
-				return response;
-			}
-		}
-
-		public static string DescribePartitioner(Server server)
-		{
-			using (var session = new CassandraSession(new ConnectionBuilder(null, server.Host, server.Port)))
-			{
-				string response = session.GetClient(setKeyspace: false).describe_partitioner();
-				return response;
-			}
-		}
-
-		public static string DescribeSnitch(Server server)
-		{
-			using (var session = new CassandraSession(new ConnectionBuilder(null, server.Host, server.Port)))
-			{
-				string response = session.GetClient(setKeyspace: false).describe_snitch();
-				return response;
-			}
-		}
-
-		#endregion
-
 		private IConnection _connection;
 
 		public CassandraSession(ConnectionBuilder connectionBuilder)
@@ -125,7 +34,6 @@ namespace FluentCassandra
 			ConnectionProvider = connectionProvider;
 			ReadConsistency = read;
 			WriteConsistency = write;
-			Keyspace = new CassandraKeyspace(connectionProvider.Builder.Keyspace);
 
 			IsAuthenticated = false;
 			Current = this;
@@ -149,11 +57,6 @@ namespace FluentCassandra
 		/// <summary>
 		/// 
 		/// </summary>
-		public CassandraKeyspace Keyspace { get; private set; }
-
-		/// <summary>
-		/// 
-		/// </summary>
 		public bool IsAuthenticated { get; private set; }
 
 		/// <summary>
@@ -170,7 +73,11 @@ namespace FluentCassandra
 				_connection.Open();
 
 			if (setKeyspace)
-				_connection.SetKeyspace(Keyspace.KeyspaceName);
+				_connection.SetKeyspace(ConnectionProvider.Builder.Keyspace);
+
+			var builder = ConnectionProvider.Builder;
+			if (!String.IsNullOrWhiteSpace(builder.Username) && !String.IsNullOrWhiteSpace(builder.Password))
+				Login(builder.Username, builder.Password);
 
 			return new CassandraClientWrapper(_connection.Client);
 		}
@@ -209,6 +116,44 @@ namespace FluentCassandra
 				IsAuthenticated = false;
 				throw new CassandraException("Login failed.", exc);
 			}
+		}
+
+		/// <summary>
+		/// The last error that occured during the execution of an operation.
+		/// </summary>
+		public CassandraException LastError { get; private set; }
+
+		/// <summary>
+		/// Indicates if errors should be thrown when occuring on opperation.
+		/// </summary>
+		public bool ThrowErrors { get; set; }
+
+		/// <summary>
+		/// Execute the column family operation against the connection to the server.
+		/// </summary>
+		/// <typeparam name="TResult"></typeparam>
+		/// <param name="action"></param>
+		/// <param name="throwOnError"></param>
+		/// <returns></returns>
+		public TResult ExecuteOperation<TResult>(Operation<TResult> action, bool? throwOnError = null)
+		{
+			if (!throwOnError.HasValue)
+				throwOnError = ThrowErrors;
+
+			action.Session = this;
+
+			LastError = null;
+
+			TResult result;
+			bool success = action.TryExecute(out result);
+
+			if (!success)
+				LastError = action.Error;
+
+			if (!success && (throwOnError ?? ThrowErrors))
+				throw action.Error;
+
+			return result;
 		}
 
 		#region IDisposable Members

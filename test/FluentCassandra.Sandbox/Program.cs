@@ -15,14 +15,18 @@ namespace FluentCassandra.Sandbox
 
 		private static void SetupKeyspace()
 		{
-			if (CassandraSession.KeyspaceExists(Server, KeyspaceName))
-				CassandraSession.DropKeyspace(Server, KeyspaceName);
+			using (var db = new CassandraContext(keyspace: KeyspaceName, server: Server))
+			{
 
-			var keyspace = new CassandraKeyspace(KeyspaceName);
-			keyspace.TryCreateSelf(Server);
-			keyspace.TryCreateColumnFamily<UTF8Type>(Server, "Posts");
-			keyspace.TryCreateColumnFamily<LongType>(Server, "Tags");
-			keyspace.TryCreateColumnFamily<TimeUUIDType, UTF8Type>(Server, "Comments");
+				if (db.KeyspaceExists(KeyspaceName))
+					db.DropKeyspace(KeyspaceName);
+
+				var keyspace = db.Keyspace;
+				keyspace.TryCreateSelf(Server);
+				keyspace.TryCreateColumnFamily<UTF8Type>("Posts");
+				keyspace.TryCreateColumnFamily<LongType>("Tags");
+				keyspace.TryCreateColumnFamily<TimeUUIDType, UTF8Type>("Comments");
+			}
 		}
 
 		#endregion

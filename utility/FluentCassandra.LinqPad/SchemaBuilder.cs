@@ -7,7 +7,6 @@ using System.Linq;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using FluentCassandra.Connections;
 using FluentCassandra.Types;
 using LINQPad.Extensibility.DataContext;
 using Microsoft.CSharp;
@@ -18,10 +17,10 @@ namespace FluentCassandra.LinqPad
 	{
 		internal static List<ExplorerItem> GetSchemaAndBuildAssembly(CassandraConnectionInfo info, string driverFolder, AssemblyName name, ref string nameSpace, ref string typeName)
 		{
-			var server = new Server(info.Host, info.Port, info.Timeout);
-			var keyspace = new CassandraKeyspace(info.Keyspace);
+			var context = info.CreateContext();
+			var keyspace = context.Keyspace;
 
-			var def = keyspace.Describe(server);
+			var def = keyspace.Describe();
 			var code = GenerateCode(def, nameSpace, typeName);
 			var schema = GetSchema(def);
 

@@ -22,26 +22,26 @@ namespace FluentCassandra
 			var keyspaceName = "Testing";
 			var server = new Server("localhost");
 
-			if (CassandraSession.KeyspaceExists(server, keyspaceName))
-				CassandraSession.DropKeyspace(server, keyspaceName);
-
-			var keyspace = new CassandraKeyspace(keyspaceName);
-			keyspace.TryCreateSelf(server);
-			keyspace.TryCreateColumnFamily<AsciiType>(server, "Standard");
-			keyspace.TryCreateColumnFamily<AsciiType, AsciiType>(server, "Super");
-			keyspace.TryCreateColumnFamily<AsciiType>(server, "StandardAsciiType");
-			keyspace.TryCreateColumnFamily<BytesType>(server, "StandardBytesType");
-			keyspace.TryCreateColumnFamily<IntegerType>(server, "StandardIntegerType");
-			keyspace.TryCreateColumnFamily<LexicalUUIDType>(server, "StandardLexicalUUIDType");
-			keyspace.TryCreateColumnFamily<LongType>(server, "StandardLongType");
-			keyspace.TryCreateColumnFamily<TimeUUIDType>(server, "StandardTimeUUIDType");
-			keyspace.TryCreateColumnFamily<UTF8Type>(server, "StandardUTF8Type");
-			keyspace.TryCreateColumnFamily<UUIDType>(server, "StandardUUIDType");
-			keyspace.TryCreateColumnFamily<CompositeType<LongType, UTF8Type>>(server, "StandardCompositeType");
-			keyspace.TryCreateColumnFamily<DynamicCompositeType>(server, "StandardDynamicCompositeType");
-
 			DB = new CassandraContext(keyspaceName, server);
 			DB.ThrowErrors = true;
+
+			if (DB.KeyspaceExists(keyspaceName))
+				DB.DropKeyspace(keyspaceName);
+
+			var keyspace = DB.Keyspace;
+			keyspace.TryCreateSelf(server);
+			keyspace.TryCreateColumnFamily<AsciiType>("Standard");
+			keyspace.TryCreateColumnFamily<AsciiType, AsciiType>("Super");
+			keyspace.TryCreateColumnFamily<AsciiType>("StandardAsciiType");
+			keyspace.TryCreateColumnFamily<BytesType>("StandardBytesType");
+			keyspace.TryCreateColumnFamily<IntegerType>("StandardIntegerType");
+			keyspace.TryCreateColumnFamily<LexicalUUIDType>("StandardLexicalUUIDType");
+			keyspace.TryCreateColumnFamily<LongType>("StandardLongType");
+			keyspace.TryCreateColumnFamily<TimeUUIDType>("StandardTimeUUIDType");
+			keyspace.TryCreateColumnFamily<UTF8Type>("StandardUTF8Type");
+			keyspace.TryCreateColumnFamily<UUIDType>("StandardUUIDType");
+			keyspace.TryCreateColumnFamily<CompositeType<LongType, UTF8Type>>("StandardCompositeType");
+			keyspace.TryCreateColumnFamily<DynamicCompositeType>("StandardDynamicCompositeType");
 
 			Family = DB.GetColumnFamily<AsciiType>("Standard");
 			SuperFamily = DB.GetColumnFamily<AsciiType, AsciiType>("Super");

@@ -34,25 +34,26 @@ namespace FluentCassandra.StressTest
 
 		private static void SetupKeyspace()
 		{
-			if (!CassandraSession.KeyspaceExists(server, keyspaceName))
-				CassandraSession.AddKeyspace(server, new KsDef {
-					Name = keyspaceName,
-					Replication_factor = 1,
-					Strategy_class = "org.apache.cassandra.locator.SimpleStrategy",
-					Cf_defs = new List<CfDef>()
-				});
+			using (var db = new CassandraContext(keyspace: keyspaceName, server: server))
+			{
+				if (!db.KeyspaceExists(keyspaceName))
+					db.AddKeyspace(new KsDef {
+						Name = keyspaceName,
+						Replication_factor = 1,
+						Strategy_class = "org.apache.cassandra.locator.SimpleStrategy",
+						Cf_defs = new List<CfDef>()
+					});
 
-			var keyspace = new CassandraKeyspace(keyspaceName);
-
-			if (!keyspace.ColumnFamilyExists(server, "Posts"))
-				keyspace.AddColumnFamily(server, new CfDef {
-					Name = "Posts",
-					Keyspace = keyspaceName,
-					Column_type = "Super",
-					Comparator_type = "UTF8Type",
-					Subcomparator_type = "UTF8Type",
-					Comment = "Used for blog posts."
-				});
+				if (!db.Keyspace.ColumnFamilyExists("Posts"))
+					db.AddColumnFamily(new CfDef {
+						Name = "Posts",
+						Keyspace = keyspaceName,
+						Column_type = "Super",
+						Comparator_type = "UTF8Type",
+						Subcomparator_type = "UTF8Type",
+						Comment = "Used for blog posts."
+					});
+			}
 		}
 
 		private static void Main(string[] args)

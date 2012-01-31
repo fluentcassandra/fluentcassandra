@@ -5,16 +5,16 @@ namespace FluentCassandra.Operations
 {
 	public class SimpleOperation<TResult> : Operation<TResult>
 	{
-		private readonly Func<TResult> _operation;
+		private readonly Func<SimpleOperation<TResult>, TResult> _operation;
 
-		public SimpleOperation(Func<TResult> operation)
+		public SimpleOperation(Func<SimpleOperation<TResult>, TResult> operation)
 		{
 			_operation = operation;
 		}
 
 		public override TResult Execute()
 		{
-			return _operation();
+			return _operation(this);
 		}
 	}
 }

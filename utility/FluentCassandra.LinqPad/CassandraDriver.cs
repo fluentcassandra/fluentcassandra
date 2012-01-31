@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using FluentCassandra.Linq;
-using LINQPad.Extensibility.DataContext;
 using LINQPad;
-using FluentCassandra.Connections;
+using LINQPad.Extensibility.DataContext;
 
 namespace FluentCassandra.LinqPad
 {
@@ -26,10 +25,10 @@ namespace FluentCassandra.LinqPad
 			if (_schema != null)
 				return;
 
-			var server = new Server(info.Host, info.Port, info.Timeout);
-			var keyspace = new CassandraKeyspace(info.Keyspace);
+			var context = info.CreateContext();
+			var keyspace = context.Keyspace;
 
-			_schema = keyspace.Describe(server);
+			_schema = keyspace.Describe();
 		}
 
 		/// <summary>Returns the text to display in the root Schema Explorer node for a given connection info.</summary>

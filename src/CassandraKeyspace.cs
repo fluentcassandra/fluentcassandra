@@ -6,20 +6,28 @@ using FluentCassandra.Connections;
 using System.Diagnostics;
 using FluentCassandra.Types;
 using System.Text;
+using FluentCassandra.Operations;
 
 namespace FluentCassandra
 {
 	public class CassandraKeyspace
 	{
 		private readonly string _keyspaceName;
+		private KsDef _cachedKeyspaceDescription;
+		private CassandraContext _context;
 
-		public CassandraKeyspace(KsDef definition)
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="definition"></param>
+		public CassandraKeyspace(KsDef definition, CassandraContext context)
 		{
 			if (definition == null)
 				throw new ArgumentNullException("definition");
 
 			_keyspaceName = definition.Name;
 			_cachedKeyspaceDescription = definition;
+			_context = context;
 		}
 
 		/// <summary>
@@ -27,9 +35,13 @@ namespace FluentCassandra
 		/// </summary>
 		/// <param name="keyspaceName"></param>
 		/// <param name="connecton"></param>
-		public CassandraKeyspace(string keyspaceName)
+		public CassandraKeyspace(string keyspaceName, CassandraContext context)
 		{
+			if (keyspaceName == null)
+				throw new ArgumentNullException("keyspaceName");
+
 			_keyspaceName = keyspaceName;
+			_context = context;
 		}
 
 		/// <summary>
@@ -40,22 +52,24 @@ namespace FluentCassandra
 			get { return _keyspaceName; }
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
 		public override string ToString()
 		{
 			return KeyspaceName;
 		}
 
-		private KsDef _cachedKeyspaceDescription;
-
 		public void TryCreateSelf(Server server)
 		{
-			if (CassandraSession.KeyspaceExists(server, KeyspaceName))
+			if (_context.KeyspaceExists(KeyspaceName))
 			{
 				Debug.WriteLine(KeyspaceName + " already exists", "keyspace");
 				return;
 			}
 
-			string result = CassandraSession.AddKeyspace(server, new KsDef {
+			string result = _context.AddKeyspace(new KsDef {
 				Name = KeyspaceName,
 				Strategy_class = "org.apache.cassandra.locator.SimpleStrategy",
 				Replication_factor = 1,
@@ -64,10 +78,10 @@ namespace FluentCassandra
 			Debug.WriteLine(result, "keyspace setup");
 		}
 
-		public void TryCreateColumnFamily<CompareWith>(Server server, string columnFamilyName)
+		public void TryCreateColumnFamily<CompareWith>(string columnFamilyName)
 			where CompareWith : CassandraType
 		{
-			if (ColumnFamilyExists(server, columnFamilyName))
+			if (ColumnFamilyExists(columnFamilyName))
 			{
 				Debug.WriteLine(columnFamilyName + " already exists", "keyspace setup");
 				return;
@@ -75,7 +89,7 @@ namespace FluentCassandra
 
 			var comparatorType = GetCassandraComparatorType(typeof(CompareWith));
 
-			string result = AddColumnFamily(server, new CfDef {
+			string result = _context.AddColumnFamily(new CfDef {
 				Name = columnFamilyName,
 				Keyspace = KeyspaceName,
 				Comparator_type = comparatorType
@@ -83,11 +97,11 @@ namespace FluentCassandra
 			Debug.WriteLine(result, "keyspace setup");
 		}
 
-		public void TryCreateColumnFamily<CompareWith, CompareSubcolumnWith>(Server server, string columnFamilyName)
+		public void TryCreateColumnFamily<CompareWith, CompareSubcolumnWith>(string columnFamilyName)
 			where CompareWith : CassandraType
 			where CompareSubcolumnWith : CassandraType
 		{
-			if (ColumnFamilyExists(server, columnFamilyName))
+			if (ColumnFamilyExists(columnFamilyName))
 			{
 				Debug.WriteLine(columnFamilyName + " already exists", "keyspace setup");
 				return;
@@ -96,7 +110,7 @@ namespace FluentCassandra
 			var comparatorType = GetCassandraComparatorType(typeof(CompareWith));
 			var subComparatorType = GetCassandraComparatorType(typeof(CompareSubcolumnWith));
 
-			string result = AddColumnFamily(server, new CfDef {
+			string result = _context.AddColumnFamily(new CfDef {
 				Name = columnFamilyName,
 				Keyspace = KeyspaceName,
 				Column_type = "Super",
@@ -127,63 +141,39 @@ namespace FluentCassandra
 			return comparatorTypeName;
 		}
 
-		#region Cassandra System For Server
-
-		public CfDef GetColumnFamily(Server server, string columnFamily)
+		public CfDef GetColumnFamily(string columnFamily)
 		{
-			return Describe(server).Cf_defs.FirstOrDefault(cf => cf.Name == columnFamily);
+			return Describe().Cf_defs.FirstOrDefault(cf => cf.Name == columnFamily);
 		}
 
-		public string AddColumnFamily(Server server, CfDef definition)
+		public bool ColumnFamilyExists(string columnFamilyName)
 		{
-			_cachedKeyspaceDescription = null;
-
-			using (var session = new CassandraSession(new ConnectionBuilder(KeyspaceName, server.Host, server.Port)))
-				return session.GetClient().system_add_column_family(definition);
+			return Describe().Cf_defs.Any(columnFamily => columnFamily.Name == columnFamilyName);
 		}
 
-		public string UpdateColumnFamily(Server server, CfDef definition)
+		public void ClearCachedKeyspaceDescription()
 		{
 			_cachedKeyspaceDescription = null;
-
-			using (var session = new CassandraSession(new ConnectionBuilder(KeyspaceName, server.Host, server.Port)))
-				return session.GetClient().system_update_column_family(definition);
 		}
 
-		public string DropColumnFamily(Server server, string columnFamily)
-		{
-			_cachedKeyspaceDescription = null;
+		#region Cassandra Keyspace Server Operations
 
-			using (var session = new CassandraSession(new ConnectionBuilder(KeyspaceName, server.Host, server.Port)))
-				return session.GetClient().system_drop_column_family(columnFamily);
-		}
-
-		#endregion
-
-		#region Cassandra Descriptions For Server
-
-		public bool ColumnFamilyExists(Server server, string columnFamilyName)
-		{
-			return Describe(server).Cf_defs.Any(columnFamily => columnFamily.Name == columnFamilyName);
-		}
-
-		public IEnumerable<CassandraTokenRange> DescribeRing(Server server)
-		{
-			using (var session = new CassandraSession(new ConnectionBuilder(KeyspaceName, server.Host, server.Port)))
-			{
-				var tokenRanges = session.GetClient(setKeyspace: false).describe_ring(KeyspaceName);
-
-				foreach (var tokenRange in tokenRanges)
-					yield return new CassandraTokenRange(tokenRange.Start_token, tokenRange.End_token, tokenRange.Endpoints);
-			}
-		}
-
-		public KsDef Describe(Server server)
+		public KsDef Describe()
 		{
 			if (_cachedKeyspaceDescription == null)
-				_cachedKeyspaceDescription = CassandraSession.GetKeyspace(server, KeyspaceName);
+				_cachedKeyspaceDescription = _context.ExecuteOperation(new SimpleOperation<Apache.Cassandra.KsDef>(ctx => {
+				return ctx.Session.GetClient().describe_keyspace(KeyspaceName);
+			}));
 
 			return _cachedKeyspaceDescription;
+		}
+
+		public IEnumerable<CassandraTokenRange> DescribeRing()
+		{
+			return _context.ExecuteOperation(new SimpleOperation<IEnumerable<CassandraTokenRange>>(ctx => {
+				var tokenRanges = ctx.Session.GetClient(setKeyspace: false).describe_ring(KeyspaceName);
+				return tokenRanges.Select(tr => new CassandraTokenRange(tr.Start_token, tr.End_token, tr.Endpoints));
+			}));
 		}
 
 		#endregion

@@ -6,6 +6,8 @@ namespace FluentCassandra.Connections
 	{
 		ConnectionBuilder Builder { get; }
 
+		IServerManager Servers { get; }
+
 		IConnection CreateConnection();
 
 		IConnection Open();

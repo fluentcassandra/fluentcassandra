@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using FluentCassandra.Linq;
-using FluentCassandra.Types;
-using FluentCassandra.Operations;
+using System.Linq;
+using System.Linq;
+using Apache.Cassandra;
 using FluentCassandra.Connections;
+using FluentCassandra.Linq;
+using FluentCassandra.Operations;
+using FluentCassandra.Types;
 
 namespace FluentCassandra
 {
@@ -49,6 +52,8 @@ namespace FluentCassandra
 
 			_connectionBuilder = connectionBuilder;
 			_trackers = new List<IFluentMutationTracker>();
+
+			Keyspace = new CassandraKeyspace(connectionBuilder.Keyspace, this);
 		}
 
 		/// <summary>
@@ -75,6 +80,115 @@ namespace FluentCassandra
 		{
 			return new CassandraSuperColumnFamily<CompareWith, CompareSubcolumnWith>(this, columnFamily);
 		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public CassandraKeyspace Keyspace { get; private set; }
+
+		#region Cassandra System For Server
+
+		public string AddKeyspace(KsDef definition)
+		{
+			return ExecuteOperation(new SimpleOperation<string>(ctx => {
+				return ctx.Session.GetClient(setKeyspace: false).system_add_keyspace(definition);
+			}));
+		}
+
+		public string UpdateKeyspace(KsDef definition)
+		{
+			return ExecuteOperation(new SimpleOperation<string>(ctx => {
+				return ctx.Session.GetClient(setKeyspace: false).system_update_keyspace(definition);
+			}));
+		}
+
+		public string DropKeyspace(string keyspace)
+		{
+			return ExecuteOperation(new SimpleOperation<string>(ctx => {
+				return ctx.Session.GetClient(setKeyspace: false).system_drop_keyspace(keyspace);
+			}));
+		}
+
+		public string AddColumnFamily(CfDef definition)
+		{
+			Keyspace.ClearCachedKeyspaceDescription();
+
+			return ExecuteOperation(new SimpleOperation<string>(ctx => {
+				return ctx.Session.GetClient().system_add_column_family(definition);
+			}));
+		}
+
+		public string UpdateColumnFamily(CfDef definition)
+		{
+			Keyspace.ClearCachedKeyspaceDescription();
+
+			return ExecuteOperation(new SimpleOperation<string>(ctx => {
+				return ctx.Session.GetClient().system_update_column_family(definition);
+			}));
+		}
+
+		public string DropColumnFamily(string columnFamily)
+		{
+			Keyspace.ClearCachedKeyspaceDescription();
+
+			return ExecuteOperation(new SimpleOperation<string>(ctx => {
+				return ctx.Session.GetClient().system_drop_column_family(columnFamily);
+			}));
+		}
+
+		#endregion
+
+		#region Cassandra Descriptions For Server
+
+		public bool KeyspaceExists(string keyspaceName)
+		{
+			return DescribeKeyspaces().Any(keyspace => keyspace.KeyspaceName == keyspaceName);
+		}
+
+		public IEnumerable<CassandraKeyspace> DescribeKeyspaces()
+		{
+			return ExecuteOperation(new SimpleOperation<IEnumerable<CassandraKeyspace>>(ctx => {
+				IEnumerable<KsDef> keyspaces = ctx.Session.GetClient(setKeyspace: false).describe_keyspaces();
+				return keyspaces.Select(keyspace => new CassandraKeyspace(keyspace, this));
+			}));
+		}
+
+		public string DescribeClusterName()
+		{
+			return ExecuteOperation(new SimpleOperation<string>(ctx => {
+				return ctx.Session.GetClient(setKeyspace: false).describe_cluster_name();
+			}));
+		}
+
+		public Dictionary<string, List<string>> DescribeSchemaVersions()
+		{
+			return ExecuteOperation(new SimpleOperation<Dictionary<string, List<string>>>(ctx => {
+				return ctx.Session.GetClient(setKeyspace: false).describe_schema_versions();
+			}));
+		}
+
+		public string DescribeVersion()
+		{
+			return ExecuteOperation(new SimpleOperation<string>(ctx => {
+				return ctx.Session.GetClient(setKeyspace: false).describe_version();
+			}));
+		}
+
+		public string DescribePartitioner()
+		{
+			return ExecuteOperation(new SimpleOperation<string>(ctx => {
+				return ctx.Session.GetClient(setKeyspace: false).describe_partitioner();
+			}));
+		}
+
+		public string DescribeSnitch()
+		{
+			return ExecuteOperation(new SimpleOperation<string>(ctx => {
+				return ctx.Session.GetClient(setKeyspace: false).describe_snitch();
+			}));
+		}
+
+		#endregion
 
 		/// <summary>
 		/// 
@@ -184,20 +298,11 @@ namespace FluentCassandra
 				localSession = OpenSession();
 
 			action.Context = this;
-			action.Session = localSession;
 
 			try
 			{
-				LastError = null;
-	
-				TResult result;
-				bool success = action.TryExecute(out result);
-
-				if (!success)
-					LastError = action.Error;
-
-				if (!success && (throwOnError ?? ThrowErrors))
-					throw action.Error;
+				var result = localSession.ExecuteOperation(action, throwOnError);
+				LastError = localSession.LastError;
 
 				return result;
 			}

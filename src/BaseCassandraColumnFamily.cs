@@ -70,26 +70,20 @@ namespace FluentCassandra
 		/// <returns></returns>
 		public TResult ExecuteOperation<TResult>(ColumnFamilyOperation<TResult> action, bool? throwOnError = null)
 		{
+			if (!throwOnError.HasValue)
+				throwOnError = ThrowErrors;
+
 			CassandraSession localSession = null;
 			if (CassandraSession.Current == null)
 				localSession = _context.OpenSession();
 
 			action.Context = _context;
-			action.Session = localSession;
+			action.ColumnFamily = this;
 
 			try
 			{
-				LastError = null;
-
-				TResult result;
-				action.ColumnFamily = this;
-				bool success = action.TryExecute(out result);
-
-				if (!success)
-					LastError = action.Error;
-
-				if (!success && (throwOnError ?? ThrowErrors))
-					throw action.Error;
+				var result = localSession.ExecuteOperation(action, throwOnError);
+				LastError = localSession.LastError;
 
 				return result;
 			}

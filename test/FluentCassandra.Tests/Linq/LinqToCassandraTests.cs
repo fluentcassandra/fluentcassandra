@@ -19,15 +19,13 @@ namespace FluentCassandra.Linq
 			var keyspaceName = "Testing";
 			var server = new Server("localhost");
 
-			try { CassandraSession.DropKeyspace(server, keyspaceName); }
-			catch { }
-
-			var keyspace = new CassandraKeyspace(keyspaceName);
-			keyspace.TryCreateSelf(server);
-
 			_db = new CassandraContext(keyspace: keyspaceName, server: server);
 			_db.ThrowErrors = true;
 
+			try { _db.DropKeyspace(keyspaceName); }
+			catch { }
+
+			_db.Keyspace.TryCreateSelf(server);
 			_db.ExecuteNonQuery(@"
 CREATE COLUMNFAMILY Users (
 	KEY int PRIMARY KEY,
