@@ -23,11 +23,11 @@ namespace FluentCassandra.Operations
 			if (SuperColumnName != null)
 				path.SuperColumn = SuperColumnName;
 
-			CassandraSession.Current.GetClient().remove(
+			Session.GetClient().remove(
 				Key,
 				path,
 				DateTimeOffset.Now.ToTimestamp(),
-				CassandraSession.Current.WriteConsistency
+				Session.WriteConsistency
 			);
 
 			return new Void();

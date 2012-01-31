@@ -21,7 +21,7 @@ namespace FluentCassandra.Operations
 			if (CompressCqlQuery)
 				query = GzipCompress(query);
 
-			var result = CassandraSession.Current.GetClient().execute_cql_query(
+			var result = Session.GetClient().execute_cql_query(
 				query,
 				CompressCqlQuery ? Apache.Cassandra.Compression.GZIP : Apache.Cassandra.Compression.NONE
 			);
@@ -39,10 +39,10 @@ namespace FluentCassandra.Operations
 			}
 		}
 
-		public ExecuteCqlNonQuery(UTF8Type cqlQuery, bool? compressCqlQuery = null)
+		public ExecuteCqlNonQuery(UTF8Type cqlQuery, bool compressCqlQuery)
 		{
 			CqlQuery = cqlQuery;
-			CompressCqlQuery = compressCqlQuery ?? CassandraContext.CurrentConnectionBuilder.CompressCqlQueries;
+			CompressCqlQuery = compressCqlQuery;
 		}
 	}
 }

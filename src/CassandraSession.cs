@@ -109,17 +109,13 @@ namespace FluentCassandra
 
 		#endregion
 
-		private bool _disposed;
 		private IConnection _connection;
-
-		public CassandraSession()
-			: this(CassandraContext.CurrentConnectionBuilder) { }
 
 		public CassandraSession(ConnectionBuilder connectionBuilder)
 			: this(ConnectionProviderFactory.Get(connectionBuilder), connectionBuilder.ReadConsistency, connectionBuilder.WriteConsistency) { }
 
-		public CassandraSession(ConsistencyLevel read, ConsistencyLevel write)
-			: this(ConnectionProviderFactory.Get(CassandraContext.CurrentConnectionBuilder), read, write) { }
+		public CassandraSession(ConnectionBuilder connectionBuilder, ConsistencyLevel read, ConsistencyLevel write)
+			: this(ConnectionProviderFactory.Get(connectionBuilder), read, write) { }
 
 		public CassandraSession(IConnectionProvider connectionProvider, ConsistencyLevel read, ConsistencyLevel write)
 		{
@@ -135,16 +131,36 @@ namespace FluentCassandra
 			Current = this;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
 		public IConnectionProvider ConnectionProvider { get; private set; }
 
+		/// <summary>
+		/// 
+		/// </summary>
 		public ConsistencyLevel ReadConsistency { get; private set; }
 
+		/// <summary>
+		/// 
+		/// </summary>
 		public ConsistencyLevel WriteConsistency { get; private set; }
 
+		/// <summary>
+		/// 
+		/// </summary>
 		public CassandraKeyspace Keyspace { get; private set; }
 
+		/// <summary>
+		/// 
+		/// </summary>
 		public bool IsAuthenticated { get; private set; }
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="setKeyspace"></param>
+		/// <returns></returns>
 		internal CassandraClientWrapper GetClient(bool setKeyspace = true)
 		{
 			if (_connection == null)
@@ -159,6 +175,24 @@ namespace FluentCassandra
 			return new CassandraClientWrapper(_connection.Client);
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		public void Login()
+		{
+			var builder = ConnectionProvider.Builder;
+
+			if (String.IsNullOrWhiteSpace(builder.Username) || String.IsNullOrWhiteSpace(builder.Password))
+				throw new CassandraException("No username and/or password was set in the connection string, please use Login(username, password) method.");
+
+			Login(builder.Username, builder.Password);
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="username"></param>
+		/// <param name="password"></param>
 		public void Login(string username, string password)
 		{
 			var auth = new AuthenticationRequest {
@@ -182,6 +216,15 @@ namespace FluentCassandra
 		/// <summary>
 		/// 
 		/// </summary>
+		public bool WasDisposed
+		{
+			get;
+			private set;
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
 		public void Dispose()
 		{
 			Dispose(true);
@@ -196,7 +239,7 @@ namespace FluentCassandra
 		/// </param>
 		protected virtual void Dispose(bool disposing)
 		{
-			if (!_disposed && disposing)
+			if (!WasDisposed && disposing)
 			{
 				if (_connection != null)
 					ConnectionProvider.Close(_connection);
@@ -205,7 +248,7 @@ namespace FluentCassandra
 					Current = null;
 			}
 
-			_disposed = true;
+			WasDisposed = true;
 		}
 
 		/// <summary>

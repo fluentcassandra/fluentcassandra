@@ -6,7 +6,7 @@ namespace FluentCassandra.Operations
 	{
 		public override Void Execute()
 		{
-			CassandraSession.Current.GetClient().truncate(ColumnFamily.FamilyName);
+			Session.GetClient().truncate(ColumnFamily.FamilyName);
 
 			return new Void();
 		}

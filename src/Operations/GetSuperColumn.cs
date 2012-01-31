@@ -25,10 +25,10 @@ namespace FluentCassandra.Operations
 			if (SuperColumnName != null)
 				path.SuperColumn = SuperColumnName;
 
-			var output = CassandraSession.Current.GetClient().get(
+			var output = Session.GetClient().get(
 				Key,
 				path,
-				CassandraSession.Current.ReadConsistency
+				Session.ReadConsistency
 			);
 
 			return (IFluentSuperColumn<CompareWith, CompareSubcolumnWith>)Helper.ConvertToFluentBaseColumn<CompareWith, CompareSubcolumnWith>(output);

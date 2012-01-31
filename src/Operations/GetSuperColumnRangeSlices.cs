@@ -20,41 +20,29 @@ namespace FluentCassandra.Operations
 
 		public override IEnumerable<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>> Execute()
 		{
-			CassandraSession _localSession = null;
-			if (CassandraSession.Current == null)
-				_localSession = new CassandraSession();
+			var parent = new CassandraColumnParent {
+				ColumnFamily = ColumnFamily.FamilyName
+			};
 
-			try
+			if (SuperColumnName != null)
+				parent.SuperColumn = SuperColumnName;
+
+			var output = Session.GetClient().get_range_slices(
+				parent,
+				SlicePredicate,
+				KeyRange,
+				Session.ReadConsistency
+			);
+
+			foreach (var result in output)
 			{
-				var parent = new CassandraColumnParent {
-					ColumnFamily = ColumnFamily.FamilyName
-				};
+				var r = new FluentSuperColumn<CompareWith, CompareSubcolumnWith>(result.Columns.Select(col => {
+					return Helper.ConvertColumnToFluentColumn<CompareSubcolumnWith>(col.Column);
+				}));
+				ColumnFamily.Context.Attach(r);
+				r.MutationTracker.Clear();
 
-				if (SuperColumnName != null)
-					parent.SuperColumn = SuperColumnName;
-
-				var output = CassandraSession.Current.GetClient().get_range_slices(
-					parent,
-					SlicePredicate,
-					KeyRange,
-					CassandraSession.Current.ReadConsistency
-				);
-
-				foreach (var result in output)
-				{
-					var r = new FluentSuperColumn<CompareWith, CompareSubcolumnWith>(result.Columns.Select(col => {
-						return Helper.ConvertColumnToFluentColumn<CompareSubcolumnWith>(col.Column);
-					}));
-					ColumnFamily.Context.Attach(r);
-					r.MutationTracker.Clear();
-
-					yield return r;
-				}
-			}
-			finally
-			{
-				if (_localSession != null)
-					_localSession.Dispose();
+				yield return r;
 			}
 		}
 

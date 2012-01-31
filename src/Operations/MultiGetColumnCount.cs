@@ -16,38 +16,26 @@ namespace FluentCassandra.Operations
 
 		public override IDictionary<BytesType, int> Execute()
 		{
-			CassandraSession _localSession = null;
-			if (CassandraSession.Current == null)
-				_localSession = new CassandraSession();
+			var parent = new CassandraColumnParent {
+				ColumnFamily = ColumnFamily.FamilyName
+			};
 
-			try
-			{
-				var parent = new CassandraColumnParent {
-					ColumnFamily = ColumnFamily.FamilyName
-				};
+			if (SuperColumnName != null)
+				parent.SuperColumn = SuperColumnName;
 
-				if (SuperColumnName != null)
-					parent.SuperColumn = SuperColumnName;
+			var output = Session.GetClient().multiget_count(
+				Keys,
+				parent,
+				SlicePredicate,
+				Session.ReadConsistency
+			);
 
-				var output = CassandraSession.Current.GetClient().multiget_count(
-					Keys,
-					parent,
-					SlicePredicate,
-					CassandraSession.Current.ReadConsistency
-				);
+			var results = new Dictionary<BytesType, int>();
 
-				var results = new Dictionary<BytesType, int>();
+			foreach (var result in output)
+				results.Add(result.Key, result.Value);
 
-				foreach (var result in output)
-					results.Add(result.Key, result.Value);
-
-				return results;
-			}
-			finally
-			{
-				if (_localSession != null)
-					_localSession.Dispose();
-			}
+			return results;
 		}
 
 		public MultiGetColumnCount(IEnumerable<BytesType> keys, CassandraSlicePredicate columnSlicePredicate)

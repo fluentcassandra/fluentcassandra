@@ -28,11 +28,11 @@ namespace FluentCassandra.Operations
 			if (ColumnName != null)
 				path.Column = ColumnName;
 
-			CassandraSession.Current.GetClient().remove(
+			Session.GetClient().remove(
 				Key,
 				path,
 				DateTimeOffset.Now.ToTimestamp(),
-				CassandraSession.Current.WriteConsistency
+				Session.WriteConsistency
 			);
 
 			return new Void();

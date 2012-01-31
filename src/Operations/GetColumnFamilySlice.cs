@@ -27,33 +27,21 @@ namespace FluentCassandra.Operations
 
 		private IEnumerable<IFluentColumn<CompareWith>> GetColumns(BaseCassandraColumnFamily columnFamily)
 		{
-			CassandraSession _localSession = null;
-			if (CassandraSession.Current == null)
-				_localSession = new CassandraSession();
+			var parent = new CassandraColumnParent {
+				ColumnFamily = columnFamily.FamilyName
+			};
 
-			try
+			var output = Session.GetClient().get_slice(
+				Key,
+				parent,
+				SlicePredicate,
+				Session.ReadConsistency
+			);
+
+			foreach (var result in output)
 			{
-				var parent = new CassandraColumnParent {
-					ColumnFamily = columnFamily.FamilyName
-				};
-
-				var output = CassandraSession.Current.GetClient().get_slice(
-					Key,
-					parent,
-					SlicePredicate,
-					CassandraSession.Current.ReadConsistency
-				);
-
-				foreach (var result in output)
-				{
-					var r = Helper.ConvertColumnToFluentColumn<CompareWith>(result.Column);
-					yield return r;
-				}
-			}
-			finally
-			{
-				if (_localSession != null)
-					_localSession.Dispose();
+				var r = Helper.ConvertColumnToFluentColumn<CompareWith>(result.Column);
+				yield return r;
 			}
 		}
 

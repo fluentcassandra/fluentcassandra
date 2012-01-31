@@ -27,11 +27,11 @@ namespace FluentCassandra.Operations
 			if (SuperColumnName != null)
 				parent.SuperColumn = SuperColumnName;
 
-			var result = CassandraSession.Current.GetClient().get_count(
+			var result = Session.GetClient().get_count(
 				Key,
 				parent,
 				SlicePredicate,
-				CassandraSession.Current.ReadConsistency
+				Session.ReadConsistency
 			);
 
 			return result;

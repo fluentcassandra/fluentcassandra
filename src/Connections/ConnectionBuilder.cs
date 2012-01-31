@@ -330,7 +330,7 @@ namespace FluentCassandra.Connections
 			b.AppendFormat(format, "Read", ReadConsistency);
 			b.AppendFormat(format, "Write", WriteConsistency);
 			b.AppendFormat(format, "Username", Username);
-			b.AppendFormat(format, "Password", Password == null ? "" : new String('X', Password.Length));
+			b.AppendFormat(format, "Password", Password);
 
 			return b.ToString();
 		}

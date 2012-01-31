@@ -18,11 +18,11 @@ namespace FluentCassandra.Operations
 				ColumnFamily = ColumnFamily.FamilyName
 			};
 
-			CassandraSession.Current.GetClient().remove(
+			Session.GetClient().remove(
 				Key,
 				path,
 				DateTimeOffset.UtcNow.ToTimestamp(),
-				CassandraSession.Current.WriteConsistency
+				Session.WriteConsistency
 			);
 
 			return new Void();

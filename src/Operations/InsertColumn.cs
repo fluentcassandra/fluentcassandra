@@ -39,11 +39,11 @@ namespace FluentCassandra.Operations
 				Ttl = TimeToLive
 			};
 
-			CassandraSession.Current.GetClient().insert(
+			Session.GetClient().insert(
 				Key,
 				parent,
 				column,
-				CassandraSession.Current.WriteConsistency
+				Session.WriteConsistency
 			);
 
 			return new Void();

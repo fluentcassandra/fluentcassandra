@@ -28,10 +28,10 @@ namespace FluentCassandra.Operations
 			if (ColumnName != null)
 				path.Column = ColumnName;
 
-			var output = CassandraSession.Current.GetClient().get(
+			var output = Session.GetClient().get(
 				Key,
 				path,
-				CassandraSession.Current.ReadConsistency
+				Session.ReadConsistency
 			);
 
 			return (IFluentColumn<CompareWith>)Helper.ConvertToFluentBaseColumn<CompareWith, VoidType>(output);

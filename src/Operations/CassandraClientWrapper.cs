@@ -23,25 +23,13 @@ namespace FluentCassandra.Operations
 		/// <returns></returns>
 		private TResult ExecuteOperation<TResult>(Operation<TResult> action)
 		{
-			CassandraSession _localSession = null;
-			if (CassandraSession.Current == null)
-				_localSession = new CassandraSession();
+			TResult result;
+			bool success = action.TryExecute(out result);
 
-			try
-			{
-				TResult result;
-				bool success = action.TryExecute(out result);
+			if (!success)
+				throw action.Error;
 
-				if (!success)
-					throw action.Error;
-
-				return result;
-			}
-			finally
-			{
-				if (_localSession != null)
-					_localSession.Dispose();
-			}
+			return result;
 		}
 
 		#region Iface Members

@@ -9,15 +9,7 @@ namespace FluentCassandra
 {
 	public class CassandraContext : IDisposable
 	{
-		[ThreadStatic]
-		private static ConnectionBuilder _currentConnectionBuilder;
-
-		public static ConnectionBuilder CurrentConnectionBuilder
-		{
-			get { return _currentConnectionBuilder; }
-			internal set { _currentConnectionBuilder = value; }
-		}
-
+		private readonly ConnectionBuilder _connectionBuilder;
 		private IList<IFluentMutationTracker> _trackers;
 
 		/// <summary>
@@ -53,9 +45,9 @@ namespace FluentCassandra
 		/// <param name="connectionBuilder"></param>
 		public CassandraContext(ConnectionBuilder connectionBuilder)
 		{
-			CurrentConnectionBuilder = connectionBuilder;
 			ThrowErrors = true;
-			
+
+			_connectionBuilder = connectionBuilder;
 			_trackers = new List<IFluentMutationTracker>();
 		}
 
@@ -137,7 +129,7 @@ namespace FluentCassandra
 		/// <param name="cqlQuery"></param>
 		public IEnumerable<ICqlRow<BytesType>> ExecuteQuery(UTF8Type cqlQuery)
 		{
-			var op = new ExecuteCqlQuery<BytesType>(cqlQuery);
+			var op = new ExecuteCqlQuery<BytesType>(cqlQuery, ConnectionBuilder.CompressCqlQueries);
 			return ExecuteOperation(op);
 		}
 
@@ -147,9 +139,23 @@ namespace FluentCassandra
 		/// <param name="cqlQuery"></param>
 		public void ExecuteNonQuery(UTF8Type cqlQuery)
 		{
-			var op = new ExecuteCqlNonQuery(cqlQuery);
+			var op = new ExecuteCqlNonQuery(cqlQuery, ConnectionBuilder.CompressCqlQueries);
 			ExecuteOperation(op);
 		}
+
+		/// <summary>
+		/// Open a session against the database.
+		/// </summary>
+		/// <returns></returns>
+		public CassandraSession OpenSession()
+		{
+			return new CassandraSession(_connectionBuilder);
+		}
+
+		/// <summary>
+		/// The connection builder that is currently in use for this context.
+		/// </summary>
+		public ConnectionBuilder ConnectionBuilder { get; private set; }
 
 		/// <summary>
 		/// The last error that occured during the execution of an operation.
@@ -173,9 +179,12 @@ namespace FluentCassandra
 			if (!throwOnError.HasValue)
 				throwOnError = ThrowErrors;
 
-			CassandraSession _localSession = null;
+			CassandraSession localSession = null;
 			if (CassandraSession.Current == null)
-				_localSession = new CassandraSession();
+				localSession = OpenSession();
+
+			action.Context = this;
+			action.Session = localSession;
 
 			try
 			{
@@ -194,13 +203,16 @@ namespace FluentCassandra
 			}
 			finally
 			{
-				if (_localSession != null)
-					_localSession.Dispose();
+				if (localSession != null)
+					localSession.Dispose();
 			}
 		}
 
 		#region IDisposable Members
 
+		/// <summary>
+		/// 
+		/// </summary>
 		public bool WasDisposed
 		{
 			get;

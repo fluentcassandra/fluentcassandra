@@ -225,7 +225,7 @@ namespace FluentCassandra
 		public static IEnumerable<ICqlRow<CompareWith>> Cql<CompareWith>(this CassandraColumnFamily<CompareWith> family, UTF8Type cqlQuery)
 			where CompareWith : CassandraType
 		{
-			var op = new ExecuteCqlQuery<CompareWith>(cqlQuery);
+			var op = new ExecuteCqlQuery<CompareWith>(cqlQuery, family.Context.ConnectionBuilder.CompressCqlQueries);
 			return family.ExecuteOperation(op);
 		}
 	}

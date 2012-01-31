@@ -70,9 +70,12 @@ namespace FluentCassandra
 		/// <returns></returns>
 		public TResult ExecuteOperation<TResult>(ColumnFamilyOperation<TResult> action, bool? throwOnError = null)
 		{
-			CassandraSession _localSession = null;
+			CassandraSession localSession = null;
 			if (CassandraSession.Current == null)
-				_localSession = new CassandraSession();
+				localSession = _context.OpenSession();
+
+			action.Context = _context;
+			action.Session = localSession;
 
 			try
 			{
@@ -92,8 +95,8 @@ namespace FluentCassandra
 			}
 			finally
 			{
-				if (_localSession != null)
-					_localSession.Dispose();
+				if (localSession != null)
+					localSession.Dispose();
 			}
 		}
 

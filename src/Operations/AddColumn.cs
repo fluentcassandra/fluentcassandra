@@ -29,11 +29,11 @@ namespace FluentCassandra.Operations
 				Value = ColumnValue
 			};
 
-			CassandraSession.Current.GetClient().add(
+			Session.GetClient().add(
 				Key,
 				parent,
 				column,
-				CassandraSession.Current.WriteConsistency
+				Session.WriteConsistency
 			);
 
 			return new Void();
