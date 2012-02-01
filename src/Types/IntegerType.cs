@@ -41,6 +41,8 @@ namespace FluentCassandra.Types
 
 		#endregion
 
+		internal override object GetRawValue() { return _value; }
+
 		private BigInteger _value;
 
 		#region Equality

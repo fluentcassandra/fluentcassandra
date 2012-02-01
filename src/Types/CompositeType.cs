@@ -99,6 +99,8 @@ namespace FluentCassandra.Types
 
 		#endregion
 
+		internal override object GetRawValue() { return _value; }
+
 		public List<Type> ComponentTypeHints { get; set; }
 
 		private List<CassandraType> _value;

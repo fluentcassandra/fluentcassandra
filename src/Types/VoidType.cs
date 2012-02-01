@@ -46,5 +46,10 @@ namespace FluentCassandra.Types
 		{
 			throw new NotImplementedException();
 		}
+
+		internal override object GetRawValue()
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

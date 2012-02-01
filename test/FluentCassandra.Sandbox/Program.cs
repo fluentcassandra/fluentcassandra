@@ -22,7 +22,7 @@ namespace FluentCassandra.Sandbox
 					db.DropKeyspace(KeyspaceName);
 
 				var keyspace = db.Keyspace;
-				keyspace.TryCreateSelf(Server);
+				keyspace.TryCreateSelf();
 				keyspace.TryCreateColumnFamily<UTF8Type>("Posts");
 				keyspace.TryCreateColumnFamily<LongType>("Tags");
 				keyspace.TryCreateColumnFamily<TimeUUIDType, UTF8Type>("Comments");

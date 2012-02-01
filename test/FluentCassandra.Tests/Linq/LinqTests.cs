@@ -12,7 +12,7 @@ namespace FluentCassandra.Linq
 		private CassandraContext _db;
 		private CassandraColumnFamily<AsciiType> _family;
 
-		[SetUp]
+		[TestFixtureSetUp]
 		public void TestInit()
 		{
 			var keyspaceName = "Testing";
@@ -110,7 +110,7 @@ namespace FluentCassandra.Linq
 		[Test]
 		public void WHERE_Using_KEY_And_One_Parameter()
 		{
-			var expected = "SELECT * FROM Users WHERE (KEY = 1234 AND Age = 10)";
+			var expected = "SELECT * FROM Users WHERE KEY = 1234 AND Age = 10";
 
 			var query =
 				from f in _family
@@ -140,7 +140,7 @@ namespace FluentCassandra.Linq
 		[Test]
 		public void WHERE_Two_AND_Parameter()
 		{
-			var expected = "SELECT * FROM Users WHERE (Id = 1234 AND Age = 10)";
+			var expected = "SELECT * FROM Users WHERE Id = 1234 AND Age = 10";
 
 			var query =
 				from f in _family
@@ -155,45 +155,14 @@ namespace FluentCassandra.Linq
 		[Test]
 		public void WHERE_Two_OR_Parameter()
 		{
-			var expected = "SELECT * FROM Users WHERE (Id = 1234 OR Age = 10)";
+			Assert.Throws<NotSupportedException>(delegate {
+				var query =
+					from f in _family
+					where f["Id"] == 1234 || f["Age"] == 10
+					select f;
 
-			var query =
-				from f in _family
-				where f["Id"] == 1234 || f["Age"] == 10
-				select f;
-
-			var actual = query.ToString();
-
-			AreEqual(expected, actual);
-		}
-
-		[Test]
-		public void WHERE_Three_Complex_Parameter()
-		{
-			var expected = "SELECT * FROM Users WHERE ((Id = 1234 OR Age = 10) AND Name = 'Adama')";
-
-			var query =
-				from f in _family
-				where (f["Id"] == 1234 || f["Age"] == 10) && f["Name"] == "Adama"
-				select f;
-
-			var actual = query.ToString();
-
-			AreEqual(expected, actual);
-		}
-
-		[Test]
-		public void SELECT_Two_Columns_WHERE_Three_Complex_Parameter()
-		{
-			var expected = "SELECT Age, Name FROM Users WHERE ((Id = 1234 OR Age = 10) AND Name = 'Adama')";
-
-			var query = _family
-				.Where(f => (f["Id"] == 1234 || f["Age"] == 10) && f["Name"] == "Adama")
-				.Select("Age", "Name");
-
-			var actual = query.ToString();
-
-			AreEqual(expected, actual);
+				query.ToString();
+			}, "OR is not supported");
 		}
 	}
 }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using FluentCassandra.Types;
-using Apache.Cassandra;
 
 namespace FluentCassandra.Operations
 {
@@ -19,7 +18,7 @@ namespace FluentCassandra.Operations
 
 		public override FluentSuperColumnFamily<CompareWith, CompareSubcolumnWith> Execute()
 		{
-			var result = new FluentSuperColumnFamily<CompareWith, CompareSubcolumnWith>(Key, ColumnFamily.FamilyName, GetColumns(ColumnFamily));
+			var result = new FluentSuperColumnFamily<CompareWith, CompareSubcolumnWith>(Key, ColumnFamily.FamilyName, ColumnFamily.Schema(), GetColumns(ColumnFamily));
 			ColumnFamily.Context.Attach(result);
 			result.MutationTracker.Clear();
 

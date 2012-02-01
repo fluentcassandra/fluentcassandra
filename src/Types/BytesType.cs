@@ -11,7 +11,8 @@ namespace FluentCassandra.Types
 
 		public override object GetValue(Type type)
 		{
-			if (_sourceType != type)
+			// change value if source type is different and source type wasn't raw bytes
+			if (_sourceType != type && _sourceType != typeof(byte[]) && _bigEndianValue != null)
 			{
 				_value = Converter.FromBigEndian(_bigEndianValue, type);
 				_sourceType = type;
@@ -24,6 +25,7 @@ namespace FluentCassandra.Types
 		{
 			_sourceType = obj.GetType();
 			_value = SetValue(obj, Converter);
+			_bigEndianValue = Converter.ToBigEndian(_value, _sourceType);
 		}
 
 		public override byte[] ToBigEndian()
@@ -43,12 +45,12 @@ namespace FluentCassandra.Types
 
 		public override string ToString()
 		{
-			return GetValue<string>();
+			return (_sourceType != null ? _sourceType.Name : "byte[]") + " of lenght = " + (_value != null ? _value.Length : _bigEndianValue.Length);
 		}
 
 		#endregion
 
-		public int Length { get { return _value != null ? _value.Length : _bigEndianValue.Length; } }
+		internal override object GetRawValue() { return _bigEndianValue; }
 
 		private Type _sourceType;
 		private byte[] _bigEndianValue;

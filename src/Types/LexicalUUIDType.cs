@@ -40,6 +40,8 @@ namespace FluentCassandra.Types
 
 		#endregion
 
+		internal override object GetRawValue() { return _value; }
+
 		private Guid _value;
 
 		#region Equality

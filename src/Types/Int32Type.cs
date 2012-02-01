@@ -40,7 +40,9 @@ namespace FluentCassandra.Types
 
 		#endregion
 
-		private Int32 _value;
+		internal override object GetRawValue() { return _value; }
+
+		private int _value;
 
 		#region Equality
 

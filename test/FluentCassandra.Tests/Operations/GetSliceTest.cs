@@ -11,20 +11,20 @@ namespace FluentCassandra.Operations
 		private CassandraContext _db;
 		private CassandraColumnFamily<AsciiType> _family;
 		private CassandraSuperColumnFamily<AsciiType, AsciiType> _superFamily;
-		private const string _testKey = "Test1";
-		private const string _testName = "Test1";
-		private const string _testSuperName = "SubTest1";
+		private readonly string _testKey = "Test1";
+		private readonly string _testName = "Test1";
+		private readonly string _testSuperName = "SubTest1";
 
-		[SetUp]
+		[TestFixtureSetUp]
 		public void TestInit()
 		{
-			var setup = new _CassandraSetup();
+			var setup = new CassandraDatabaseSetup();
 			_db = setup.DB;
 			_family = setup.Family;
 			_superFamily = setup.SuperFamily;
 		}
 
-		[TearDown]
+		[TestFixtureTearDown]
 		public void TestCleanup()
 		{
 			_db.Dispose();

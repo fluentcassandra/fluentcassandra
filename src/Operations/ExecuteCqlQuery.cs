@@ -19,6 +19,30 @@ namespace FluentCassandra.Operations
 
 		public bool CompressCqlQuery { get; private set; }
 
+		private CassandraColumnFamilySchema TryGetSchema(Apache.Cassandra.CqlResult result, string familyName)
+		{
+			//if (ColumnFamily != null && ColumnFamily.FamilyName != null)
+			//    return ColumnFamily.Schema();
+
+			var resultSchema = result.Schema;
+			var schema = new CassandraColumnFamilySchema();
+			schema.FamilyName = familyName;
+
+			foreach (var s in resultSchema.Value_types)
+			{
+				var key = s.Key;
+				if (key.Length == 3 && key[0] == 75 && key[1] == 69 && key[2] == 89)
+				{
+					schema.Key = CassandraType.GetCassandraType(s.Value);
+					continue;
+				}
+
+				schema.Columns.Add(CassandraType.GetTypeFromDatabaseValue(s.Key, resultSchema.Default_name_type), CassandraType.GetCassandraType(s.Value));
+			}
+
+			return schema;
+		}
+
 		private string TryGetFamilyName()
 		{
 			if (ColumnFamily != null && ColumnFamily.FamilyName != null)
@@ -51,10 +75,13 @@ namespace FluentCassandra.Operations
 		private IEnumerable<ICqlRow<CompareWith>> GetRows(Apache.Cassandra.CqlResult result)
 		{
 			var familyName = TryGetFamilyName();
+			var schema = TryGetSchema(result, familyName);
+
 			foreach (var row in result.Rows)
 				yield return new FluentColumnFamily<CompareWith>(
 					CassandraType.GetTypeFromDatabaseValue<BytesType>(row.Key),
 					familyName, 
+					schema,
 					GetColumns(row));
 		}
 

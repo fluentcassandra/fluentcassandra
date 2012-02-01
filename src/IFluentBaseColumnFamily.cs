@@ -6,7 +6,7 @@ namespace FluentCassandra
 {
 	public interface IFluentBaseColumnFamily : IFluentRecord, INotifyPropertyChanged
 	{
-		BytesType Key { get; set; }
+		CassandraType Key { get; set; }
 		string FamilyName { get; }
 		ColumnType ColumnType { get; }
 

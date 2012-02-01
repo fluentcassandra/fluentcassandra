@@ -41,7 +41,8 @@ namespace FluentCassandra.Operations
 				});
 
 				var familyName = ColumnFamily.FamilyName;
-				var r = new FluentSuperColumnFamily<CompareWith, CompareSubcolumnWith>(key, familyName, superColumns);
+				var schema = ColumnFamily.Schema();
+				var r = new FluentSuperColumnFamily<CompareWith, CompareSubcolumnWith>(key, familyName, schema, superColumns);
 				ColumnFamily.Context.Attach(r);
 				r.MutationTracker.Clear();
 

@@ -10,27 +10,13 @@ namespace FluentCassandra
 	{
 		public const string FamilyName = "Standard";
 		public const string TestKey = "Test1";
-		private CassandraContext _db;
-
-		[SetUp]
-		public void TestInit()
-		{
-			var setup = new _CassandraSetup();
-			_db = setup.DB;
-		}
-
-		[TearDown]
-		public void TestCleanup()
-		{
-			_db.Dispose();
-		}
-
 
 		[Test]
 		public void CreateRecord_Doesnt_Check_BytesType_Zero_Length()
 		{
 			// arrange
-			var family = _db.GetColumnFamily<AsciiType>(FamilyName);
+			var db = new CassandraContext("Test1", "localhost");
+			var family = db.GetColumnFamily<AsciiType>(FamilyName);
 			
 			// act
 			// assert

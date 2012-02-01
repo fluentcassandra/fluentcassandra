@@ -11,9 +11,9 @@ namespace FluentCassandra
 
 		public Type CompareWithType { get { return typeof(CompareWith); } }
 
-		public FluentColumnFamily<CompareWith> CreateRecord(BytesType key)
+		public FluentColumnFamily<CompareWith> CreateRecord(CassandraType key)
 		{
-			if (key.Length == 0)
+			if (key.GetValue<byte[]>().Length == 0)
 				throw new ArgumentException("'key' is not allowed to be zero length.", "key");
 
 			return new FluentColumnFamily<CompareWith>(key, FamilyName);

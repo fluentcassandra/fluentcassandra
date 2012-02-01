@@ -80,7 +80,7 @@ namespace FluentCassandra.Types
 
 		#region Conversion
 
-		private static T Convert<T>(CassandraType type)
+		private static T ConvertTo<T>(CassandraType type)
 		{
 			if (type == null)
 				return default(T);
@@ -88,53 +88,158 @@ namespace FluentCassandra.Types
 			return type.GetValue<T>();
 		}
 
-		public static implicit operator byte[](CassandraType o) { return Convert<byte[]>(o); }
-		public static implicit operator char[](CassandraType o) { return Convert<char[]>(o); }
+		private static CassandraType ConvertFrom(object o)
+		{
+			var sourceType = o.GetType();
+			var destinationType = (Type)null;
 
-		public static implicit operator byte(CassandraType o) { return Convert<byte>(o); }
-		public static implicit operator sbyte(CassandraType o) { return Convert<sbyte>(o); }
-		public static implicit operator short(CassandraType o) { return Convert<short>(o); }
-		public static implicit operator ushort(CassandraType o) { return Convert<ushort>(o); }
-		public static implicit operator int(CassandraType o) { return Convert<int>(o); }
-		public static implicit operator uint(CassandraType o) { return Convert<uint>(o); }
-		public static implicit operator long(CassandraType o) { return Convert<long>(o); }
-		public static implicit operator ulong(CassandraType o) { return Convert<ulong>(o); }
-		public static implicit operator float(CassandraType o) { return Convert<float>(o); }
-		public static implicit operator double(CassandraType o) { return Convert<double>(o); }
-		public static implicit operator decimal(CassandraType o) { return Convert<decimal>(o); }
-		public static implicit operator bool(CassandraType o) { return Convert<bool>(o); }
-		public static implicit operator string(CassandraType o) { return Convert<string>(o); }
-		public static implicit operator char(CassandraType o) { return Convert<char>(o); }
-		public static implicit operator Guid(CassandraType o) { return Convert<Guid>(o); }
-		public static implicit operator DateTime(CassandraType o) { return Convert<DateTime>(o); }
-		public static implicit operator DateTimeOffset(CassandraType o) { return Convert<DateTimeOffset>(o); }
-		public static implicit operator BigInteger(CassandraType o) { return Convert<BigInteger>(o); }
+			switch (Type.GetTypeCode(sourceType))
+			{
 
-		public static implicit operator byte?(CassandraType o) { return Convert<byte?>(o); }
-		public static implicit operator sbyte?(CassandraType o) { return Convert<sbyte?>(o); }
-		public static implicit operator short?(CassandraType o) { return Convert<short?>(o); }
-		public static implicit operator ushort?(CassandraType o) { return Convert<ushort?>(o); }
-		public static implicit operator int?(CassandraType o) { return Convert<int?>(o); }
-		public static implicit operator uint?(CassandraType o) { return Convert<uint?>(o); }
-		public static implicit operator long?(CassandraType o) { return Convert<long?>(o); }
-		public static implicit operator ulong?(CassandraType o) { return Convert<ulong?>(o); }
-		public static implicit operator float?(CassandraType o) { return Convert<float?>(o); }
-		public static implicit operator double?(CassandraType o) { return Convert<double?>(o); }
-		public static implicit operator decimal?(CassandraType o) { return Convert<decimal?>(o); }
-		public static implicit operator bool?(CassandraType o) { return Convert<bool?>(o); }
+				case TypeCode.DateTime:
+					destinationType = typeof(DateType);
+					break;
+
+				case TypeCode.Boolean:
+					destinationType = typeof(BooleanType);
+					break;
+
+				case TypeCode.Char:
+				case TypeCode.Double:
+					destinationType = typeof(DoubleType);
+					break;
+
+				case TypeCode.Single:
+					destinationType = typeof(FloatType);
+					break;
+
+				case TypeCode.Int64:
+				case TypeCode.UInt64:
+					destinationType = typeof(LongType);
+					break;
+
+				case TypeCode.Int16:
+				case TypeCode.Int32:
+				case TypeCode.UInt16:
+				case TypeCode.UInt32:
+					destinationType = typeof(Int32Type);
+					break;
+
+				case TypeCode.Decimal:
+					destinationType = typeof(DecimalType);
+					break;
+
+				case TypeCode.String:
+					destinationType = typeof(UTF8Type);
+					break;
+
+				case TypeCode.Object:
+					if (sourceType == typeof(DateTimeOffset))
+						destinationType = typeof(DateType);
+
+					if (sourceType == typeof(BigInteger))
+						destinationType = typeof(IntegerType);
+
+					if (sourceType == typeof(char[]))
+						destinationType = typeof(UTF8Type);
+
+					goto default;
+
+				case TypeCode.Byte:
+				case TypeCode.SByte:
+					goto default;
+
+				default:
+					destinationType = typeof(BytesType);
+					break;
+			}
+
+			var type = (CassandraType)Activator.CreateInstance(destinationType);
+			type.SetValue(o);
+			return type;
+		}
+
+		public static implicit operator CassandraType(byte[] o) { return ConvertFrom(o); }
+		public static implicit operator CassandraType(char[] o) { return ConvertFrom(o); }
+
+		public static implicit operator CassandraType(byte o) { return ConvertFrom(o); }
+		public static implicit operator CassandraType(sbyte o) { return ConvertFrom(o); }
+		public static implicit operator CassandraType(short o) { return ConvertFrom(o); }
+		public static implicit operator CassandraType(ushort o) { return ConvertFrom(o); }
+		public static implicit operator CassandraType(int o) { return ConvertFrom(o); }
+		public static implicit operator CassandraType(uint o) { return ConvertFrom(o); }
+		public static implicit operator CassandraType(long o) { return ConvertFrom(o); }
+		public static implicit operator CassandraType(ulong o) { return ConvertFrom(o); }
+		public static implicit operator CassandraType(float o) { return ConvertFrom(o); }
+		public static implicit operator CassandraType(double o) { return ConvertFrom(o); }
+		public static implicit operator CassandraType(decimal o) { return ConvertFrom(o); }
+		public static implicit operator CassandraType(bool o) { return ConvertFrom(o); }
+		public static implicit operator CassandraType(string o) { return ConvertFrom(o); }
+		public static implicit operator CassandraType(char o) { return ConvertFrom(o); }
+		public static implicit operator CassandraType(Guid o) { return ConvertFrom(o); }
+		public static implicit operator CassandraType(DateTime o) { return ConvertFrom(o); }
+		public static implicit operator CassandraType(DateTimeOffset o) { return ConvertFrom(o); }
+
+		public static implicit operator byte[](CassandraType o) { return ConvertTo<byte[]>(o); }
+		public static implicit operator char[](CassandraType o) { return ConvertTo<char[]>(o); }
+
+		public static implicit operator byte(CassandraType o) { return ConvertTo<byte>(o); }
+		public static implicit operator sbyte(CassandraType o) { return ConvertTo<sbyte>(o); }
+		public static implicit operator short(CassandraType o) { return ConvertTo<short>(o); }
+		public static implicit operator ushort(CassandraType o) { return ConvertTo<ushort>(o); }
+		public static implicit operator int(CassandraType o) { return ConvertTo<int>(o); }
+		public static implicit operator uint(CassandraType o) { return ConvertTo<uint>(o); }
+		public static implicit operator long(CassandraType o) { return ConvertTo<long>(o); }
+		public static implicit operator ulong(CassandraType o) { return ConvertTo<ulong>(o); }
+		public static implicit operator float(CassandraType o) { return ConvertTo<float>(o); }
+		public static implicit operator double(CassandraType o) { return ConvertTo<double>(o); }
+		public static implicit operator decimal(CassandraType o) { return ConvertTo<decimal>(o); }
+		public static implicit operator bool(CassandraType o) { return ConvertTo<bool>(o); }
+		public static implicit operator string(CassandraType o) { return ConvertTo<string>(o); }
+		public static implicit operator char(CassandraType o) { return ConvertTo<char>(o); }
+		public static implicit operator Guid(CassandraType o) { return ConvertTo<Guid>(o); }
+		public static implicit operator DateTime(CassandraType o) { return ConvertTo<DateTime>(o); }
+		public static implicit operator DateTimeOffset(CassandraType o) { return ConvertTo<DateTimeOffset>(o); }
+		public static implicit operator BigInteger(CassandraType o) { return ConvertTo<BigInteger>(o); }
+
+		public static implicit operator byte?(CassandraType o) { return ConvertTo<byte?>(o); }
+		public static implicit operator sbyte?(CassandraType o) { return ConvertTo<sbyte?>(o); }
+		public static implicit operator short?(CassandraType o) { return ConvertTo<short?>(o); }
+		public static implicit operator ushort?(CassandraType o) { return ConvertTo<ushort?>(o); }
+		public static implicit operator int?(CassandraType o) { return ConvertTo<int?>(o); }
+		public static implicit operator uint?(CassandraType o) { return ConvertTo<uint?>(o); }
+		public static implicit operator long?(CassandraType o) { return ConvertTo<long?>(o); }
+		public static implicit operator ulong?(CassandraType o) { return ConvertTo<ulong?>(o); }
+		public static implicit operator float?(CassandraType o) { return ConvertTo<float?>(o); }
+		public static implicit operator double?(CassandraType o) { return ConvertTo<double?>(o); }
+		public static implicit operator decimal?(CassandraType o) { return ConvertTo<decimal?>(o); }
+		public static implicit operator bool?(CassandraType o) { return ConvertTo<bool?>(o); }
 		//public static implicit operator string(CassandraType o) { return Convert<string>(o); }
-		public static implicit operator char?(CassandraType o) { return Convert<char?>(o); }
-		public static implicit operator Guid?(CassandraType o) { return Convert<Guid?>(o); }
-		public static implicit operator DateTime?(CassandraType o) { return Convert<DateTime?>(o); }
-		public static implicit operator DateTimeOffset?(CassandraType o) { return Convert<DateTimeOffset?>(o); }
-		public static implicit operator BigInteger?(CassandraType o) { return Convert<BigInteger?>(o); }
+		public static implicit operator char?(CassandraType o) { return ConvertTo<char?>(o); }
+		public static implicit operator Guid?(CassandraType o) { return ConvertTo<Guid?>(o); }
+		public static implicit operator DateTime?(CassandraType o) { return ConvertTo<DateTime?>(o); }
+		public static implicit operator DateTimeOffset?(CassandraType o) { return ConvertTo<DateTimeOffset?>(o); }
+		public static implicit operator BigInteger?(CassandraType o) { return ConvertTo<BigInteger?>(o); }
 
-		public static implicit operator object[](CassandraType o) { return Convert<object[]>(o); }
-		public static implicit operator List<object>(CassandraType o) { return Convert<List<object>>(o); }
-		public static implicit operator CassandraType[](CassandraType o) { return Convert<CassandraType[]>(o); }
-		public static implicit operator List<CassandraType>(CassandraType o) { return Convert<List<CassandraType>>(o); }
+		public static implicit operator object[](CassandraType o) { return ConvertTo<object[]>(o); }
+		public static implicit operator List<object>(CassandraType o) { return ConvertTo<List<object>>(o); }
+		public static implicit operator CassandraType[](CassandraType o) { return ConvertTo<CassandraType[]>(o); }
+		public static implicit operator List<CassandraType>(CassandraType o) { return ConvertTo<List<CassandraType>>(o); }
 
 		#endregion
+
+		internal abstract object GetRawValue();
+
+		public object ToType(Type conversionType)
+		{
+			if (GetType() == typeof(BytesType))
+				return GetTypeFromDatabaseValue((byte[])GetRawValue(), conversionType);
+
+			if (conversionType.BaseType == typeof(CassandraType))
+				return GetTypeFromObject(GetRawValue(), conversionType);
+
+			return GetValue(conversionType);
+		}
 
 		#region IConvertible Members
 
@@ -145,7 +250,7 @@ namespace FluentCassandra.Types
 
 		object IConvertible.ToType(Type conversionType, IFormatProvider provider)
 		{
-			return GetValue(conversionType);
+			return ToType(conversionType);
 		}
 
 		bool IConvertible.ToBoolean(IFormatProvider provider) { return GetValue<bool>(); }

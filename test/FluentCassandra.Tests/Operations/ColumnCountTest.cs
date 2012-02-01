@@ -14,16 +14,16 @@ namespace FluentCassandra.Operations
 		private const string _testKey = "Test1";
 		private const string _testSuperName = "SubTest1";
 
-		[SetUp]
+		[TestFixtureSetUp]
 		public void TestInit()
 		{
-			var setup = new _CassandraSetup();
+			var setup = new CassandraDatabaseSetup();
 			_db = setup.DB;
 			_family = setup.Family;
 			_superFamily = setup.SuperFamily;
 		}
 
-		[TearDown]
+		[TestFixtureTearDown]
 		public void TestCleanup()
 		{
 			_db.Dispose();

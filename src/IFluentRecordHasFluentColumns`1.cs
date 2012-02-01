@@ -7,6 +7,6 @@ namespace FluentCassandra
 		:	IFluentRecord<IFluentColumn<CompareWith>>
 		where CompareWith : CassandraType
 	{
-		BytesType this[CompareWith columnName] { get; }
+		CassandraType this[CompareWith columnName] { get; }
 	}
 }

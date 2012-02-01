@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using Apache.Cassandra;
 using FluentCassandra.Connections;
-using System.Diagnostics;
-using FluentCassandra.Types;
-using System.Text;
 using FluentCassandra.Operations;
+using FluentCassandra.Types;
 
 namespace FluentCassandra
 {
@@ -61,7 +61,7 @@ namespace FluentCassandra
 			return KeyspaceName;
 		}
 
-		public void TryCreateSelf(Server server)
+		public void TryCreateSelf()
 		{
 			if (_context.KeyspaceExists(KeyspaceName))
 			{
@@ -81,43 +81,45 @@ namespace FluentCassandra
 		public void TryCreateColumnFamily<CompareWith>(string columnFamilyName)
 			where CompareWith : CassandraType
 		{
-			if (ColumnFamilyExists(columnFamilyName))
+			try
+			{
+				var comparatorType = GetCassandraComparatorType(typeof(CompareWith));
+
+				string result = _context.AddColumnFamily(new CfDef {
+					Name = columnFamilyName,
+					Keyspace = KeyspaceName,
+					Comparator_type = comparatorType
+				});
+				Debug.WriteLine(result, "keyspace setup");
+			}
+			catch (Exception exc)
 			{
 				Debug.WriteLine(columnFamilyName + " already exists", "keyspace setup");
-				return;
 			}
-
-			var comparatorType = GetCassandraComparatorType(typeof(CompareWith));
-
-			string result = _context.AddColumnFamily(new CfDef {
-				Name = columnFamilyName,
-				Keyspace = KeyspaceName,
-				Comparator_type = comparatorType
-			});
-			Debug.WriteLine(result, "keyspace setup");
 		}
 
 		public void TryCreateColumnFamily<CompareWith, CompareSubcolumnWith>(string columnFamilyName)
 			where CompareWith : CassandraType
 			where CompareSubcolumnWith : CassandraType
 		{
-			if (ColumnFamilyExists(columnFamilyName))
+			try
+			{
+				var comparatorType = GetCassandraComparatorType(typeof(CompareWith));
+				var subComparatorType = GetCassandraComparatorType(typeof(CompareSubcolumnWith));
+
+				string result = _context.AddColumnFamily(new CfDef {
+					Name = columnFamilyName,
+					Keyspace = KeyspaceName,
+					Column_type = "Super",
+					Comparator_type = comparatorType,
+					Subcomparator_type = subComparatorType
+				});
+				Debug.WriteLine(result, "keyspace setup");
+			}
+			catch (Exception exc)
 			{
 				Debug.WriteLine(columnFamilyName + " already exists", "keyspace setup");
-				return;
 			}
-
-			var comparatorType = GetCassandraComparatorType(typeof(CompareWith));
-			var subComparatorType = GetCassandraComparatorType(typeof(CompareSubcolumnWith));
-
-			string result = _context.AddColumnFamily(new CfDef {
-				Name = columnFamilyName,
-				Keyspace = KeyspaceName,
-				Column_type = "Super",
-				Comparator_type = comparatorType,
-				Subcomparator_type = subComparatorType
-			});
-			Debug.WriteLine(result, "keyspace setup");
 		}
 
 		private string GetCassandraComparatorType(Type comparatorType)
@@ -141,7 +143,7 @@ namespace FluentCassandra
 			return comparatorTypeName;
 		}
 
-		public CfDef GetColumnFamily(string columnFamily)
+		public CfDef GetColumnFamilyDescription(string columnFamily)
 		{
 			return Describe().Cf_defs.FirstOrDefault(cf => cf.Name == columnFamily);
 		}
@@ -162,7 +164,7 @@ namespace FluentCassandra
 		{
 			if (_cachedKeyspaceDescription == null)
 				_cachedKeyspaceDescription = _context.ExecuteOperation(new SimpleOperation<Apache.Cassandra.KsDef>(ctx => {
-				return ctx.Session.GetClient().describe_keyspace(KeyspaceName);
+					return ctx.Session.GetClient().describe_keyspace(KeyspaceName);
 			}));
 
 			return _cachedKeyspaceDescription;

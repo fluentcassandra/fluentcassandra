@@ -12,14 +12,14 @@ namespace FluentCassandra.TypesToDatabase
 		public const string TestKey = "Test1";
 		private CassandraContext _db;
 
-		[SetUp]
+		[TestFixtureSetUp]
 		public void TestInit()
 		{
-			var setup = new _CassandraSetup();
+			var setup = new CassandraDatabaseSetup();
 			_db = setup.DB;
 		}
 
-		[TearDown]
+		[TestFixtureTearDown]
 		public void TestCleanup()
 		{
 			_db.Dispose();

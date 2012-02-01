@@ -40,6 +40,8 @@ namespace FluentCassandra.Types
 
 		#endregion
 
+		internal override object GetRawValue() { return _value; }
+
 		private DateTimeOffset _value;
 
 		#region Equality

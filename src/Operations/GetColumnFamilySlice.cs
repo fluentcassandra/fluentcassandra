@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Apache.Cassandra;
 using FluentCassandra.Types;
 
 namespace FluentCassandra.Operations
@@ -18,7 +17,7 @@ namespace FluentCassandra.Operations
 
 		public override IFluentColumnFamily<CompareWith> Execute()
 		{
-			var result = new FluentColumnFamily<CompareWith>(Key, ColumnFamily.FamilyName, GetColumns(ColumnFamily));
+			var result = new FluentColumnFamily<CompareWith>(Key, ColumnFamily.FamilyName, ColumnFamily.Schema(), GetColumns(ColumnFamily));
 			ColumnFamily.Context.Attach(result);
 			result.MutationTracker.Clear();
 

@@ -9,8 +9,8 @@ namespace FluentCassandra.Linq
 	public interface ICqlRow<CompareWith> : IDynamicMetaObjectProvider
 		where CompareWith : CassandraType
 	{
-		BytesType Key { get; set; }
-		BytesType this[CompareWith columnName] { get; }
+		CassandraType Key { get; set; }
+		CassandraType this[CompareWith columnName] { get; }
 
 		IList<IFluentColumn<CompareWith>> Columns { get; }
 	}

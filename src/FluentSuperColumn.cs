@@ -68,7 +68,7 @@ namespace FluentCassandra
 		/// </summary>
 		/// <param name="columnName"></param>
 		/// <returns></returns>
-		public BytesType this[CompareSubcolumnWith columnName]
+		public CassandraType this[CompareSubcolumnWith columnName]
 		{
 			get
 			{
@@ -80,6 +80,8 @@ namespace FluentCassandra
 				return value as BytesType;
 			}
 		}
+
+		public CassandraColumnFamilySchema SchemaInUse { get; set; }
 
 		/// <summary>
 		/// Gets the path.

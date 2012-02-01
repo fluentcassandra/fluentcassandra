@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using FluentCassandra.Connections;
 using FluentCassandra.Types;
 using NUnit.Framework;
 
@@ -10,60 +9,16 @@ namespace FluentCassandra.Linq
 	public class LinqToCassandraTests
 	{
 		private CassandraContext _db;
-		private CassandraColumnFamily<AsciiType> _family;
-		private User[] _users;
+		private CassandraColumnFamily<UTF8Type> _family;
+		private CassandraDatabaseSetup.User[] _users;
 
-		[SetUp]
+		[TestFixtureSetUp]
 		public void TestInit()
 		{
-			var keyspaceName = "Testing";
-			var server = new Server("localhost");
-
-			_db = new CassandraContext(keyspace: keyspaceName, server: server);
-			_db.ThrowErrors = true;
-
-			try { _db.DropKeyspace(keyspaceName); }
-			catch { }
-
-			_db.Keyspace.TryCreateSelf(server);
-			_db.ExecuteNonQuery(@"
-CREATE COLUMNFAMILY Users (
-	KEY int PRIMARY KEY,
-	Name ascii,
-	Email ascii,
-	Age int
-);");
-			_db.ExecuteNonQuery(@"CREATE INDEX User_Age ON Users (Age);");
-
-			_family = _db.GetColumnFamily<AsciiType>("Users");
-			_family.RemoveAllRows();
-
-			_users = new[] {
-				new User { Id = 1, Name = "Darren Gemmell", Email = "darren@somewhere.com", Age = 32 },
-				new User { Id = 2, Name = "Fernando Laubscher", Email = "fernando@somewhere.com", Age = 23 },
-				new User { Id = 3, Name = "Cody Millhouse", Email = "cody@somewhere.com", Age = 56 },
-				new User { Id = 4, Name = "Emilia Thibert", Email = "emilia@somewhere.com", Age = 67 },
-				new User { Id = 5, Name = "Allyson Schurr", Email = "allyson@somewhere.com", Age = 21 }
-			};
-
-			foreach (var user in _users)
-			{
-				dynamic record = _family.CreateRecord(user.Id);
-				record.Name = user.Name;
-				record.Email = user.Email;
-				record.Age = user.Age;
-
-				_db.Attach(record);
-			}
-			_db.SaveChanges();
-		}
-
-		private class User
-		{
-			public int Id { get; set; }
-			public string Name { get; set; }
-			public string Email { get; set; }
-			public int Age { get; set; }
+			var setup = new CassandraDatabaseSetup();
+			_db = setup.DB;
+			_family = setup.UserFamily;
+			_users = setup.Users;
 		}
 
 		[Test]

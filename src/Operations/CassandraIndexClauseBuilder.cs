@@ -121,8 +121,8 @@ namespace FluentCassandra.Operations
 			var value = CassandraType.GetTypeFromObject<BytesType>(Expression.Lambda(exp.Right).Compile().DynamicInvoke());
 
 			indexExpression = new Cassandra.IndexExpression {
-				Column_name = columnName,
-				Value = value
+				Column_name = columnName.ToBigEndian(),
+				Value = value.ToBigEndian()
 			};
 
 			switch (exp.NodeType)

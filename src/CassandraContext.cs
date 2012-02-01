@@ -12,7 +12,6 @@ namespace FluentCassandra
 {
 	public class CassandraContext : IDisposable
 	{
-		private readonly ConnectionBuilder _connectionBuilder;
 		private IList<IFluentMutationTracker> _trackers;
 
 		/// <summary>
@@ -50,9 +49,9 @@ namespace FluentCassandra
 		{
 			ThrowErrors = true;
 
-			_connectionBuilder = connectionBuilder;
 			_trackers = new List<IFluentMutationTracker>();
 
+			ConnectionBuilder = connectionBuilder;
 			Keyspace = new CassandraKeyspace(connectionBuilder.Keyspace, this);
 		}
 
@@ -263,7 +262,7 @@ namespace FluentCassandra
 		/// <returns></returns>
 		public CassandraSession OpenSession()
 		{
-			return new CassandraSession(_connectionBuilder);
+			return new CassandraSession(ConnectionBuilder);
 		}
 
 		/// <summary>
@@ -293,8 +292,8 @@ namespace FluentCassandra
 			if (!throwOnError.HasValue)
 				throwOnError = ThrowErrors;
 
-			CassandraSession localSession = null;
-			if (CassandraSession.Current == null)
+			var localSession = CassandraSession.Current;
+			if (localSession == null)
 				localSession = OpenSession();
 
 			action.Context = this;

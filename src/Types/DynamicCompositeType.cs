@@ -59,6 +59,8 @@ namespace FluentCassandra.Types
 
 		#endregion
 
+		internal override object GetRawValue() { return _value; }
+
 		private List<CassandraType> _value;
 
 		#region Equality

@@ -16,9 +16,10 @@ namespace FluentCassandra
 		/// </summary>
 		/// <param name="key"></param>
 		/// <param name="columnFamily"></param>
-		public FluentSuperColumnFamily(BytesType key, string columnFamily)
+		public FluentSuperColumnFamily(BytesType key, string columnFamily, CassandraColumnFamilySchema schema = null)
 		{
-			Key = key;
+			SchemaInUse = schema ?? new CassandraColumnFamilySchema { Key = typeof(BytesType), FamilyName = columnFamily, Columns = new Dictionary<CassandraType, Type>() };
+			Key = (CassandraType)key.ToType(SchemaInUse.Key);
 			FamilyName = columnFamily;
 
 			_columns = new FluentColumnList<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>>(GetSelf());
@@ -31,9 +32,10 @@ namespace FluentCassandra
 		/// <param name="key"></param>
 		/// <param name="columnFamily"></param>
 		/// <param name="columns"></param>
-		internal FluentSuperColumnFamily(BytesType key, string columnFamily, IEnumerable<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>> columns)
+		internal FluentSuperColumnFamily(BytesType key, string columnFamily, CassandraColumnFamilySchema schema, IEnumerable<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>> columns)
 		{
-			Key = key;
+			SchemaInUse = schema;
+			Key = (CassandraType)key.ToType(SchemaInUse.Key);
 			FamilyName = columnFamily;
 
 			_columns = new FluentColumnList<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>>(GetSelf(), columns);
@@ -42,7 +44,7 @@ namespace FluentCassandra
 		/// <summary>
 		/// 
 		/// </summary>
-		public BytesType Key { get; set; }
+		public CassandraType Key { get; set; }
 
 		/// <summary>
 		/// 
@@ -81,6 +83,8 @@ namespace FluentCassandra
 		{
 			get { return _columns; }
 		}
+
+		public CassandraColumnFamilySchema SchemaInUse { get; set; }
 
 		/// <summary>
 		/// Gets the path.

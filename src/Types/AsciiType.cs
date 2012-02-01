@@ -40,6 +40,8 @@ namespace FluentCassandra.Types
 
 		#endregion
 
+		internal override object GetRawValue() { return _value; }
+
 		private string _value;
 
 		#region Equality
@@ -70,6 +72,13 @@ namespace FluentCassandra.Types
 		{
 			return new AsciiType {
 				_value = o
+			};
+		}
+
+		public static implicit operator AsciiType(UTF8Type o)
+		{
+			return new AsciiType {
+				_value = o.GetValue<string>()
 			};
 		}
 

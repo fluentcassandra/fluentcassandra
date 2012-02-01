@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
+using Apache.Cassandra;
 using FluentCassandra.Operations;
+using FluentCassandra.Types;
 
 namespace FluentCassandra
 {
@@ -9,6 +12,7 @@ namespace FluentCassandra
 	public abstract class BaseCassandraColumnFamily : ICassandraQueryProvider
 	{
 		private CassandraContext _context;
+		private CassandraColumnFamilySchema _cachedColumnFamilyFluentFriendlySchema;
 
 		/// <summary>
 		/// 
@@ -53,12 +57,47 @@ namespace FluentCassandra
 		}
 
 		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		public CassandraColumnFamilySchema Schema()
+		{
+			var def = _context.Keyspace.GetColumnFamilyDescription(FamilyName);
+
+			if (_cachedColumnFamilyFluentFriendlySchema == null)
+			{
+				var keyType = CassandraType.GetCassandraType(def.Key_validation_class);
+				var colNameType = CassandraType.GetCassandraType(def.Default_validation_class);
+
+				_cachedColumnFamilyFluentFriendlySchema = new CassandraColumnFamilySchema {
+					FamilyName = FamilyName,
+					Key = keyType,
+					Columns = def.Column_metadata.ToDictionary(
+						col => CassandraType.GetTypeFromDatabaseValue(col.Name, colNameType),
+						col => CassandraType.GetCassandraType(col.Validation_class))
+				};
+			}
+
+			return _cachedColumnFamilyFluentFriendlySchema;
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public void ClearCachedKeyspaceSchema()
+		{
+			_cachedColumnFamilyFluentFriendlySchema = null;
+		}
+
+		/// <summary>
 		/// Removes all the rows from the given column family.
 		/// </summary>
 		public void RemoveAllRows()
 		{
-			var op = new Truncate();
-			ExecuteOperation(op);
+			_context.ExecuteOperation(new SimpleOperation<int>(ctx => {
+				ctx.Session.GetClient().truncate(FamilyName);
+				return 0;
+			}));
 		}
 
 		/// <summary>
@@ -73,8 +112,8 @@ namespace FluentCassandra
 			if (!throwOnError.HasValue)
 				throwOnError = ThrowErrors;
 
-			CassandraSession localSession = null;
-			if (CassandraSession.Current == null)
+			var localSession = CassandraSession.Current;
+			if (localSession == null)
 				localSession = _context.OpenSession();
 
 			action.Context = _context;

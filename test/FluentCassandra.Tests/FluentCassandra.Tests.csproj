@@ -69,6 +69,7 @@
     <Compile Include="Linq\LinqToCassandraTests.cs" />
     <Compile Include="Operations\CassandraIndexClauseTest.cs" />
     <Compile Include="ReportedIssuesTests.cs" />
+    <Compile Include="TestSetup.cs" />
     <Compile Include="TypesToDatabase\AsciiTypeTest.cs" />
     <Compile Include="TypesToDatabase\BytesTypeTest.cs" />
     <Compile Include="TypesToDatabase\CompositeTypeTest.cs" />
@@ -81,7 +82,7 @@
     <Compile Include="Types\CompositeTypeTest.cs" />
     <Compile Include="Types\DynamicCompositeTypeTest.cs" />
     <Compile Include="Types\IntegerTypeTest.cs" />
-    <Compile Include="_CassandraSetup.cs" />
+    <Compile Include="CassandraDatabaseSetup.cs" />
     <Compile Include="FluentSuperColumnFamilyTest.cs" />
     <Compile Include="FluentColumnFamilyTest.cs" />
     <Compile Include="FluentColumnTest.cs" />

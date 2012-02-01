@@ -93,6 +93,7 @@
     <Compile Include="Apache\Cassandra\TokenRange.cs" />
     <Compile Include="Apache\Cassandra\UnavailableException.cs" />
     <Compile Include="BaseCassandraColumnFamily.cs" />
+    <Compile Include="CassandraColumnFamilySchema.cs" />
     <Compile Include="CassandraColumnFamily`1.cs" />
     <Compile Include="CassandraContext.cs" />
     <Compile Include="CassandraException.cs" />
@@ -206,7 +207,6 @@
     <Compile Include="Operations\RemoveKey.cs" />
     <Compile Include="Operations\RemoveSuperColumn.cs" />
     <Compile Include="Operations\SimpleOperation.cs" />
-    <Compile Include="Operations\Truncate.cs" />
     <Compile Include="Operations\Void.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -273,7 +273,6 @@
     <Compile Include="Types\DecimalTypeConverter.cs" />
     <Compile Include="Types\DynamicCompositeType.cs" />
     <Compile Include="Types\DynamicCompositeTypeConverter.cs" />
-    <Compile Include="Types\CassandraTypeExtensions.cs" />
     <Compile Include="Types\IntegerTypeConverter.cs" />
     <Compile Include="Types\IntegerType.cs" />
     <Compile Include="Types\LexicalUUIDTypeConverter.cs" />

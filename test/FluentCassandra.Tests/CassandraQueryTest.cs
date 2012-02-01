@@ -13,15 +13,15 @@ namespace FluentCassandra
 		private const string _testKey = "Test1";
 		private const string _testName = "Test1";
 
-		[SetUp]
+		[TestFixtureSetUp]
 		public void TestInit()
 		{
-			var setup = new _CassandraSetup();
+			var setup = new CassandraDatabaseSetup();
 			_db = setup.DB;
 			_family = setup.Family;
 		}
 
-		[TearDown]
+		[TestFixtureTearDown]
 		public void TestCleanup()
 		{
 			_db.Dispose();
