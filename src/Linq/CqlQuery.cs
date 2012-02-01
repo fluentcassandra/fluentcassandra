@@ -47,7 +47,7 @@ namespace FluentCassandra.Linq
 		/// <returns></returns>
 		public IEnumerator<ICqlRow<CompareWith>> GetEnumerator()
 		{
-			var result = CqlQueryEvaluator<CompareWith>.GetEvaluator<CompareWith>(Expression);
+			var result = CqlQueryEvaluator<CompareWith>.GetEvaluator(Expression);
 			return Provider.Cql(result.Query).GetEnumerator();
 		}
 
@@ -107,7 +107,7 @@ namespace FluentCassandra.Linq
 		/// <returns></returns>
 		public override string ToString()
 		{
-			return CqlQueryEvaluator<CompareWith>.GetCql<CompareWith>(Expression);
+			return CqlQueryEvaluator<CompareWith>.GetCql(Expression);
 		}
 	}
 }

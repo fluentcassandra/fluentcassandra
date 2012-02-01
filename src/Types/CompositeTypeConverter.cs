@@ -67,7 +67,7 @@ namespace FluentCassandra.Types
 		public override object ConvertTo(List<CassandraType> value, Type destinationType)
 		{
 			if (destinationType == typeof(string))
-				return String.Join(":", value);
+				return String.Join(":", (IEnumerable<CassandraType>)value);
 
 			if (destinationType == typeof(byte[]))
 			{

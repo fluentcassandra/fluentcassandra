@@ -30,9 +30,6 @@ namespace FluentCassandra.Types
 
 		public override object ConvertTo(float value, Type destinationType)
 		{
-			if (!(value is float))
-				return null;
-
 			if (destinationType == typeof(byte[]))
 				return value.ToBytes();
 

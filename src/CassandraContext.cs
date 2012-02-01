@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq;
 using Apache.Cassandra;
 using FluentCassandra.Connections;
 using FluentCassandra.Linq;

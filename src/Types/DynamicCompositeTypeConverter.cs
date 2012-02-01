@@ -73,7 +73,7 @@ namespace FluentCassandra.Types
 				return null;
 
 			if (destinationType == typeof(string))
-				return String.Join(":", value);
+				return String.Join(":", (IEnumerable<CassandraType>)value);
 
 			if (destinationType == typeof(byte[]))
 			{

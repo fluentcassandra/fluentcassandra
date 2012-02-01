@@ -30,9 +30,6 @@ namespace FluentCassandra.Types
 
 		public override object ConvertTo(double value, Type destinationType)
 		{
-			if (!(value is double))
-				return null;
-
 			if (destinationType == typeof(byte[]))
 				return value.ToBytes();
 

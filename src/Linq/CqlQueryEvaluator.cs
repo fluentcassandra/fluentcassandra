@@ -50,8 +50,7 @@ namespace FluentCassandra.Linq
 
 		private string WhereCriteria { get; set; }
 
-		private void AddTable<CompareWith>(CassandraColumnFamily<CompareWith> provider)
-			where CompareWith : CassandraType
+		private void AddTable(CassandraColumnFamily<CompareWith> provider)
 		{
 			_columnFamily = provider.FamilyName;
 		}
@@ -119,15 +118,13 @@ namespace FluentCassandra.Linq
 
 		#region Expression Parsing
 
-		public static string GetCql<CompareWith>(Expression expression)
-			where CompareWith : CassandraType
+		public static string GetCql(Expression expression)
 		{
-			var eval = GetEvaluator<CompareWith>(expression);
+			var eval = GetEvaluator(expression);
 			return eval.Query;
 		}
 
-		public static CqlQueryEvaluator<CompareWith> GetEvaluator<CompareWith>(Expression expression)
-			where CompareWith : CassandraType
+		public static CqlQueryEvaluator<CompareWith> GetEvaluator(Expression expression)
 		{
 			var eval = new CqlQueryEvaluator<CompareWith>();
 			eval.Evaluate(expression);

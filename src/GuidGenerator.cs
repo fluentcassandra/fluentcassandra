@@ -2,7 +2,6 @@
 
 namespace FluentCassandra
 {
-	
 	public static class GuidGenerator
 	{
 		// number of bytes in guid
@@ -19,9 +18,9 @@ namespace FluentCassandra
 		public const int VersionByteShift = 4;
 
 		// indexes within the uuid array for certain boundaries
-		private static readonly byte TimestampByte = 0;
-		private static readonly byte GuidClockSequenceByte = 8;
-		private static readonly byte NodeByte = 10;
+		private const byte TimestampByte = 0;
+		private const byte GuidClockSequenceByte = 8;
+		private const byte NodeByte = 10;
 
 		// offset to move from 1/1/0001, which is 0-time for .NET, to gregorian 0-time of 10/15/1582
 		private static readonly DateTime GregorianCalendarStart = new DateTime(1582, 10, 15, 0, 0, 0, DateTimeKind.Utc);
@@ -29,12 +28,12 @@ namespace FluentCassandra
 		// random node that is 16 bytes
 		private static readonly byte[] RandomNode;
 
-		private static Random _random = new Random();
-
 		static GuidGenerator()
 		{
 			RandomNode = new byte[6];
-			_random.NextBytes(RandomNode);
+
+			var random = new Random();
+			random.NextBytes(RandomNode);
 		}
 
 		public static GuidVersion GetVersion(this Guid guid)

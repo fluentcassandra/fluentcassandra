@@ -92,7 +92,7 @@ namespace FluentCassandra
 				});
 				Debug.WriteLine(result, "keyspace setup");
 			}
-			catch (Exception exc)
+			catch
 			{
 				Debug.WriteLine(columnFamilyName + " already exists", "keyspace setup");
 			}
@@ -116,7 +116,7 @@ namespace FluentCassandra
 				});
 				Debug.WriteLine(result, "keyspace setup");
 			}
-			catch (Exception exc)
+			catch
 			{
 				Debug.WriteLine(columnFamilyName + " already exists", "keyspace setup");
 			}
