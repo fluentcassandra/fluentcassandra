@@ -8,7 +8,7 @@ namespace FluentCassandra.Linq
 {
 	public static class CqlQueryExtensions
 	{
-		public static CqlQuery<CompareWith> Select<CompareWith>(this IQueryable<ICqlRow<CompareWith>> source, params CompareWith[] columns) where CompareWith : CassandraType
+		public static CqlQuery Select(this IQueryable<ICqlRow> source, params CassandraType[] columns)
 		{
 			if (source == null)
 				throw new ArgumentNullException("source");
@@ -16,7 +16,7 @@ namespace FluentCassandra.Linq
 			if (columns == null)
 				throw new ArgumentNullException("columns");
 
-			return (CqlQuery<CompareWith>)source.Provider.CreateQuery<ICqlRow<CompareWith>>(Expression.Call(null, ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(new Type[] { typeof(CompareWith) }), new Expression[] { source.Expression, Expression.Constant(columns) }));
+			return (CqlQuery)source.Provider.CreateQuery<ICqlRow>(Expression.Call(null, ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(new Type[] { typeof(CassandraType) }), new Expression[] { source.Expression, Expression.Constant(columns) }));
 		}
 	}
 }

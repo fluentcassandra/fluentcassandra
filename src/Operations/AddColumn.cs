@@ -5,7 +5,7 @@ namespace FluentCassandra.Operations
 {
 	public class AddColumn : ColumnFamilyOperation<Void>
 	{
-		public BytesType Key { get; private set; }
+		public CassandraType Key { get; private set; }
 
 		public CassandraType SuperColumnName { get; private set; }
 
@@ -41,14 +41,14 @@ namespace FluentCassandra.Operations
 
 		#endregion
 
-		public AddColumn(BytesType key, CassandraType name, long value)
+		public AddColumn(CassandraType key, CassandraType name, long value)
 		{
 			Key = key;
 			ColumnName = name;
 			ColumnValue = value;
 		}
 
-		public AddColumn(BytesType key, CassandraType superColumnName, CassandraType name, long value)
+		public AddColumn(CassandraType key, CassandraType superColumnName, CassandraType name, long value)
 		{
 			Key = key;
 			SuperColumnName = superColumnName;

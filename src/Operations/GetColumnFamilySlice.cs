@@ -4,27 +4,26 @@ using FluentCassandra.Types;
 
 namespace FluentCassandra.Operations
 {
-	public class GetColumnFamilySlice<CompareWith> : ColumnFamilyOperation<IFluentColumnFamily<CompareWith>>
-		where CompareWith : CassandraType
+	public class GetColumnFamilySlice : ColumnFamilyOperation<FluentColumnFamily>
 	{
 		/*
 		 * list<ColumnOrSuperColumn> get_slice(keyspace, key, column_parent, predicate, consistency_level)
 		 */
 
-		public BytesType Key { get; private set; }
+		public CassandraType Key { get; private set; }
 
 		public CassandraSlicePredicate SlicePredicate { get; private set; }
 
-		public override IFluentColumnFamily<CompareWith> Execute()
+		public override FluentColumnFamily Execute()
 		{
-			var result = new FluentColumnFamily<CompareWith>(Key, ColumnFamily.FamilyName, ColumnFamily.Schema(), GetColumns(ColumnFamily));
+			var result = new FluentColumnFamily(Key, ColumnFamily.FamilyName, ColumnFamily.Schema(), GetColumns(ColumnFamily));
 			ColumnFamily.Context.Attach(result);
 			result.MutationTracker.Clear();
 
 			return result;
 		}
 
-		private IEnumerable<IFluentColumn<CompareWith>> GetColumns(BaseCassandraColumnFamily columnFamily)
+		private IEnumerable<FluentColumn> GetColumns(BaseCassandraColumnFamily columnFamily)
 		{
 			var parent = new CassandraColumnParent {
 				ColumnFamily = columnFamily.FamilyName
@@ -39,12 +38,12 @@ namespace FluentCassandra.Operations
 
 			foreach (var result in output)
 			{
-				var r = Helper.ConvertColumnToFluentColumn<CompareWith>(result.Column);
+				var r = Helper.ConvertColumnToFluentColumn(result.Column);
 				yield return r;
 			}
 		}
 
-		public GetColumnFamilySlice(BytesType key, CassandraSlicePredicate columnSlicePredicate)
+		public GetColumnFamilySlice(CassandraType key, CassandraSlicePredicate columnSlicePredicate)
 		{
 			Key = key;
 			SlicePredicate = columnSlicePredicate;

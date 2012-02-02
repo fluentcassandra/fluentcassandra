@@ -5,8 +5,7 @@ using FluentCassandra.Types;
 
 namespace FluentCassandra.Operations
 {
-	public class GetColumnFamilyIndexedSlices<CompareWith> : QueryableColumnFamilyOperation<IFluentColumnFamily<CompareWith>>
-		where CompareWith : CassandraType
+	public class GetColumnFamilyIndexedSlices : QueryableColumnFamilyOperation<FluentColumnFamily>
 	{
 		/*
 		 * list<KeySlice> get_range_slices(keyspace, column_parent, predicate, range, consistency_level)
@@ -14,12 +13,12 @@ namespace FluentCassandra.Operations
 
 		public CassandraIndexClause IndexClause { get; private set; }
 
-		public override IEnumerable<IFluentColumnFamily<CompareWith>> Execute()
+		public override IEnumerable<FluentColumnFamily> Execute()
 		{
 			return GetFamilies(ColumnFamily);
 		}
 
-		private IEnumerable<IFluentColumnFamily<CompareWith>> GetFamilies(BaseCassandraColumnFamily columnFamily)
+		private IEnumerable<FluentColumnFamily> GetFamilies(BaseCassandraColumnFamily columnFamily)
 		{
 			var parent = new CassandraColumnParent {
 				ColumnFamily = columnFamily.FamilyName
@@ -34,8 +33,8 @@ namespace FluentCassandra.Operations
 
 			foreach (var result in output)
 			{
-				var r = new FluentColumnFamily<CompareWith>(result.Key, columnFamily.FamilyName, columnFamily.Schema(), result.Columns.Select(col => {
-					return Helper.ConvertColumnToFluentColumn<CompareWith>(col.Column);
+				var r = new FluentColumnFamily(result.Key, columnFamily.FamilyName, columnFamily.Schema(), result.Columns.Select(col => {
+					return Helper.ConvertColumnToFluentColumn(col.Column);
 				}));
 				columnFamily.Context.Attach(r);
 				r.MutationTracker.Clear();

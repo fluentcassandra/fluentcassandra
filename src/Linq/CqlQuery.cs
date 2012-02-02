@@ -7,18 +7,17 @@ using FluentCassandra.Types;
 
 namespace FluentCassandra.Linq
 {
-	public class CqlQuery<CompareWith> : IQueryable, IQueryable<ICqlRow<CompareWith>>
-		where CompareWith : CassandraType
+	public class CqlQuery : IQueryable, IQueryable<ICqlRow>
 	{
 		private readonly Expression _expression;
-		private readonly CassandraColumnFamily<CompareWith> _provider;
+		private readonly CassandraColumnFamily _provider;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="CqlQuery&lt;T&gt;"/> class.
 		/// </summary>
 		/// <param name="expression">The expression.</param>
 		/// <param name="provider">The provider.</param>
-		public CqlQuery(Expression expression, CassandraColumnFamily<CompareWith> provider)
+		public CqlQuery(Expression expression, CassandraColumnFamily provider)
 		{
 			_expression = expression;
 			_provider = provider;
@@ -45,9 +44,9 @@ namespace FluentCassandra.Linq
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		public IEnumerator<ICqlRow<CompareWith>> GetEnumerator()
+		public IEnumerator<ICqlRow> GetEnumerator()
 		{
-			var result = CqlQueryEvaluator<CompareWith>.GetEvaluator(Expression);
+			var result = CqlQueryEvaluator.GetEvaluator(Expression);
 			return Provider.Cql(result.Query).GetEnumerator();
 		}
 
@@ -64,7 +63,7 @@ namespace FluentCassandra.Linq
 		/// </returns>
 		public virtual Type ElementType
 		{
-			get { return typeof(ICqlRow<CompareWith>); }
+			get { return typeof(ICqlRow); }
 		}
 
 		/// <summary>
@@ -86,7 +85,7 @@ namespace FluentCassandra.Linq
 		/// <returns>
 		/// The <see cref="T:System.Linq.IQueryProvider"/> that is associated with this data source.
 		/// </returns>
-		public CassandraColumnFamily<CompareWith> Provider
+		public CassandraColumnFamily Provider
 		{
 			get { return _provider; }
 		}
@@ -107,7 +106,7 @@ namespace FluentCassandra.Linq
 		/// <returns></returns>
 		public override string ToString()
 		{
-			return CqlQueryEvaluator<CompareWith>.GetCql(Expression);
+			return CqlQueryEvaluator.GetCql(Expression);
 		}
 	}
 }

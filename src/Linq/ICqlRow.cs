@@ -6,12 +6,11 @@ using System.Collections.Generic;
 
 namespace FluentCassandra.Linq
 {
-	public interface ICqlRow<CompareWith> : IDynamicMetaObjectProvider
-		where CompareWith : CassandraType
+	public interface ICqlRow : IDynamicMetaObjectProvider
 	{
 		CassandraType Key { get; set; }
-		CassandraType this[CompareWith columnName] { get; }
+		CassandraType this[CassandraType columnName] { get; }
 
-		IList<IFluentColumn<CompareWith>> Columns { get; }
+		IList<FluentColumn> Columns { get; }
 	}
 }

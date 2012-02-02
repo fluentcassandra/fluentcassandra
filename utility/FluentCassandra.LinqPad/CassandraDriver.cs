@@ -135,7 +135,7 @@ namespace FluentCassandra.LinqPad
 		{
 			while (t != null)
 			{
-				if (t.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(ICqlRow<>))) return true;
+				if (t.GetInterfaces().Any(i => i == typeof(ICqlRow))) return true;
 				t = t.BaseType;
 			}
 

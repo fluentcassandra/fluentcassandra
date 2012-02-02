@@ -10,7 +10,7 @@ namespace FluentCassandra.Operations
 		 * remove(keyspace, key, column_path, timestamp, consistency_level)
 		 */
 
-		public BytesType Key { get; private set; }
+		public CassandraType Key { get; private set; }
 
 		public override Void Execute()
 		{
@@ -28,7 +28,7 @@ namespace FluentCassandra.Operations
 			return new Void();
 		}
 
-		public RemoveKey(BytesType key)
+		public RemoveKey(CassandraType key)
 		{
 			Key = key;
 		}

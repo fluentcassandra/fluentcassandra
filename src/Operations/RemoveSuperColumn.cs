@@ -10,7 +10,7 @@ namespace FluentCassandra.Operations
 		 * remove(keyspace, key, column_path, timestamp, consistency_level)
 		 */
 
-		public BytesType Key { get; private set; }
+		public CassandraType Key { get; private set; }
 
 		public CassandraType SuperColumnName { get; private set; }
 
@@ -33,7 +33,7 @@ namespace FluentCassandra.Operations
 			return new Void();
 		}
 
-		public RemoveSuperColumn(BytesType key, CassandraType superColumnName)
+		public RemoveSuperColumn(CassandraType key, CassandraType superColumnName)
 		{
 			Key = key;
 			SuperColumnName = superColumnName;

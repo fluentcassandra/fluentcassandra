@@ -10,8 +10,7 @@ using System.Diagnostics;
 
 namespace FluentCassandra.Operations
 {
-	public class ExecuteCqlQuery<CompareWith> : ColumnFamilyOperation<IEnumerable<ICqlRow<CompareWith>>>
-		where CompareWith : CassandraType
+	public class ExecuteCqlQuery : ColumnFamilyOperation<IEnumerable<ICqlRow>>
 	{
 		private static readonly Regex ColumnFamilyNameExpression = new Regex(@"FROM\s+(?<name>\w+)");
 
@@ -24,20 +23,27 @@ namespace FluentCassandra.Operations
 			//if (ColumnFamily != null && ColumnFamily.FamilyName != null)
 			//    return ColumnFamily.Schema();
 
+			var keyName = CassandraColumnFamilySchema.KeyName.ToBigEndian();
 			var resultSchema = result.Schema;
+			var colNameType = CassandraType.GetCassandraType(resultSchema.Default_name_type);
+
 			var schema = new CassandraColumnFamilySchema();
 			schema.FamilyName = familyName;
+			schema.ColumnNameType = colNameType;
 
 			foreach (var s in resultSchema.Value_types)
 			{
 				var key = s.Key;
-				if (key.Length == 3 && key[0] == 75 && key[1] == 69 && key[2] == 89)
+				if (key.Length == 3 && key[0] == keyName[0] && key[1] == keyName[1] && key[2] == keyName[2])
 				{
-					schema.Key = CassandraType.GetCassandraType(s.Value);
+					schema.KeyType = CassandraType.GetCassandraType(s.Value);
 					continue;
 				}
 
-				schema.Columns.Add(CassandraType.GetTypeFromDatabaseValue(s.Key, resultSchema.Default_name_type), CassandraType.GetCassandraType(s.Value));
+				schema.Columns.Add(new CassandraColumnSchema {
+					Name = CassandraType.GetTypeFromDatabaseValue(s.Key, colNameType),
+					ValueType = CassandraType.GetCassandraType(s.Value)
+				});
 			}
 
 			return schema;
@@ -56,7 +62,7 @@ namespace FluentCassandra.Operations
 			return "[Unknown]";
 		}
 
-		public override IEnumerable<ICqlRow<CompareWith>> Execute()
+		public override IEnumerable<ICqlRow> Execute()
 		{
 			Debug.Write(CqlQuery.ToString(), "query");
 			byte[] query = CqlQuery;
@@ -72,20 +78,20 @@ namespace FluentCassandra.Operations
 			return GetRows(result);
 		}
 
-		private IEnumerable<ICqlRow<CompareWith>> GetRows(Apache.Cassandra.CqlResult result)
+		private IEnumerable<ICqlRow> GetRows(Apache.Cassandra.CqlResult result)
 		{
 			var familyName = TryGetFamilyName();
 			var schema = TryGetSchema(result, familyName);
 
 			foreach (var row in result.Rows)
-				yield return new FluentColumnFamily<CompareWith>(
+				yield return new FluentColumnFamily(
 					CassandraType.GetTypeFromDatabaseValue<BytesType>(row.Key),
 					familyName, 
 					schema,
 					GetColumns(row));
 		}
 
-		private IEnumerable<IFluentColumn<CompareWith>> GetColumns(Apache.Cassandra.CqlRow row)
+		private IEnumerable<FluentColumn> GetColumns(Apache.Cassandra.CqlRow row)
 		{
 			foreach (var col in row.Columns)
 			{
@@ -93,7 +99,7 @@ namespace FluentCassandra.Operations
 				if (col.Timestamp == -1)
 					continue;
 
-				yield return Helper.ConvertColumnToFluentColumn<CompareWith>(col);
+				yield return Helper.ConvertColumnToFluentColumn(col);
 			}
 		}
 

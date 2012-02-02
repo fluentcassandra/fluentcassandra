@@ -59,10 +59,9 @@ namespace FluentCassandra
 		/// </summary>
 		/// <typeparam name="CompareWith"></typeparam>
 		/// <returns></returns>
-		public CassandraColumnFamily<CompareWith> GetColumnFamily<CompareWith>(string columnFamily)
-			where CompareWith : CassandraType
+		public CassandraColumnFamily GetColumnFamily(string columnFamily)
 		{
-			return new CassandraColumnFamily<CompareWith>(this, columnFamily);
+			return new CassandraColumnFamily(this, columnFamily);
 		}
 
 		/// <summary>
@@ -72,11 +71,11 @@ namespace FluentCassandra
 		/// <typeparam name="CompareSubcolumnWith"></typeparam>
 		/// <param name="columnFamily"></param>
 		/// <returns></returns>
-		public CassandraSuperColumnFamily<CompareWith, CompareSubcolumnWith> GetColumnFamily<CompareWith, CompareSubcolumnWith>(string columnFamily)
+		public CassandraSuperColumnFamily GetColumnFamily<CompareWith, CompareSubcolumnWith>(string columnFamily)
 			where CompareWith : CassandraType
 			where CompareSubcolumnWith : CassandraType
 		{
-			return new CassandraSuperColumnFamily<CompareWith, CompareSubcolumnWith>(this, columnFamily);
+			return new CassandraSuperColumnFamily(this, columnFamily);
 		}
 
 		/// <summary>
@@ -239,9 +238,9 @@ namespace FluentCassandra
 		/// 
 		/// </summary>
 		/// <param name="cqlQuery"></param>
-		public IEnumerable<ICqlRow<BytesType>> ExecuteQuery(UTF8Type cqlQuery)
+		public IEnumerable<ICqlRow> ExecuteQuery(UTF8Type cqlQuery)
 		{
-			var op = new ExecuteCqlQuery<BytesType>(cqlQuery, ConnectionBuilder.CompressCqlQueries);
+			var op = new ExecuteCqlQuery(cqlQuery, ConnectionBuilder.CompressCqlQueries);
 			return ExecuteOperation(op);
 		}
 

@@ -8,8 +8,7 @@ using FluentCassandra.Types;
 namespace FluentCassandra.Linq
 {
 	/// <see href="https://github.com/apache/cassandra/blob/trunk/doc/cql/CQL.textile"/>
-	internal class CqlQueryEvaluator<CompareWith>
-		where CompareWith : CassandraType
+	internal class CqlQueryEvaluator
 	{
 		private string _columnFamily;
 
@@ -50,7 +49,7 @@ namespace FluentCassandra.Linq
 
 		private string WhereCriteria { get; set; }
 
-		private void AddTable(CassandraColumnFamily<CompareWith> provider)
+		private void AddTable(CassandraColumnFamily provider)
 		{
 			_columnFamily = provider.FamilyName;
 		}
@@ -124,9 +123,9 @@ namespace FluentCassandra.Linq
 			return eval.Query;
 		}
 
-		public static CqlQueryEvaluator<CompareWith> GetEvaluator(Expression expression)
+		public static CqlQueryEvaluator GetEvaluator(Expression expression)
 		{
-			var eval = new CqlQueryEvaluator<CompareWith>();
+			var eval = new CqlQueryEvaluator();
 			eval.Evaluate(expression);
 
 			return eval;
@@ -157,7 +156,7 @@ namespace FluentCassandra.Linq
 					break;
 
 				case ExpressionType.Constant:
-					AddTable(((ConstantExpression)exp).Value as CassandraColumnFamily<CompareWith>);
+					AddTable(((ConstantExpression)exp).Value as CassandraColumnFamily);
 					break;
 			}
 		}
@@ -193,12 +192,12 @@ namespace FluentCassandra.Linq
 				throw new NotSupportedException("Method call to " + exp.Method.Name + " is not supported.");
 		}
 
-		private IEnumerable<CompareWith> VisitSelectExpression(Expression exp)
+		private IEnumerable<CassandraType> VisitSelectExpression(Expression exp)
 		{
 			switch (exp.NodeType)
 			{
 				case ExpressionType.Parameter:
-					return new CompareWith[0];
+					return new CassandraType[0];
 
 				case ExpressionType.Constant:
 					return VisitSelectColumnExpression((ConstantExpression)exp);
@@ -208,9 +207,9 @@ namespace FluentCassandra.Linq
 			}
 		}
 
-		private IEnumerable<CompareWith> VisitSelectColumnExpression(ConstantExpression exp)
+		private IEnumerable<CassandraType> VisitSelectColumnExpression(ConstantExpression exp)
 		{
-			return (IEnumerable<CompareWith>)exp.Value;
+			return (IEnumerable<CassandraType>)exp.Value;
 		}
 
 		private string VisitWhereExpression(Expression exp)

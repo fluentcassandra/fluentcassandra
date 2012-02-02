@@ -7,16 +7,20 @@ namespace FluentCassandra
 	/// 
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
-	public class FluentColumn<CompareWith> : IFluentColumn<CompareWith>
-		where CompareWith : CassandraType
+	public class FluentColumn : IFluentBaseColumn
 	{
-		private BytesType _value;
+		private CassandraType _name;
+		private CassandraType _value;
+
 		private FluentColumnParent _parent;
 		private IFluentBaseColumnFamily _family;
+		private CassandraColumnSchema _schema;
 		private int? _ttl;
 
-		public FluentColumn()
+		public FluentColumn(CassandraColumnSchema schema = null)
 		{
+			SetSchema(schema);
+
 			ColumnTimestamp = DateTimeOffset.UtcNow;
 			ColumnSecondsUntilDeleted = null;
 			ColumnTimeUntilDeleted = null;
@@ -25,14 +29,25 @@ namespace FluentCassandra
 		/// <summary>
 		/// The column name.
 		/// </summary>
-		public CompareWith ColumnName { get; set; }
+		public CassandraType ColumnName
+		{
+			get { return _name; }
+			set
+			{
+				_name = (CassandraType)value.ToType(GetSchema().NameType);
+				ColumnTimestamp = DateTimeOffset.UtcNow;
+			}
+		}
 
-		public BytesType ColumnValue
+		/// <summary>
+		/// 
+		/// </summary>
+		public CassandraType ColumnValue
 		{
 			get { return _value; }
 			set
 			{
-				_value = value;
+				_value = (CassandraType)value.ToType(GetSchema().ValueType);
 				ColumnTimestamp = DateTimeOffset.UtcNow;
 			}
 		}
@@ -54,7 +69,7 @@ namespace FluentCassandra
 			get
 			{
 				if (_family == null && _parent != null)
-					_family = _parent.ColumnFamily as IFluentColumnFamily<CompareWith>;
+					_family = _parent.ColumnFamily;
 
 				return _family;
 			}
@@ -105,12 +120,35 @@ namespace FluentCassandra
 		}
 
 		/// <summary>
+		/// 
+		/// </summary>
+		public CassandraColumnSchema GetSchema()
+		{
+			if (_schema == null)
+				_schema = new CassandraColumnSchema { Name = ColumnName, ValueType = ColumnValue.GetType() };
+
+			return _schema;
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="schema"></param>
+		public void SetSchema(CassandraColumnSchema schema)
+		{
+			if (schema == null)
+				schema = new CassandraColumnSchema { Name = ColumnName, ValueType = ColumnValue.GetType() };
+
+			_schema = schema;
+		}
+
+		/// <summary>
 		/// Gets the path.
 		/// </summary>
 		/// <returns></returns>
 		public FluentColumnPath GetPath()
 		{
-			return new FluentColumnPath(_parent, (IFluentColumn<CassandraType>)this);
+			return new FluentColumnPath(_parent, this);
 		}
 
 		/// <summary>
@@ -122,20 +160,22 @@ namespace FluentCassandra
 			return _parent;
 		}
 
-		#region IFluentBaseColumn Members
-
-		CassandraType IFluentBaseColumn.ColumnName { get { return ColumnName; } }
-
-		void IFluentBaseColumn.SetParent(FluentColumnParent parent)
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="parent"></param>
+		public void SetParent(FluentColumnParent parent)
 		{
 			UpdateParent(parent);
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="parent"></param>
 		private void UpdateParent(FluentColumnParent parent)
 		{
 			_parent = parent;
 		}
-
-		#endregion
 	}
 }

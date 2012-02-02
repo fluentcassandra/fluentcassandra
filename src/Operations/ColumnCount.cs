@@ -1,5 +1,4 @@
 ﻿using System;
-using Apache.Cassandra;
 using FluentCassandra.Types;
 
 namespace FluentCassandra.Operations
@@ -10,7 +9,7 @@ namespace FluentCassandra.Operations
 		 * i32 get_count(keyspace, key, column_parent, consistency_level) 
 		 */
 
-		public BytesType Key { get; private set; }
+		public CassandraType Key { get; private set; }
 
 		public CassandraType SuperColumnName { get; private set; }
 
@@ -39,13 +38,13 @@ namespace FluentCassandra.Operations
 
 		#endregion
 
-		public ColumnCount(BytesType key, CassandraSlicePredicate columnSlicePredicate)
+		public ColumnCount(CassandraType key, CassandraSlicePredicate columnSlicePredicate)
 		{
 			Key = key;
 			SlicePredicate = columnSlicePredicate;
 		}
 
-		public ColumnCount(BytesType key, CassandraType superColumnName, CassandraSlicePredicate columnSlicePredicate)
+		public ColumnCount(CassandraType key, CassandraType superColumnName, CassandraSlicePredicate columnSlicePredicate)
 		{
 			Key = key;
 			SuperColumnName = superColumnName;

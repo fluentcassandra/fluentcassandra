@@ -8,13 +8,12 @@ using FluentCassandra.Linq;
 
 namespace FluentCassandra
 {
-	public partial class CassandraColumnFamily<CompareWith> : IQueryable, IQueryable<ICqlRow<CompareWith>>, IQueryProvider
-		where CompareWith : CassandraType
+	public partial class CassandraColumnFamily : IQueryable, IQueryable<ICqlRow>, IQueryProvider
 	{
-		public CqlQuery<CompareWith> ToQuery()
+		public CqlQuery ToQuery()
 		{
 			var queryable = (IQueryable)this;
-			return new CqlQuery<CompareWith>(queryable.Expression, this);
+			return new CqlQuery(queryable.Expression, this);
 		}
 
 		#region IEnumerable Members
@@ -32,13 +31,13 @@ namespace FluentCassandra
 
 		#endregion
 
-		#region IEnumerable<ICqlRow<CompareWith>> Members
+		#region IEnumerable<ICqlRow> Members
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		IEnumerator<ICqlRow<CompareWith>> IEnumerable<ICqlRow<CompareWith>>.GetEnumerator()
+		IEnumerator<ICqlRow> IEnumerable<ICqlRow>.GetEnumerator()
 		{
 			return ToQuery().GetEnumerator();
 		}
@@ -98,10 +97,10 @@ namespace FluentCassandra
 			if (expression == null)
 				throw new ArgumentNullException("expression");
 
-			if (typeof(ICqlRow<CompareWith>) != typeof(TElement))
-				throw new ApplicationException("The resulting column type must be " + typeof(CompareWith).ToString());
+			if (typeof(ICqlRow) != typeof(TElement))
+				throw new ApplicationException("The resulting column type must be " + typeof(CassandraType));
 
-			return (IQueryable<TElement>)new CqlQuery<CompareWith>(expression, this);
+			return (IQueryable<TElement>)new CqlQuery(expression, this);
 		}
 
 		/// <summary>
@@ -116,7 +115,7 @@ namespace FluentCassandra
 			if (expression == null)
 				throw new ArgumentNullException("expression");
 
-			return new CqlQuery<CompareWith>(expression, this);
+			return new CqlQuery(expression, this);
 		}
 
 		/// <summary>
@@ -130,7 +129,7 @@ namespace FluentCassandra
 			if (!typeof(TResult).IsAssignableFrom(typeof(IFluentBaseColumnFamily)))
 				throw new CassandraException("'TElement' must inherit from IFluentBaseColumnFamily");
 
-			return (TResult)new CqlQuery<CompareWith>(expression, this).FirstOrDefault();
+			return (TResult)new CqlQuery(expression, this).FirstOrDefault();
 		}
 
 		/// <summary>
@@ -142,7 +141,7 @@ namespace FluentCassandra
 		/// </returns>
 		object IQueryProvider.Execute(Expression expression)
 		{
-			return new CqlQuery<CompareWith>(expression, this).GetEnumerator();
+			return new CqlQuery(expression, this).GetEnumerator();
 		}
 
 		#endregion

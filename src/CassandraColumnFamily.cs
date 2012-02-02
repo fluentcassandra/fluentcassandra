@@ -3,20 +3,17 @@ using FluentCassandra.Types;
 
 namespace FluentCassandra
 {
-	public partial class CassandraColumnFamily<CompareWith> : BaseCassandraColumnFamily
-		where CompareWith : CassandraType
+	public partial class CassandraColumnFamily : BaseCassandraColumnFamily
 	{
 		public CassandraColumnFamily(CassandraContext context, string columnFamily)
 			: base(context, columnFamily) { }
 
-		public Type CompareWithType { get { return typeof(CompareWith); } }
-
-		public FluentColumnFamily<CompareWith> CreateRecord(CassandraType key)
+		public FluentColumnFamily CreateRecord(CassandraType key)
 		{
 			if (key.GetValue<byte[]>().Length == 0)
 				throw new ArgumentException("'key' is not allowed to be zero length.", "key");
 
-			return new FluentColumnFamily<CompareWith>(key, FamilyName);
+			return new FluentColumnFamily(key, FamilyName);
 		}
 	}
 }

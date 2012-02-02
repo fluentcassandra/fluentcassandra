@@ -5,9 +5,7 @@ using FluentCassandra.Types;
 
 namespace FluentCassandra.Operations
 {
-	public class MultiGetSuperColumnFamilySlice<CompareWith, CompareSubcolumnWith> : QueryableColumnFamilyOperation<IFluentSuperColumnFamily<CompareWith, CompareSubcolumnWith>>
-		where CompareWith : CassandraType
-		where CompareSubcolumnWith : CassandraType
+	public class MultiGetSuperColumnFamilySlice : QueryableColumnFamilyOperation<FluentSuperColumnFamily>
 	{
 		/*
 		 * map<string,list<ColumnOrSuperColumn>> multiget_slice(keyspace, keys, column_parent, predicate, consistency_level)
@@ -15,7 +13,7 @@ namespace FluentCassandra.Operations
 
 		public List<BytesType> Keys { get; private set; }
 
-		public override IEnumerable<IFluentSuperColumnFamily<CompareWith, CompareSubcolumnWith>> Execute()
+		public override IEnumerable<FluentSuperColumnFamily> Execute()
 		{
 			var parent = new CassandraColumnParent {
 				ColumnFamily = ColumnFamily.FamilyName
@@ -33,7 +31,7 @@ namespace FluentCassandra.Operations
 				var key = CassandraType.GetTypeFromDatabaseValue<BytesType>(result.Key);
 
 				var superColumns = result.Value.Select(col => {
-					var superCol = Helper.ConvertSuperColumnToFluentSuperColumn<CompareWith, CompareSubcolumnWith>(col.Super_column);
+					var superCol = Helper.ConvertSuperColumnToFluentSuperColumn(col.Super_column);
 					ColumnFamily.Context.Attach(superCol);
 					superCol.MutationTracker.Clear();
 
@@ -42,7 +40,7 @@ namespace FluentCassandra.Operations
 
 				var familyName = ColumnFamily.FamilyName;
 				var schema = ColumnFamily.Schema();
-				var r = new FluentSuperColumnFamily<CompareWith, CompareSubcolumnWith>(key, familyName, schema, superColumns);
+				var r = new FluentSuperColumnFamily(key, familyName, schema, superColumns);
 				ColumnFamily.Context.Attach(r);
 				r.MutationTracker.Clear();
 

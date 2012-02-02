@@ -4,19 +4,17 @@ using Apache.Cassandra;
 
 namespace FluentCassandra.Operations
 {
-	public class GetSuperColumn<CompareWith, CompareSubcolumnWith> : ColumnFamilyOperation<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>>
-		where CompareWith : CassandraType
-		where CompareSubcolumnWith : CassandraType
+	public class GetSuperColumn : ColumnFamilyOperation<FluentSuperColumn>
 	{
 		/*
 		 * ColumnOrSuperColumn get(keyspace, key, column_path, consistency_level)
 		 */
 
-		public BytesType Key { get; private set; }
+		public CassandraType Key { get; private set; }
 
 		public CassandraType SuperColumnName { get; private set; }
 
-		public override IFluentSuperColumn<CompareWith, CompareSubcolumnWith> Execute()
+		public override FluentSuperColumn Execute()
 		{
 			var path = new CassandraColumnPath {
 				ColumnFamily = ColumnFamily.FamilyName
@@ -31,10 +29,10 @@ namespace FluentCassandra.Operations
 				Session.ReadConsistency
 			);
 
-			return (IFluentSuperColumn<CompareWith, CompareSubcolumnWith>)Helper.ConvertToFluentBaseColumn<CompareWith, CompareSubcolumnWith>(output);
+			return (FluentSuperColumn)Helper.ConvertToFluentBaseColumn(output);
 		}
 
-		public GetSuperColumn(BytesType key, CassandraType superColumnName)
+		public GetSuperColumn(CassandraType key, CassandraType superColumnName)
 		{
 			Key = key;
 			SuperColumnName = superColumnName;

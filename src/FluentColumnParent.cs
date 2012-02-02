@@ -10,7 +10,7 @@ namespace FluentCassandra
 		/// <param name="columnFamily"></param>
 		/// <param name="superColumn"></param>
 		/// <param name="column"></param>
-		public FluentColumnParent(IFluentBaseColumnFamily columnFamily, IFluentSuperColumn superColumn)
+		public FluentColumnParent(IFluentBaseColumnFamily columnFamily, FluentSuperColumn superColumn)
 		{
 			ColumnFamily = columnFamily;
 			SuperColumn = superColumn;
@@ -24,6 +24,6 @@ namespace FluentCassandra
 		/// <summary>
 		/// 
 		/// </summary>
-		public IFluentSuperColumn SuperColumn { get; set; }
+		public FluentSuperColumn SuperColumn { get; set; }
 	}
 }

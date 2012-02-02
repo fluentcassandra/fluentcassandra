@@ -5,24 +5,24 @@ using FluentCassandra.Types;
 
 namespace FluentCassandra
 {
-	public class FluentSuperColumnFamily<CompareWith, CompareSubcolumnWith> : FluentRecord<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>>, IFluentSuperColumnFamily<CompareWith, CompareSubcolumnWith>
-		where CompareWith : CassandraType
-		where CompareSubcolumnWith : CassandraType
+	public class FluentSuperColumnFamily : FluentRecord<FluentSuperColumn>, IFluentBaseColumnFamily
 	{
-		private FluentColumnList<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>> _columns;
+		private FluentColumnList<FluentSuperColumn> _columns;
+		private CassandraColumnFamilySchema _schema;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="key"></param>
 		/// <param name="columnFamily"></param>
-		public FluentSuperColumnFamily(BytesType key, string columnFamily, CassandraColumnFamilySchema schema = null)
+		public FluentSuperColumnFamily(CassandraType key, string columnFamily, CassandraColumnFamilySchema schema = null)
 		{
-			SchemaInUse = schema ?? new CassandraColumnFamilySchema { Key = typeof(BytesType), FamilyName = columnFamily, Columns = new Dictionary<CassandraType, Type>() };
-			Key = (CassandraType)key.ToType(SchemaInUse.Key);
+			SetSchema(schema);
+
+			Key = (CassandraType)key.ToType(GetSchema().KeyType);
 			FamilyName = columnFamily;
 
-			_columns = new FluentColumnList<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>>(GetSelf());
+			_columns = new FluentColumnList<FluentSuperColumn>(GetSelf());
 
 		}
 
@@ -32,13 +32,14 @@ namespace FluentCassandra
 		/// <param name="key"></param>
 		/// <param name="columnFamily"></param>
 		/// <param name="columns"></param>
-		internal FluentSuperColumnFamily(BytesType key, string columnFamily, CassandraColumnFamilySchema schema, IEnumerable<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>> columns)
+		internal FluentSuperColumnFamily(CassandraType key, string columnFamily, CassandraColumnFamilySchema schema, IEnumerable<FluentSuperColumn> columns)
 		{
-			SchemaInUse = schema;
-			Key = (CassandraType)key.ToType(SchemaInUse.Key);
+			SetSchema(schema);
+
+			Key = (CassandraType)key.ToType(GetSchema().KeyType);
 			FamilyName = columnFamily;
 
-			_columns = new FluentColumnList<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>>(GetSelf(), columns);
+			_columns = new FluentColumnList<FluentSuperColumn>(GetSelf(), columns);
 		}
 
 		/// <summary>
@@ -60,31 +61,52 @@ namespace FluentCassandra
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		public IFluentSuperColumn<CompareWith, CompareSubcolumnWith> CreateSuperColumn()
+		public FluentSuperColumn CreateSuperColumn()
 		{
-			return new FluentSuperColumn<CompareWith, CompareSubcolumnWith>();
+			return new FluentSuperColumn();
 		}
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		public IFluentSuperColumn<CompareWith, CompareSubcolumnWith> CreateSuperColumn(CompareWith name)
+		public FluentSuperColumn CreateSuperColumn(CassandraType name)
 		{
-			return new FluentSuperColumn<CompareWith, CompareSubcolumnWith> {
-				ColumnName = name
+			return new FluentSuperColumn {
+				ColumnName = (CassandraType)name.ToType(GetSchema().ColumnNameType)
 			};
 		}
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public override IList<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>> Columns
+		public override IList<FluentSuperColumn> Columns
 		{
 			get { return _columns; }
 		}
 
-		public CassandraColumnFamilySchema SchemaInUse { get; set; }
+		/// <summary>
+		/// 
+		/// </summary>
+		public CassandraColumnFamilySchema GetSchema()
+		{
+			if (_schema == null)
+				_schema = new CassandraColumnFamilySchema { FamilyName = FamilyName };
+
+			return _schema;
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="schema"></param>
+		public void SetSchema(CassandraColumnFamilySchema schema)
+		{
+			if (schema == null)
+				schema = new CassandraColumnFamilySchema { FamilyName = FamilyName };
+
+			_schema = schema;
+		}
 
 		/// <summary>
 		/// Gets the path.
@@ -113,7 +135,7 @@ namespace FluentCassandra
 		public override bool TryGetColumn(object name, out object result)
 		{
 			var col = Columns.FirstOrDefault(c => c.ColumnName == name);
-			result = (col == null) ? CreateSuperColumn(CassandraType.GetTypeFromObject<CompareWith>(name)) : col;
+			result = (col == null) ? CreateSuperColumn(CassandraType.GetTypeFromObject(name, GetSchema().ColumnNameType)) : col;
 
 			return true;
 		}
@@ -126,14 +148,14 @@ namespace FluentCassandra
 		/// <returns></returns>
 		public override bool TrySetColumn(object name, object value)
 		{
-			if (!(value is FluentSuperColumn<CompareWith, CompareSubcolumnWith>))
-				throw new ArgumentException("Value must be of type " + typeof(FluentSuperColumn<CompareWith, CompareSubcolumnWith>) + ", because this column family is of type Super.", "value");
+			if (!(value is FluentSuperColumn))
+				throw new ArgumentException("Value must be of type " + typeof(FluentSuperColumn) + ", because this column family is of type Super.", "value");
 
 			var col = Columns.FirstOrDefault(c => c.ColumnName == name);
 			var mutationType = col == null ? MutationType.Added : MutationType.Changed;
 
-			col = (FluentSuperColumn<CompareWith, CompareSubcolumnWith>)value;
-			((FluentSuperColumn<CompareWith, CompareSubcolumnWith>)col).ColumnName = CassandraType.GetTypeFromObject<CompareWith>(name);
+			col = (FluentSuperColumn)value;
+			col.ColumnName = CassandraType.GetTypeFromObject(name, GetSchema().ColumnNameType);
 
 			int index = Columns.IndexOf(col);
 

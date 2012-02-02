@@ -113,14 +113,12 @@ namespace FluentCassandra.Operations
 			return Convert.ToInt64((dt - UnixStart).TotalMilliseconds);
 		}
 
-		public static IFluentBaseColumn<CompareWith> ConvertToFluentBaseColumn<CompareWith, CompareSubcolumnWith>(ColumnOrSuperColumn col)
-			where CompareWith : CassandraType
-			where CompareSubcolumnWith : CassandraType
+		public static IFluentBaseColumn ConvertToFluentBaseColumn(ColumnOrSuperColumn col)
 		{
 			if (col.Super_column != null)
-				return ConvertSuperColumnToFluentSuperColumn<CompareWith, CompareSubcolumnWith>(col.Super_column);
+				return ConvertSuperColumnToFluentSuperColumn(col.Super_column);
 			else if (col.Column != null)
-				return ConvertColumnToFluentColumn<CompareWith>(col.Column);
+				return ConvertColumnToFluentColumn(col.Column);
 			else if (col.Counter_super_column != null)
 				throw new NotSupportedException("Reading CounterSuperColumns isn't supported yet.");
 			else if (col.Counter_column != null)
@@ -129,12 +127,10 @@ namespace FluentCassandra.Operations
 				return null;
 		}
 
-		public static FluentColumn<CompareWith> ConvertColumnToFluentColumn<CompareWith>(Column col)
-			where CompareWith : CassandraType
+		public static FluentColumn ConvertColumnToFluentColumn(Column col)
 		{
-
-			var fcol = new FluentColumn<CompareWith> {
-				ColumnName = CassandraType.GetTypeFromDatabaseValue<CompareWith>(col.Name),
+			var fcol = new FluentColumn {
+				ColumnName = CassandraType.GetTypeFromDatabaseValue<BytesType>(col.Name),
 				ColumnValue = CassandraType.GetTypeFromDatabaseValue<BytesType>(col.Value),
 				ColumnTimestamp = UnixStart.AddMilliseconds(col.Timestamp),
 			};
@@ -145,16 +141,14 @@ namespace FluentCassandra.Operations
 			return fcol;
 		}
 
-		public static FluentSuperColumn<CompareWith, CompareSubcolumnWith> ConvertSuperColumnToFluentSuperColumn<CompareWith, CompareSubcolumnWith>(SuperColumn col)
-			where CompareWith : CassandraType
-			where CompareSubcolumnWith : CassandraType
+		public static FluentSuperColumn ConvertSuperColumnToFluentSuperColumn(SuperColumn col)
 		{
-			var superCol = new FluentSuperColumn<CompareWith, CompareSubcolumnWith> {
-				ColumnName = CassandraType.GetTypeFromDatabaseValue<CompareWith>(col.Name)
+			var superCol = new FluentSuperColumn {
+				ColumnName = CassandraType.GetTypeFromDatabaseValue<BytesType>(col.Name)
 			};
 
 			foreach (var xcol in col.Columns)
-				superCol.Columns.Add(ConvertColumnToFluentColumn<CompareSubcolumnWith>(xcol));
+				superCol.Columns.Add(ConvertColumnToFluentColumn(xcol));
 
 			return superCol;
 		}
@@ -207,7 +201,7 @@ namespace FluentCassandra.Operations
 			}
 		}
 
-		public static Column CreateColumn(IFluentColumn column)
+		public static Column CreateColumn(FluentColumn column)
 		{
 			return new Column {
 				Name = column.ColumnName.TryToBigEndian(),
@@ -218,21 +212,21 @@ namespace FluentCassandra.Operations
 
 		public static ColumnOrSuperColumn CreateColumnOrSuperColumn(IFluentBaseColumn column)
 		{
-			if (column is IFluentColumn)
+			if (column is FluentColumn)
 			{
 				return new ColumnOrSuperColumn {
-					Column = CreateColumn((IFluentColumn)column)
+					Column = CreateColumn((FluentColumn)column)
 				};
 			}
-			else if (column is IFluentSuperColumn)
+			else if (column is FluentSuperColumn)
 			{
-				var colY = (IFluentSuperColumn)column;
+				var colY = (FluentSuperColumn)column;
 				var superColumn = new SuperColumn {
 					Name = colY.ColumnName.TryToBigEndian(),
 					Columns = new List<Column>()
 				};
 
-				foreach (var col in colY.Columns.OfType<IFluentColumn>())
+				foreach (var col in colY.Columns.OfType<FluentColumn>())
 					superColumn.Columns.Add(CreateColumn(col));
 
 				return new ColumnOrSuperColumn {

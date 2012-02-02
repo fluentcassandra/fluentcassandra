@@ -35,7 +35,7 @@ namespace FluentCassandra.Linq
 				var objUser = _users[i];
 				dynamic dbUser = actual[i];
 
-				Assert.AreEqual(objUser.Id, dbUser.Key);
+				Assert.AreEqual(objUser.Id, dbUser.KeyType);
 				Assert.AreEqual(objUser.Name, (string)dbUser.Name);
 				Assert.AreEqual(objUser.Email, (string)dbUser.Email);
 				Assert.AreEqual(objUser.Age, (int)dbUser.Age);
@@ -90,7 +90,7 @@ namespace FluentCassandra.Linq
 			dynamic actual = response.FirstOrDefault();
 
 			Assert.AreEqual(1, response.Count);
-			Assert.AreEqual(expected.Id, actual.Key);
+			Assert.AreEqual(expected.Id, actual.KeyType);
 			Assert.AreEqual(expected.Name, (string)actual.Name);
 			Assert.AreEqual(expected.Email, (string)actual.Email);
 			Assert.AreEqual(expected.Age, (int)actual.Age);
@@ -109,7 +109,7 @@ namespace FluentCassandra.Linq
 			dynamic actual = response.FirstOrDefault();
 
 			Assert.AreEqual(1, response.Count);
-			Assert.AreEqual(expected.Id, actual.Key);
+			Assert.AreEqual(expected.Id, actual.KeyType);
 			Assert.AreEqual(expected.Name, (string)actual.Name);
 			Assert.AreEqual(expected.Email, (string)actual.Email);
 			Assert.AreEqual(expected.Age, (int)actual.Age);
@@ -128,7 +128,7 @@ namespace FluentCassandra.Linq
 			dynamic actual = response.FirstOrDefault();
 
 			Assert.AreEqual(1, response.Count);
-			Assert.AreEqual(expected.Id, actual.Key);
+			Assert.AreEqual(expected.Id, actual.KeyType);
 			Assert.AreEqual(expected.Name, (string)actual.Name);
 			Assert.AreEqual(expected.Email, (string)actual.Email);
 			Assert.AreEqual(expected.Age, (int)actual.Age);

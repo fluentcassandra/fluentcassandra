@@ -19,7 +19,7 @@ namespace FluentCassandra.LinqPad
 			_types = def.Column_metadata.Select(col => CassandraType.GetCassandraType(col.Validation_class)).ToList();
 			_types.Insert(0, CassandraType.GetCassandraType(def.Key_validation_class));
 
-			var row = (ICqlRow<CompareWith>)objectToWrite;
+			var row = (ICqlRow)objectToWrite;
 			_columns.Add("KEY", CassandraType.GetTypeFromObject(row.Key.GetValue<byte[]>(), def.Key_validation_class).GetValue<string>());
 
 			foreach (var c in row.Columns)

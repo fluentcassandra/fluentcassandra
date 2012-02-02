@@ -9,6 +9,9 @@ namespace FluentCassandra
 
 		IFluentBaseColumnFamily Family { get; }
 
+		CassandraColumnSchema GetSchema();
+		void SetSchema(CassandraColumnSchema schema);
+
 		FluentColumnPath GetPath();
 		FluentColumnParent GetParent();
 

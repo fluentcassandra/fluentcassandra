@@ -11,15 +11,13 @@ namespace FluentCassandra
 	{
 		#region ColumnCount
 
-		public static int ColumnCount<CompareWith>(this CassandraColumnFamily<CompareWith> family, BytesType key, IEnumerable<CompareWith> columnNames)
-			where CompareWith : CassandraType
+		public static int ColumnCount(this CassandraColumnFamily family, CassandraType key, IEnumerable<CassandraType> columnNames)
 		{
 			var op = new ColumnCount(key, new ColumnSlicePredicate(columnNames));
 			return family.ExecuteOperation(op);
 		}
 
-		public static int ColumnCount<CompareWith>(this CassandraColumnFamily<CompareWith> family, BytesType key, CompareWith columnStart, CompareWith columnEnd, bool reversed = false, int count = 100)
-			where CompareWith : CassandraType
+		public static int ColumnCount(this CassandraColumnFamily family, CassandraType key, CassandraType columnStart, CassandraType columnEnd, bool reversed = false, int count = 100)
 		{
 			var op = new ColumnCount(key, new RangeSlicePredicate(columnStart, columnEnd, reversed, count));
 			return family.ExecuteOperation(op);
@@ -29,14 +27,12 @@ namespace FluentCassandra
 
 		#region InsertColumn
 
-		public static void InsertColumn<CompareWith>(this CassandraColumnFamily<CompareWith> family, BytesType key, IFluentColumn<CompareWith> column)
-			where CompareWith : CassandraType
+		public static void InsertColumn(this CassandraColumnFamily family, CassandraType key, FluentColumn column)
 		{
-			InsertColumn<CompareWith>(family, key, column.GetPath());
+			InsertColumn(family, key, column.GetPath());
 		}
 
-		public static void InsertColumn<CompareWith>(this CassandraColumnFamily<CompareWith> family, BytesType key, FluentColumnPath path)
-			where CompareWith : CassandraType
+		public static void InsertColumn(this CassandraColumnFamily family, CassandraType key, FluentColumnPath path)
 		{
 			var columnName = path.Column.ColumnName;
 			var columnValue = path.Column.ColumnValue;
@@ -47,14 +43,12 @@ namespace FluentCassandra
 			family.ExecuteOperation(op);
 		}
 
-		public static void InsertColumn<CompareWith>(this CassandraColumnFamily<CompareWith> family, BytesType key, CompareWith columnName, BytesType columnValue)
-			where CompareWith : CassandraType
+		public static void InsertColumn(this CassandraColumnFamily family, CassandraType key, CassandraType columnName, BytesType columnValue)
 		{
-			InsertColumn<CompareWith>(family, key, columnName, columnValue, DateTimeOffset.UtcNow, null);
+			InsertColumn(family, key, columnName, columnValue, DateTimeOffset.UtcNow, null);
 		}
 
-		public static void InsertColumn<CompareWith>(this CassandraColumnFamily<CompareWith> family, BytesType key, CompareWith columnName, BytesType columnValue, DateTimeOffset timestamp, int? timeToLive)
-			where CompareWith : CassandraType
+		public static void InsertColumn(this CassandraColumnFamily family, CassandraType key, CassandraType columnName, BytesType columnValue, DateTimeOffset timestamp, int? timeToLive)
 		{
 			var op = new InsertColumn(key, columnName, columnValue, timestamp, timeToLive);
 			family.ExecuteOperation(op);
@@ -64,8 +58,7 @@ namespace FluentCassandra
 
 		#region AddColumn
 
-		public static void InsertColumn<CompareWith>(this CassandraColumnFamily<CompareWith> family, BytesType key, CompareWith columnName, long columnValue)
-			where CompareWith : CassandraType
+		public static void InsertColumn(this CassandraColumnFamily family, CassandraType key, CassandraType columnName, long columnValue)
 		{
 			var op = new AddColumn(key, columnName, columnValue);
 			family.ExecuteOperation(op);
@@ -75,17 +68,15 @@ namespace FluentCassandra
 
 		#region GetColumn
 
-		public static IFluentColumn<CompareWith> GetColumn<CompareWith>(this CassandraColumnFamily<CompareWith> family, BytesType key, FluentColumnPath path)
-			where CompareWith : CassandraType
+		public static FluentColumn GetColumn(this CassandraColumnFamily family, CassandraType key, FluentColumnPath path)
 		{
-			var columnName = (CompareWith)path.Column.ColumnName;
-			return GetColumn<CompareWith>(family, key, columnName);
+			var columnName = path.Column.ColumnName;
+			return GetColumn(family, key, columnName);
 		}
 
-		public static IFluentColumn<CompareWith> GetColumn<CompareWith>(this CassandraColumnFamily<CompareWith> family, BytesType key, CompareWith columnName)
-			where CompareWith : CassandraType
+		public static FluentColumn GetColumn(this CassandraColumnFamily family, CassandraType key, CassandraType columnName)
 		{
-			var op = new GetColumn<CompareWith>(key, columnName);
+			var op = new GetColumn(key, columnName);
 			return family.ExecuteOperation(op);
 		}
 
@@ -93,15 +84,13 @@ namespace FluentCassandra
 
 		#region RemoveColumn
 
-		public static void RemoveColumn<CompareWith>(this CassandraColumnFamily<CompareWith> family, BytesType key, FluentColumnPath path)
-			where CompareWith : CassandraType
+		public static void RemoveColumn(this CassandraColumnFamily family, CassandraType key, FluentColumnPath path)
 		{
-			var columnName = (CompareWith)path.Column.ColumnName;
-			RemoveColumn<CompareWith>(family, key, columnName);
+			var columnName = path.Column.ColumnName;
+			RemoveColumn(family, key, columnName);
 		}
 
-		public static void RemoveColumn<CompareWith>(this CassandraColumnFamily<CompareWith> family, BytesType key, CompareWith columnName)
-			where CompareWith : CassandraType
+		public static void RemoveColumn(this CassandraColumnFamily family, CassandraType key, CassandraType columnName)
 		{
 			var op = new RemoveColumn(key, columnName);
 			family.ExecuteOperation(op);
@@ -111,8 +100,7 @@ namespace FluentCassandra
 
 		#region RemoveKey
 
-		public static void RemoveKey<CompareWith>(this CassandraColumnFamily<CompareWith> family, BytesType key)
-			where CompareWith : CassandraType
+		public static void RemoveKey(this CassandraColumnFamily family, CassandraType key)
 		{
 			var op = new RemoveKey(key);
 			family.ExecuteOperation(op);
@@ -122,17 +110,15 @@ namespace FluentCassandra
 
 		#region GetSingle
 
-		public static IFluentColumnFamily<CompareWith> GetSingle<CompareWith>(this CassandraColumnFamily<CompareWith> family, BytesType key, IEnumerable<CompareWith> columnNames)
-			where CompareWith : CassandraType
+		public static FluentColumnFamily GetSingle(this CassandraColumnFamily family, CassandraType key, IEnumerable<CassandraType> columnNames)
 		{
-			var op = new GetColumnFamilySlice<CompareWith>(key, new ColumnSlicePredicate(columnNames));
+			var op = new GetColumnFamilySlice(key, new ColumnSlicePredicate(columnNames));
 			return family.ExecuteOperation(op);
 		}
 
-		public static IFluentColumnFamily<CompareWith> GetSingle<CompareWith>(this CassandraColumnFamily<CompareWith> family, BytesType key, CompareWith columnStart, CompareWith columnEnd, bool columnsReversed = false, int columnCount = 100)
-			where CompareWith : CassandraType
+		public static FluentColumnFamily GetSingle(this CassandraColumnFamily family, CassandraType key, CassandraType columnStart, CassandraType columnEnd, bool columnsReversed = false, int columnCount = 100)
 		{
-			var op = new GetColumnFamilySlice<CompareWith>(key, new RangeSlicePredicate(columnStart, columnEnd, columnsReversed, columnCount));
+			var op = new GetColumnFamilySlice(key, new RangeSlicePredicate(columnStart, columnEnd, columnsReversed, columnCount));
 			return family.ExecuteOperation(op);
 		}
 
@@ -142,90 +128,80 @@ namespace FluentCassandra
 
 		// queryable
 
-		public static ICassandraQueryable<IFluentColumnFamily<CompareWith>, CompareWith> Get<CompareWith>(this CassandraColumnFamily<CompareWith> family, params BytesType[] keys)
-			where CompareWith : CassandraType
+		public static ICassandraQueryable<FluentColumnFamily, CassandraType> Get(this CassandraColumnFamily family, params BytesType[] keys)
 		{
-			var setup = new CassandraQuerySetup<IFluentColumnFamily<CompareWith>, CompareWith> {
+			var setup = new CassandraQuerySetup<FluentColumnFamily, CassandraType> {
 				Keys = keys,
-				CreateQueryOperation = (s, slice) => new MultiGetColumnFamilySlice<CompareWith>(s.Keys, slice)
+				CreateQueryOperation = (s, slice) => new MultiGetColumnFamilySlice(s.Keys, slice)
 			};
 			return ((ICassandraQueryProvider)family).CreateQuery(setup, null);
 		}
 
-		public static ICassandraQueryable<IFluentColumnFamily<CompareWith>, CompareWith> Get<CompareWith>(this CassandraColumnFamily<CompareWith> family, BytesType startKey, BytesType endKey, string startToken, string endToken, int keyCount)
-			where CompareWith : CassandraType
+		public static ICassandraQueryable<FluentColumnFamily, CassandraType> Get(this CassandraColumnFamily family, BytesType startKey, BytesType endKey, string startToken, string endToken, int keyCount)
 		{
-			var setup = new CassandraQuerySetup<IFluentColumnFamily<CompareWith>, CompareWith> {
+			var setup = new CassandraQuerySetup<FluentColumnFamily, CassandraType> {
 				KeyRange = new CassandraKeyRange(startKey, endKey, startToken, endToken, keyCount),
-				CreateQueryOperation = (s, slice) => new GetColumnFamilyRangeSlices<CompareWith>(s.KeyRange, slice)
+				CreateQueryOperation = (s, slice) => new GetColumnFamilyRangeSlices(s.KeyRange, slice)
 			};
 			return ((ICassandraQueryProvider)family).CreateQuery(setup, null);
 		}
 
-		public static ICassandraQueryable<IFluentColumnFamily<CompareWith>, CompareWith> Get<CompareWith>(this CassandraColumnFamily<CompareWith> family, BytesType startKey, int keyCount, Expression<Func<IFluentRecordHasFluentColumns<CompareWith>, bool>> expression)
-			where CompareWith : CassandraType
+		public static ICassandraQueryable<FluentColumnFamily, CassandraType> Get(this CassandraColumnFamily family, BytesType startKey, int keyCount, Expression<Func<FluentRecord<FluentColumn>, bool>> expression)
 		{
-			var setup = new CassandraQuerySetup<IFluentColumnFamily<CompareWith>, CompareWith> {
-				IndexClause = new CassandraIndexClause<CompareWith>(startKey, keyCount, expression),
-				CreateQueryOperation = (s, slice) => new GetColumnFamilyIndexedSlices<CompareWith>(s.IndexClause, slice)
+			var setup = new CassandraQuerySetup<FluentColumnFamily, CassandraType> {
+				IndexClause = new CassandraIndexClause(startKey, keyCount, expression),
+				CreateQueryOperation = (s, slice) => new GetColumnFamilyIndexedSlices(s.IndexClause, slice)
 			};
 			return ((ICassandraQueryProvider)family).CreateQuery(setup, null);
 		}
 
 		// multi_get_slice
 
-		public static IEnumerable<IFluentColumnFamily<CompareWith>> Get<CompareWith>(this CassandraColumnFamily<CompareWith> family, IEnumerable<BytesType> keys, IEnumerable<CompareWith> columnNames)
-			where CompareWith : CassandraType
+		public static IEnumerable<FluentColumnFamily> Get(this CassandraColumnFamily family, IEnumerable<BytesType> keys, IEnumerable<CassandraType> columnNames)
 		{
-			var op = new MultiGetColumnFamilySlice<CompareWith>(keys, new ColumnSlicePredicate(columnNames));
+			var op = new MultiGetColumnFamilySlice(keys, new ColumnSlicePredicate(columnNames));
 			return family.ExecuteOperation(op);
 		}
 
-		public static IEnumerable<IFluentColumnFamily<CompareWith>> Get<CompareWith>(this CassandraColumnFamily<CompareWith> family, IEnumerable<BytesType> keys, CompareWith columnStart, CompareWith columnEnd, bool columnsReversed = false, int columnCount = 100)
-			where CompareWith : CassandraType
+		public static IEnumerable<FluentColumnFamily> Get(this CassandraColumnFamily family, IEnumerable<BytesType> keys, CassandraType columnStart, CassandraType columnEnd, bool columnsReversed = false, int columnCount = 100)
 		{
-			var op = new MultiGetColumnFamilySlice<CompareWith>(keys, new RangeSlicePredicate(columnStart, columnEnd, columnsReversed, columnCount));
+			var op = new MultiGetColumnFamilySlice(keys, new RangeSlicePredicate(columnStart, columnEnd, columnsReversed, columnCount));
 			return family.ExecuteOperation(op);
 		}
 
 		// get_range_slice
 
-		public static IEnumerable<IFluentColumnFamily<CompareWith>> Get<CompareWith>(this CassandraColumnFamily<CompareWith> family, BytesType startKey, BytesType endKey, string startToken, string endToken, int keyCount, IEnumerable<CompareWith> columnNames)
-			where CompareWith : CassandraType
+		public static IEnumerable<FluentColumnFamily> Get(this CassandraColumnFamily family, BytesType startKey, BytesType endKey, string startToken, string endToken, int keyCount, IEnumerable<CassandraType> columnNames)
 		{
-			var op = new GetColumnFamilyRangeSlices<CompareWith>(new CassandraKeyRange(startKey, endKey, startToken, endToken, keyCount), new ColumnSlicePredicate(columnNames));
+			var op = new GetColumnFamilyRangeSlices(new CassandraKeyRange(startKey, endKey, startToken, endToken, keyCount), new ColumnSlicePredicate(columnNames));
 			return family.ExecuteOperation(op);
 		}
 
-		public static IEnumerable<IFluentColumnFamily<CompareWith>> Get<CompareWith>(this CassandraColumnFamily<CompareWith> family, BytesType startKey, BytesType endKey, string startToken, string endToken, int keyCount, CompareWith columnStart, CompareWith columnEnd, bool columnsReversed = false, int columnCount = 100)
-			where CompareWith : CassandraType
+		public static IEnumerable<FluentColumnFamily> Get(this CassandraColumnFamily family, BytesType startKey, BytesType endKey, string startToken, string endToken, int keyCount, CassandraType columnStart, CassandraType columnEnd, bool columnsReversed = false, int columnCount = 100)
 		{
-			var op = new GetColumnFamilyRangeSlices<CompareWith>(new CassandraKeyRange(startKey, endKey, startToken, endToken, keyCount), new RangeSlicePredicate(columnStart, columnEnd, columnsReversed, columnCount));
+			var op = new GetColumnFamilyRangeSlices(new CassandraKeyRange(startKey, endKey, startToken, endToken, keyCount), new RangeSlicePredicate(columnStart, columnEnd, columnsReversed, columnCount));
 			return family.ExecuteOperation(op);
 		}
 
 		// get_indexed_slices
 
-		public static IEnumerable<IFluentColumnFamily<CompareWith>> Get<CompareWith>(this CassandraColumnFamily<CompareWith> family, BytesType startKey, int keyCount, Expression<Func<IFluentRecordHasFluentColumns<CompareWith>, bool>> expression, IEnumerable<CompareWith> columnNames)
-			where CompareWith : CassandraType
+		public static IEnumerable<FluentColumnFamily> Get(this CassandraColumnFamily family, CassandraType startKey, int keyCount, Expression<Func<FluentRecord<FluentColumn>, bool>> expression, IEnumerable<CassandraType> columnNames)
 		{
-			var op = new GetColumnFamilyIndexedSlices<CompareWith>(new CassandraIndexClause<CompareWith>(startKey, keyCount, expression), new ColumnSlicePredicate(columnNames));
+			var op = new GetColumnFamilyIndexedSlices(new CassandraIndexClause(startKey, keyCount, expression), new ColumnSlicePredicate(columnNames));
 			return family.ExecuteOperation(op);
 		}
 
-		public static IEnumerable<IFluentColumnFamily<CompareWith>> Get<CompareWith>(this CassandraColumnFamily<CompareWith> family, BytesType startKey, int keyCount, Expression<Func<IFluentRecordHasFluentColumns<CompareWith>, bool>> expression, CompareWith columnStart, CompareWith columnEnd, bool columnsReversed = false, int columnCount = 100)
-			where CompareWith : CassandraType
+		public static IEnumerable<FluentColumnFamily> Get(this CassandraColumnFamily family, CassandraType startKey, int keyCount, Expression<Func<FluentRecord<FluentColumn>, bool>> expression, CassandraType columnStart, CassandraType columnEnd, bool columnsReversed = false, int columnCount = 100)
 		{
-			var op = new GetColumnFamilyIndexedSlices<CompareWith>(new CassandraIndexClause<CompareWith>(startKey, keyCount, expression), new RangeSlicePredicate(columnStart, columnEnd, columnsReversed, columnCount));
+			var op = new GetColumnFamilyIndexedSlices(new CassandraIndexClause(startKey, keyCount, expression), new RangeSlicePredicate(columnStart, columnEnd, columnsReversed, columnCount));
 			return family.ExecuteOperation(op);
 		}
 
 		#endregion
 
-		public static IEnumerable<ICqlRow<CompareWith>> Cql<CompareWith>(this CassandraColumnFamily<CompareWith> family, UTF8Type cqlQuery)
-			where CompareWith : CassandraType
+		public static IEnumerable<ICqlRow> Cql(this CassandraColumnFamily family, UTF8Type cqlQuery)
 		{
-			var op = new ExecuteCqlQuery<CompareWith>(cqlQuery, family.Context.ConnectionBuilder.CompressCqlQueries);
+			var op = new ExecuteCqlQuery(cqlQuery, family.Context.ConnectionBuilder.CompressCqlQueries);
 			return family.ExecuteOperation(op);
 		}
 	}

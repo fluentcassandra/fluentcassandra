@@ -10,7 +10,7 @@ namespace FluentCassandra
 	/// 
 	/// </summary>
 	/// <typeparam name="T">A type that impliments <see cref="IFluentColumn"/>.</typeparam>
-	public abstract class FluentRecord<T> : DynamicObject, IFluentRecord, IFluentRecord<T>, INotifyPropertyChanged, IEnumerable<T>
+	public abstract class FluentRecord<T> : DynamicObject, IFluentRecord, INotifyPropertyChanged, IEnumerable<IFluentBaseColumn>
 		where T : IFluentBaseColumn
 	{
 		/// <summary>
@@ -106,11 +106,11 @@ namespace FluentCassandra
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public abstract bool TrySetColumn(object name, object value);
 
-		#region IEnumerable<T> Members
+		#region IEnumerable<IFluentBaseColumn> Members
 
-		public IEnumerator<T> GetEnumerator()
+		public IEnumerator<IFluentBaseColumn> GetEnumerator()
 		{
-			return Columns.GetEnumerator();
+			return ((IFluentRecord)Columns).GetEnumerator();
 		}
 
 		#endregion

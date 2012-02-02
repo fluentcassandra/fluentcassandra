@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using Apache.Cassandra;
 using FluentCassandra.Operations;
 using FluentCassandra.Types;
 
@@ -71,10 +70,11 @@ namespace FluentCassandra
 
 				_cachedColumnFamilyFluentFriendlySchema = new CassandraColumnFamilySchema {
 					FamilyName = FamilyName,
-					Key = keyType,
-					Columns = def.Column_metadata.ToDictionary(
-						col => CassandraType.GetTypeFromDatabaseValue(col.Name, colNameType),
-						col => CassandraType.GetCassandraType(col.Validation_class))
+					KeyType = keyType,
+					Columns = def.Column_metadata.Select(col => new CassandraColumnSchema {
+						Name = CassandraType.GetTypeFromDatabaseValue(col.Name, colNameType),
+						ValueType = CassandraType.GetCassandraType(col.Validation_class)
+					}).ToList()
 				};
 			}
 

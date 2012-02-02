@@ -7,7 +7,7 @@ namespace FluentCassandra.Operations
 {
 	public class CassandraQuerySetup
 	{
-		public BytesType Key
+		public CassandraType Key
 		{
 			get
 			{

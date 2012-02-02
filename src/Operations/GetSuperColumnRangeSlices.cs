@@ -6,9 +6,7 @@ using FluentCassandra.Types;
 
 namespace FluentCassandra.Operations
 {
-	public class GetSuperColumnRangeSlices<CompareWith, CompareSubcolumnWith> : QueryableColumnFamilyOperation<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>>
-		where CompareWith : CassandraType
-		where CompareSubcolumnWith : CassandraType
+	public class GetSuperColumnRangeSlices : QueryableColumnFamilyOperation<FluentSuperColumn>
 	{
 		/*
 		 * list<KeySlice> get_range_slices(keyspace, column_parent, predicate, range, consistency_level)
@@ -18,7 +16,7 @@ namespace FluentCassandra.Operations
 
 		public CassandraType SuperColumnName { get; private set; }
 
-		public override IEnumerable<IFluentSuperColumn<CompareWith, CompareSubcolumnWith>> Execute()
+		public override IEnumerable<FluentSuperColumn> Execute()
 		{
 			var parent = new CassandraColumnParent {
 				ColumnFamily = ColumnFamily.FamilyName
@@ -36,8 +34,8 @@ namespace FluentCassandra.Operations
 
 			foreach (var result in output)
 			{
-				var r = new FluentSuperColumn<CompareWith, CompareSubcolumnWith>(result.Columns.Select(col => {
-					return Helper.ConvertColumnToFluentColumn<CompareSubcolumnWith>(col.Column);
+				var r = new FluentSuperColumn(result.Columns.Select(col => {
+					return Helper.ConvertColumnToFluentColumn(col.Column);
 				}));
 				ColumnFamily.Context.Attach(r);
 				r.MutationTracker.Clear();

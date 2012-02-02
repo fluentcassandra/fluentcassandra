@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using Apache.Cassandra;
-using FluentCassandra.Connections;
 using FluentCassandra.Operations;
 using FluentCassandra.Types;
 

@@ -5,16 +5,12 @@ using FluentCassandra.Types;
 
 namespace FluentCassandra.Operations
 {
-	public class CassandraIndexClause<CompareWith> : CassandraIndexClause
-		where CompareWith : CassandraType
+	public class CassandraIndexClause
 	{
-		public CassandraIndexClause(BytesType startKey, int count, Expression<Func<IFluentRecordHasFluentColumns<CompareWith>, bool>> expression)
-			: base(startKey, count, expression) { }
-	}
+		public CassandraIndexClause(CassandraType startKey, int count, Expression<Func<FluentRecord<FluentColumn>, bool>> expression)
+			: this(startKey, count, (Expression)expression) { }
 
-	public abstract class CassandraIndexClause
-	{
-		protected internal CassandraIndexClause(BytesType startKey, int count, Expression expression)
+		protected internal CassandraIndexClause(CassandraType startKey, int count, Expression expression)
 		{
 			StartKey = startKey;
 			Count = count;
@@ -23,7 +19,7 @@ namespace FluentCassandra.Operations
 
 		private List<Apache.Cassandra.IndexExpression> _compiledExpressions;
 
-		public BytesType StartKey { get; private set; }
+		public CassandraType StartKey { get; private set; }
 		public int Count { get; private set; }
 		public Expression Expression { get; private set; }
 
