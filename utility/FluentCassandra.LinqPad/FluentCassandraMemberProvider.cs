@@ -13,14 +13,15 @@ namespace FluentCassandra.LinqPad
 		private IDictionary<string, object> _columns;
 		private IList<Type> _types;
 
-		public FluentCassandraMemberProvider(object objectToWrite, Apache.Cassandra.CfDef def)
+		public FluentCassandraMemberProvider(object objectToWrite)
 		{
-			_columns = new Dictionary<string, object>();
-			_types = def.Column_metadata.Select(col => CassandraType.GetCassandraType(col.Validation_class)).ToList();
-			_types.Insert(0, CassandraType.GetCassandraType(def.Key_validation_class));
-
 			var row = (ICqlRow)objectToWrite;
-			_columns.Add("KEY", CassandraType.GetTypeFromObject(row.Key.GetValue<byte[]>(), def.Key_validation_class).GetValue<string>());
+	
+			_columns = new Dictionary<string, object>();
+			_types = row.Columns.Select(c => c.GetSchema().ValueType).ToList();
+			_types.Insert(0, row.Key.GetType());
+
+			_columns.Add("KEY", row.Key.GetValue<string>());
 
 			foreach (var c in row.Columns)
 				_columns.Add(c.ColumnName.GetValue<string>(), c.ColumnValue);

@@ -119,12 +119,9 @@ namespace FluentCassandra.LinqPad
 		{
 			if (objectToWrite != null && IsCassandraRow(objectToWrite.GetType()))
 			{
-				dynamic family = objectToWrite;
-				var def = _schema.Cf_defs.FirstOrDefault(columnFamily => columnFamily.Name == family.FamilyName);
-
 				var t = objectToWrite.GetType().GetGenericArguments().FirstOrDefault();
 				var providerType = typeof(FluentCassandraMemberProvider<>).MakeGenericType(new[] { t });
-				var provider = Activator.CreateInstance(providerType, objectToWrite, def);
+				var provider = Activator.CreateInstance(providerType, objectToWrite);
 
 				return (ICustomMemberProvider)provider;
 			}
