@@ -85,7 +85,7 @@ namespace FluentCassandra
 			var actual = family.Test3;
 
 			// assert
-			Assert.IsInstanceOfType(typeof(IFluentSuperColumn), actual);
+			Assert.IsInstanceOfType(typeof(FluentSuperColumn), actual);
 		}
 
 		[Test]

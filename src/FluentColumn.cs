@@ -3,6 +3,17 @@ using FluentCassandra.Types;
 
 namespace FluentCassandra
 {
+	[Obsolete("Use \"FluentColumn\" class with out generic type")]
+	public class FluentColumn<CompareWith> : FluentColumn
+		where CompareWith : CassandraType
+	{
+		public FluentColumn()
+			: base(new CassandraColumnSchema {
+				NameType = typeof(CompareWith),
+				ValueType = typeof(BytesType)
+			}) { }
+	}
+
 	/// <summary>
 	/// 
 	/// </summary>

@@ -16,7 +16,7 @@ namespace FluentCassandra.Operations
 
 		public override FluentColumnFamily Execute()
 		{
-			var result = new FluentColumnFamily(Key, ColumnFamily.FamilyName, ColumnFamily.Schema(), GetColumns(ColumnFamily));
+			var result = new FluentColumnFamily(Key, ColumnFamily.FamilyName, ColumnFamily.GetSchema(), GetColumns(ColumnFamily));
 			ColumnFamily.Context.Attach(result);
 			result.MutationTracker.Clear();
 

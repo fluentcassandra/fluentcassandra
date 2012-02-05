@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Dynamic;
 using System.ComponentModel;
+using FluentCassandra.Types;
 
 namespace FluentCassandra
 {

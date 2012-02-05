@@ -40,25 +40,25 @@ namespace FluentCassandra.Operations
 				fetch = new CassandraType[0];
 
 			var columns = (CassandraType[])fetch;
-			RangeSlicePredicate predicate;
+			CassandraRangeSlicePredicate predicate;
 
 			if (columns.Length > 1)
 			{
 				if (calls.Count > 1)
 					throw new CassandraException("A multi column fetch cannot be used with the following query options: " + String.Join(", ", calls.Keys.Where(x => x != "Fetch")));
 
-				return new ColumnSlicePredicate(columns);
+				return new CassandraColumnSlicePredicate(columns);
 			}
 			else if (columns.Length == 1)
 			{
 				if (calls.Count == 1)
-					return new ColumnSlicePredicate(columns);
+					return new CassandraColumnSlicePredicate(columns);
 
-				predicate = new RangeSlicePredicate(columns[0], null);
+				predicate = new CassandraRangeSlicePredicate(columns[0], null);
 			}
 			else
 			{
-				predicate = new RangeSlicePredicate(null, null);
+				predicate = new CassandraRangeSlicePredicate(null, null);
 			}
 
 			if (calls.TryGetValue("Take", out take))

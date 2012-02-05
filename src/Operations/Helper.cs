@@ -54,9 +54,9 @@ namespace FluentCassandra.Operations
 
 		public static SlicePredicate CreateSlicePredicate(CassandraSlicePredicate predicate)
 		{
-			if (predicate is RangeSlicePredicate)
+			if (predicate is CassandraRangeSlicePredicate)
 			{
-				var x = (RangeSlicePredicate)predicate;
+				var x = (CassandraRangeSlicePredicate)predicate;
 				return new SlicePredicate {
 					Slice_range = new SliceRange {
 						Start = x.Start.TryToBigEndian() ?? new byte[0],
@@ -66,9 +66,9 @@ namespace FluentCassandra.Operations
 					}
 				};
 			}
-			else if (predicate is ColumnSlicePredicate)
+			else if (predicate is CassandraColumnSlicePredicate)
 			{
-				var x = (ColumnSlicePredicate)predicate;
+				var x = (CassandraColumnSlicePredicate)predicate;
 				return new SlicePredicate {
 					Column_names = x.Columns.Select(o => o.TryToBigEndian()).ToList()
 				};

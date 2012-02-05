@@ -5,20 +5,35 @@ using FluentCassandra.Types;
 
 namespace FluentCassandra
 {
+	[Obsolete("Use \"FluentSuperColumn\" class with out generic type")]
+	public class FluentSuperColumn<CompareWith, CompareSubcolumnWith> : FluentSuperColumn
+		where CompareWith : CassandraType
+		where CompareSubcolumnWith : CassandraType
+	{
+		public FluentSuperColumn()
+			: base(new CassandraColumnSchema {
+				NameType = typeof(CompareWith),
+				ValueType = typeof(CompareSubcolumnWith)
+			}) { }
+	}
+
 	/// <summary>
 	/// 
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
-	public class FluentSuperColumn : FluentRecord<FluentColumn>, IFluentBaseColumn
+	public class FluentSuperColumn : FluentRecord<FluentColumn>, IFluentBaseColumn, IFluentRecordExpression
 	{
+		private CassandraType _name;
 		private FluentColumnList<FluentColumn> _columns;
-		private CassandraSuperColumnSchema _schema;
+		private CassandraColumnSchema _schema;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public FluentSuperColumn()
+		public FluentSuperColumn(CassandraColumnSchema schema = null)
 		{
+			SetSchema(schema);
+
 			_columns = new FluentColumnList<FluentColumn>(GetPath());
 		}
 
@@ -26,15 +41,24 @@ namespace FluentCassandra
 		/// 
 		/// </summary>
 		/// <param name="columns"></param>
-		internal FluentSuperColumn(IEnumerable<FluentColumn> columns)
+		internal FluentSuperColumn(CassandraColumnSchema schema, IEnumerable<FluentColumn> columns)
 		{
+			SetSchema(schema);
+
 			_columns = new FluentColumnList<FluentColumn>(GetPath(), columns);
 		}
 
 		/// <summary>
 		/// The column name.
 		/// </summary>
-		public CassandraType ColumnName { get; set; }
+		public CassandraType ColumnName
+		{
+			get { return _name; }
+			set
+			{
+				_name = (CassandraType)value.ToType(GetSchema().NameType);
+			}
+		}
 
 		/// <summary>
 		/// 
@@ -42,7 +66,18 @@ namespace FluentCassandra
 		/// <returns></returns>
 		public FluentColumn CreateColumn()
 		{
-			return new FluentColumn();
+			return new FluentColumn(GetColumnSchema(""));
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		public FluentColumn CreateColumn(CassandraType name)
+		{
+			return new FluentColumn(GetColumnSchema(name)) {
+				ColumnName = name
+			};
 		}
 
 		/// <summary>
@@ -76,17 +111,17 @@ namespace FluentCassandra
 				if (value is NullType)
 					throw new CassandraException(String.Format("Column, {0}, could not be found.", columnName));
 
-				return value as BytesType;
+				return value;
 			}
 		}
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public CassandraSuperColumnSchema GetSchema()
+		public CassandraColumnSchema GetSchema()
 		{
 			if (_schema == null)
-				_schema = new CassandraSuperColumnSchema { Name = ColumnName };
+				_schema = new CassandraColumnSchema { Name = ColumnName, ValueType = typeof(BytesType) };
 
 			return _schema;
 		}
@@ -95,10 +130,10 @@ namespace FluentCassandra
 		/// 
 		/// </summary>
 		/// <param name="schema"></param>
-		public void SetSchema(CassandraSuperColumnSchema schema)
+		public void SetSchema(CassandraColumnSchema schema)
 		{
 			if (schema == null)
-				schema = new CassandraSuperColumnSchema { Name = ColumnName };
+				schema = new CassandraColumnSchema { Name = ColumnName, ValueType = typeof(BytesType) };
 
 			_schema = schema;
 		}
@@ -145,18 +180,10 @@ namespace FluentCassandra
 		/// <returns></returns>
 		private CassandraColumnSchema GetColumnSchema(object name)
 		{
-			var col = Columns.FirstOrDefault(c => c.ColumnName == name);
 			var schema = GetSchema();
 
-			if (col == null)
-				return new CassandraColumnSchema { NameType = schema.ColumnNameType, ValueType = typeof(BytesType) };
-
-			var colSchema = schema.Columns.FirstOrDefault(c => c.Name == col.ColumnName);
-
-			if (colSchema != null)
-				return colSchema;
-
-			return new CassandraColumnSchema { NameType = schema.ColumnNameType, ValueType = typeof(BytesType) };
+			// mock up a fake schema to send to the fluent column
+			return new CassandraColumnSchema { NameType = schema.ValueType, ValueType = typeof(BytesType) };
 		}
 
 		/// <summary>
@@ -207,19 +234,6 @@ namespace FluentCassandra
 		}
 
 		#region IFluentBaseColumn Members
-
-		void IFluentBaseColumn.SetSchema(CassandraColumnSchema schema)
-		{
-			if (schema is CassandraSuperColumnSchema)
-				SetSchema((CassandraSuperColumnSchema)schema);
-
-			throw new ArgumentException("'schema' must be of CassandraSuperColumnSchema type.", "schema");
-		}
-
-		CassandraColumnSchema IFluentBaseColumn.GetSchema()
-		{
-			return GetSchema();
-		}
 
 		IFluentBaseColumnFamily IFluentBaseColumn.Family { get { return Family; } }
 

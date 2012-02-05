@@ -19,7 +19,7 @@ namespace FluentCassandra.Operations
 			string columnValue = "test-value";
 
 			// act
-			var index = new CassandraIndexClause<BytesType>(
+			var index = new CassandraIndexClause(
 				key,
 				count,
 				family => family[columnName] == columnValue);
@@ -38,7 +38,7 @@ namespace FluentCassandra.Operations
 			string columnValue = "test-value";
 
 			// act
-			var index = new CassandraIndexClause<BytesType>(
+			var index = new CassandraIndexClause(
 				key,
 				count,
 				family => family[columnName] == columnValue);
@@ -57,7 +57,7 @@ namespace FluentCassandra.Operations
 			var columnValue = "test-value";
 
 			// act
-			var index = new CassandraIndexClause<BytesType>(
+			var index = new CassandraIndexClause(
 				key,
 				count,
 				family => family[columnName] == columnValue);
@@ -85,7 +85,7 @@ namespace FluentCassandra.Operations
 			var columnValue2 = Math.PI;
 
 			// act
-			var index = new CassandraIndexClause<BytesType>(
+			var index = new CassandraIndexClause(
 				key,
 				count,
 				family => family[columnName1] == columnValue1
@@ -121,7 +121,7 @@ namespace FluentCassandra.Operations
 			var columnValue3 = Math.PI;
 
 			// act
-			var index = new CassandraIndexClause<BytesType>(
+			var index = new CassandraIndexClause(
 				key,
 				count,
 				family => family[columnName1] == columnValue1
@@ -159,7 +159,7 @@ namespace FluentCassandra.Operations
 			var columnValue = Math.PI;
 
 			// act
-			var index = new CassandraIndexClause<BytesType>(
+			var index = new CassandraIndexClause(
 				key,
 				count,
 				family => family[columnName] == columnValue);
@@ -185,7 +185,7 @@ namespace FluentCassandra.Operations
 			var columnValue = Math.PI;
 
 			// act
-			var index = new CassandraIndexClause<BytesType>(
+			var index = new CassandraIndexClause(
 				key,
 				count,
 				family => family[columnName] > columnValue);
@@ -211,7 +211,7 @@ namespace FluentCassandra.Operations
 			var columnValue = Math.PI;
 
 			// act
-			var index = new CassandraIndexClause<BytesType>(
+			var index = new CassandraIndexClause(
 				key,
 				count,
 				family => family[columnName] >= columnValue);
@@ -237,7 +237,7 @@ namespace FluentCassandra.Operations
 			var columnValue = Math.PI;
 
 			// act
-			var index = new CassandraIndexClause<BytesType>(
+			var index = new CassandraIndexClause(
 				key,
 				count,
 				family => family[columnName] < columnValue);
@@ -263,7 +263,7 @@ namespace FluentCassandra.Operations
 			var columnValue = Math.PI;
 
 			// act
-			var index = new CassandraIndexClause<BytesType>(
+			var index = new CassandraIndexClause(
 				key,
 				count,
 				family => family[columnName] <= columnValue);

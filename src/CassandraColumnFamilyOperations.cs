@@ -13,13 +13,13 @@ namespace FluentCassandra
 
 		public static int ColumnCount(this CassandraColumnFamily family, CassandraType key, IEnumerable<CassandraType> columnNames)
 		{
-			var op = new ColumnCount(key, new ColumnSlicePredicate(columnNames));
+			var op = new ColumnCount(key, new CassandraColumnSlicePredicate(columnNames));
 			return family.ExecuteOperation(op);
 		}
 
 		public static int ColumnCount(this CassandraColumnFamily family, CassandraType key, CassandraType columnStart, CassandraType columnEnd, bool reversed = false, int count = 100)
 		{
-			var op = new ColumnCount(key, new RangeSlicePredicate(columnStart, columnEnd, reversed, count));
+			var op = new ColumnCount(key, new CassandraRangeSlicePredicate(columnStart, columnEnd, reversed, count));
 			return family.ExecuteOperation(op);
 		}
 
@@ -112,13 +112,13 @@ namespace FluentCassandra
 
 		public static FluentColumnFamily GetSingle(this CassandraColumnFamily family, CassandraType key, IEnumerable<CassandraType> columnNames)
 		{
-			var op = new GetColumnFamilySlice(key, new ColumnSlicePredicate(columnNames));
+			var op = new GetColumnFamilySlice(key, new CassandraColumnSlicePredicate(columnNames));
 			return family.ExecuteOperation(op);
 		}
 
 		public static FluentColumnFamily GetSingle(this CassandraColumnFamily family, CassandraType key, CassandraType columnStart, CassandraType columnEnd, bool columnsReversed = false, int columnCount = 100)
 		{
-			var op = new GetColumnFamilySlice(key, new RangeSlicePredicate(columnStart, columnEnd, columnsReversed, columnCount));
+			var op = new GetColumnFamilySlice(key, new CassandraRangeSlicePredicate(columnStart, columnEnd, columnsReversed, columnCount));
 			return family.ExecuteOperation(op);
 		}
 
@@ -146,7 +146,7 @@ namespace FluentCassandra
 			return ((ICassandraQueryProvider)family).CreateQuery(setup, null);
 		}
 
-		public static ICassandraQueryable<FluentColumnFamily, CassandraType> Get(this CassandraColumnFamily family, BytesType startKey, int keyCount, Expression<Func<FluentRecord<FluentColumn>, bool>> expression)
+		public static ICassandraQueryable<FluentColumnFamily, CassandraType> Get(this CassandraColumnFamily family, BytesType startKey, int keyCount, Expression<Func<IFluentRecordExpression, bool>> expression)
 		{
 			var setup = new CassandraQuerySetup<FluentColumnFamily, CassandraType> {
 				IndexClause = new CassandraIndexClause(startKey, keyCount, expression),
@@ -159,13 +159,13 @@ namespace FluentCassandra
 
 		public static IEnumerable<FluentColumnFamily> Get(this CassandraColumnFamily family, IEnumerable<BytesType> keys, IEnumerable<CassandraType> columnNames)
 		{
-			var op = new MultiGetColumnFamilySlice(keys, new ColumnSlicePredicate(columnNames));
+			var op = new MultiGetColumnFamilySlice(keys, new CassandraColumnSlicePredicate(columnNames));
 			return family.ExecuteOperation(op);
 		}
 
 		public static IEnumerable<FluentColumnFamily> Get(this CassandraColumnFamily family, IEnumerable<BytesType> keys, CassandraType columnStart, CassandraType columnEnd, bool columnsReversed = false, int columnCount = 100)
 		{
-			var op = new MultiGetColumnFamilySlice(keys, new RangeSlicePredicate(columnStart, columnEnd, columnsReversed, columnCount));
+			var op = new MultiGetColumnFamilySlice(keys, new CassandraRangeSlicePredicate(columnStart, columnEnd, columnsReversed, columnCount));
 			return family.ExecuteOperation(op);
 		}
 
@@ -173,27 +173,27 @@ namespace FluentCassandra
 
 		public static IEnumerable<FluentColumnFamily> Get(this CassandraColumnFamily family, BytesType startKey, BytesType endKey, string startToken, string endToken, int keyCount, IEnumerable<CassandraType> columnNames)
 		{
-			var op = new GetColumnFamilyRangeSlices(new CassandraKeyRange(startKey, endKey, startToken, endToken, keyCount), new ColumnSlicePredicate(columnNames));
+			var op = new GetColumnFamilyRangeSlices(new CassandraKeyRange(startKey, endKey, startToken, endToken, keyCount), new CassandraColumnSlicePredicate(columnNames));
 			return family.ExecuteOperation(op);
 		}
 
 		public static IEnumerable<FluentColumnFamily> Get(this CassandraColumnFamily family, BytesType startKey, BytesType endKey, string startToken, string endToken, int keyCount, CassandraType columnStart, CassandraType columnEnd, bool columnsReversed = false, int columnCount = 100)
 		{
-			var op = new GetColumnFamilyRangeSlices(new CassandraKeyRange(startKey, endKey, startToken, endToken, keyCount), new RangeSlicePredicate(columnStart, columnEnd, columnsReversed, columnCount));
+			var op = new GetColumnFamilyRangeSlices(new CassandraKeyRange(startKey, endKey, startToken, endToken, keyCount), new CassandraRangeSlicePredicate(columnStart, columnEnd, columnsReversed, columnCount));
 			return family.ExecuteOperation(op);
 		}
 
 		// get_indexed_slices
 
-		public static IEnumerable<FluentColumnFamily> Get(this CassandraColumnFamily family, CassandraType startKey, int keyCount, Expression<Func<FluentRecord<FluentColumn>, bool>> expression, IEnumerable<CassandraType> columnNames)
+		public static IEnumerable<FluentColumnFamily> Get(this CassandraColumnFamily family, CassandraType startKey, int keyCount, Expression<Func<IFluentRecordExpression, bool>> expression, IEnumerable<CassandraType> columnNames)
 		{
-			var op = new GetColumnFamilyIndexedSlices(new CassandraIndexClause(startKey, keyCount, expression), new ColumnSlicePredicate(columnNames));
+			var op = new GetColumnFamilyIndexedSlices(new CassandraIndexClause(startKey, keyCount, expression), new CassandraColumnSlicePredicate(columnNames));
 			return family.ExecuteOperation(op);
 		}
 
-		public static IEnumerable<FluentColumnFamily> Get(this CassandraColumnFamily family, CassandraType startKey, int keyCount, Expression<Func<FluentRecord<FluentColumn>, bool>> expression, CassandraType columnStart, CassandraType columnEnd, bool columnsReversed = false, int columnCount = 100)
+		public static IEnumerable<FluentColumnFamily> Get(this CassandraColumnFamily family, CassandraType startKey, int keyCount, Expression<Func<IFluentRecordExpression, bool>> expression, CassandraType columnStart, CassandraType columnEnd, bool columnsReversed = false, int columnCount = 100)
 		{
-			var op = new GetColumnFamilyIndexedSlices(new CassandraIndexClause(startKey, keyCount, expression), new RangeSlicePredicate(columnStart, columnEnd, columnsReversed, columnCount));
+			var op = new GetColumnFamilyIndexedSlices(new CassandraIndexClause(startKey, keyCount, expression), new CassandraRangeSlicePredicate(columnStart, columnEnd, columnsReversed, columnCount));
 			return family.ExecuteOperation(op);
 		}
 

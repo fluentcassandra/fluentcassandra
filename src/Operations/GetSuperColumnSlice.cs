@@ -19,7 +19,7 @@ namespace FluentCassandra.Operations
 
 		public override FluentSuperColumn Execute()
 		{
-			var result = new FluentSuperColumn(GetColumns(ColumnFamily));
+			var result = new FluentSuperColumn(null, GetColumns(ColumnFamily));
 			ColumnFamily.Context.Attach(result);
 			result.MutationTracker.Clear();
 

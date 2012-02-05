@@ -7,17 +7,17 @@ namespace FluentCassandra
 {
 	public class CassandraColumnFamilySchema
 	{
-		public static readonly AsciiType KeyName = CassandraType.GetTypeFromDatabaseValue<AsciiType>(new byte[] { 75, 69, 89 });
+		public static readonly AsciiType DefaultKeyName = CassandraType.GetTypeFromDatabaseValue<AsciiType>(new byte[] { 75, 69, 89 });
 
 		public CassandraColumnFamilySchema()
 		{
-			Key = KeyName;
+			KeyName = DefaultKeyName;
 			KeyType = typeof(BytesType);
 			Columns = new List<CassandraColumnSchema>();
 		}
 
 		public string FamilyName { get; set; }
-		public CassandraType Key { get; private set; }
+		public CassandraType KeyName { get; set; }
 
 		public Type KeyType { get; set; }
 		public Type ColumnNameType { get; set; }

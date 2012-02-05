@@ -1,14 +1,30 @@
 using System;
-using System.Collections.Generic;
 using FluentCassandra.Types;
 
 namespace FluentCassandra
 {
 	public class CassandraColumnSchema
 	{
-		private Type _nameType;
+		public CassandraColumnSchema()
+		{
+			NameType = typeof(BytesType);
+			ValueType = typeof(BytesType);
+		}
 
-		public CassandraType Name { get; set; }
+		private Type _nameType;
+		private CassandraType _name;
+
+		public CassandraType Name
+		{
+			get { return _name; }
+			set
+			{
+				if (value != null)
+					NameType = value.GetType();
+
+				_name = value;
+			}
+		}
 
 		public Type NameType
 		{
@@ -23,18 +39,5 @@ namespace FluentCassandra
 		}
 
 		public virtual Type ValueType { get; set; }
-	}
-
-	public class CassandraSuperColumnSchema : CassandraColumnSchema
-	{
-		public Type ColumnNameType { get; set; }
-
-		public IList<CassandraColumnSchema> Columns { get; set; }
-
-		public override Type ValueType
-		{
-			get { throw new NotSupportedException(); }
-			set { throw new NotSupportedException(); }
-		}
 	}
 }

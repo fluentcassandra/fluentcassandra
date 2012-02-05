@@ -33,7 +33,7 @@ namespace FluentCassandra.Operations
 
 			foreach (var result in output)
 			{
-				var r = new FluentSuperColumn(result.Value.Select(col => {
+				var r = new FluentSuperColumn(null, result.Value.Select(col => {
 					return Helper.ConvertColumnToFluentColumn(col.Column);
 				}));
 				ColumnFamily.Context.Attach(r);

@@ -3,9 +3,9 @@ using FluentCassandra.Types;
 
 namespace FluentCassandra.Operations
 {
-	public class RangeSlicePredicate : CassandraSlicePredicate
+	public class CassandraRangeSlicePredicate : CassandraSlicePredicate
 	{
-		public RangeSlicePredicate(CassandraType start, CassandraType finish, bool reversed = false, int count = 100)
+		public CassandraRangeSlicePredicate(CassandraType start, CassandraType finish, bool reversed = false, int count = 100)
 		{
 			Start = start;
 			Finish = finish;

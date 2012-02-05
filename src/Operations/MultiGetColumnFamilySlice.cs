@@ -30,7 +30,7 @@ namespace FluentCassandra.Operations
 			{
 				var key = CassandraType.GetTypeFromDatabaseValue<BytesType>(result.Key);
 
-				var r = new FluentColumnFamily(key, ColumnFamily.FamilyName, ColumnFamily.Schema(), result.Value.Select(col => {
+				var r = new FluentColumnFamily(key, ColumnFamily.FamilyName, ColumnFamily.GetSchema(), result.Value.Select(col => {
 					return Helper.ConvertColumnToFluentColumn(col.Column);
 				}));
 				ColumnFamily.Context.Attach(r);

@@ -5,9 +5,9 @@ using FluentCassandra.Types;
 
 namespace FluentCassandra.Operations
 {
-	public class ColumnSlicePredicate : CassandraSlicePredicate
+	public class CassandraColumnSlicePredicate : CassandraSlicePredicate
 	{
-		public ColumnSlicePredicate(IEnumerable<CassandraType> columns)
+		public CassandraColumnSlicePredicate(IEnumerable<CassandraType> columns)
 		{
 			Columns = columns;
 		}

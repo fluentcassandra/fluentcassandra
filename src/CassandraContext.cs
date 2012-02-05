@@ -65,17 +65,42 @@ namespace FluentCassandra
 		}
 
 		/// <summary>
+		/// Gets a typed column family.
+		/// </summary>
+		/// <typeparam name="CompareWith"></typeparam>
+		/// <returns></returns>
+		public CassandraColumnFamily GetSuperColumnFamily(string columnFamily)
+		{
+			return new CassandraColumnFamily(this, columnFamily);
+		}
+
+		/// <summary>
 		/// Gets a typed super column family.
 		/// </summary>
 		/// <typeparam name="CompareWith"></typeparam>
 		/// <typeparam name="CompareSubcolumnWith"></typeparam>
 		/// <param name="columnFamily"></param>
 		/// <returns></returns>
-		public CassandraSuperColumnFamily GetColumnFamily<CompareWith, CompareSubcolumnWith>(string columnFamily)
+		[Obsolete("Use \"GetColumnFamily\" with out generic parameters")]
+		public CassandraColumnFamily<CompareWith> GetColumnFamily<CompareWith>(string columnFamily)
+			where CompareWith : CassandraType
+		{
+			return new CassandraColumnFamily<CompareWith>(this, columnFamily);
+		}
+
+		/// <summary>
+		/// Gets a typed super column family.
+		/// </summary>
+		/// <typeparam name="CompareWith"></typeparam>
+		/// <typeparam name="CompareSubcolumnWith"></typeparam>
+		/// <param name="columnFamily"></param>
+		/// <returns></returns>
+		[Obsolete("Use \"GetSuperColumnFamily\" with out generic parameters")]
+		public CassandraSuperColumnFamily<CompareWith, CompareSubcolumnWith> GetColumnFamily<CompareWith, CompareSubcolumnWith>(string columnFamily)
 			where CompareWith : CassandraType
 			where CompareSubcolumnWith : CassandraType
 		{
-			return new CassandraSuperColumnFamily(this, columnFamily);
+			return new CassandraSuperColumnFamily<CompareWith, CompareSubcolumnWith>(this, columnFamily);
 		}
 
 		/// <summary>

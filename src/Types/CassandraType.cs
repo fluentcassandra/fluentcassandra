@@ -179,6 +179,7 @@ namespace FluentCassandra.Types
 		public static implicit operator CassandraType(Guid o) { return ConvertFrom(o); }
 		public static implicit operator CassandraType(DateTime o) { return ConvertFrom(o); }
 		public static implicit operator CassandraType(DateTimeOffset o) { return ConvertFrom(o); }
+		public static implicit operator CassandraType(BigInteger o) { return ConvertFrom(o); }
 
 		public static implicit operator byte[](CassandraType o) { return ConvertTo<byte[]>(o); }
 		public static implicit operator char[](CassandraType o) { return ConvertTo<char[]>(o); }

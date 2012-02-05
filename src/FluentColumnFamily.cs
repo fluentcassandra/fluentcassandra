@@ -6,8 +6,21 @@ using FluentCassandra.Linq;
 
 namespace FluentCassandra
 {
-	public class FluentColumnFamily : FluentRecord<FluentColumn>, IFluentBaseColumnFamily, ICqlRow
+	[Obsolete("Use \"FluentColumnFamily\" class with out generic type")]
+	public class FluentColumnFamily<CompareWith> : FluentColumnFamily
+		where CompareWith : CassandraType
 	{
+		public FluentColumnFamily(CassandraType key, string columnFamily)
+			: base(key, columnFamily, new CassandraColumnFamilySchema {
+				FamilyName = columnFamily,
+				KeyType = typeof(BytesType),
+				ColumnNameType = typeof(CompareWith)
+			}) { }
+	}
+
+	public class FluentColumnFamily : FluentRecord<FluentColumn>, IFluentBaseColumnFamily, IFluentRecordExpression, ICqlRow
+	{
+		private CassandraType _key;
 		private FluentColumnList<FluentColumn> _columns;
 		private CassandraColumnFamilySchema _schema;
 
@@ -20,7 +33,7 @@ namespace FluentCassandra
 		{
 			SetSchema(schema);
 
-			Key = (CassandraType)key.ToType(GetSchema().KeyType);
+			Key = key;
 			FamilyName = columnFamily;
 
 			_columns = new FluentColumnList<FluentColumn>(GetSelf());
@@ -36,16 +49,23 @@ namespace FluentCassandra
 		{
 			SetSchema(schema);
 
-			Key = (CassandraType)key.ToType(GetSchema().KeyType);
+			Key = key;
 			FamilyName = columnFamily;
 
 			_columns = new FluentColumnList<FluentColumn>(GetSelf(), columns);
 		}
 
 		/// <summary>
-		/// 
+		/// The column name.
 		/// </summary>
-		public CassandraType Key { get; set; }
+		public CassandraType Key
+		{
+			get { return _key; }
+			set
+			{
+				_key = (CassandraType)value.ToType(GetSchema().KeyType);
+			}
+		}
 
 		/// <summary>
 		/// 
@@ -106,6 +126,18 @@ namespace FluentCassandra
 		{
 			return new FluentColumn(GetColumnSchema(""));
 		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		public FluentColumn CreateColumn(CassandraType name)
+		{
+			return new FluentColumn(GetColumnSchema(name)) {
+				ColumnName = name
+			};
+		}
+
 
 		/// <summary>
 		/// 

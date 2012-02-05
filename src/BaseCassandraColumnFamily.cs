@@ -11,7 +11,6 @@ namespace FluentCassandra
 	public abstract class BaseCassandraColumnFamily : ICassandraQueryProvider
 	{
 		private CassandraContext _context;
-		private CassandraColumnFamilySchema _cachedColumnFamilyFluentFriendlySchema;
 
 		/// <summary>
 		/// 
@@ -59,35 +58,18 @@ namespace FluentCassandra
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		public CassandraColumnFamilySchema Schema()
-		{
-			var def = _context.Keyspace.GetColumnFamilyDescription(FamilyName);
-
-			if (_cachedColumnFamilyFluentFriendlySchema == null)
-			{
-				var keyType = CassandraType.GetCassandraType(def.Key_validation_class);
-				var colNameType = CassandraType.GetCassandraType(def.Default_validation_class);
-
-				_cachedColumnFamilyFluentFriendlySchema = new CassandraColumnFamilySchema {
-					FamilyName = FamilyName,
-					KeyType = keyType,
-					Columns = def.Column_metadata.Select(col => new CassandraColumnSchema {
-						Name = CassandraType.GetTypeFromDatabaseValue(col.Name, colNameType),
-						ValueType = CassandraType.GetCassandraType(col.Validation_class)
-					}).ToList()
-				};
-			}
-
-			return _cachedColumnFamilyFluentFriendlySchema;
-		}
+		public abstract CassandraColumnFamilySchema GetSchema();
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public void ClearCachedKeyspaceSchema()
-		{
-			_cachedColumnFamilyFluentFriendlySchema = null;
-		}
+		/// <param name="schema"></param>
+		public abstract void SetSchema(CassandraColumnFamilySchema schema);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public abstract void ClearCachedColumnFamilySchema();
 
 		/// <summary>
 		/// Removes all the rows from the given column family.

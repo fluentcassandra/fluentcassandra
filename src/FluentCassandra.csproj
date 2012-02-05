@@ -102,6 +102,7 @@
     <Compile Include="CassandraSession.cs" />
     <Compile Include="CassandraSuperColumnFamilyOperations.cs" />
     <Compile Include="CassandraSuperColumnFamily.cs" />
+    <Compile Include="CassandraSuperColumnFamilySchema.cs" />
     <Compile Include="CassandraTokenRange.cs" />
     <Compile Include="Connections\Connection.cs" />
     <Compile Include="Connections\ConnectionBuilder.cs" />
@@ -147,6 +148,7 @@
     <Compile Include="GuidVersion.cs" />
     <Compile Include="IFluentBaseColumn.cs" />
     <Compile Include="CassandraColumnFamilyOperations.cs" />
+    <Compile Include="IFluentRecordExpression.cs" />
     <Compile Include="Linq\CqlQuery.cs" />
     <Compile Include="Linq\CqlQueryEvaluator.cs" />
     <Compile Include="Linq\CassandraColumnFamily`1+QueryProvider.cs" />
@@ -163,7 +165,7 @@
     <Compile Include="Operations\CassandraQueryable.cs" />
     <Compile Include="Operations\CassandraQuerySetup.cs" />
     <Compile Include="Operations\CassandraSlicePredicateBuilder.cs" />
-    <Compile Include="Operations\ColumnSlicePredicate.cs" />
+    <Compile Include="Operations\CassandraColumnSlicePredicate.cs" />
     <Compile Include="Operations\AddColumn.cs" />
     <Compile Include="Operations\ExecuteCqlNonQuery.cs" />
     <Compile Include="Operations\ExecuteCqlQuery.cs" />
@@ -198,7 +200,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Operations\QueryableColumnFamilyOperation.cs" />
-    <Compile Include="Operations\RangeSlicePredicate.cs" />
+    <Compile Include="Operations\CassandraRangeSlicePredicate.cs" />
     <Compile Include="Operations\RemoveColumn.cs" />
     <Compile Include="Operations\RemoveKey.cs" />
     <Compile Include="Operations\RemoveSuperColumn.cs" />

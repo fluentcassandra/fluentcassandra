@@ -7,7 +7,7 @@ namespace FluentCassandra.Operations
 {
 	public class CassandraIndexClause
 	{
-		public CassandraIndexClause(CassandraType startKey, int count, Expression<Func<FluentRecord<FluentColumn>, bool>> expression)
+		public CassandraIndexClause(CassandraType startKey, int count, Expression<Func<IFluentRecordExpression, bool>> expression)
 			: this(startKey, count, (Expression)expression) { }
 
 		protected internal CassandraIndexClause(CassandraType startKey, int count, Expression expression)

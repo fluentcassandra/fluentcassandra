@@ -23,7 +23,7 @@ namespace FluentCassandra.Operations
 			//if (ColumnFamily != null && ColumnFamily.FamilyName != null)
 			//    return ColumnFamily.Schema();
 
-			var keyName = CassandraColumnFamilySchema.KeyName.ToBigEndian();
+			var keyName = CassandraColumnFamilySchema.DefaultKeyName.ToBigEndian();
 			var resultSchema = result.Schema;
 			var colNameType = CassandraType.GetCassandraType(resultSchema.Default_name_type);
 

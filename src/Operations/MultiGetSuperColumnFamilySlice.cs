@@ -39,7 +39,7 @@ namespace FluentCassandra.Operations
 				});
 
 				var familyName = ColumnFamily.FamilyName;
-				var schema = ColumnFamily.Schema();
+				var schema = (CassandraSuperColumnFamilySchema)ColumnFamily.GetSchema();
 				var r = new FluentSuperColumnFamily(key, familyName, schema, superColumns);
 				ColumnFamily.Context.Attach(r);
 				r.MutationTracker.Clear();
