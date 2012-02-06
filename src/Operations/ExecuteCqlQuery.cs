@@ -88,10 +88,10 @@ namespace FluentCassandra.Operations
 					CassandraType.GetTypeFromDatabaseValue<BytesType>(row.Key),
 					familyName, 
 					schema,
-					GetColumns(row));
+					GetColumns(row, schema));
 		}
 
-		private IEnumerable<FluentColumn> GetColumns(Apache.Cassandra.CqlRow row)
+		private IEnumerable<FluentColumn> GetColumns(Apache.Cassandra.CqlRow row, CassandraColumnFamilySchema schema)
 		{
 			foreach (var col in row.Columns)
 			{
@@ -99,7 +99,12 @@ namespace FluentCassandra.Operations
 				if (col.Timestamp == -1)
 					continue;
 
-				yield return Helper.ConvertColumnToFluentColumn(col);
+				
+				var colSchema = schema.Columns.Where(x => x.Name == col.Name).FirstOrDefault();
+				var fcol = Helper.ConvertColumnToFluentColumn(col);
+				fcol.SetSchema(colSchema);
+
+				yield return fcol;
 			}
 		}
 

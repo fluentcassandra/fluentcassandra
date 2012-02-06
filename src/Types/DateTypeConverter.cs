@@ -6,10 +6,16 @@ namespace FluentCassandra.Types
 	{
 		private static readonly DateTimeOffset UnixStart = new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero);
 
-		public static long ToDate(DateTimeOffset dt)
+		private static long ToUnixTime(DateTimeOffset dt)
 		{
 			// this was changed from .NET Ticks to the Unix Epoch to be compatible with other cassandra libraries
-			return Convert.ToInt64((dt - UnixStart).TotalMilliseconds);
+			return Convert.ToInt64(Math.Floor((dt - UnixStart).TotalMilliseconds));
+		}
+
+		private static DateTimeOffset FromUnixTime(long ms)
+		{
+			// this was changed from .NET Ticks to the Unix Epoch to be compatible with other cassandra libraries
+			return UnixStart.AddMilliseconds(ms);
 		}
 
 		public override bool CanConvertFrom(Type sourceType)
@@ -53,19 +59,19 @@ namespace FluentCassandra.Types
 			}
 		}
 
-		public override DateTimeOffset ConvertFrom(object value)
+		public override DateTimeOffset ConvertFromInternal(object value)
 		{
 			if (value is DateTimeOffset)
 				return (DateTimeOffset)value;
 
 			if (value is byte[])
-				return UnixStart.AddMilliseconds(((byte[])value).FromBytes<long>());
+				return FromUnixTime(((byte[])value).FromBytes<long>());
 
 			if (value is long)
-				return UnixStart.AddMilliseconds((long)value);
+				return FromUnixTime((long)value);
 
 			if (value is ulong)
-				return UnixStart.AddMilliseconds((ulong)value);
+				return FromUnixTime(Convert.ToInt64((ulong)value));
 
 			if (value is DateTime)
 			{
@@ -78,19 +84,19 @@ namespace FluentCassandra.Types
 			return default(DateTimeOffset);
 		}
 
-		public override object ConvertTo(DateTimeOffset value, Type destinationType)
+		public override object ConvertToInternal(DateTimeOffset value, Type destinationType)
 		{
 			if (destinationType == typeof(DateTimeOffset))
 				return value;
 
 			if (destinationType == typeof(byte[]))
-				return ToDate(value).ToBytes();
+				return ToUnixTime(value).ToBytes();
 
 			if (destinationType == typeof(long))
-				return ToDate(value);
+				return ToUnixTime(value);
 
 			if (destinationType == typeof(ulong))
-				return (ulong)ToDate(value);
+				return (ulong)ToUnixTime(value);
 
 			if (destinationType == typeof(DateTime))
 				return value.LocalDateTime;

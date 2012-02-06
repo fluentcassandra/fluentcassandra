@@ -40,7 +40,7 @@ namespace FluentCassandra.Operations
 			var columns = _family.GetSingle(_testKey, new AsciiType[] { "Test1", "Test2" });
 
 			// assert
-			Assert.AreEqual(expectedCount, columns.Count());
+			Assert.AreEqual(expectedCount, columns.Columns.Count);
 		}
 
 		[Test]
@@ -53,7 +53,7 @@ namespace FluentCassandra.Operations
 			var columns = _superFamily.GetSingleSuperColumn(_testKey, _testSuperName, new AsciiType[] { "Test1", "Test2" });
 
 			// assert
-			Assert.AreEqual(expectedCount, columns.Count());
+			Assert.AreEqual(expectedCount, columns.Columns.Count);
 		}
 
 		[Test]
@@ -66,7 +66,7 @@ namespace FluentCassandra.Operations
 			var columns = _superFamily.GetSingle(_testKey, new AsciiType[] { _testSuperName });
 
 			// assert
-			Assert.AreEqual(expectedCount, columns.Count());
+			Assert.AreEqual(expectedCount, columns.Columns.Count);
 		}
 
 		[Test]
@@ -79,7 +79,7 @@ namespace FluentCassandra.Operations
 			var columns = _family.GetSingle(_testKey, _testName, null, columnCount: 2);
 
 			// assert
-			Assert.AreEqual(expectedCount, columns.Count());
+			Assert.AreEqual(expectedCount, columns.Columns.Count);
 		}
 
 		[Test]
@@ -92,7 +92,7 @@ namespace FluentCassandra.Operations
 			var columns = _superFamily.GetSingleSuperColumn(_testKey, _testSuperName, _testName, null, count: 2);
 
 			// assert
-			Assert.AreEqual(expectedCount, columns.Count());
+			Assert.AreEqual(expectedCount, columns.Columns.Count);
 		}
 
 		[Test]
@@ -105,7 +105,7 @@ namespace FluentCassandra.Operations
 			var columns = _superFamily.GetSingle(_testKey, _testSuperName, null, count: 1);
 
 			// assert
-			Assert.AreEqual(expectedCount, columns.Count());
+			Assert.AreEqual(expectedCount, columns.Columns.Count);
 		}
 	}
 }

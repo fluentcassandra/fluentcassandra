@@ -20,7 +20,7 @@ namespace FluentCassandra.Types
 			return destinationType == typeof(byte[]);
 		}
 
-		public override float ConvertFrom(object value)
+		public override float ConvertFromInternal(object value)
 		{
 			if (value is byte[])
 				return ((byte[])value).FromBytes<float>();
@@ -28,7 +28,7 @@ namespace FluentCassandra.Types
 			return (float)Convert.ChangeType(value, typeof(float));
 		}
 
-		public override object ConvertTo(float value, Type destinationType)
+		public override object ConvertToInternal(float value, Type destinationType)
 		{
 			if (destinationType == typeof(byte[]))
 				return value.ToBytes();

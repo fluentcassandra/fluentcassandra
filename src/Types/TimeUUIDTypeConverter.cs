@@ -14,7 +14,7 @@ namespace FluentCassandra.Types
 			return destinationType == typeof(byte[]) || destinationType == typeof(Guid) || destinationType == typeof(DateTime) || destinationType == typeof(DateTimeOffset);
 		}
 
-		public override Guid ConvertFrom(object value)
+		public override Guid ConvertFromInternal(object value)
 		{
 			if (value is DateTime)
 				return GuidGenerator.GenerateTimeBasedGuid((DateTime)value);
@@ -31,7 +31,7 @@ namespace FluentCassandra.Types
 			return default(Guid);
 		}
 
-		public override object ConvertTo(Guid value, Type destinationType)
+		public override object ConvertToInternal(Guid value, Type destinationType)
 		{
 			Guid guid = value;
 

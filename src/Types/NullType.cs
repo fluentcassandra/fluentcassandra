@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Numerics;
 
 namespace FluentCassandra.Types
 {
 	internal class NullType : CassandraType
 	{
-		public readonly static NullType Value = null;
+		public readonly static NullType Value = new NullType();
 
 		private NullType() { }
 
@@ -12,15 +13,51 @@ namespace FluentCassandra.Types
 		{
 		}
 
-		public override object GetValue(Type type)
+		protected override object GetValueInternal(Type type)
 		{
 			return type.IsValueType ? Activator.CreateInstance(type) : null;
 		}
 
 		protected override TypeCode TypeCode
 		{
-			get { return TypeCode.Empty; }
+			get { return TypeCode.DBNull; }
 		}
+
+		#region Equality
+
+		public override bool Equals(object obj)
+		{
+			if (obj == null)
+				return true;
+
+			if (obj is NullType)
+				return true;
+
+			return false;
+		}
+
+		public override int GetHashCode()
+		{
+			return 0;
+		}
+
+		public static bool operator ==(NullType type, object obj)
+		{
+			if (Object.Equals(type, null))
+				type = Value;
+
+			return type.Equals(obj);
+		}
+
+		public static bool operator !=(NullType type, object obj)
+		{
+			if (Object.Equals(type, null))
+				type = Value;
+
+			return !type.Equals(obj);
+		}
+
+		#endregion
 
 		public override byte[] ToBigEndian()
 		{
@@ -31,7 +68,7 @@ namespace FluentCassandra.Types
 		{
 		}
 
-		internal override object GetRawValue() { return null; }
+		protected override object GetRawValue() { return null; }
 
 		public static implicit operator byte?(NullType o) { return null; }
 		public static implicit operator sbyte?(NullType o) { return null; }
@@ -50,5 +87,6 @@ namespace FluentCassandra.Types
 		public static implicit operator Guid?(NullType o) { return null; }
 		public static implicit operator DateTime?(NullType o) { return null; }
 		public static implicit operator DateTimeOffset?(NullType o) { return null; }
+		public static implicit operator BigInteger?(NullType o) { return null; }
 	}
 }

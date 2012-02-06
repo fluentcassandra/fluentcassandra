@@ -44,7 +44,7 @@ namespace FluentCassandra.TypesToDatabase
 		{
 			// arrange
 			var family = _db.GetColumnFamily<TimeUUIDType>(FamilyName);
-			var expected = new DateTime(2010, 11, 29, 0, 0, 0, DateTimeKind.Local);
+			var expected = new DateTime(2010, 11, 20, 0, 0, 0, DateTimeKind.Local);
 
 			// act
 			family.InsertColumn(TestKey, expected, Math.PI);
@@ -60,7 +60,7 @@ namespace FluentCassandra.TypesToDatabase
 		{
 			// arrange
 			var family = _db.GetColumnFamily<TimeUUIDType>(FamilyName);
-			var expected = new DateTime(2010, 11, 29, 0, 0, 0, DateTimeKind.Utc);
+			var expected = new DateTime(2010, 11, 21, 0, 0, 0, DateTimeKind.Utc);
 
 			// act
 			family.InsertColumn(TestKey, expected, Math.PI);
@@ -75,7 +75,7 @@ namespace FluentCassandra.TypesToDatabase
 		{
 			// arrange
 			var family = _db.GetColumnFamily<TimeUUIDType>(FamilyName);
-			var expected = new DateTimeOffset(2010, 11, 29, 0, 0, 0, TimeSpan.Zero);
+			var expected = new DateTimeOffset(2010, 11, 22, 0, 0, 0, TimeSpan.Zero);
 
 			// act
 			family.InsertColumn(TestKey, expected, Math.PI);

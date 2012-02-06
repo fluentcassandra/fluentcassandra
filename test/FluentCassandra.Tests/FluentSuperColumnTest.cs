@@ -83,7 +83,7 @@ namespace FluentCassandra
 			var colName = "This is a test name";
 			var colValue1 = 300M;
 			var colValue2 = "Hello";
-			string expected = null;
+			var expected = (string)null;
 
 			// act
 			dynamic superColumn = new FluentSuperColumn<AsciiType, AsciiType>();
@@ -93,7 +93,7 @@ namespace FluentCassandra
 			var actual = superColumn.Test3;
 
 			// assert
-			Assert.AreEqual(expected, actual);
+			Assert.AreEqual(expected, (string)actual);
 		}
 
 		[Test]

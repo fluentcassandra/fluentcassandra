@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using FluentCassandra.Operations;
-using FluentCassandra.Types;
 
 namespace FluentCassandra
 {
@@ -94,24 +93,25 @@ namespace FluentCassandra
 			if (!throwOnError.HasValue)
 				throwOnError = ThrowErrors;
 
-			var localSession = CassandraSession.Current;
-			if (localSession == null)
-				localSession = _context.OpenSession();
+			var localSession = CassandraSession.Current == null;
+			var session = CassandraSession.Current;
+			if (session == null)
+				session = _context.OpenSession();
 
 			action.Context = _context;
 			action.ColumnFamily = this;
 
 			try
 			{
-				var result = localSession.ExecuteOperation(action, throwOnError);
-				LastError = localSession.LastError;
+				var result = session.ExecuteOperation(action, throwOnError);
+				LastError = session.LastError;
 
 				return result;
 			}
 			finally
 			{
-				if (localSession != null)
-					localSession.Dispose();
+				if (localSession && session != null)
+					session.Dispose();
 			}
 		}
 

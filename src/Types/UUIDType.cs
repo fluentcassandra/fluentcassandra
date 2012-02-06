@@ -9,14 +9,14 @@ namespace FluentCassandra.Types
 
 		#region Implimentation
 
-		public override object GetValue(Type type)
+		protected override object GetValueInternal(Type type)
 		{
-			return GetValue(_value, type, Converter);
+			return Converter.ConvertTo(_value, type);
 		}
 
 		public override void SetValue(object obj)
 		{
-			_value = SetValue(obj, Converter);
+			_value = Converter.ConvertFrom(obj);
 		}
 
 		public override byte[] ToBigEndian()
@@ -41,7 +41,7 @@ namespace FluentCassandra.Types
 
 		#endregion
 
-		internal override object GetRawValue() { return _value; }
+		protected override object GetRawValue() { return _value; }
 
 		private Guid _value;
 
@@ -52,7 +52,7 @@ namespace FluentCassandra.Types
 			if (obj is UUIDType)
 				return _value == ((UUIDType)obj)._value;
 
-			return _value == CassandraType.GetValue<Guid>(obj, Converter);
+			return _value == Converter.ConvertFrom(obj);
 		}
 
 		public override int GetHashCode()

@@ -20,7 +20,7 @@ namespace FluentCassandra.Types
 			return destinationType == typeof(byte[]);
 		}
 
-		public override decimal ConvertFrom(object value)
+		public override decimal ConvertFromInternal(object value)
 		{
 			if (value is byte[])
 				return ((byte[])value).FromBytes<decimal>();
@@ -28,7 +28,7 @@ namespace FluentCassandra.Types
 			return (decimal)Convert.ChangeType(value, typeof(decimal));
 		}
 
-		public override object ConvertTo(decimal value, Type destinationType)
+		public override object ConvertToInternal(decimal value, Type destinationType)
 		{
 			if (destinationType == typeof(byte[]))
 				return value.ToBytes();

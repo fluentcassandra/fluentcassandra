@@ -42,10 +42,18 @@ namespace FluentCassandra.Types
 			}
 		}
 
-		public override long ConvertFrom(object value)
+		public override long ConvertFromInternal(object value)
 		{
 			if (value is byte[])
-				return ((byte[])value).FromBytes<long>();
+			{
+				var vbytes = (byte[])value;
+				var bytes = new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 };
+
+				for (int i = 0; i < vbytes.Length; i++)
+					bytes[i] = vbytes[i];
+
+				return bytes.FromBytes<long>();
+			}
 
 			if (value is long) return (long)value;
 
@@ -61,7 +69,7 @@ namespace FluentCassandra.Types
 			return default(long);
 		}
 
-		public override object ConvertTo(long value, Type destinationType)
+		public override object ConvertToInternal(long value, Type destinationType)
 		{
 			if (destinationType == typeof(byte[]))
 				return value.ToBytes();

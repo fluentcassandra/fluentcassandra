@@ -8,7 +8,7 @@ namespace FluentCassandra.Types
 
 		public static byte[] ToBytes(this object value)
 		{
-			return BitConverter.ConvertFrom(value);
+			return BitConverter.ConvertFromInternal(value);
 		}
 
 		public static T FromBytes<T>(this byte[] value)
@@ -18,7 +18,7 @@ namespace FluentCassandra.Types
 
 		public static object FromBytes(this byte[] value, Type destinationType)
 		{
-			return BitConverter.ConvertTo(value, destinationType);
+			return BitConverter.ConvertToInternal(value, destinationType);
 		}
 
 		private static void ReverseLowFieldTimestamp(byte[] guid)

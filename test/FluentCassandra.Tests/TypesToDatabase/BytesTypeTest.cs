@@ -286,7 +286,7 @@ namespace FluentCassandra.TypesToDatabase
 		{
 			// arrange
 			var family = _db.GetColumnFamily<BytesType>(FamilyName);
-			DateTime expected = DateTime.Now;
+			DateTime expected = DateTime.Now.MillisecondResolution();
 
 			// act
 			family.InsertColumn(TestKey, expected, Math.PI);
@@ -302,7 +302,7 @@ namespace FluentCassandra.TypesToDatabase
 		{
 			// arrange
 			var family = _db.GetColumnFamily<BytesType>(FamilyName);
-			DateTime expected = DateTime.UtcNow;
+			DateTime expected = DateTime.UtcNow.MillisecondResolution();
 
 			// act
 			family.InsertColumn(TestKey, expected, Math.PI);
@@ -318,7 +318,7 @@ namespace FluentCassandra.TypesToDatabase
 		{
 			// arrange
 			var family = _db.GetColumnFamily<BytesType>(FamilyName);
-			DateTimeOffset expected = DateTimeOffset.Now;
+			DateTimeOffset expected = DateTimeOffset.Now.MillisecondResolution();
 
 			// act
 			family.InsertColumn(TestKey, expected, Math.PI);

@@ -315,23 +315,24 @@ namespace FluentCassandra
 			if (!throwOnError.HasValue)
 				throwOnError = ThrowErrors;
 
-			var localSession = CassandraSession.Current;
-			if (localSession == null)
-				localSession = OpenSession();
+			var localSession = CassandraSession.Current == null;
+			var session = CassandraSession.Current;
+			if (session == null)
+				session = OpenSession();
 
 			action.Context = this;
 
 			try
 			{
-				var result = localSession.ExecuteOperation(action, throwOnError);
-				LastError = localSession.LastError;
+				var result = session.ExecuteOperation(action, throwOnError);
+				LastError = session.LastError;
 
 				return result;
 			}
 			finally
 			{
-				if (localSession != null)
-					localSession.Dispose();
+				if (localSession && session != null)
+					session.Dispose();
 			}
 		}
 

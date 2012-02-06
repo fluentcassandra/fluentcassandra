@@ -20,7 +20,7 @@ namespace FluentCassandra.Types
 			return destinationType == typeof(byte[]);
 		}
 
-		public override string ConvertFrom(object value)
+		public override string ConvertFromInternal(object value)
 		{
 			if (value is byte[])
 				return ((byte[])value).FromBytes<string>();
@@ -28,7 +28,7 @@ namespace FluentCassandra.Types
 			return (string)Convert.ChangeType(value, typeof(string));
 		}
 
-		public override object ConvertTo(string value, Type destinationType)
+		public override object ConvertToInternal(string value, Type destinationType)
 		{
 			if (!(value is string))
 				return null;
@@ -47,7 +47,7 @@ namespace FluentCassandra.Types
 
 		public override string FromBigEndian(byte[] value)
 		{
-			var obj = ConvertFrom(value);
+			var obj = ConvertFromInternal(value);
 			return obj;
 		}
 	}

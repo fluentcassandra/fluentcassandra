@@ -1,7 +1,6 @@
 ﻿using System;
-using System.ComponentModel;
-using System.Numerics;
 using System.Collections.Generic;
+using System.Numerics;
 
 namespace FluentCassandra.Types
 {
@@ -12,31 +11,24 @@ namespace FluentCassandra.Types
 			return (T)GetValue(typeof(T));
 		}
 
-		internal object GetValue<T>(T value, Type type, CassandraTypeConverter<T> converter)
-		{
-			if (type.IsGenericType && type.GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
-			{
-				var nc = new NullableConverter(type);
-				type = nc.UnderlyingType;
-			}
-
-			if (!converter.CanConvertTo(type))
-				throw new InvalidCastException(String.Format("{0} cannot be cast to {1}", type, TypeCode));
-
-			return converter.ConvertTo(value, type);
-		}
-
-		internal T SetValue<T>(object obj, CassandraTypeConverter<T> converter)
-		{
-			if (!converter.CanConvertFrom(obj.GetType()))
-				throw new InvalidCastException(String.Format("{0} cannot be cast to {1}", obj.GetType(), TypeCode));
-
-			return converter.ConvertFrom(obj);
-		}
-
 		public abstract void SetValue(object obj);
-		public abstract object GetValue(Type type);
 
+		public object GetValue(Type type)
+		{
+			if (type == GetType())
+				return this;
+
+			if (GetType() == typeof(BytesType) && type.BaseType == typeof(CassandraType))
+				return GetTypeFromDatabaseValue((byte[])GetRawValue(), type);
+
+			if (type.BaseType == typeof(CassandraType))
+				return GetTypeFromObject(GetRawValue(), type);
+
+			return GetValueInternal(type);
+		}
+
+		protected abstract object GetValueInternal(Type type);
+		protected abstract object GetRawValue();
 		protected abstract TypeCode TypeCode { get; }
 
 		public abstract byte[] ToBigEndian();
@@ -90,73 +82,7 @@ namespace FluentCassandra.Types
 
 		private static CassandraType ConvertFrom(object o)
 		{
-			var sourceType = o.GetType();
-			var destinationType = (Type)null;
-
-			switch (Type.GetTypeCode(sourceType))
-			{
-
-				case TypeCode.DateTime:
-					destinationType = typeof(DateType);
-					break;
-
-				case TypeCode.Boolean:
-					destinationType = typeof(BooleanType);
-					break;
-
-				case TypeCode.Char:
-				case TypeCode.Double:
-					destinationType = typeof(DoubleType);
-					break;
-
-				case TypeCode.Single:
-					destinationType = typeof(FloatType);
-					break;
-
-				case TypeCode.Int64:
-				case TypeCode.UInt64:
-					destinationType = typeof(LongType);
-					break;
-
-				case TypeCode.Int16:
-				case TypeCode.Int32:
-				case TypeCode.UInt16:
-				case TypeCode.UInt32:
-					destinationType = typeof(Int32Type);
-					break;
-
-				case TypeCode.Decimal:
-					destinationType = typeof(DecimalType);
-					break;
-
-				case TypeCode.String:
-					destinationType = typeof(UTF8Type);
-					break;
-
-				case TypeCode.Object:
-					if (sourceType == typeof(DateTimeOffset))
-						destinationType = typeof(DateType);
-
-					if (sourceType == typeof(BigInteger))
-						destinationType = typeof(IntegerType);
-
-					if (sourceType == typeof(char[]))
-						destinationType = typeof(UTF8Type);
-
-					goto default;
-
-				case TypeCode.Byte:
-				case TypeCode.SByte:
-					goto default;
-
-				default:
-					destinationType = typeof(BytesType);
-					break;
-			}
-
-			var type = (CassandraType)Activator.CreateInstance(destinationType);
-			type.SetValue(o);
-			return type;
+			return GetTypeFromObject(o);
 		}
 
 		public static implicit operator CassandraType(byte[] o) { return ConvertFrom(o); }
@@ -229,19 +155,6 @@ namespace FluentCassandra.Types
 
 		#endregion
 
-		internal abstract object GetRawValue();
-
-		public object ToType(Type conversionType)
-		{
-			if (GetType() == typeof(BytesType))
-				return GetTypeFromDatabaseValue((byte[])GetRawValue(), conversionType);
-
-			if (conversionType.BaseType == typeof(CassandraType))
-				return GetTypeFromObject(GetRawValue(), conversionType);
-
-			return GetValue(conversionType);
-		}
-
 		#region IConvertible Members
 
 		TypeCode IConvertible.GetTypeCode()
@@ -251,7 +164,7 @@ namespace FluentCassandra.Types
 
 		object IConvertible.ToType(Type conversionType, IFormatProvider provider)
 		{
-			return ToType(conversionType);
+			return GetValue(conversionType);
 		}
 
 		bool IConvertible.ToBoolean(IFormatProvider provider) { return GetValue<bool>(); }
@@ -304,6 +217,82 @@ namespace FluentCassandra.Types
 			return type;
 		}
 
+		public static CassandraType GetTypeFromObject(object obj)
+		{
+			if (obj == null)
+				return NullType.Value;
+
+			var sourceType = obj.GetType();
+			var destinationType = (Type)null;
+
+			switch (Type.GetTypeCode(sourceType))
+			{
+
+				case TypeCode.DateTime:
+					destinationType = typeof(DateType);
+					break;
+
+				case TypeCode.Boolean:
+					destinationType = typeof(BooleanType);
+					break;
+
+				case TypeCode.Double:
+					destinationType = typeof(DoubleType);
+					break;
+
+				case TypeCode.Single:
+					destinationType = typeof(FloatType);
+					break;
+
+				case TypeCode.Int64:
+				case TypeCode.UInt64:
+					destinationType = typeof(LongType);
+					break;
+
+				case TypeCode.Int16:
+				case TypeCode.Int32:
+				case TypeCode.UInt16:
+				case TypeCode.UInt32:
+					destinationType = typeof(Int32Type);
+					break;
+
+				case TypeCode.Decimal:
+					destinationType = typeof(DecimalType);
+					break;
+
+				case TypeCode.Char:
+				case TypeCode.String:
+					destinationType = typeof(UTF8Type);
+					break;
+
+				case TypeCode.Byte:
+				case TypeCode.SByte:
+					destinationType = typeof(BytesType);
+					break;
+
+				default:
+					if (sourceType == typeof(DateTimeOffset))
+						destinationType = typeof(DateType);
+
+					if (sourceType == typeof(BigInteger))
+						destinationType = typeof(IntegerType);
+
+					if (sourceType == typeof(Guid))
+						destinationType = typeof(UUIDType);
+
+					if (sourceType == typeof(char[]))
+						destinationType = typeof(UTF8Type);
+
+					if (destinationType == null)
+						destinationType = typeof(BytesType);
+					break;
+			}
+
+			var type = (CassandraType)Activator.CreateInstance(destinationType);
+			type.SetValue(obj);
+			return type;
+		}
+
 		public static CassandraType GetTypeFromObject(object obj, Type cassandraType)
 		{
 			CassandraType type = Activator.CreateInstance(cassandraType) as CassandraType;
@@ -346,19 +335,6 @@ namespace FluentCassandra.Types
 			}
 
 			return cassandraType;
-		}
-
-		internal static T GetValue<T>(object obj, CassandraTypeConverter<T> converter)
-		{
-			if (obj is CassandraType)
-				return ((CassandraType)obj).GetValue<T>();
-
-			var objType = obj.GetType();
-
-			if (!converter.CanConvertFrom(objType))
-				throw new InvalidCastException(String.Format("{0} cannot be cast to {1}", objType, typeof(T)));
-
-			return converter.ConvertFrom(obj);
 		}
 	}
 }

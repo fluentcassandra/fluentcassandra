@@ -45,7 +45,7 @@ namespace FluentCassandra
 			get { return _name; }
 			set
 			{
-				_name = (CassandraType)value.ToType(GetSchema().NameType);
+				_name = (CassandraType)value.GetValue(GetSchema().NameType);
 				ColumnTimestamp = DateTimeOffset.UtcNow;
 			}
 		}
@@ -58,7 +58,7 @@ namespace FluentCassandra
 			get { return _value; }
 			set
 			{
-				_value = (CassandraType)value.ToType(GetSchema().ValueType);
+				_value = (CassandraType)value.GetValue(GetSchema().ValueType);
 				ColumnTimestamp = DateTimeOffset.UtcNow;
 			}
 		}
@@ -148,7 +148,13 @@ namespace FluentCassandra
 		public void SetSchema(CassandraColumnSchema schema)
 		{
 			if (schema == null)
-				schema = new CassandraColumnSchema { Name = ColumnName, ValueType = ColumnValue.GetType() };
+				schema = new CassandraColumnSchema();
+		
+			if (_name != null)
+				_name = (CassandraType)_name.GetValue(schema.NameType);
+
+			if (_value != null)
+				_value = (CassandraType)_value.GetValue(schema.ValueType);
 
 			_schema = schema;
 		}

@@ -7,6 +7,8 @@ namespace FluentCassandra.Types
 {
 	internal class BytesTypeConverter : CassandraTypeConverter<byte[]>
 	{
+		private static readonly DateTimeOffset UnixStartOffset = new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero);
+
 		public override bool CanConvertFrom(Type sourceType)
 		{
 			if (sourceType == typeof(Guid))
@@ -19,6 +21,9 @@ namespace FluentCassandra.Types
 				return true;
 
 			if (sourceType == typeof(char[]))
+				return true;
+
+			if (sourceType == typeof(BigInteger))
 				return true;
 
 			switch (Type.GetTypeCode(sourceType))
@@ -59,6 +64,9 @@ namespace FluentCassandra.Types
 			if (destinationType == typeof(char[]))
 				return true;
 
+			if (destinationType == typeof(BigInteger))
+				return true;
+
 			switch (Type.GetTypeCode(destinationType))
 			{
 				case TypeCode.Byte:
@@ -83,7 +91,7 @@ namespace FluentCassandra.Types
 			}
 		}
 
-		public override byte[] ConvertFrom(object value)
+		public override byte[] ConvertFromInternal(object value)
 		{
 			if (value is Guid)
 				return ((Guid)value).ToByteArray();
@@ -96,8 +104,23 @@ namespace FluentCassandra.Types
 			if (value is BigInteger)
 				bytes = ((BigInteger)value).ToByteArray();
 
-			if (value is DateTimeOffset)
-				bytes = BitConverter.GetBytes(((DateTimeOffset)value).UtcTicks);
+			if (value is DateTimeOffset || value is DateTime)
+			{
+				var dto = DateTimeOffset.MinValue;
+
+				if (value is DateTimeOffset)
+					dto = (DateTimeOffset)value;
+
+				if (value is DateTime)
+				{
+					var dt = (DateTime)value;
+					var utc = dt.Kind == DateTimeKind.Utc;
+
+					dto = new DateTimeOffset(dt, utc ? TimeSpan.Zero : (DateTimeOffset.Now.Offset));
+				}
+
+				bytes = BitConverter.GetBytes(Convert.ToInt64(Math.Floor((dto - UnixStartOffset).TotalMilliseconds)));
+			}
 
 			if (value is char[])
 				bytes = ((char[])value).Select(c => (byte)c).ToArray();
@@ -110,8 +133,6 @@ namespace FluentCassandra.Types
 						bytes = new byte[] { (byte)value }; break;
 					case TypeCode.SByte:
 						bytes = new byte[] { Convert.ToByte((sbyte)value) }; break;
-					case TypeCode.DateTime:
-						bytes = BitConverter.GetBytes(((DateTime)value).Ticks); break;
 					case TypeCode.Boolean:
 						bytes = BitConverter.GetBytes((bool)value); break;
 					case TypeCode.Char:
@@ -147,7 +168,7 @@ namespace FluentCassandra.Types
 			return bytes;
 		}
 
-		public override object ConvertTo(byte[] value, Type destinationType)
+		public override object ConvertToInternal(byte[] value, Type destinationType)
 		{
 			if (destinationType == typeof(Guid))
 				return new Guid(value);
@@ -157,8 +178,15 @@ namespace FluentCassandra.Types
 
 			var bytes = value;
 
-			if (destinationType == typeof(DateTimeOffset))
-				return new DateTimeOffset(BitConverter.ToInt64(bytes, 0), new TimeSpan(0L));
+			if (destinationType == typeof(DateTimeOffset) || destinationType == typeof(DateTime))
+			{
+				var dto = UnixStartOffset.AddMilliseconds(BitConverter.ToInt64(bytes, 0));
+
+				if (destinationType == typeof(DateTime))
+					return dto.LocalDateTime;
+
+				return dto;
+			}
 
 			if (destinationType == typeof(BigInteger))
 				return new BigInteger(bytes);
@@ -172,12 +200,13 @@ namespace FluentCassandra.Types
 					return bytes[0];
 				case TypeCode.SByte:
 					return Convert.ToSByte(bytes[0]);
-				case TypeCode.DateTime:
-					return new DateTime(BitConverter.ToInt64(bytes, 0));
 				case TypeCode.Boolean:
 					return BitConverter.ToBoolean(bytes, 0);
 				case TypeCode.Char:
-					return BitConverter.ToChar(bytes, 0);
+					if (bytes.Length == 1)
+						return (char)bytes[0];
+					else
+						return BitConverter.ToChar(bytes, 0);
 				case TypeCode.Double:
 					return BitConverter.ToDouble(bytes, 0);
 				case TypeCode.Int16:

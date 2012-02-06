@@ -27,14 +27,14 @@ namespace FluentCassandra.Types
 
 		#region Implimentation
 
-		public override object GetValue(Type type)
+		protected override object GetValueInternal(Type type)
 		{
-			return GetValue(_value, type, Converter);
+			return Converter.ConvertTo(_value, type);
 		}
 
 		public override void SetValue(object obj)
 		{
-			_value = SetValue(obj, Converter);
+			_value = Converter.ConvertFrom(obj);
 		}
 
 		public override byte[] ToBigEndian()
@@ -59,7 +59,7 @@ namespace FluentCassandra.Types
 
 		#endregion
 
-		internal override object GetRawValue() { return _value; }
+		protected override object GetRawValue() { return _value; }
 
 		private List<CassandraType> _value;
 
@@ -72,7 +72,7 @@ namespace FluentCassandra.Types
 			if (obj is DynamicCompositeType)
 				objArray = ((DynamicCompositeType)obj)._value;
 			else
-				objArray = CassandraType.GetValue<List<CassandraType>>(obj, Converter);
+				objArray = Converter.ConvertFrom(obj);
 
 			if (objArray == null)
 				return false;

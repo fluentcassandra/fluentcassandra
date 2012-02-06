@@ -63,7 +63,7 @@ namespace FluentCassandra
 			get { return _key; }
 			set
 			{
-				_key = (CassandraType)value.ToType(GetSchema().KeyType);
+				_key = (CassandraType)value.GetValue(GetSchema().KeyType);
 			}
 		}
 
@@ -179,7 +179,7 @@ namespace FluentCassandra
 				return NullType.Value;
 
 			var schema = GetColumnSchema(name);
-			return (CassandraType)col.ColumnValue.ToType(schema.ValueType);
+			return (CassandraType)col.ColumnValue.GetValue(schema.ValueType);
 		}
 
 		/// <summary>
@@ -190,12 +190,12 @@ namespace FluentCassandra
 		private CassandraColumnSchema GetColumnSchema(object name)
 		{
 			var col = Columns.FirstOrDefault(c => c.ColumnName == name);
+
+			if (col != null)
+				return col.GetSchema();
+
 			var schema = GetSchema();
-
-			if (col == null)
-				return new CassandraColumnSchema { NameType = schema.ColumnNameType, ValueType = typeof(BytesType) };
-
-			var colSchema = schema.Columns.FirstOrDefault(c => c.Name == col.ColumnName);
+			var colSchema = schema.Columns.FirstOrDefault(c => c.Name == name);
 
 			if (colSchema != null)
 				return colSchema;
@@ -242,7 +242,7 @@ namespace FluentCassandra
 			}
 
 			// set the column value
-			col.ColumnValue = CassandraType.GetTypeFromObject<BytesType>(value);
+			col.ColumnValue = CassandraType.GetTypeFromObject(value);
 
 			// notify the tracker that the column has changed
 			OnColumnMutated(mutationType, col);

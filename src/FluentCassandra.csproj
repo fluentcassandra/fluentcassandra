@@ -95,6 +95,7 @@
     <Compile Include="BaseCassandraColumnFamily.cs" />
     <Compile Include="CassandraColumnFamilySchema.cs" />
     <Compile Include="CassandraColumnFamily.cs" />
+    <Compile Include="CassandraColumnPathSchema.cs" />
     <Compile Include="CassandraColumnSchema.cs" />
     <Compile Include="CassandraContext.cs" />
     <Compile Include="CassandraException.cs" />
@@ -102,7 +103,6 @@
     <Compile Include="CassandraSession.cs" />
     <Compile Include="CassandraSuperColumnFamilyOperations.cs" />
     <Compile Include="CassandraSuperColumnFamily.cs" />
-    <Compile Include="CassandraSuperColumnFamilySchema.cs" />
     <Compile Include="CassandraTokenRange.cs" />
     <Compile Include="Connections\Connection.cs" />
     <Compile Include="Connections\ConnectionBuilder.cs" />
@@ -151,7 +151,7 @@
     <Compile Include="IFluentRecordExpression.cs" />
     <Compile Include="Linq\CqlQuery.cs" />
     <Compile Include="Linq\CqlQueryEvaluator.cs" />
-    <Compile Include="Linq\CassandraColumnFamily`1+QueryProvider.cs" />
+    <Compile Include="Linq\CassandraColumnFamily+QueryProvider.cs" />
     <Compile Include="Linq\CqlQueryExtensions.cs" />
     <Compile Include="Linq\ICqlRow.cs" />
     <Compile Include="Operations\BatchMutate.cs" />

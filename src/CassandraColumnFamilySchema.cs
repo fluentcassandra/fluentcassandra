@@ -12,7 +12,11 @@ namespace FluentCassandra
 		public CassandraColumnFamilySchema()
 		{
 			KeyName = DefaultKeyName;
+
 			KeyType = typeof(BytesType);
+			SuperColumnNameType = typeof(BytesType);
+			ColumnNameType = typeof(BytesType);
+
 			Columns = new List<CassandraColumnSchema>();
 		}
 
@@ -20,6 +24,7 @@ namespace FluentCassandra
 		public CassandraType KeyName { get; set; }
 
 		public Type KeyType { get; set; }
+		public Type SuperColumnNameType { get; set; }
 		public Type ColumnNameType { get; set; }
 
 		public IList<CassandraColumnSchema> Columns { get; set; }

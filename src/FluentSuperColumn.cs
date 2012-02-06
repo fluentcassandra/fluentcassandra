@@ -56,7 +56,7 @@ namespace FluentCassandra
 			get { return _name; }
 			set
 			{
-				_name = (CassandraType)value.ToType(GetSchema().NameType);
+				_name = (CassandraType)value.GetValue(GetSchema().NameType);
 			}
 		}
 
@@ -170,7 +170,7 @@ namespace FluentCassandra
 				return NullType.Value;
 
 			var schema = GetColumnSchema(name);
-			return (CassandraType)col.ColumnValue.ToType(schema.ValueType);
+			return (CassandraType)col.ColumnValue.GetValue(schema.ValueType);
 		}
 
 		/// <summary>
@@ -225,7 +225,7 @@ namespace FluentCassandra
 			}
 
 			// set the column value
-			col.ColumnValue = CassandraType.GetTypeFromObject<BytesType>(value);
+			col.ColumnValue = CassandraType.GetTypeFromObject(value);
 
 			// notify the tracker that the column has changed
 			OnColumnMutated(mutationType, col);

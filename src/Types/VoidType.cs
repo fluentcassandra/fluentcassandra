@@ -12,7 +12,7 @@ namespace FluentCassandra.Types
 			throw new NotImplementedException();
 		}
 
-		public override object GetValue(Type type)
+		protected override object GetValueInternal(Type type)
 		{
 			throw new NotImplementedException();
 		}
@@ -27,16 +27,6 @@ namespace FluentCassandra.Types
 			get { throw new NotImplementedException(); }
 		}
 
-		public override bool Equals(object obj)
-		{
-			throw new NotImplementedException();
-		}
-
-		public override int GetHashCode()
-		{
-			throw new NotImplementedException();
-		}
-
 		public override void SetValueFromBigEndian(byte[] value)
 		{
 			throw new NotImplementedException();
@@ -47,7 +37,7 @@ namespace FluentCassandra.Types
 			throw new NotImplementedException();
 		}
 
-		internal override object GetRawValue()
+		protected override object GetRawValue()
 		{
 			throw new NotImplementedException();
 		}

@@ -17,15 +17,17 @@ namespace FluentCassandra.Operations
 
 		public override FluentColumn Execute()
 		{
+			var schema = ColumnFamily.GetSchema();
+
 			var path = new CassandraColumnPath {
 				ColumnFamily = ColumnFamily.FamilyName
 			};
 
 			if (SuperColumnName != null)
-				path.SuperColumn = SuperColumnName;
+				path.SuperColumn = SuperColumnName.GetValue(schema.SuperColumnNameType) as CassandraType;
 
 			if (ColumnName != null)
-				path.Column = ColumnName;
+				path.Column = ColumnName.GetValue(schema.ColumnNameType) as CassandraType;
 
 			var output = Session.GetClient().get(
 				Key,
@@ -33,7 +35,7 @@ namespace FluentCassandra.Operations
 				Session.ReadConsistency
 			);
 
-			return (FluentColumn)Helper.ConvertToFluentBaseColumn(output);
+			return (FluentColumn)Helper.ConvertToFluentBaseColumn(output, schema);
 		}
 
 		public GetColumn(CassandraType key, CassandraType superColumnName, CassandraType columnName)

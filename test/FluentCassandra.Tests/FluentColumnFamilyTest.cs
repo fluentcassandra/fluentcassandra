@@ -77,7 +77,7 @@ namespace FluentCassandra
 			// arrange
 			var colValue1 = 300M;
 			var colValue2 = "Hello";
-			string expected = null;
+			var expected = (string)null;
 
 			// act
 			dynamic family = new FluentColumnFamily<AsciiType>("Keyspace1", "Standard1");
@@ -86,7 +86,7 @@ namespace FluentCassandra
 			var actual = family.Test3;
 
 			// assert
-			Assert.AreEqual(expected, actual);
+			Assert.AreEqual(expected, (string)actual);
 		}
 
 		[Test]

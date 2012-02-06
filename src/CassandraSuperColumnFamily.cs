@@ -12,17 +12,17 @@ namespace FluentCassandra
 		public CassandraSuperColumnFamily(CassandraContext context, string columnFamily)
 			: base(context, columnFamily)
 		{
-			SetSchema(new CassandraSuperColumnFamilySchema {
+			SetSchema(new CassandraColumnFamilySchema {
 				FamilyName = columnFamily,
-				ColumnNameType = typeof(CompareWith),
-				SubColumnNameType = typeof(CompareSubcolumnWith)
+				SuperColumnNameType = typeof(CompareWith),
+				ColumnNameType = typeof(CompareSubcolumnWith)
 			});
 		}
 	}
 
 	public class CassandraSuperColumnFamily : BaseCassandraColumnFamily
 	{
-		private CassandraSuperColumnFamilySchema _cachedSchema;
+		private CassandraColumnFamilySchema _cachedSchema;
 
 		public CassandraSuperColumnFamily(CassandraContext context, string columnFamily)
 			: base(context, columnFamily) { }
@@ -32,7 +32,7 @@ namespace FluentCassandra
 			if (key.GetValue<byte[]>().Length == 0)
 				throw new ArgumentException("'key' is not allowed to be zero length.", "key");
 
-			return new FluentSuperColumnFamily(key, FamilyName, (CassandraSuperColumnFamilySchema)GetSchema());
+			return new FluentSuperColumnFamily(key, FamilyName, GetSchema());
 		}
 
 		public override CassandraColumnFamilySchema GetSchema()
@@ -41,7 +41,7 @@ namespace FluentCassandra
 
 			if (_cachedSchema == null)
 			{
-				_cachedSchema = new CassandraSuperColumnFamilySchema();
+				_cachedSchema = new CassandraColumnFamilySchema();
 
 				var keyType = CassandraType.GetCassandraType(def.Key_validation_class);
 				var colNameType = CassandraType.GetCassandraType(def.Default_validation_class);
@@ -49,7 +49,8 @@ namespace FluentCassandra
 
 				_cachedSchema.FamilyName = FamilyName;
 				_cachedSchema.KeyType = keyType;
-				_cachedSchema.SubColumnNameType = subColNameType;
+				_cachedSchema.SuperColumnNameType = colNameType;
+				_cachedSchema.ColumnNameType = subColNameType;
 				_cachedSchema.Columns = def.Column_metadata.Select(col => new CassandraColumnSchema {
 					Name = CassandraType.GetTypeFromDatabaseValue(col.Name, colNameType),
 					ValueType = CassandraType.GetCassandraType(col.Validation_class)
@@ -61,10 +62,10 @@ namespace FluentCassandra
 
 		public override void SetSchema(CassandraColumnFamilySchema schema)
 		{
-			if (schema is CassandraSuperColumnFamilySchema)
-				_cachedSchema = (CassandraSuperColumnFamilySchema)schema;
+			if (schema == null)
+				schema = new CassandraColumnFamilySchema { FamilyName = FamilyName };
 
-			throw new ArgumentException("'schema' must be of CassandraSuperColumnFamilySchema type.", "schema");
+			_cachedSchema = schema;
 		}
 
 		public override void ClearCachedColumnFamilySchema()

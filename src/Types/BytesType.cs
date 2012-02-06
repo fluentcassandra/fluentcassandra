@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Numerics;
 
 namespace FluentCassandra.Types
 {
@@ -9,7 +10,7 @@ namespace FluentCassandra.Types
 
 		#region Implimentation
 
-		public override object GetValue(Type type)
+		protected override object GetValueInternal(Type type)
 		{
 			// change value if source type is different and source type wasn't raw bytes
 			if (_sourceType != type && _sourceType != typeof(byte[]) && _bigEndianValue != null)
@@ -18,13 +19,13 @@ namespace FluentCassandra.Types
 				_sourceType = type;
 			}
 
-			return GetValue(_value, type, Converter);
+			return Converter.ConvertTo(_value, type);
 		}
 
 		public override void SetValue(object obj)
 		{
 			_sourceType = obj.GetType();
-			_value = SetValue(obj, Converter);
+			_value = Converter.ConvertFrom(obj);
 			_bigEndianValue = Converter.ToBigEndian(_value, _sourceType);
 		}
 
@@ -50,7 +51,7 @@ namespace FluentCassandra.Types
 
 		#endregion
 
-		internal override object GetRawValue() { return _bigEndianValue; }
+		protected override object GetRawValue() { return _bigEndianValue; }
 
 		private Type _sourceType;
 		private byte[] _bigEndianValue;
@@ -60,6 +61,9 @@ namespace FluentCassandra.Types
 
 		public override bool Equals(object obj)
 		{
+			if (obj == null)
+				return false;
+
 			if (obj is BytesType)
 			{
 				BytesType b1 = this;
@@ -83,7 +87,7 @@ namespace FluentCassandra.Types
 				return b1._value.SequenceEqual(b2._value);
 			}
 
-			return _value.SequenceEqual(CassandraType.GetValue<byte[]>(obj, Converter));
+			return obj.Equals(GetValue(obj.GetType()));
 		}
 
 		/// <remarks>
@@ -136,6 +140,7 @@ namespace FluentCassandra.Types
 		public static implicit operator BytesType(Guid o) { return ConvertFrom(o); }
 		public static implicit operator BytesType(DateTime o) { return ConvertFrom(o); }
 		public static implicit operator BytesType(DateTimeOffset o) { return ConvertFrom(o); }
+		public static implicit operator BytesType(BigInteger o) { return ConvertFrom(o); }
 
 		public static implicit operator byte(BytesType o) { return ConvertTo<byte>(o); }
 		public static implicit operator sbyte(BytesType o) { return ConvertTo<sbyte>(o); }
@@ -154,6 +159,7 @@ namespace FluentCassandra.Types
 		public static implicit operator Guid(BytesType o) { return ConvertTo<Guid>(o); }
 		public static implicit operator DateTime(BytesType o) { return ConvertTo<DateTime>(o); }
 		public static implicit operator DateTimeOffset(BytesType o) { return ConvertTo<DateTimeOffset>(o); }
+		public static implicit operator BigInteger(BytesType o) { return ConvertTo<BigInteger>(o); }
 
 		public static implicit operator byte?(BytesType o) { return ConvertTo<byte>(o); }
 		public static implicit operator sbyte?(BytesType o) { return ConvertTo<sbyte>(o); }
@@ -167,11 +173,11 @@ namespace FluentCassandra.Types
 		public static implicit operator double?(BytesType o) { return ConvertTo<double>(o); }
 		public static implicit operator decimal?(BytesType o) { return ConvertTo<decimal>(o); }
 		public static implicit operator bool?(BytesType o) { return ConvertTo<bool>(o); }
-		//public static implicit operator string(BytesType o) { return ConvertTo<string>(o); }
 		public static implicit operator char?(BytesType o) { return ConvertTo<char>(o); }
 		public static implicit operator Guid?(BytesType o) { return ConvertTo<Guid>(o); }
 		public static implicit operator DateTime?(BytesType o) { return ConvertTo<DateTime>(o); }
 		public static implicit operator DateTimeOffset?(BytesType o) { return ConvertTo<DateTimeOffset>(o); }
+		public static implicit operator BigInteger?(BytesType o) { return ConvertTo<BigInteger>(o); }
 
 		private static T ConvertTo<T>(BytesType type)
 		{

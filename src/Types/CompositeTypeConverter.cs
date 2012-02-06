@@ -24,7 +24,7 @@ namespace FluentCassandra.Types
 				destinationType == typeof(string);
 		}
 
-		public override List<CassandraType> ConvertFrom(object value)
+		public override List<CassandraType> ConvertFromInternal(object value)
 		{
 			if (value is byte[])
 			{
@@ -64,7 +64,7 @@ namespace FluentCassandra.Types
 			return null;
 		}
 
-		public override object ConvertTo(List<CassandraType> value, Type destinationType)
+		public override object ConvertToInternal(List<CassandraType> value, Type destinationType)
 		{
 			if (destinationType == typeof(string))
 				return String.Join(":", (IEnumerable<CassandraType>)value);

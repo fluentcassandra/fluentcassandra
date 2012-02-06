@@ -43,7 +43,7 @@ namespace FluentCassandra.Types
 			}
 		}
 
-		public override BigInteger ConvertFrom(object value)
+		public override BigInteger ConvertFromInternal(object value)
 		{
 			if (value is byte[])
 				return ((byte[])value).FromBytes<BigInteger>();
@@ -62,7 +62,7 @@ namespace FluentCassandra.Types
 			return default(BigInteger);
 		}
 
-		public override object ConvertTo(BigInteger value, Type destinationType)
+		public override object ConvertToInternal(BigInteger value, Type destinationType)
 		{
 			if (destinationType == typeof(byte[]))
 				return value.ToBytes();

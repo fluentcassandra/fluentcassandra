@@ -14,7 +14,7 @@ namespace FluentCassandra.Types
 			return destinationType == typeof(byte[]) || destinationType == typeof(Guid);
 		}
 
-		public override Guid ConvertFrom(object value)
+		public override Guid ConvertFromInternal(object value)
 		{
 			if (value is byte[] && ((byte[])value).Length == 16)
 				return ((byte[])value).FromBytes<Guid>();
@@ -25,7 +25,7 @@ namespace FluentCassandra.Types
 			return default(Guid);
 		}
 
-		public override object ConvertTo(Guid value, Type destinationType)
+		public override object ConvertToInternal(Guid value, Type destinationType)
 		{
 			if (destinationType == typeof(byte[]))
 				return value.ToBytes();

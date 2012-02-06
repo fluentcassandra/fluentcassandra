@@ -29,7 +29,7 @@ namespace FluentCassandra.Operations
 
 			foreach (var result in output)
 			{
-				var r = new FluentSuperColumnFamily(result.Key, ColumnFamily.FamilyName, (CassandraSuperColumnFamilySchema)ColumnFamily.GetSchema(), result.Columns.Select(col => {
+				var r = new FluentSuperColumnFamily(result.Key, ColumnFamily.FamilyName, ColumnFamily.GetSchema(), result.Columns.Select(col => {
 					var superCol = Helper.ConvertSuperColumnToFluentSuperColumn(col.Super_column);
 					ColumnFamily.Context.Attach(superCol);
 					superCol.MutationTracker.Clear();

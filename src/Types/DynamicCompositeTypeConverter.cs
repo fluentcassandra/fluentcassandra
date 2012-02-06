@@ -24,7 +24,7 @@ namespace FluentCassandra.Types
 			return destinationType == typeof(byte[]) || destinationType == typeof(List<CassandraType>) || destinationType == typeof(CassandraType[]) || destinationType == typeof(string);
 		}
 
-		public override List<CassandraType> ConvertFrom(object value)
+		public override List<CassandraType> ConvertFromInternal(object value)
 		{
 			if (value is byte[])
 			{
@@ -67,7 +67,7 @@ namespace FluentCassandra.Types
 			return null;
 		}
 
-		public override object ConvertTo(List<CassandraType> value, Type destinationType)
+		public override object ConvertToInternal(List<CassandraType> value, Type destinationType)
 		{
 			if (!(value is List<CassandraType>))
 				return null;
@@ -121,7 +121,7 @@ namespace FluentCassandra.Types
 
 		public override List<CassandraType> FromBigEndian(byte[] value)
 		{
-			var obj = ConvertFrom(value);
+			var obj = ConvertFromInternal(value);
 			return obj;
 		}
 	}

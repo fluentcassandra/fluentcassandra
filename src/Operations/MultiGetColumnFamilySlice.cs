@@ -15,6 +15,8 @@ namespace FluentCassandra.Operations
 
 		public override IEnumerable<FluentColumnFamily> Execute()
 		{
+			var schema = ColumnFamily.GetSchema();
+
 			var parent = new CassandraColumnParent {
 				ColumnFamily = ColumnFamily.FamilyName
 			};
@@ -28,10 +30,10 @@ namespace FluentCassandra.Operations
 
 			foreach (var result in output)
 			{
-				var key = CassandraType.GetTypeFromDatabaseValue<BytesType>(result.Key);
+				var key = CassandraType.GetTypeFromDatabaseValue(result.Key, schema.KeyType);
 
-				var r = new FluentColumnFamily(key, ColumnFamily.FamilyName, ColumnFamily.GetSchema(), result.Value.Select(col => {
-					return Helper.ConvertColumnToFluentColumn(col.Column);
+				var r = new FluentColumnFamily(key, ColumnFamily.FamilyName, schema, result.Value.Select(col => {
+					return Helper.ConvertColumnToFluentColumn(col.Column, schema);
 				}));
 				ColumnFamily.Context.Attach(r);
 				r.MutationTracker.Clear();

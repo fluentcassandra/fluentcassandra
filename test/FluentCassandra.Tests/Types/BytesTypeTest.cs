@@ -248,7 +248,7 @@ namespace FluentCassandra.Types
 		public void Implicit_DateTime_Cast()
 		{
 			// arrange
-			DateTime expected = DateTime.Now;
+			DateTime expected = DateTime.Now.MillisecondResolution();
 
 			// act
 			BytesType actual = expected;
@@ -261,7 +261,7 @@ namespace FluentCassandra.Types
 		public void Implicit_DateTimeOffset_Cast()
 		{
 			// arrange
-			DateTimeOffset expected = DateTimeOffset.Now;
+			DateTimeOffset expected = DateTimeOffset.Now.MillisecondResolution();
 
 			// act
 			BytesType actual = expected;

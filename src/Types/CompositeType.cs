@@ -64,9 +64,9 @@ namespace FluentCassandra.Types
 
 		#region Implimentation
 
-		public override object GetValue(Type type)
+		protected override object GetValueInternal(Type type)
 		{
-			return GetValue(_value, type, Converter);
+			return Converter.ConvertTo(_value, type);
 		}
 
 		public override void SetValue(object obj)
@@ -74,7 +74,7 @@ namespace FluentCassandra.Types
 			if (obj != null && obj.GetType().GetInterfaces().Contains(typeof(IEnumerable<CassandraType>)))
 				ComponentTypeHints = ((IEnumerable<CassandraType>)obj).Select(t => t.GetType()).ToList();
 
-			_value = SetValue(obj, Converter);
+			_value = Converter.ConvertFrom(obj);
 		}
 
 		public override byte[] ToBigEndian()
@@ -99,7 +99,7 @@ namespace FluentCassandra.Types
 
 		#endregion
 
-		internal override object GetRawValue() { return _value; }
+		protected override object GetRawValue() { return _value; }
 
 		public List<Type> ComponentTypeHints { get; set; }
 
@@ -114,7 +114,7 @@ namespace FluentCassandra.Types
 			if (obj is CompositeType)
 				objArray = ((CompositeType)obj)._value;
 			else
-				objArray = CassandraType.GetValue<List<CassandraType>>(obj, Converter);
+				objArray = Converter.ConvertFrom(obj);
 
 			if (objArray == null)
 				return false;

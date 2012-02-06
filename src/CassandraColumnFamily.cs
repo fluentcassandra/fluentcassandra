@@ -37,6 +37,9 @@ namespace FluentCassandra
 		{
 			var def = Context.Keyspace.GetColumnFamilyDescription(FamilyName);
 
+			if (def == null && _cachedSchema == null)
+				_cachedSchema = new CassandraColumnFamilySchema();
+
 			if (_cachedSchema == null)
 			{
 				_cachedSchema = new CassandraColumnFamilySchema();

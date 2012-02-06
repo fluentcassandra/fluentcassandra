@@ -25,15 +25,17 @@ namespace FluentCassandra.Operations
 
 		public override Void Execute()
 		{
+			var schema = ColumnFamily.GetSchema();
+
 			var parent = new CassandraColumnParent {
 				ColumnFamily = ColumnFamily.FamilyName,
 			};
 
 			if (SuperColumnName != null)
-				parent.SuperColumn = SuperColumnName;
+				parent.SuperColumn = SuperColumnName.GetValue(schema.SuperColumnNameType) as CassandraType;
 
 			var column = new CassandraColumn {
-				Name = ColumnName,
+				Name = ColumnName.GetValue(schema.ColumnNameType) as CassandraType,
 				Value = ColumnValue,
 				Timestamp = Timestamp,
 				Ttl = TimeToLive

@@ -33,7 +33,6 @@ namespace FluentCassandra.TypesToDatabase
 
 			// act
 			family.InsertColumn(TestKey, expected, Math.PI);
-			_db.SaveChanges();
 			var actual = family.GetColumn(TestKey, expected);
 
 			// assert
@@ -49,7 +48,6 @@ namespace FluentCassandra.TypesToDatabase
 
 			// act
 			family.InsertColumn(TestKey, expected, Math.PI);
-			_db.SaveChanges();
 			var actual = family.GetColumn(TestKey, expected);
 
 			// assert
@@ -65,7 +63,6 @@ namespace FluentCassandra.TypesToDatabase
 
 			// act
 			family.InsertColumn(TestKey, expected, Math.PI);
-			_db.SaveChanges();
 			var actual = family.GetColumn(TestKey, expected);
 
 			// assert
@@ -81,7 +78,6 @@ namespace FluentCassandra.TypesToDatabase
 
 			// act
 			family.InsertColumn(TestKey, expected, Math.PI);
-			_db.SaveChanges();
 			var actual = family.GetColumn(TestKey, expected);
 
 			// assert
@@ -97,7 +93,6 @@ namespace FluentCassandra.TypesToDatabase
 
 			// act
 			family.InsertColumn(TestKey, expected, Math.PI);
-			_db.SaveChanges();
 			var actual = family.GetColumn(TestKey, expected);
 
 			// assert
@@ -113,7 +108,6 @@ namespace FluentCassandra.TypesToDatabase
 
 			// act
 			family.InsertColumn(TestKey, expected, Math.PI);
-			_db.SaveChanges();
 			var actual = family.GetColumn(TestKey, expected);
 
 			// assert
@@ -129,7 +123,6 @@ namespace FluentCassandra.TypesToDatabase
 
 			// act
 			family.InsertColumn(TestKey, expected, Math.PI);
-			_db.SaveChanges();
 			var actual = family.GetColumn(TestKey, expected);
 
 			// assert
@@ -145,7 +138,6 @@ namespace FluentCassandra.TypesToDatabase
 
 			// act
 			family.InsertColumn(TestKey, expected, Math.PI);
-			_db.SaveChanges();
 			var actual = family.GetColumn(TestKey, expected);
 
 			// assert

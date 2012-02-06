@@ -16,7 +16,7 @@ namespace FluentCassandra.Linq
 			if (columns == null)
 				throw new ArgumentNullException("columns");
 
-			return (CqlQuery)source.Provider.CreateQuery<ICqlRow>(Expression.Call(null, ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(new Type[] { typeof(CassandraType) }), new Expression[] { source.Expression, Expression.Constant(columns) }));
+			return (CqlQuery)source.Provider.CreateQuery<ICqlRow>(Expression.Call(null, (MethodInfo)MethodBase.GetCurrentMethod(), new Expression[] { source.Expression, Expression.Constant(columns) }));
 		}
 	}
 }

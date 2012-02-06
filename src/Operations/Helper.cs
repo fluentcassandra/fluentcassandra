@@ -113,12 +113,12 @@ namespace FluentCassandra.Operations
 			return Convert.ToInt64((dt - UnixStart).TotalMilliseconds);
 		}
 
-		public static IFluentBaseColumn ConvertToFluentBaseColumn(ColumnOrSuperColumn col)
+		public static IFluentBaseColumn ConvertToFluentBaseColumn(ColumnOrSuperColumn col, CassandraColumnFamilySchema schema = null)
 		{
 			if (col.Super_column != null)
-				return ConvertSuperColumnToFluentSuperColumn(col.Super_column);
+				return ConvertSuperColumnToFluentSuperColumn(col.Super_column, schema);
 			else if (col.Column != null)
-				return ConvertColumnToFluentColumn(col.Column);
+				return ConvertColumnToFluentColumn(col.Column, schema);
 			else if (col.Counter_super_column != null)
 				throw new NotSupportedException("Reading CounterSuperColumns isn't supported yet.");
 			else if (col.Counter_column != null)
@@ -127,11 +127,24 @@ namespace FluentCassandra.Operations
 				return null;
 		}
 
-		public static FluentColumn ConvertColumnToFluentColumn(Column col)
+		public static FluentColumn ConvertColumnToFluentColumn(Column col, CassandraColumnFamilySchema schema = null)
 		{
-			var fcol = new FluentColumn {
-				ColumnName = CassandraType.GetTypeFromDatabaseValue<BytesType>(col.Name),
-				ColumnValue = CassandraType.GetTypeFromDatabaseValue<BytesType>(col.Value),
+			var colSchema = new CassandraColumnSchema();
+
+			if (schema != null)
+			{
+				colSchema = schema.Columns.Where(x => x.Name == col.Name).FirstOrDefault();
+
+				if (colSchema == null)
+				{
+					colSchema = new CassandraColumnSchema();
+					colSchema.NameType = schema.ColumnNameType;
+				}
+			}
+
+			var fcol = new FluentColumn(colSchema) {
+				ColumnName = CassandraType.GetTypeFromDatabaseValue(col.Name, colSchema.NameType),
+				ColumnValue = CassandraType.GetTypeFromDatabaseValue(col.Value, colSchema.ValueType),
 				ColumnTimestamp = UnixStart.AddMilliseconds(col.Timestamp),
 			};
 
@@ -141,14 +154,21 @@ namespace FluentCassandra.Operations
 			return fcol;
 		}
 
-		public static FluentSuperColumn ConvertSuperColumnToFluentSuperColumn(SuperColumn col)
+		public static FluentSuperColumn ConvertSuperColumnToFluentSuperColumn(SuperColumn col, CassandraColumnFamilySchema schema = null)
 		{
+			var nameType = typeof(BytesType);
+
+			if (schema != null)
+			{
+				nameType = schema.SuperColumnNameType;
+			}
+
 			var superCol = new FluentSuperColumn {
-				ColumnName = CassandraType.GetTypeFromDatabaseValue<BytesType>(col.Name)
+				ColumnName = CassandraType.GetTypeFromDatabaseValue(col.Name, nameType)
 			};
 
 			foreach (var xcol in col.Columns)
-				superCol.Columns.Add(ConvertColumnToFluentColumn(xcol));
+				superCol.Columns.Add(ConvertColumnToFluentColumn(xcol, schema));
 
 			return superCol;
 		}

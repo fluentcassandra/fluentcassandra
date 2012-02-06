@@ -29,7 +29,7 @@ namespace FluentCassandra.Types
 			dynamic family = new FluentSuperColumnFamily<AsciiType, AsciiType>("Test1", "SubTest1");
 
 			// act
-			FluentSuperColumn<AsciiType, AsciiType> actual = family.ShouldNotBeFound;
+			FluentSuperColumn actual = family.ShouldNotBeFound;
 
 			// assert
 			Assert.AreEqual(expectedName, (string)actual.ColumnName);
