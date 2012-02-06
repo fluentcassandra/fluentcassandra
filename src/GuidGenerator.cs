@@ -23,7 +23,7 @@ namespace FluentCassandra
 		private const byte NodeByte = 10;
 
 		// offset to move from 1/1/0001, which is 0-time for .NET, to gregorian 0-time of 10/15/1582
-		private static readonly DateTime GregorianCalendarStart = new DateTime(1582, 10, 15, 0, 0, 0, DateTimeKind.Utc);
+		private static readonly DateTimeOffset GregorianCalendarStart = new DateTimeOffset(1582, 10, 15, 0, 0, 0, TimeSpan.Zero);
 
 		// random node that is 16 bytes
 		private static readonly byte[] RandomNode;
@@ -42,7 +42,7 @@ namespace FluentCassandra
 			return (GuidVersion)((bytes[VersionByte] & 0xFF) >> VersionByteShift);
 		}
 
-		public static DateTime GetDateTime(Guid guid)
+		public static DateTimeOffset GetDateTimeOffset(Guid guid)
 		{
 			byte[] bytes = guid.ToByteArray();
 
@@ -56,22 +56,27 @@ namespace FluentCassandra
 			long timestamp = BitConverter.ToInt64(timestampBytes, 0);
 			long ticks = timestamp + GregorianCalendarStart.Ticks;
 
-			return new DateTime(ticks, DateTimeKind.Utc);
+			return new DateTimeOffset(ticks, TimeSpan.Zero);
 		}
 
-		public static DateTimeOffset GetDateTimeOffset(Guid guid)
+		public static DateTime GetDateTime(Guid guid)
 		{
-			return new DateTimeOffset(GetDateTime(guid), TimeSpan.Zero);
+			return GetDateTimeOffset(guid).DateTime;
+		}
+
+		public static DateTime GetLocalDateTime(Guid guid)
+		{
+			return GetDateTimeOffset(guid).LocalDateTime;
+		}
+
+		public static DateTime GetUtcDateTime(Guid guid)
+		{
+			return GetDateTimeOffset(guid).UtcDateTime;
 		}
 
 		public static Guid GenerateTimeBasedGuid()
 		{
-			return GenerateTimeBasedGuid(DateTime.UtcNow, RandomNode);
-		}
-
-		public static Guid GenerateTimeBasedGuid(DateTimeOffset dateTime)
-		{
-			return GenerateTimeBasedGuid(dateTime, RandomNode);
+			return GenerateTimeBasedGuid(DateTimeOffset.UtcNow, RandomNode);
 		}
 
 		public static Guid GenerateTimeBasedGuid(DateTime dateTime)
@@ -79,16 +84,20 @@ namespace FluentCassandra
 			return GenerateTimeBasedGuid(dateTime, RandomNode);
 		}
 
-		public static Guid GenerateTimeBasedGuid(DateTimeOffset dateTime, byte[] node)
+		public static Guid GenerateTimeBasedGuid(DateTimeOffset dateTime)
 		{
-			return GenerateTimeBasedGuid(dateTime.UtcDateTime, node);
+			return GenerateTimeBasedGuid(dateTime, RandomNode);
 		}
 
 		public static Guid GenerateTimeBasedGuid(DateTime dateTime, byte[] node)
 		{
-			dateTime = dateTime.ToUniversalTime();
-			long ticks = (dateTime - GregorianCalendarStart).Ticks;
+			var utc = dateTime.Kind == DateTimeKind.Utc;
+			return GenerateTimeBasedGuid(new DateTimeOffset(dateTime, utc ? TimeSpan.Zero : (DateTimeOffset.Now.Offset)), node);
+		}
 
+		public static Guid GenerateTimeBasedGuid(DateTimeOffset dateTime, byte[] node)
+		{
+			long ticks = (dateTime - GregorianCalendarStart).Ticks;
 			byte[] guid = new byte[ByteArraySize];
 			byte[] clockSequenceBytes = BitConverter.GetBytes(Convert.ToInt16(Environment.TickCount % Int16.MaxValue));
 			byte[] timestamp = BitConverter.GetBytes(ticks);
