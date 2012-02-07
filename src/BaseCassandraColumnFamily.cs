@@ -71,6 +71,14 @@ namespace FluentCassandra
 		public abstract void ClearCachedColumnFamilySchema();
 
 		/// <summary>
+		/// 
+		/// </summary>
+		public void TryCreateSelf()
+		{
+			Context.Keyspace.TryCreateColumnFamily(GetSchema());
+		}
+
+		/// <summary>
 		/// Removes all the rows from the given column family.
 		/// </summary>
 		public void RemoveAllRows()

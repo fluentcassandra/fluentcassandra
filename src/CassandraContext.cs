@@ -171,7 +171,7 @@ namespace FluentCassandra
 		{
 			return ExecuteOperation(new SimpleOperation<IEnumerable<CassandraKeyspace>>(ctx => {
 				IEnumerable<KsDef> keyspaces = ctx.Session.GetClient(setKeyspace: false).describe_keyspaces();
-				return keyspaces.Select(keyspace => new CassandraKeyspace(keyspace, this));
+				return keyspaces.Select(keyspace => new CassandraKeyspace(new CassandraKeyspaceSchema(keyspace), this));
 			}));
 		}
 

@@ -29,7 +29,7 @@ namespace FluentCassandra.TypesToDatabase
 		public void Save_CompositeType()
 		{
 			// arrange
-			var family = _db.GetColumnFamily<CompositeType<LongType, UTF8Type>>(FamilyName);
+			var family = _db.GetColumnFamily(FamilyName);
 			var expected = new CompositeType<LongType, UTF8Type>(300L, "string1");
 
 			// act

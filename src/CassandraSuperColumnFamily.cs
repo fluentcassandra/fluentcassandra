@@ -37,25 +37,12 @@ namespace FluentCassandra
 
 		public override CassandraColumnFamilySchema GetSchema()
 		{
-			var def = Context.Keyspace.GetColumnFamilyDescription(FamilyName);
+			var schema = Context.Keyspace.GetColumnFamilySchema(FamilyName);
 
 			if (_cachedSchema == null)
-			{
-				_cachedSchema = new CassandraColumnFamilySchema();
-
-				var keyType = CassandraType.GetCassandraType(def.Key_validation_class);
-				var colNameType = CassandraType.GetCassandraType(def.Default_validation_class);
-				var subColNameType = CassandraType.GetCassandraType(def.Subcomparator_type);
-
-				_cachedSchema.FamilyName = FamilyName;
-				_cachedSchema.KeyType = keyType;
-				_cachedSchema.SuperColumnNameType = colNameType;
-				_cachedSchema.ColumnNameType = subColNameType;
-				_cachedSchema.Columns = def.Column_metadata.Select(col => new CassandraColumnSchema {
-					Name = CassandraType.GetTypeFromDatabaseValue(col.Name, colNameType),
-					ValueType = CassandraType.GetCassandraType(col.Validation_class)
-				}).ToList();
-			}
+				_cachedSchema = (schema == null)
+					? new CassandraColumnFamilySchema(FamilyName, ColumnType.Super)
+					: schema;
 
 			return _cachedSchema;
 		}

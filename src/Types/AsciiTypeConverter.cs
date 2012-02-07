@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 
 namespace FluentCassandra.Types
 {
@@ -23,18 +24,15 @@ namespace FluentCassandra.Types
 		public override string ConvertFromInternal(object value)
 		{
 			if (value is byte[])
-				return ((byte[])value).FromBytes<string>();
+				return Encoding.ASCII.GetString((byte[])value);
 
 			return (string)Convert.ChangeType(value, typeof(string));
 		}
 
 		public override object ConvertToInternal(string value, Type destinationType)
 		{
-			if (!(value is string))
-				return null;
-
 			if (destinationType == typeof(byte[]))
-				return value.ToBytes();
+				return Encoding.ASCII.GetBytes(value);
 
 			return Convert.ChangeType(value, destinationType);
 		}

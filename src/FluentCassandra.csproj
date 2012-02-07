@@ -95,11 +95,11 @@
     <Compile Include="BaseCassandraColumnFamily.cs" />
     <Compile Include="CassandraColumnFamilySchema.cs" />
     <Compile Include="CassandraColumnFamily.cs" />
-    <Compile Include="CassandraColumnPathSchema.cs" />
     <Compile Include="CassandraColumnSchema.cs" />
     <Compile Include="CassandraContext.cs" />
     <Compile Include="CassandraException.cs" />
     <Compile Include="CassandraKeyspace.cs" />
+    <Compile Include="CassandraKeyspaceSchema.cs" />
     <Compile Include="CassandraSession.cs" />
     <Compile Include="CassandraSuperColumnFamilyOperations.cs" />
     <Compile Include="CassandraSuperColumnFamily.cs" />

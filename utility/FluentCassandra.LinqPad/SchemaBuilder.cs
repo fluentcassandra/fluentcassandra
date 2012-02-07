@@ -18,7 +18,7 @@ namespace FluentCassandra.LinqPad
 			var context = info.CreateContext();
 			var keyspace = context.Keyspace;
 
-			var def = keyspace.Describe();
+			var def = keyspace.GetSchema();
 			var code = GenerateCode(def, nameSpace, typeName);
 			var schema = GetSchema(def);
 
@@ -28,7 +28,7 @@ namespace FluentCassandra.LinqPad
 			return schema;
 		}
 
-		private static string GenerateCode(Apache.Cassandra.KsDef def, string nameSpace, string typeName)
+		private static string GenerateCode(CassandraKeyspaceSchema schema, string nameSpace, string typeName)
 		{
 			var code = new StringBuilder();
 
@@ -62,16 +62,14 @@ using FluentCassandra.Types;");
 				Context.Dispose();
 		}
 ");
-			foreach (var familyDef in def.Cf_defs)
+			foreach (var familyDef in schema.ColumnFamilies)
 			{
-				var type = CassandraType.GetCassandraType(familyDef.Default_validation_class);
-				var validationName = type.Name;
-				var familyName = familyDef.Name;
+				var familyName = familyDef.FamilyName;
 				code.AppendLine(@"
-		private FluentCassandra.CassandraColumnFamily<" + validationName + @"> _" + familyName + @";
-		public FluentCassandra.CassandraColumnFamily<" + validationName + @"> " + familyName + @" { get { 
+		private FluentCassandra.CassandraColumnFamily _" + familyName + @";
+		public FluentCassandra.CassandraColumnFamily " + familyName + @" { get { 
 			if (_" + familyName + @" == null)
-				_" + familyName + @" = Context.GetColumnFamily<" + validationName + @">(""" + familyName + @""");
+				_" + familyName + @" = Context.GetColumnFamily(""" + familyName + @""");
 
 			return _" + familyName + @";
 		} }");
@@ -103,20 +101,20 @@ using FluentCassandra.Types;");
 					("Cannot compile typed context: " + results.Errors[0].ErrorText + " (line " + results.Errors[0].Line + ")");
 		}
 
-		private static List<ExplorerItem> GetSchema(Apache.Cassandra.KsDef def)
+		private static List<ExplorerItem> GetSchema(CassandraKeyspaceSchema schema)
 		{
 			var families = new List<ExplorerItem>();
 
-			foreach (var familyDef in def.Cf_defs)
+			foreach (var familyDef in schema.ColumnFamilies)
 			{
-				var family = new ExplorerItem(familyDef.Name, ExplorerItemKind.QueryableObject, ExplorerIcon.Table);
+				var family = new ExplorerItem(familyDef.FamilyName, ExplorerItemKind.QueryableObject, ExplorerIcon.Table);
 				family.IsEnumerable = true;
 				family.Children = new List<ExplorerItem>();
-				family.Children.Add(new ExplorerItem("KEY", ExplorerItemKind.Property, ExplorerIcon.Key));
+				family.Children.Add(new ExplorerItem(familyDef.KeyName.GetValue<string>(), ExplorerItemKind.Property, ExplorerIcon.Key));
 
-				foreach (var colDef in familyDef.Column_metadata)
+				foreach (var colDef in familyDef.Columns)
 				{
-					var col = new ExplorerItem(CassandraType.GetTypeFromDatabaseValue(colDef.Name, familyDef.Default_validation_class).GetValue<string>(), ExplorerItemKind.Property, ExplorerIcon.Column);
+					var col = new ExplorerItem(colDef.Name.GetValue<string>(), ExplorerItemKind.Property, ExplorerIcon.Column);
 					family.Children.Add(col);
 				}
 

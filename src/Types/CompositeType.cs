@@ -60,6 +60,7 @@ namespace FluentCassandra.Types
 		public CompositeType()
 		{
 			ComponentTypeHints = new List<Type>();
+			_value = new List<CassandraType>();
 		}
 
 		#region Implimentation

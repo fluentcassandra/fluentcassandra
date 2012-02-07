@@ -1,4 +1,5 @@
 using System;
+using Apache.Cassandra;
 using FluentCassandra.Types;
 
 namespace FluentCassandra
@@ -11,7 +12,13 @@ namespace FluentCassandra
 			ValueType = typeof(BytesType);
 		}
 
-		private Type _nameType;
+		public CassandraColumnSchema(ColumnDef def, Type columnNameType)
+		{
+			NameType = columnNameType;
+			Name = def.Name;
+			ValueType = CassandraType.GetCassandraType(def.Validation_class);
+		}
+
 		private CassandraType _name;
 
 		public CassandraType Name
@@ -19,25 +26,11 @@ namespace FluentCassandra
 			get { return _name; }
 			set
 			{
-				if (value != null)
-					NameType = value.GetType();
-
-				_name = value;
+				_name = (CassandraType)value.GetValue(NameType);
 			}
 		}
 
-		public Type NameType
-		{
-			get
-			{
-				if (_nameType == null && Name != null)
-					_nameType = Name.GetType();
-
-				return _nameType;
-			}
-			set { _nameType = value; }
-		}
-
-		public virtual Type ValueType { get; set; }
+		public Type NameType { get; set; }
+		public Type ValueType { get; set; }
 	}
 }

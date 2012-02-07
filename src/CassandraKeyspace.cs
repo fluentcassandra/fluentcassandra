@@ -12,34 +12,22 @@ namespace FluentCassandra
 	public class CassandraKeyspace
 	{
 		private readonly string _keyspaceName;
-		private KsDef _cachedKeyspaceDescription;
+		private CassandraKeyspaceSchema _cachedSchema;
 		private CassandraContext _context;
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="definition"></param>
-		public CassandraKeyspace(KsDef definition, CassandraContext context)
-		{
-			if (definition == null)
-				throw new ArgumentNullException("definition");
-
-			_keyspaceName = definition.Name;
-			_cachedKeyspaceDescription = definition;
-			_context = context;
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="keyspaceName"></param>
-		/// <param name="connecton"></param>
 		public CassandraKeyspace(string keyspaceName, CassandraContext context)
-		{
-			if (keyspaceName == null)
-				throw new ArgumentNullException("keyspaceName");
+			: this(new CassandraKeyspaceSchema { Name = keyspaceName }, context) { }
 
-			_keyspaceName = keyspaceName;
+		public CassandraKeyspace(CassandraKeyspaceSchema schema, CassandraContext context)
+		{
+			if (schema == null)
+				throw new ArgumentNullException("schema");
+
+			if (schema.Name == null)
+				throw new ArgumentException("Must specify the keyspace name.");
+
+			_keyspaceName = schema.Name;
+			_cachedSchema = schema;
 			_context = context;
 		}
 
@@ -70,55 +58,63 @@ namespace FluentCassandra
 
 			string result = _context.AddKeyspace(new KsDef {
 				Name = KeyspaceName,
-				Strategy_class = "org.apache.cassandra.locator.SimpleStrategy",
+				Strategy_class = "org.apache.cassandra.locator.NetworkTopologyStrategy",
 				Replication_factor = 1,
 				Cf_defs = new List<CfDef>(0)
 			});
 			Debug.WriteLine(result, "keyspace setup");
 		}
 
-		public void TryCreateColumnFamily<CompareWith>(string columnFamilyName)
-			where CompareWith : CassandraType
+		public void TryCreateColumnFamily(CassandraColumnFamilySchema schema)
 		{
 			try
 			{
-				var comparatorType = GetCassandraComparatorType(typeof(CompareWith));
-
-				string result = _context.AddColumnFamily(new CfDef {
-					Name = columnFamilyName,
+				var def = new CfDef {
 					Keyspace = KeyspaceName,
-					Comparator_type = comparatorType
-				});
-				Debug.WriteLine(result, "keyspace setup");
+					Name = schema.FamilyName,
+					Comment = schema.FamilyDescription,
+					Column_type = schema.FamilyType.ToString(),
+					Key_alias = schema.KeyName.ToBigEndian(),
+					Key_validation_class = GetCassandraComparatorType(schema.KeyType),
+					Comparator_type = GetCassandraComparatorType(schema.ColumnNameType),
+					Default_validation_class = GetCassandraComparatorType(schema.DefaultColumnValueType)
+				};
+
+				if (schema.FamilyType == ColumnType.Super)
+				{
+					def.Comparator_type = GetCassandraComparatorType(schema.SuperColumnNameType);
+					def.Subcomparator_type = GetCassandraComparatorType(schema.ColumnNameType);
+				}
+
+				string result = _context.AddColumnFamily(def);
+				Debug.WriteLine(result, "column family setup");
 			}
 			catch
 			{
-				Debug.WriteLine(columnFamilyName + " already exists", "keyspace setup");
+				Debug.WriteLine(schema.FamilyName + " already exists", "column family setup");
 			}
 		}
 
+		[Obsolete("Use \"TryCreateColumnFamily\" class with out generic type")]
+		public void TryCreateColumnFamily<CompareWith>(string columnFamilyName)
+			where CompareWith : CassandraType
+		{
+			TryCreateColumnFamily(new CassandraColumnFamilySchema {
+				ColumnNameType = typeof(CompareWith),
+				FamilyName = columnFamilyName
+			});
+		}
+
+		[Obsolete("Use \"TryCreateColumnFamily\" class with out generic type")]
 		public void TryCreateColumnFamily<CompareWith, CompareSubcolumnWith>(string columnFamilyName)
 			where CompareWith : CassandraType
 			where CompareSubcolumnWith : CassandraType
 		{
-			try
-			{
-				var comparatorType = GetCassandraComparatorType(typeof(CompareWith));
-				var subComparatorType = GetCassandraComparatorType(typeof(CompareSubcolumnWith));
-
-				string result = _context.AddColumnFamily(new CfDef {
-					Name = columnFamilyName,
-					Keyspace = KeyspaceName,
-					Column_type = "Super",
-					Comparator_type = comparatorType,
-					Subcomparator_type = subComparatorType
-				});
-				Debug.WriteLine(result, "keyspace setup");
-			}
-			catch
-			{
-				Debug.WriteLine(columnFamilyName + " already exists", "keyspace setup");
-			}
+			TryCreateColumnFamily(new CassandraColumnFamilySchema(type: ColumnType.Super) {
+				ColumnNameType = typeof(CompareWith),
+				SuperColumnNameType = typeof(CompareSubcolumnWith),
+				FamilyName = columnFamilyName
+			});
 		}
 
 		private string GetCassandraComparatorType(Type comparatorType)
@@ -142,31 +138,38 @@ namespace FluentCassandra
 			return comparatorTypeName;
 		}
 
-		public CfDef GetColumnFamilyDescription(string columnFamily)
+		public KsDef GetDescription()
 		{
-			return Describe().Cf_defs.FirstOrDefault(cf => cf.Name == columnFamily);
+			return _context.ExecuteOperation(new SimpleOperation<Apache.Cassandra.KsDef>(ctx => {
+				return ctx.Session.GetClient().describe_keyspace(KeyspaceName);
+			}));
+		}
+
+		public CassandraColumnFamilySchema GetColumnFamilySchema(string columnFamily)
+		{
+			return GetSchema().ColumnFamilies.FirstOrDefault(cf => cf.FamilyName == columnFamily);
 		}
 
 		public bool ColumnFamilyExists(string columnFamilyName)
 		{
-			return Describe().Cf_defs.Any(columnFamily => columnFamily.Name == columnFamilyName);
+			return GetSchema().ColumnFamilies.Any(cf => cf.FamilyName == columnFamilyName);
 		}
 
 		public void ClearCachedKeyspaceDescription()
 		{
-			_cachedKeyspaceDescription = null;
+			_cachedSchema = null;
 		}
 
 		#region Cassandra Keyspace Server Operations
 
-		public KsDef Describe()
+		public CassandraKeyspaceSchema GetSchema()
 		{
-			if (_cachedKeyspaceDescription == null)
-				_cachedKeyspaceDescription = _context.ExecuteOperation(new SimpleOperation<Apache.Cassandra.KsDef>(ctx => {
+			if (_cachedSchema == null)
+				_cachedSchema = new CassandraKeyspaceSchema(_context.ExecuteOperation(new SimpleOperation<Apache.Cassandra.KsDef>(ctx => {
 					return ctx.Session.GetClient().describe_keyspace(KeyspaceName);
-			}));
+				})));
 
-			return _cachedKeyspaceDescription;
+			return _cachedSchema;
 		}
 
 		public IEnumerable<CassandraTokenRange> DescribeRing()

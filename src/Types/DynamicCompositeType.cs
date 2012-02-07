@@ -10,19 +10,26 @@ namespace FluentCassandra.Types
 
 		public DynamicCompositeType()
 			: this(new Dictionary<char, Type> {
-				{ 'a', typeof(AsciiType) },
-				{ 'b', typeof(BytesType) },
-				{ 'i', typeof(IntegerType) },
-				{ 'x', typeof(LexicalUUIDType) },
+				{ 'b', typeof(BooleanType) },
+				{ 't', typeof(DateType) },
+				{ 'm', typeof(DecimalType) },
+				{ 'f', typeof(FloatType) },
+				{ 'd', typeof(DoubleType) },
+				{ 'i', typeof(Int32Type) },
 				{ 'l', typeof(LongType) },
-				{ 't', typeof(TimeUUIDType) },
+				{ 'z', typeof(IntegerType) },
+				{ 'a', typeof(AsciiType) },
 				{ 's', typeof(UTF8Type) },
-				{ 'u', typeof(UUIDType) }
+				{ 'x', typeof(BytesType) },
+				{ 'u', typeof(UUIDType) },
+				{ '1', typeof(TimeUUIDType) },
+				{ '2', typeof(LexicalUUIDType) }
 			}) { }
 
 		public DynamicCompositeType(IDictionary<char, Type> aliases)
 		{
 			Converter = new DynamicCompositeTypeConverter(aliases);
+			_value = new List<CassandraType>();
 		}
 
 		#region Implimentation

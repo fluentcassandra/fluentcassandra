@@ -14,21 +14,12 @@ namespace FluentCassandra.LinqPad
 	/// </summary>
 	public class CassandraDriver : DynamicDataContextDriver
 	{
-		private Apache.Cassandra.KsDef _schema;
-
 		public override string Name { get { return "Cassandra"; } }
 
 		public override string Author { get { return "Nick Berardi"; } }
 
 		private void CacheDefinitionIfNessisary(CassandraConnectionInfo info)
 		{
-			if (_schema != null)
-				return;
-
-			var context = info.CreateContext();
-			var keyspace = context.Keyspace;
-
-			_schema = keyspace.Describe();
 		}
 
 		/// <summary>Returns the text to display in the root Schema Explorer node for a given connection info.</summary>
