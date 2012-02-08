@@ -13,6 +13,8 @@ namespace FluentCassandra.Operations
 
 		public override IEnumerable<FluentSuperColumnFamily> Execute()
 		{
+			var schema = ColumnFamily.GetSchema();
+
 			var parent = new CassandraColumnParent {
 				ColumnFamily = ColumnFamily.FamilyName
 			};
@@ -29,18 +31,36 @@ namespace FluentCassandra.Operations
 
 			foreach (var result in output)
 			{
-				var key = CassandraObject.GetTypeFromDatabaseValue(result.Key, CassandraType.BytesType);
+				var key = CassandraObject.GetTypeFromDatabaseValue(result.Key, schema.KeyType);
 
-				var superColumns = result.Value.Select(col => {
-					var superCol = Helper.ConvertSuperColumnToFluentSuperColumn(col.Super_column);
+				var superColumns = (IEnumerable<FluentSuperColumn>)null;
+
+				if (SuperColumnName != null)
+				{
+					var superColSchema = new CassandraColumnSchema {
+						NameType = schema.SuperColumnNameType,
+						Name = SuperColumnName,
+						ValueType = schema.ColumnNameType
+					};
+
+					var superCol = new FluentSuperColumn(superColSchema, result.Value.Select(col => Helper.ConvertColumnToFluentColumn(col.Column, schema)));
 					ColumnFamily.Context.Attach(superCol);
 					superCol.MutationTracker.Clear();
 
-					return superCol;
-				});
+					superColumns = new[] { superCol };
+				}
+				else
+				{
+					superColumns = result.Value.Select(col => {
+						var superCol = Helper.ConvertSuperColumnToFluentSuperColumn(col.Super_column);
+						ColumnFamily.Context.Attach(superCol);
+						superCol.MutationTracker.Clear();
+
+						return superCol;
+					});
+				}
 
 				var familyName = ColumnFamily.FamilyName;
-				var schema = ColumnFamily.GetSchema();
 				var r = new FluentSuperColumnFamily(key, familyName, schema, superColumns);
 				ColumnFamily.Context.Attach(r);
 				r.MutationTracker.Clear();

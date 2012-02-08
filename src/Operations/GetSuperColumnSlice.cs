@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Apache.Cassandra;
 using FluentCassandra.Types;
 
 namespace FluentCassandra.Operations
@@ -19,7 +18,17 @@ namespace FluentCassandra.Operations
 
 		public override FluentSuperColumn Execute()
 		{
-			var result = new FluentSuperColumn(null, GetColumns(ColumnFamily));
+			var schema = ColumnFamily.GetSchema();
+			var superColSchema = new CassandraColumnSchema {
+				NameType = schema.SuperColumnNameType,
+				Name = SuperColumnName,
+				ValueType = schema.ColumnNameType
+			};
+
+			var result = new FluentSuperColumn(superColSchema, GetColumns(ColumnFamily)) {
+				ColumnName = SuperColumnName
+			};
+
 			ColumnFamily.Context.Attach(result);
 			result.MutationTracker.Clear();
 
@@ -28,12 +37,12 @@ namespace FluentCassandra.Operations
 
 		private IEnumerable<FluentColumn> GetColumns(BaseCassandraColumnFamily columnFamily)
 		{
-			var parent = new CassandraColumnParent {
-				ColumnFamily = columnFamily.FamilyName
-			};
+			var schema = ColumnFamily.GetSchema();
 
-			if (SuperColumnName != null)
-				parent.SuperColumn = SuperColumnName;
+			var parent = new CassandraColumnParent {
+				ColumnFamily = columnFamily.FamilyName,
+				SuperColumn = SuperColumnName
+			};
 
 			var output = Session.GetClient().get_slice(
 				Key,
@@ -44,7 +53,7 @@ namespace FluentCassandra.Operations
 
 			foreach (var result in output)
 			{
-				var r = Helper.ConvertColumnToFluentColumn(result.Column);
+				var r = Helper.ConvertColumnToFluentColumn(result.Column, schema);
 				yield return r;
 			}
 		}

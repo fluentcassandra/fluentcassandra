@@ -84,7 +84,7 @@ namespace FluentCassandra.Types
 
 		public static CassandraType GetCassandraType(Type sourceType)
 		{
-			if (sourceType.BaseType == typeof(CassandraType))
+			if (sourceType.BaseType == typeof(CassandraObject))
 				return new CassandraType(sourceType.Name) { _type = sourceType };
 
 			var destinationType = (CassandraType)null;
