@@ -26,7 +26,7 @@ namespace FluentCassandra.Operations
 			_client.set_keyspace(keyspace);
 		}
 
-		public Apache.Cassandra.ColumnOrSuperColumn get(CassandraType key, CassandraColumnPath column_path, Apache.Cassandra.ConsistencyLevel consistency_level)
+		public Apache.Cassandra.ColumnOrSuperColumn get(CassandraObject key, CassandraColumnPath column_path, Apache.Cassandra.ConsistencyLevel consistency_level)
 		{
 			return _client.get(
 				key.TryToBigEndian(),
@@ -34,7 +34,7 @@ namespace FluentCassandra.Operations
 				consistency_level);
 		}
 
-		public List<Apache.Cassandra.ColumnOrSuperColumn> get_slice(CassandraType key, CassandraColumnParent column_parent, CassandraSlicePredicate predicate, Apache.Cassandra.ConsistencyLevel consistency_level)
+		public List<Apache.Cassandra.ColumnOrSuperColumn> get_slice(CassandraObject key, CassandraColumnParent column_parent, CassandraSlicePredicate predicate, Apache.Cassandra.ConsistencyLevel consistency_level)
 		{
 			return _client.get_slice(
 				key.TryToBigEndian(),
@@ -43,7 +43,7 @@ namespace FluentCassandra.Operations
 				consistency_level);
 		}
 
-		public int get_count(CassandraType key, CassandraColumnParent column_parent, CassandraSlicePredicate predicate, Apache.Cassandra.ConsistencyLevel consistency_level)
+		public int get_count(CassandraObject key, CassandraColumnParent column_parent, CassandraSlicePredicate predicate, Apache.Cassandra.ConsistencyLevel consistency_level)
 		{
 			return _client.get_count(
 				key.TryToBigEndian(),
@@ -52,7 +52,7 @@ namespace FluentCassandra.Operations
 				consistency_level);
 		}
 
-		public Dictionary<byte[], List<Apache.Cassandra.ColumnOrSuperColumn>> multiget_slice(List<BytesType> keys, CassandraColumnParent column_parent, CassandraSlicePredicate predicate, Apache.Cassandra.ConsistencyLevel consistency_level)
+		public Dictionary<byte[], List<Apache.Cassandra.ColumnOrSuperColumn>> multiget_slice(List<CassandraObject> keys, CassandraColumnParent column_parent, CassandraSlicePredicate predicate, Apache.Cassandra.ConsistencyLevel consistency_level)
 		{
 			return _client.multiget_slice(
 				Helper.ToByteArrayList(keys),
@@ -61,7 +61,7 @@ namespace FluentCassandra.Operations
 				consistency_level);
 		}
 
-		public Dictionary<byte[], int> multiget_count(List<BytesType> keys, CassandraColumnParent column_parent, CassandraSlicePredicate predicate, Apache.Cassandra.ConsistencyLevel consistency_level)
+		public Dictionary<byte[], int> multiget_count(List<CassandraObject> keys, CassandraColumnParent column_parent, CassandraSlicePredicate predicate, Apache.Cassandra.ConsistencyLevel consistency_level)
 		{
 			return _client.multiget_count(
 				Helper.ToByteArrayList(keys),
@@ -88,7 +88,7 @@ namespace FluentCassandra.Operations
 				consistency_level);
 		}
 
-		public void insert(CassandraType key, CassandraColumnParent column_parent, CassandraColumn column, Apache.Cassandra.ConsistencyLevel consistency_level)
+		public void insert(CassandraObject key, CassandraColumnParent column_parent, CassandraColumn column, Apache.Cassandra.ConsistencyLevel consistency_level)
 		{
 			_client.insert(
 				key.TryToBigEndian(),
@@ -97,7 +97,7 @@ namespace FluentCassandra.Operations
 				consistency_level);
 		}
 
-		public void add(CassandraType key, CassandraColumnParent column_parent, CassandraCounterColumn column, Apache.Cassandra.ConsistencyLevel consistency_level)
+		public void add(CassandraObject key, CassandraColumnParent column_parent, CassandraCounterColumn column, Apache.Cassandra.ConsistencyLevel consistency_level)
 		{
 			_client.add(
 				key.TryToBigEndian(),
@@ -106,7 +106,7 @@ namespace FluentCassandra.Operations
 				consistency_level);
 		}
 
-		public void remove(CassandraType key, CassandraColumnPath column_path, long timestamp, Apache.Cassandra.ConsistencyLevel consistency_level)
+		public void remove(CassandraObject key, CassandraColumnPath column_path, long timestamp, Apache.Cassandra.ConsistencyLevel consistency_level)
 		{
 			_client.remove(
 				key.TryToBigEndian(),
@@ -115,7 +115,7 @@ namespace FluentCassandra.Operations
 				consistency_level);
 		}
 
-		public void remove_counter(CassandraType key, CassandraColumnPath path, Apache.Cassandra.ConsistencyLevel consistency_level)
+		public void remove_counter(CassandraObject key, CassandraColumnPath path, Apache.Cassandra.ConsistencyLevel consistency_level)
 		{
 			_client.remove_counter(
 				key.TryToBigEndian(),

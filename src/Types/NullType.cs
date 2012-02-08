@@ -3,7 +3,7 @@ using System.Numerics;
 
 namespace FluentCassandra.Types
 {
-	internal class NullType : CassandraType
+	internal class NullType : CassandraObject
 	{
 		public readonly static NullType Value = new NullType();
 

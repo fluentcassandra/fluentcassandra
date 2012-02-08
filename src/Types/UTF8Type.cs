@@ -2,7 +2,7 @@
 
 namespace FluentCassandra.Types
 {
-	public class UTF8Type : CassandraType
+	public class UTF8Type : CassandraObject
 	{
 		private static readonly UTF8TypeConverter Converter = new UTF8TypeConverter();
 

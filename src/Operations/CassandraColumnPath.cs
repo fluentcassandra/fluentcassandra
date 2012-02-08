@@ -6,6 +6,6 @@ namespace FluentCassandra.Operations
 {
 	public class CassandraColumnPath : CassandraColumnParent
 	{
-		public CassandraType Column { get; set; }
+		public CassandraObject Column { get; set; }
 	}
 }

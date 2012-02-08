@@ -9,7 +9,7 @@ namespace FluentCassandra.Operations
 	internal static class CassandraSlicePredicateBuilder
 	{
 		public static QueryableColumnFamilyOperation<TResult> BuildQueryableOperation<TResult, CompareWith>(this ICassandraQueryable<TResult, CompareWith> source)
-			where CompareWith : CassandraType
+			where CompareWith : CassandraObject
 		{
 			return BuildOperation<QueryableColumnFamilyOperation<TResult>>(source, source.Setup.CreateQueryOperation);
 		}
@@ -26,20 +26,20 @@ namespace FluentCassandra.Operations
 
 			var calls = BuildCallDictionary(new Dictionary<string, object>(), source.Expression);
 
-			var predicate = BuildPredicateFromExpression(calls);
+			var predicate = BuildPredicateFromExpression(source.Setup, calls);
 			var operation = createOp(source.Setup, predicate);
 
 			return operation;
 		}
 
-		private static CassandraSlicePredicate BuildPredicateFromExpression(IDictionary<string, object> calls)
+		private static CassandraSlicePredicate BuildPredicateFromExpression(CassandraQuerySetup setup, IDictionary<string, object> calls)
 		{
-			object fetch, take, takeUntil;
+			object fetch, take, takeUntil, superColumnName;
 
 			if (!calls.TryGetValue("Fetch", out fetch))
-				fetch = new CassandraType[0];
+				fetch = new CassandraObject[0];
 
-			var columns = (CassandraType[])fetch;
+			var columns = (CassandraObject[])fetch;
 			CassandraRangeSlicePredicate predicate;
 
 			if (columns.Length > 1)
@@ -69,12 +69,15 @@ namespace FluentCassandra.Operations
 
 			if (calls.TryGetValue("TakeUntil", out takeUntil))
 			{
-				CassandraType column = (CassandraType)takeUntil;
+				CassandraObject column = (CassandraObject)takeUntil;
 				predicate.Finish = column;
 			}
 
 			if (calls.ContainsKey("Reverse"))
 				predicate.Reversed = true;
+
+			if (calls.TryGetValue("ForSuperColumn", out superColumnName))
+				setup.SuperColumnName = (CassandraObject)superColumnName;
 
 			return predicate;
 		}
@@ -103,6 +106,7 @@ namespace FluentCassandra.Operations
 				case "Fetch":
 				case "Take":
 				case "TakeUntil":
+				case "ForSuperColumn":
 					calls.Add(exp.Method.Name, ((ConstantExpression)exp.Arguments[1]).Value);
 					break;
 

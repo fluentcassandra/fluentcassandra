@@ -25,7 +25,7 @@ namespace FluentCassandra.Operations
 
 			var keyName = CassandraColumnFamilySchema.DefaultKeyName.ToBigEndian();
 			var resultSchema = result.Schema;
-			var colNameType = CassandraType.GetCassandraType(resultSchema.Default_name_type);
+			var colNameType = CassandraObject.ParseType(resultSchema.Default_name_type);
 
 			var schema = new CassandraColumnFamilySchema();
 			schema.FamilyName = familyName;
@@ -36,13 +36,13 @@ namespace FluentCassandra.Operations
 				var key = s.Key;
 				if (key.Length == 3 && key[0] == keyName[0] && key[1] == keyName[1] && key[2] == keyName[2])
 				{
-					schema.KeyType = CassandraType.GetCassandraType(s.Value);
+					schema.KeyType = CassandraObject.ParseType(s.Value);
 					continue;
 				}
 
 				schema.Columns.Add(new CassandraColumnSchema {
-					Name = CassandraType.GetTypeFromDatabaseValue(s.Key, colNameType),
-					ValueType = CassandraType.GetCassandraType(s.Value)
+					Name = CassandraObject.GetTypeFromDatabaseValue(s.Key, colNameType),
+					ValueType = CassandraObject.ParseType(s.Value)
 				});
 			}
 
@@ -85,7 +85,7 @@ namespace FluentCassandra.Operations
 
 			foreach (var row in result.Rows)
 				yield return new FluentColumnFamily(
-					CassandraType.GetTypeFromDatabaseValue<BytesType>(row.Key),
+					CassandraObject.GetTypeFromDatabaseValue(row.Key, schema.KeyType),
 					familyName, 
 					schema,
 					GetColumns(row, schema));

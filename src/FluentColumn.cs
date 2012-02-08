@@ -5,7 +5,7 @@ namespace FluentCassandra
 {
 	[Obsolete("Use \"FluentColumn\" class with out generic type")]
 	public class FluentColumn<CompareWith> : FluentColumn
-		where CompareWith : CassandraType
+		where CompareWith : CassandraObject
 	{
 		public FluentColumn()
 			: base(new CassandraColumnSchema {
@@ -20,8 +20,8 @@ namespace FluentCassandra
 	/// <typeparam name="T"></typeparam>
 	public class FluentColumn : IFluentBaseColumn
 	{
-		private CassandraType _name;
-		private CassandraType _value;
+		private CassandraObject _name;
+		private CassandraObject _value;
 
 		private FluentColumnParent _parent;
 		private IFluentBaseColumnFamily _family;
@@ -40,12 +40,12 @@ namespace FluentCassandra
 		/// <summary>
 		/// The column name.
 		/// </summary>
-		public CassandraType ColumnName
+		public CassandraObject ColumnName
 		{
 			get { return _name; }
 			set
 			{
-				_name = (CassandraType)value.GetValue(GetSchema().NameType);
+				_name = (CassandraObject)value.GetValue(GetSchema().NameType);
 				ColumnTimestamp = DateTimeOffset.UtcNow;
 			}
 		}
@@ -53,12 +53,12 @@ namespace FluentCassandra
 		/// <summary>
 		/// 
 		/// </summary>
-		public CassandraType ColumnValue
+		public CassandraObject ColumnValue
 		{
 			get { return _value; }
 			set
 			{
-				_value = (CassandraType)value.GetValue(GetSchema().ValueType);
+				_value = (CassandraObject)value.GetValue(GetSchema().ValueType);
 				ColumnTimestamp = DateTimeOffset.UtcNow;
 			}
 		}
@@ -151,10 +151,10 @@ namespace FluentCassandra
 				schema = new CassandraColumnSchema();
 		
 			if (_name != null)
-				_name = (CassandraType)_name.GetValue(schema.NameType);
+				_name = (CassandraObject)_name.GetValue(schema.NameType);
 
 			if (_value != null)
-				_value = (CassandraType)_value.GetValue(schema.ValueType);
+				_value = (CassandraObject)_value.GetValue(schema.ValueType);
 
 			_schema = schema;
 		}

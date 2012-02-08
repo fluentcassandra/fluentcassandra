@@ -8,7 +8,7 @@ namespace FluentCassandra.Linq
 {
 	public static class CqlQueryExtensions
 	{
-		public static CqlQuery Select(this IQueryable<ICqlRow> source, params CassandraType[] columns)
+		public static CqlQuery Select(this IQueryable<ICqlRow> source, params CassandraObject[] columns)
 		{
 			if (source == null)
 				throw new ArgumentNullException("source");

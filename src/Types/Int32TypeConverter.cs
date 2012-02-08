@@ -2,7 +2,7 @@
 
 namespace FluentCassandra.Types
 {
-	internal class Int32TypeConverter : CassandraTypeConverter<int>
+	internal class Int32TypeConverter : CassandraObjectConverter<int>
 	{
 		public override bool CanConvertFrom(Type sourceType)
 		{

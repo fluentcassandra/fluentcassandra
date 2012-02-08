@@ -3,7 +3,7 @@ using System.Text;
 
 namespace FluentCassandra.Types
 {
-	internal class AsciiTypeConverter : CassandraTypeConverter<string>
+	internal class AsciiTypeConverter : CassandraObjectConverter<string>
 	{
 		public override bool CanConvertFrom(Type sourceType)
 		{

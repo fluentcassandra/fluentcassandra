@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace FluentCassandra.Types
 {
-	public class DynamicCompositeType : CassandraType, IList<CassandraType>
+	public class DynamicCompositeType : CassandraObject, IList<CassandraObject>
 	{
 		private readonly DynamicCompositeTypeConverter Converter;
 
@@ -29,7 +29,7 @@ namespace FluentCassandra.Types
 		public DynamicCompositeType(IDictionary<char, Type> aliases)
 		{
 			Converter = new DynamicCompositeTypeConverter(aliases);
-			_value = new List<CassandraType>();
+			_value = new List<CassandraObject>();
 		}
 
 		#region Implimentation
@@ -68,13 +68,13 @@ namespace FluentCassandra.Types
 
 		protected override object GetRawValue() { return _value; }
 
-		private List<CassandraType> _value;
+		private List<CassandraObject> _value;
 
 		#region Equality
 
 		public override bool Equals(object obj)
 		{
-			List<CassandraType> objArray;
+			List<CassandraObject> objArray;
 
 			if (obj is DynamicCompositeType)
 				objArray = ((DynamicCompositeType)obj)._value;
@@ -112,32 +112,32 @@ namespace FluentCassandra.Types
 
 		public static implicit operator DynamicCompositeType(CompositeType type)
 		{
-			return new DynamicCompositeType { _value = type.GetValue<List<CassandraType>>() };
+			return new DynamicCompositeType { _value = type.GetValue<List<CassandraObject>>() };
 		}
 
-		public static implicit operator List<CassandraType>(DynamicCompositeType type)
+		public static implicit operator List<CassandraObject>(DynamicCompositeType type)
 		{
 			return type._value;
 		}
 
-		public static implicit operator DynamicCompositeType(CassandraType[] s)
+		public static implicit operator DynamicCompositeType(CassandraObject[] s)
 		{
-			return new DynamicCompositeType { _value = new List<CassandraType>(s) };
+			return new DynamicCompositeType { _value = new List<CassandraObject>(s) };
 		}
 
-		public static implicit operator DynamicCompositeType(List<CassandraType> s)
+		public static implicit operator DynamicCompositeType(List<CassandraObject> s)
 		{
 			return new DynamicCompositeType { _value = s };
 		}
 
 		public static implicit operator DynamicCompositeType(object[] s)
 		{
-			return new DynamicCompositeType { _value = new List<CassandraType>(s.Select(o => CassandraType.GetTypeFromObject<BytesType>(o))) };
+			return new DynamicCompositeType { _value = new List<CassandraObject>(s.Select(o => CassandraObject.GetTypeFromObject(o, CassandraType.BytesType))) };
 		}
 
 		public static implicit operator DynamicCompositeType(List<object> s)
 		{
-			return new DynamicCompositeType { _value = new List<CassandraType>(s.Select(o => CassandraType.GetTypeFromObject<BytesType>(o))) };
+			return new DynamicCompositeType { _value = new List<CassandraObject>(s.Select(o => CassandraObject.GetTypeFromObject(o, CassandraType.BytesType))) };
 		}
 
 		public static implicit operator byte[](DynamicCompositeType o) { return ConvertTo<byte[]>(o); }
@@ -162,22 +162,22 @@ namespace FluentCassandra.Types
 
 		#region IList<CassandraType> Members
 
-		int IList<CassandraType>.IndexOf(CassandraType item)
+		int IList<CassandraObject>.IndexOf(CassandraObject item)
 		{
 			return _value.IndexOf(item);
 		}
 
-		void IList<CassandraType>.Insert(int index, CassandraType item)
+		void IList<CassandraObject>.Insert(int index, CassandraObject item)
 		{
 			_value.Insert(index, item);
 		}
 
-		void IList<CassandraType>.RemoveAt(int index)
+		void IList<CassandraObject>.RemoveAt(int index)
 		{
 			_value.RemoveAt(index);
 		}
 
-		public CassandraType this[int index]
+		public CassandraObject this[int index]
 		{
 			get { return _value[index]; }
 			set { _value[index] = value; }
@@ -187,7 +187,7 @@ namespace FluentCassandra.Types
 
 		#region ICollection<CassandraType> Members
 
-		public void Add(CassandraType item)
+		public void Add(CassandraObject item)
 		{
 			_value.Add(item);
 		}
@@ -197,12 +197,12 @@ namespace FluentCassandra.Types
 			_value.Clear();
 		}
 
-		public bool Contains(CassandraType item)
+		public bool Contains(CassandraObject item)
 		{
 			return _value.Contains(item);
 		}
 
-		void ICollection<CassandraType>.CopyTo(CassandraType[] array, int arrayIndex)
+		void ICollection<CassandraObject>.CopyTo(CassandraObject[] array, int arrayIndex)
 		{
 			_value.CopyTo(array, arrayIndex);
 		}
@@ -212,12 +212,12 @@ namespace FluentCassandra.Types
 			get { return _value.Count; }
 		}
 
-		bool ICollection<CassandraType>.IsReadOnly
+		bool ICollection<CassandraObject>.IsReadOnly
 		{
-			get { return ((ICollection<CassandraType>)_value).IsReadOnly; }
+			get { return ((ICollection<CassandraObject>)_value).IsReadOnly; }
 		}
 
-		public bool Remove(CassandraType item)
+		public bool Remove(CassandraObject item)
 		{
 			return _value.Remove(item);
 		}
@@ -226,7 +226,7 @@ namespace FluentCassandra.Types
 
 		#region IEnumerable<CassandraType> Members
 
-		public IEnumerator<CassandraType> GetEnumerator()
+		public IEnumerator<CassandraObject> GetEnumerator()
 		{
 			return _value.GetEnumerator();
 		}

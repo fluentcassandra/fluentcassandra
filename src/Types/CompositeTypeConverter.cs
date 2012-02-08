@@ -5,30 +5,30 @@ using System.Linq;
 
 namespace FluentCassandra.Types
 {
-	internal class CompositeTypeConverter : CassandraTypeConverter<List<CassandraType>>
+	internal class CompositeTypeConverter : CassandraObjectConverter<List<CassandraObject>>
 	{
 		public override bool CanConvertFrom(Type sourceType)
 		{
 			return sourceType == typeof(byte[]) || 
-				sourceType.GetInterfaces().Contains(typeof(IEnumerable<CassandraType>)) || 
+				sourceType.GetInterfaces().Contains(typeof(IEnumerable<CassandraObject>)) || 
 				sourceType.GetInterfaces().Contains(typeof(IEnumerable<object>));
 		}
 
 		public override bool CanConvertTo(Type destinationType)
 		{
 			return destinationType == typeof(byte[]) || 
-				destinationType == typeof(List<CassandraType>) || 
-				destinationType == typeof(CassandraType[]) || 
+				destinationType == typeof(List<CassandraObject>) || 
+				destinationType == typeof(CassandraObject[]) || 
 				destinationType == typeof(List<object>) || 
 				destinationType == typeof(object[]) || 
 				destinationType == typeof(string);
 		}
 
-		public override List<CassandraType> ConvertFromInternal(object value)
+		public override List<CassandraObject> ConvertFromInternal(object value)
 		{
 			if (value is byte[])
 			{
-				var components = new List<CassandraType>();
+				var components = new List<CassandraObject>();
 
 				using (var bytes = new MemoryStream((byte[])value))
 				{
@@ -56,18 +56,18 @@ namespace FluentCassandra.Types
 			}
 
 			if (value.GetType().GetInterfaces().Contains(typeof(IEnumerable<object>)))
-				return new List<CassandraType>(((IEnumerable<object>)value).Cast<BytesType>());
+				return new List<CassandraObject>(((IEnumerable<object>)value).Cast<BytesType>());
 
-			if (value.GetType().GetInterfaces().Contains(typeof(IEnumerable<CassandraType>)))
-				return new List<CassandraType>((IEnumerable<CassandraType>)value);
+			if (value.GetType().GetInterfaces().Contains(typeof(IEnumerable<CassandraObject>)))
+				return new List<CassandraObject>((IEnumerable<CassandraObject>)value);
 
 			return null;
 		}
 
-		public override object ConvertToInternal(List<CassandraType> value, Type destinationType)
+		public override object ConvertToInternal(List<CassandraObject> value, Type destinationType)
 		{
 			if (destinationType == typeof(string))
-				return String.Join(":", (IEnumerable<CassandraType>)value);
+				return String.Join(":", (IEnumerable<CassandraObject>)value);
 
 			if (destinationType == typeof(byte[]))
 			{
@@ -94,13 +94,13 @@ namespace FluentCassandra.Types
 				}
 			}
 
-			if (destinationType == typeof(CassandraType[]))
+			if (destinationType == typeof(CassandraObject[]))
 				return value.ToArray();
 
 			if (destinationType == typeof(object[]))
 				return value.Cast<object>().ToArray();
 
-			if (destinationType == typeof(List<CassandraType>))
+			if (destinationType == typeof(List<CassandraObject>))
 				return value;
 
 			if (destinationType == typeof(List<object>))
@@ -109,7 +109,7 @@ namespace FluentCassandra.Types
 			return null;
 		}
 
-		public override byte[] ToBigEndian(List<CassandraType> value)
+		public override byte[] ToBigEndian(List<CassandraObject> value)
 		{
 			var components = value;
 
@@ -134,14 +134,14 @@ namespace FluentCassandra.Types
 			}
 		}
 
-		public override List<CassandraType> FromBigEndian(byte[] value)
+		public override List<CassandraObject> FromBigEndian(byte[] value)
 		{
 			return FromBigEndian(value, null);
 		}
 
-		public List<CassandraType> FromBigEndian(byte[] value, List<Type> hints)
+		public List<CassandraObject> FromBigEndian(byte[] value, List<Type> hints)
 		{
-			var components = new List<CassandraType>();
+			var components = new List<CassandraObject>();
 			var hintIndex = 0;
 
 			hints = hints ?? new List<Type>();
@@ -161,7 +161,7 @@ namespace FluentCassandra.Types
 					var typeHint = (hints.Count >= (hintIndex + 1)) ? hints[hintIndex++] : typeof(BytesType);
 					bytes.Read(buffer, 0, length);
 
-					var component = CassandraType.GetTypeFromDatabaseValue(buffer, typeHint);
+					var component = CassandraObject.GetTypeFromDatabaseValue(buffer, typeHint);
 					components.Add(component);
 
 					// end of component

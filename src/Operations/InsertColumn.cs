@@ -9,13 +9,13 @@ namespace FluentCassandra.Operations
 		* insert(keyspace, key, column_path, value, timestamp, consistency_level)
 		*/
 
-		public CassandraType Key { get; private set; }
+		public CassandraObject Key { get; private set; }
 
-		public CassandraType SuperColumnName { get; private set; }
+		public CassandraObject SuperColumnName { get; private set; }
 
-		public CassandraType ColumnName { get; private set; }
+		public CassandraObject ColumnName { get; private set; }
 
-		public CassandraType ColumnValue { get; private set; }
+		public CassandraObject ColumnValue { get; private set; }
 
 		public int? TimeToLive { get; private set; }
 
@@ -32,10 +32,10 @@ namespace FluentCassandra.Operations
 			};
 
 			if (SuperColumnName != null)
-				parent.SuperColumn = SuperColumnName.GetValue(schema.SuperColumnNameType) as CassandraType;
+				parent.SuperColumn = SuperColumnName.GetValue(schema.SuperColumnNameType) as CassandraObject;
 
 			var column = new CassandraColumn {
-				Name = ColumnName.GetValue(schema.ColumnNameType) as CassandraType,
+				Name = ColumnName.GetValue(schema.ColumnNameType) as CassandraObject,
 				Value = ColumnValue,
 				Timestamp = Timestamp,
 				Ttl = TimeToLive
@@ -53,7 +53,7 @@ namespace FluentCassandra.Operations
 
 		#endregion
 
-		public InsertColumn(CassandraType key, CassandraType name, CassandraType value, DateTimeOffset timestamp, int? timeToLive)
+		public InsertColumn(CassandraObject key, CassandraObject name, CassandraObject value, DateTimeOffset timestamp, int? timeToLive)
 		{
 			Key = key;
 			ColumnName = name;
@@ -62,7 +62,7 @@ namespace FluentCassandra.Operations
 			TimeToLive = timeToLive;
 		}
 
-		public InsertColumn(CassandraType key, CassandraType superColumnName, CassandraType name, CassandraType value, DateTimeOffset timestamp, int? timeToLive)
+		public InsertColumn(CassandraObject key, CassandraObject superColumnName, CassandraObject name, CassandraObject value, DateTimeOffset timestamp, int? timeToLive)
 		{
 			Key = key;
 			SuperColumnName = superColumnName;

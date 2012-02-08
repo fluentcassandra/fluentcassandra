@@ -2,7 +2,7 @@
 
 namespace FluentCassandra.Types
 {
-	internal class DateTypeConverter : CassandraTypeConverter<DateTimeOffset>
+	internal class DateTypeConverter : CassandraObjectConverter<DateTimeOffset>
 	{
 		private static readonly DateTimeOffset UnixStart = new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero);
 

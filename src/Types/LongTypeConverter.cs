@@ -2,7 +2,7 @@
 
 namespace FluentCassandra.Types
 {
-	class LongTypeConverter : CassandraTypeConverter<long>
+	class LongTypeConverter : CassandraObjectConverter<long>
 	{
 		public override bool CanConvertFrom(Type sourceType)
 		{

@@ -6,15 +6,15 @@ using Apache.Cassandra;
 
 namespace FluentCassandra.Operations
 {
-	public class MultiGetColumnCount : ColumnFamilyOperation<IDictionary<BytesType, int>>
+	public class MultiGetColumnCount : ColumnFamilyOperation<IDictionary<CassandraObject, int>>
 	{
-		public List<BytesType> Keys { get; private set; }
+		public List<CassandraObject> Keys { get; private set; }
 
-		public CassandraType SuperColumnName { get; private set; }
+		public CassandraObject SuperColumnName { get; private set; }
 
 		public CassandraSlicePredicate SlicePredicate { get; internal protected set; }
 
-		public override IDictionary<BytesType, int> Execute()
+		public override IDictionary<CassandraObject, int> Execute()
 		{
 			var parent = new CassandraColumnParent {
 				ColumnFamily = ColumnFamily.FamilyName
@@ -30,7 +30,7 @@ namespace FluentCassandra.Operations
 				Session.ReadConsistency
 			);
 
-			var results = new Dictionary<BytesType, int>();
+			var results = new Dictionary<CassandraObject, int>();
 
 			foreach (var result in output)
 				results.Add(result.Key, result.Value);
@@ -38,13 +38,13 @@ namespace FluentCassandra.Operations
 			return results;
 		}
 
-		public MultiGetColumnCount(IEnumerable<BytesType> keys, CassandraSlicePredicate columnSlicePredicate)
+		public MultiGetColumnCount(IEnumerable<CassandraObject> keys, CassandraSlicePredicate columnSlicePredicate)
 		{
 			Keys = keys.ToList();
 			SlicePredicate = columnSlicePredicate;
 		}
 
-		public MultiGetColumnCount(IEnumerable<BytesType> keys, CassandraType superColumnName, CassandraSlicePredicate columnSlicePredicate)
+		public MultiGetColumnCount(IEnumerable<CassandraObject> keys, CassandraObject superColumnName, CassandraSlicePredicate columnSlicePredicate)
 		{
 			Keys = keys.ToList();
 			SuperColumnName = superColumnName;

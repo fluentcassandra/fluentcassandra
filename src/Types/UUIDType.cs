@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace FluentCassandra.Types
 {
-	public class UUIDType : CassandraType
+	public class UUIDType : CassandraObject
 	{
 		private static readonly UUIDTypeConverter Converter = new UUIDTypeConverter();
 

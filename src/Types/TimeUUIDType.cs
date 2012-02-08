@@ -2,7 +2,7 @@
 
 namespace FluentCassandra.Types
 {
-	public class TimeUUIDType : CassandraType
+	public class TimeUUIDType : CassandraObject
 	{
 		private static readonly TimeUUIDTypeConverter Converter = new TimeUUIDTypeConverter();
 

@@ -2,7 +2,7 @@
 
 namespace FluentCassandra.Types
 {
-	public class LongType : CassandraType
+	public class LongType : CassandraObject
 	{
 		private static readonly LongTypeConverter Converter = new LongTypeConverter();
 

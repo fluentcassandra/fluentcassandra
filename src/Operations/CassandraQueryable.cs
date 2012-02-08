@@ -11,7 +11,7 @@ namespace FluentCassandra
 	public static class CassandraQueryable
 	{
 		public static ICassandraQueryable<TResult, CompareWith> Fetch<TResult, CompareWith>(this ICassandraQueryable<TResult, CompareWith> source, params CompareWith[] columns)
-			where CompareWith : CassandraType
+			where CompareWith : CassandraObject
 		{
 			if (source == null)
 				throw new ArgumentNullException("source");
@@ -20,7 +20,7 @@ namespace FluentCassandra
 		}
 
 		public static ICassandraQueryable<TResult, CompareWith> TakeUntil<TResult, CompareWith>(this ICassandraQueryable<TResult, CompareWith> source, CompareWith column)
-			where CompareWith : CassandraType
+			where CompareWith : CassandraObject
 		{
 			if (source == null)
 				throw new ArgumentNullException("source");
@@ -28,8 +28,17 @@ namespace FluentCassandra
 			return source.Provider.CreateQuery(source.Setup, Expression.Call(null, ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(new Type[] { typeof(TResult), typeof(CompareWith) }), new Expression[] { source.Expression, Expression.Constant(column) }));
 		}
 
+		public static ICassandraQueryable<TResult, CompareWith> ForSuperColumn<TResult, CompareWith>(this ICassandraQueryable<TResult, CompareWith> source, CassandraObject superColumnName)
+			where CompareWith : CassandraObject
+		{
+			if (source == null)
+				throw new ArgumentNullException("source");
+
+			return source.Provider.CreateQuery(source.Setup, Expression.Call(null, ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(new Type[] { typeof(TResult), typeof(CompareWith) }), new Expression[] { source.Expression, Expression.Constant(superColumnName) }));
+		}
+
 		public static ICassandraQueryable<TResult, CompareWith> Take<TResult, CompareWith>(this ICassandraQueryable<TResult, CompareWith> source, int count)
-			where CompareWith : CassandraType
+			where CompareWith : CassandraObject
 		{
 			if (source == null)
 				throw new ArgumentNullException("source");
@@ -38,7 +47,7 @@ namespace FluentCassandra
 		}
 
 		public static ICassandraQueryable<TResult, CompareWith> Reverse<TResult, CompareWith>(this ICassandraQueryable<TResult, CompareWith> source)
-			where CompareWith : CassandraType
+			where CompareWith : CassandraObject
 		{
 			if (source == null)
 				throw new ArgumentNullException("source");
@@ -47,7 +56,7 @@ namespace FluentCassandra
 		}
 
 		public static int Count<TResult, CompareWith>(this ICassandraQueryable<TResult, CompareWith> source)
-			where CompareWith : CassandraType
+			where CompareWith : CassandraObject
 		{
 			if (source == null)
 				throw new ArgumentNullException("source");
@@ -56,18 +65,18 @@ namespace FluentCassandra
 			return source.Provider.Execute<int>(source, (x, slice) => new ColumnCount(x.Key, x.SuperColumnName, slice));
 		}
 
-		public static IDictionary<BytesType, int> MultiCount<TResult, CompareWith>(this ICassandraQueryable<TResult, CompareWith> source)
-			where CompareWith : CassandraType
+		public static IDictionary<CassandraObject, int> MultiCount<TResult, CompareWith>(this ICassandraQueryable<TResult, CompareWith> source)
+			where CompareWith : CassandraObject
 		{
 			if (source == null)
 				throw new ArgumentNullException("source");
 
 			source = source.Provider.CreateQuery(source.Setup, Expression.Call(null, ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(new Type[] { typeof(TResult), typeof(CompareWith) }), new Expression[] { source.Expression }));
-			return source.Provider.Execute <IDictionary<BytesType, int>>(source, (x, slice) => new MultiGetColumnCount(x.Keys, x.SuperColumnName, slice));
+			return source.Provider.Execute<IDictionary<CassandraObject, int>>(source, (x, slice) => new MultiGetColumnCount(x.Keys, x.SuperColumnName, slice));
 		}
 
 		public static IEnumerable<TResult> Execute<TResult, CompareWith>(this ICassandraQueryable<TResult, CompareWith> source)
-			where CompareWith : CassandraType
+			where CompareWith : CassandraObject
 		{
 			if (source == null)
 				throw new ArgumentNullException("source");
@@ -76,7 +85,7 @@ namespace FluentCassandra
 		}
 
 		public static IEnumerable<dynamic> ExecuteDynamic<TResult, CompareWith>(this ICassandraQueryable<TResult, CompareWith> source)
-			where CompareWith : CassandraType
+			where CompareWith : CassandraObject
 		{
 			return Execute(source).Cast<dynamic>();
 		}

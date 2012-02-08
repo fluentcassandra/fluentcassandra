@@ -14,7 +14,7 @@ namespace FluentCassandra.Operations
 	}
 
 	public interface ICassandraQueryable<TResult, CompareWith> : ICassandraQueryable, IEnumerable<TResult>
-		where CompareWith : CassandraType
+		where CompareWith : CassandraObject
 	{
 		new CassandraQuerySetup<TResult, CompareWith> Setup { get; }
 	}

@@ -2,7 +2,7 @@
 
 namespace FluentCassandra.Types
 {
-	internal class UTF8TypeConverter : CassandraTypeConverter<string>
+	internal class UTF8TypeConverter : CassandraObjectConverter<string>
 	{
 		public override bool CanConvertFrom(Type sourceType)
 		{

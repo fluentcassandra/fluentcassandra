@@ -2,7 +2,7 @@
 
 namespace FluentCassandra.Types
 {
-	public class Int32Type : CassandraType
+	public class Int32Type : CassandraObject
 	{
 		private static readonly Int32TypeConverter Converter = new Int32TypeConverter();
 

@@ -10,7 +10,7 @@ namespace FluentCassandra.Operations
 	{
 		private static readonly DateTimeOffset UnixStart = new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero);
 
-		public static List<byte[]> ToByteArrayList(List<BytesType> list)
+		public static List<byte[]> ToByteArrayList(List<CassandraObject> list)
 		{
 			return list.Select(x => x.TryToBigEndian()).ToList();
 		}
@@ -99,7 +99,7 @@ namespace FluentCassandra.Operations
 			};
 		}
 
-		public static byte[] TryToBigEndian(this CassandraType value)
+		public static byte[] TryToBigEndian(this CassandraObject value)
 		{
 			if (value == null)
 				return null;
@@ -143,8 +143,8 @@ namespace FluentCassandra.Operations
 			}
 
 			var fcol = new FluentColumn(colSchema) {
-				ColumnName = CassandraType.GetTypeFromDatabaseValue(col.Name, colSchema.NameType),
-				ColumnValue = CassandraType.GetTypeFromDatabaseValue(col.Value, colSchema.ValueType),
+				ColumnName = CassandraObject.GetTypeFromDatabaseValue(col.Name, colSchema.NameType),
+				ColumnValue = CassandraObject.GetTypeFromDatabaseValue(col.Value, colSchema.ValueType),
 				ColumnTimestamp = UnixStart.AddMilliseconds(col.Timestamp),
 			};
 
@@ -156,7 +156,7 @@ namespace FluentCassandra.Operations
 
 		public static FluentSuperColumn ConvertSuperColumnToFluentSuperColumn(SuperColumn col, CassandraColumnFamilySchema schema = null)
 		{
-			var nameType = typeof(BytesType);
+			var nameType = CassandraType.BytesType;
 
 			if (schema != null)
 			{
@@ -164,7 +164,7 @@ namespace FluentCassandra.Operations
 			}
 
 			var superCol = new FluentSuperColumn {
-				ColumnName = CassandraType.GetTypeFromDatabaseValue(col.Name, nameType)
+				ColumnName = CassandraObject.GetTypeFromDatabaseValue(col.Name, nameType)
 			};
 
 			foreach (var xcol in col.Columns)
@@ -259,7 +259,7 @@ namespace FluentCassandra.Operations
 			}
 		}
 
-		public static SlicePredicate CreateSlicePredicate(IEnumerable<CassandraType> columnNames)
+		public static SlicePredicate CreateSlicePredicate(IEnumerable<CassandraObject> columnNames)
 		{
 			return new SlicePredicate {
 				Column_names = columnNames.Select(o => o.TryToBigEndian()).ToList()

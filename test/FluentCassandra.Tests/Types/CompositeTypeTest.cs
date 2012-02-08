@@ -8,10 +8,10 @@ namespace FluentCassandra.Types
 	[TestFixture]
 	public class CompositeTypeTest
 	{
-		private readonly CassandraType[] _compositeType = new CassandraType[] { (AsciiType)"string1", (LongType)300 };
+		private readonly CassandraObject[] _compositeType = new CassandraObject[] { (AsciiType)"string1", (LongType)300 };
 		private readonly byte[] _javaByteOrder = new byte[] { 0, 7, 115, 116, 114, 105, 110, 103, 49, 0, 0, 8, 0, 0, 0, 0, 0, 0, 1, 44, 0 };
 
-		private byte[] GetBytes(CassandraType[] components)
+		private byte[] GetBytes(CassandraObject[] components)
 		{
 			using (var bytes = new MemoryStream())
 			{
@@ -38,21 +38,21 @@ namespace FluentCassandra.Types
 		public void CassandraType_Cast()
 		{
 			// arranage
-			var expected = new CassandraType[] { (AsciiType)"string1", (LongType)300 };
+			var expected = new CassandraObject[] { (AsciiType)"string1", (LongType)300 };
 
 			// act
 			CompositeType actualType = expected;
-			CassandraType actual = actualType;
+			CassandraObject actual = actualType;
 
 			// assert
-			Assert.IsTrue(expected.SequenceEqual((CassandraType[])actual));
+			Assert.IsTrue(expected.SequenceEqual((CassandraObject[])actual));
 		}
 
 		[Test]
 		public void Implicit_ByteArray_Cast()
 		{
 			// arrange
-			var expected = new CassandraType[] { (AsciiType)"string1", (LongType)300 };
+			var expected = new CassandraObject[] { (AsciiType)"string1", (LongType)300 };
 			byte[] bytes = GetBytes(expected);
 
 			// act
@@ -80,14 +80,14 @@ namespace FluentCassandra.Types
 		public void JavaBytes_To_CompositeType()
 		{
 			// arrange
-			var expected = new CassandraType[] { (BytesType)_compositeType[0].GetValue<string>(), (BytesType)_compositeType[1].GetValue<long>() };
+			var expected = new CassandraObject[] { (BytesType)_compositeType[0].GetValue<string>(), (BytesType)_compositeType[1].GetValue<long>() };
 
 			// act
 			var actual = new CompositeType();
 			actual.SetValueFromBigEndian(_javaByteOrder);
 
 			// assert
-			Assert.True(expected.SequenceEqual((CassandraType[])actual));
+			Assert.True(expected.SequenceEqual((CassandraObject[])actual));
 		}
 
 		[Test]
@@ -101,7 +101,7 @@ namespace FluentCassandra.Types
 			actual.SetValueFromBigEndian(_javaByteOrder);
 
 			// assert
-			Assert.True(_compositeType.SequenceEqual((CassandraType[])actual));
+			Assert.True(_compositeType.SequenceEqual((CassandraObject[])actual));
 		}
 	}
 }

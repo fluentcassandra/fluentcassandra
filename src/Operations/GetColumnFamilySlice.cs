@@ -10,7 +10,7 @@ namespace FluentCassandra.Operations
 		 * list<ColumnOrSuperColumn> get_slice(keyspace, key, column_parent, predicate, consistency_level)
 		 */
 
-		public CassandraType Key { get; private set; }
+		public CassandraObject Key { get; private set; }
 
 		public CassandraSlicePredicate SlicePredicate { get; private set; }
 
@@ -43,7 +43,7 @@ namespace FluentCassandra.Operations
 			}
 		}
 
-		public GetColumnFamilySlice(CassandraType key, CassandraSlicePredicate columnSlicePredicate)
+		public GetColumnFamilySlice(CassandraObject key, CassandraSlicePredicate columnSlicePredicate)
 		{
 			Key = key;
 			SlicePredicate = columnSlicePredicate;

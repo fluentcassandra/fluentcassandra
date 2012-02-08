@@ -83,7 +83,7 @@ namespace FluentCassandra
 		/// <returns></returns>
 		[Obsolete("Use \"GetColumnFamily\" with out generic parameters")]
 		public CassandraColumnFamily<CompareWith> GetColumnFamily<CompareWith>(string columnFamily)
-			where CompareWith : CassandraType
+			where CompareWith : CassandraObject
 		{
 			return new CassandraColumnFamily<CompareWith>(this, columnFamily);
 		}
@@ -97,8 +97,8 @@ namespace FluentCassandra
 		/// <returns></returns>
 		[Obsolete("Use \"GetSuperColumnFamily\" with out generic parameters")]
 		public CassandraSuperColumnFamily<CompareWith, CompareSubcolumnWith> GetColumnFamily<CompareWith, CompareSubcolumnWith>(string columnFamily)
-			where CompareWith : CassandraType
-			where CompareSubcolumnWith : CassandraType
+			where CompareWith : CassandraObject
+			where CompareSubcolumnWith : CassandraObject
 		{
 			return new CassandraSuperColumnFamily<CompareWith, CompareSubcolumnWith>(this, columnFamily);
 		}
@@ -106,7 +106,7 @@ namespace FluentCassandra
 		/// <summary>
 		/// 
 		/// </summary>
-		public CassandraKeyspace Keyspace { get; private set; }
+		public CassandraKeyspace Keyspace { get; set; }
 
 		#region Cassandra System For Server
 

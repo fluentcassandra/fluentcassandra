@@ -2,7 +2,7 @@
 
 namespace FluentCassandra.Types
 {
-	internal class DoubleTypeConverter : CassandraTypeConverter<double>
+	internal class DoubleTypeConverter : CassandraObjectConverter<double>
 	{
 		public override bool CanConvertFrom(Type sourceType)
 		{

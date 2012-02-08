@@ -192,12 +192,12 @@ namespace FluentCassandra.Linq
 				throw new NotSupportedException("Method call to " + exp.Method.Name + " is not supported.");
 		}
 
-		private IEnumerable<CassandraType> VisitSelectExpression(Expression exp)
+		private IEnumerable<CassandraObject> VisitSelectExpression(Expression exp)
 		{
 			switch (exp.NodeType)
 			{
 				case ExpressionType.Parameter:
-					return new CassandraType[0];
+					return new CassandraObject[0];
 
 				case ExpressionType.Constant:
 					return VisitSelectColumnExpression((ConstantExpression)exp);
@@ -207,9 +207,9 @@ namespace FluentCassandra.Linq
 			}
 		}
 
-		private IEnumerable<CassandraType> VisitSelectColumnExpression(ConstantExpression exp)
+		private IEnumerable<CassandraObject> VisitSelectColumnExpression(ConstantExpression exp)
 		{
-			return (IEnumerable<CassandraType>)exp.Value;
+			return (IEnumerable<CassandraObject>)exp.Value;
 		}
 
 		private string VisitWhereExpression(Expression exp)

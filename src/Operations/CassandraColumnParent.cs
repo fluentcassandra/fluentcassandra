@@ -6,6 +6,6 @@ namespace FluentCassandra.Operations
 	public class CassandraColumnParent
 	{
 		public string ColumnFamily { get; set; }
-		public CassandraType SuperColumn { get; set; }
+		public CassandraObject SuperColumn { get; set; }
 	}
 }

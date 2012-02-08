@@ -8,7 +8,7 @@ using FluentCassandra.Types;
 namespace FluentCassandra.Operations
 {
 	internal class CassandraSlicePredicateQuery<TResult, CompareWith> : ICassandraQueryable<TResult, CompareWith>
-		where CompareWith : CassandraType
+		where CompareWith : CassandraObject
 	{
 		internal CassandraSlicePredicateQuery(CassandraQuerySetup<TResult, CompareWith> setup, BaseCassandraColumnFamily family, Expression expression)
 		{

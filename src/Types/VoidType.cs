@@ -5,7 +5,7 @@ namespace FluentCassandra.Types
 	/// <summary>
 	/// The purpose of this type is to act as a stub for passing in to generics when a certain part of the generic is not required.
 	/// </summary>
-	internal class VoidType : CassandraType
+	internal class VoidType : CassandraObject
 	{
 		public override void SetValue(object obj)
 		{

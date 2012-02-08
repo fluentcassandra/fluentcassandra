@@ -9,9 +9,9 @@ namespace FluentCassandra.Operations
 		 * i32 get_count(keyspace, key, column_parent, consistency_level) 
 		 */
 
-		public CassandraType Key { get; private set; }
+		public CassandraObject Key { get; private set; }
 
-		public CassandraType SuperColumnName { get; private set; }
+		public CassandraObject SuperColumnName { get; private set; }
 
 		public CassandraSlicePredicate SlicePredicate { get; internal protected set; }
 
@@ -38,13 +38,13 @@ namespace FluentCassandra.Operations
 
 		#endregion
 
-		public ColumnCount(CassandraType key, CassandraSlicePredicate columnSlicePredicate)
+		public ColumnCount(CassandraObject key, CassandraSlicePredicate columnSlicePredicate)
 		{
 			Key = key;
 			SlicePredicate = columnSlicePredicate;
 		}
 
-		public ColumnCount(CassandraType key, CassandraType superColumnName, CassandraSlicePredicate columnSlicePredicate)
+		public ColumnCount(CassandraObject key, CassandraObject superColumnName, CassandraSlicePredicate columnSlicePredicate)
 		{
 			Key = key;
 			SuperColumnName = superColumnName;

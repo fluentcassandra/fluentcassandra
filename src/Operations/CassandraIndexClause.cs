@@ -7,10 +7,10 @@ namespace FluentCassandra.Operations
 {
 	public class CassandraIndexClause
 	{
-		public CassandraIndexClause(CassandraType startKey, int count, Expression<Func<IFluentRecordExpression, bool>> expression)
+		public CassandraIndexClause(CassandraObject startKey, int count, Expression<Func<IFluentRecordExpression, bool>> expression)
 			: this(startKey, count, (Expression)expression) { }
 
-		protected internal CassandraIndexClause(CassandraType startKey, int count, Expression expression)
+		protected internal CassandraIndexClause(CassandraObject startKey, int count, Expression expression)
 		{
 			StartKey = startKey;
 			Count = count;
@@ -19,7 +19,7 @@ namespace FluentCassandra.Operations
 
 		private List<Apache.Cassandra.IndexExpression> _compiledExpressions;
 
-		public CassandraType StartKey { get; private set; }
+		public CassandraObject StartKey { get; private set; }
 		public int Count { get; private set; }
 		public Expression Expression { get; private set; }
 

@@ -2,7 +2,7 @@
 
 namespace FluentCassandra.Types
 {
-	internal class TimeUUIDTypeConverter : CassandraTypeConverter<Guid>
+	internal class TimeUUIDTypeConverter : CassandraObjectConverter<Guid>
 	{
 		public override bool CanConvertFrom(Type sourceType)
 		{

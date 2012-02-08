@@ -2,7 +2,7 @@
 
 namespace FluentCassandra.Types
 {
-	internal class DecimalTypeConverter : CassandraTypeConverter<decimal>
+	internal class DecimalTypeConverter : CassandraObjectConverter<decimal>
 	{
 		public override bool CanConvertFrom(Type sourceType)
 		{

@@ -7,7 +7,7 @@ namespace FluentCassandra.Operations
 {
 	public class CassandraQuerySetup
 	{
-		public CassandraType Key
+		public CassandraObject Key
 		{
 			get
 			{
@@ -21,7 +21,7 @@ namespace FluentCassandra.Operations
 			}
 		}
 
-		public IEnumerable<BytesType> Keys
+		public IEnumerable<CassandraObject> Keys
 		{
 			get;
 			internal set;
@@ -33,7 +33,7 @@ namespace FluentCassandra.Operations
 			internal set;
 		}
 
-		public CassandraType SuperColumnName
+		public CassandraObject SuperColumnName
 		{
 			get;
 			internal set;
@@ -47,7 +47,7 @@ namespace FluentCassandra.Operations
 	}
 	
 	public class CassandraQuerySetup<TResult, CompareWith> : CassandraQuerySetup
-		where CompareWith : CassandraType
+		where CompareWith : CassandraObject
 	{
 		public Func<CassandraQuerySetup, CassandraSlicePredicate, QueryableColumnFamilyOperation<TResult>> CreateQueryOperation
 		{

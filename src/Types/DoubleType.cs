@@ -2,7 +2,7 @@
 
 namespace FluentCassandra.Types
 {
-	public class DoubleType : CassandraType
+	public class DoubleType : CassandraObject
 	{
 		private static readonly DoubleTypeConverter Converter = new DoubleTypeConverter();
 

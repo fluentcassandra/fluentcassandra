@@ -6,7 +6,7 @@ namespace FluentCassandra
 {
 	[Obsolete("Use \"CassandraColumnFamily\" class with out generic type")]
 	public class CassandraColumnFamily<CompareWith> : CassandraColumnFamily
-		where CompareWith : CassandraType
+		where CompareWith : CassandraObject
 	{
 		public CassandraColumnFamily(CassandraContext context, string columnFamily)
 			: base(context, columnFamily)
@@ -25,7 +25,7 @@ namespace FluentCassandra
 		public CassandraColumnFamily(CassandraContext context, string columnFamily)
 			: base(context, columnFamily) { }
 
-		public FluentColumnFamily CreateRecord(CassandraType key)
+		public FluentColumnFamily CreateRecord(CassandraObject key)
 		{
 			if (key.GetValue<byte[]>().Length == 0)
 				throw new ArgumentException("'key' is not allowed to be zero length.", "key");

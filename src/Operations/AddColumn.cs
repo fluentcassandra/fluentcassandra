@@ -5,11 +5,11 @@ namespace FluentCassandra.Operations
 {
 	public class AddColumn : ColumnFamilyOperation<Void>
 	{
-		public CassandraType Key { get; private set; }
+		public CassandraObject Key { get; private set; }
 
-		public CassandraType SuperColumnName { get; private set; }
+		public CassandraObject SuperColumnName { get; private set; }
 
-		public CassandraType ColumnName { get; private set; }
+		public CassandraObject ColumnName { get; private set; }
 
 		public long ColumnValue { get; private set; }
 
@@ -41,14 +41,14 @@ namespace FluentCassandra.Operations
 
 		#endregion
 
-		public AddColumn(CassandraType key, CassandraType name, long value)
+		public AddColumn(CassandraObject key, CassandraObject name, long value)
 		{
 			Key = key;
 			ColumnName = name;
 			ColumnValue = value;
 		}
 
-		public AddColumn(CassandraType key, CassandraType superColumnName, CassandraType name, long value)
+		public AddColumn(CassandraObject key, CassandraObject superColumnName, CassandraObject name, long value)
 		{
 			Key = key;
 			SuperColumnName = superColumnName;

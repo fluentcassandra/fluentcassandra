@@ -5,7 +5,7 @@ namespace FluentCassandra
 {
 	public interface IFluentBaseColumnFamily : IFluentRecord
 	{
-		CassandraType Key { get; set; }
+		CassandraObject Key { get; set; }
 		string FamilyName { get; }
 		ColumnType ColumnType { get; }
 

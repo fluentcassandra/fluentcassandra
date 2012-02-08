@@ -3,7 +3,7 @@ using System.Numerics;
 
 namespace FluentCassandra.Types
 {
-	class IntegerTypeConverter : CassandraTypeConverter<BigInteger>
+	class IntegerTypeConverter : CassandraObjectConverter<BigInteger>
 	{
 		public override bool CanConvertFrom(Type sourceType)
 		{

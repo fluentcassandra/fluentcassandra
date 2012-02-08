@@ -2,7 +2,7 @@
 
 namespace FluentCassandra.Types
 {
-	internal class LexicalUUIDTypeConverter : CassandraTypeConverter<Guid>
+	internal class LexicalUUIDTypeConverter : CassandraObjectConverter<Guid>
 	{
 		public override bool CanConvertFrom(Type sourceType)
 		{

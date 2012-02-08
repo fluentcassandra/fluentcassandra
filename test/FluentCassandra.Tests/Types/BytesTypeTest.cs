@@ -15,7 +15,7 @@ namespace FluentCassandra.Types
 			BytesType actualType = expected;
 
 			// act
-			CassandraType actualCassandraType = actualType;
+			CassandraObject actualCassandraType = actualType;
 			byte[] actual = actualCassandraType;
 
 			// assert

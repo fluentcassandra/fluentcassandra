@@ -5,7 +5,7 @@ namespace FluentCassandra.Operations
 {
 	public class CassandraRangeSlicePredicate : CassandraSlicePredicate
 	{
-		public CassandraRangeSlicePredicate(CassandraType start, CassandraType finish, bool reversed = false, int count = 100)
+		public CassandraRangeSlicePredicate(CassandraObject start, CassandraObject finish, bool reversed = false, int count = 100)
 		{
 			Start = start;
 			Finish = finish;
@@ -13,9 +13,9 @@ namespace FluentCassandra.Operations
 			Count = count;
 		}
 
-		public CassandraType Start { get; private set; }
+		public CassandraObject Start { get; private set; }
 
-		public CassandraType Finish { get; internal set; }
+		public CassandraObject Finish { get; internal set; }
 
 		public bool Reversed { get; internal set; }
 

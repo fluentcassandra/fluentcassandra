@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using Apache.Cassandra;
 using FluentCassandra.Operations;
 using FluentCassandra.Types;
@@ -50,19 +49,22 @@ namespace FluentCassandra
 
 		public void TryCreateSelf()
 		{
-			if (_context.KeyspaceExists(KeyspaceName))
-			{
-				Debug.WriteLine(KeyspaceName + " already exists", "keyspace");
-				return;
-			}
+			var schema = GetSchema();
 
-			string result = _context.AddKeyspace(new KsDef {
-				Name = KeyspaceName,
-				Strategy_class = "org.apache.cassandra.locator.NetworkTopologyStrategy",
-				Replication_factor = 1,
-				Cf_defs = new List<CfDef>(0)
-			});
-			Debug.WriteLine(result, "keyspace setup");
+			try
+			{
+				string result = _context.AddKeyspace(new KsDef {
+					Name = schema.Name,
+					Strategy_class = schema.Strategy,
+					Replication_factor = schema.ReplicationFactor,
+					Cf_defs = new List<CfDef>(0)
+				});
+				Debug.WriteLine(result, "keyspace setup");
+			}
+			catch
+			{
+				Debug.WriteLine(schema.Name + " already exists", "keyspace setup");
+			}
 		}
 
 		public void TryCreateColumnFamily(CassandraColumnFamilySchema schema)
@@ -75,17 +77,17 @@ namespace FluentCassandra
 					Comment = schema.FamilyDescription,
 					Column_type = schema.FamilyType.ToString(),
 					Key_alias = schema.KeyName.ToBigEndian(),
-					Key_validation_class = GetCassandraComparatorType(schema.KeyType),
-					Comparator_type = GetCassandraComparatorType(schema.ColumnNameType),
-					Default_validation_class = GetCassandraComparatorType(schema.DefaultColumnValueType)
+					Key_validation_class = schema.KeyType.DatabaseType,
+					Comparator_type = schema.ColumnNameType.DatabaseType,
+					Default_validation_class = schema.DefaultColumnValueType.DatabaseType
 				};
 
 				if (schema.FamilyType == ColumnType.Super)
 				{
-					def.Comparator_type = GetCassandraComparatorType(schema.SuperColumnNameType);
-					def.Subcomparator_type = GetCassandraComparatorType(schema.ColumnNameType);
+					def.Comparator_type = schema.SuperColumnNameType.DatabaseType;
+					def.Subcomparator_type = schema.ColumnNameType.DatabaseType;
 				}
-
+			
 				string result = _context.AddColumnFamily(def);
 				Debug.WriteLine(result, "column family setup");
 			}
@@ -97,7 +99,7 @@ namespace FluentCassandra
 
 		[Obsolete("Use \"TryCreateColumnFamily\" class with out generic type")]
 		public void TryCreateColumnFamily<CompareWith>(string columnFamilyName)
-			where CompareWith : CassandraType
+			where CompareWith : CassandraObject
 		{
 			TryCreateColumnFamily(new CassandraColumnFamilySchema {
 				ColumnNameType = typeof(CompareWith),
@@ -107,35 +109,14 @@ namespace FluentCassandra
 
 		[Obsolete("Use \"TryCreateColumnFamily\" class with out generic type")]
 		public void TryCreateColumnFamily<CompareWith, CompareSubcolumnWith>(string columnFamilyName)
-			where CompareWith : CassandraType
-			where CompareSubcolumnWith : CassandraType
+			where CompareWith : CassandraObject
+			where CompareSubcolumnWith : CassandraObject
 		{
 			TryCreateColumnFamily(new CassandraColumnFamilySchema(type: ColumnType.Super) {
 				ColumnNameType = typeof(CompareWith),
 				SuperColumnNameType = typeof(CompareSubcolumnWith),
 				FamilyName = columnFamilyName
 			});
-		}
-
-		private string GetCassandraComparatorType(Type comparatorType)
-		{
-			var comparatorTypeName = comparatorType.Name;
-
-			// need to ignore generic dynamic composite types
-			if (comparatorType.IsGenericType && comparatorTypeName.StartsWith("CompositeType"))
-			{
-				var compositeTypes = comparatorType.GetGenericArguments();
-				var typeBuilder = new StringBuilder();
-
-				typeBuilder.Append(comparatorTypeName.Substring(0, comparatorTypeName.IndexOf('`')));
-				typeBuilder.Append("(");
-				typeBuilder.Append(String.Join(",", compositeTypes.Select(t => t.Name)));
-				typeBuilder.Append(")");
-
-				comparatorTypeName = typeBuilder.ToString();
-			}
-
-			return comparatorTypeName;
 		}
 
 		public KsDef GetDescription()

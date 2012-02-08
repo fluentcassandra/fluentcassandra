@@ -2,7 +2,7 @@
 
 namespace FluentCassandra.Types
 {
-	public class BooleanType : CassandraType
+	public class BooleanType : CassandraObject
 	{
 		private static readonly BooleanTypeConverter Converter = new BooleanTypeConverter();
 

@@ -3,7 +3,7 @@ using System.Numerics;
 
 namespace FluentCassandra.Types
 {
-	public class IntegerType : CassandraType
+	public class IntegerType : CassandraObject
 	{
 		private static readonly IntegerTypeConverter Converter = new IntegerTypeConverter();
 

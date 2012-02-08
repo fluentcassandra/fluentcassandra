@@ -8,8 +8,8 @@ namespace FluentCassandra.Linq
 {
 	public interface ICqlRow : IDynamicMetaObjectProvider
 	{
-		CassandraType Key { get; set; }
-		CassandraType this[CassandraType columnName] { get; }
+		CassandraObject Key { get; set; }
+		CassandraObject this[CassandraObject columnName] { get; }
 
 		IList<FluentColumn> Columns { get; }
 	}

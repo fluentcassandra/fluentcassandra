@@ -4,7 +4,7 @@ using System.Numerics;
 
 namespace FluentCassandra.Types
 {
-	public class BytesType : CassandraType
+	public class BytesType : CassandraObject
 	{
 		private static readonly BytesTypeConverter Converter = new BytesTypeConverter();
 

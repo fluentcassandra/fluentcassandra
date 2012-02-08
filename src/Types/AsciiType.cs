@@ -2,7 +2,7 @@
 
 namespace FluentCassandra.Types
 {
-	public class AsciiType : CassandraType
+	public class AsciiType : CassandraObject
 	{
 		private static readonly AsciiTypeConverter Converter = new AsciiTypeConverter();
 

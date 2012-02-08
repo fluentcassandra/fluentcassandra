@@ -6,6 +6,6 @@ namespace FluentCassandra
 {
 	public interface IFluentRecordExpression : IDynamicMetaObjectProvider
 	{
-		CassandraType this[CassandraType name] { get; }
+		CassandraObject this[CassandraObject name] { get; }
 	}
 }

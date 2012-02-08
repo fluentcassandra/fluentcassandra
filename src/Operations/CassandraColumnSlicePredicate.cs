@@ -7,11 +7,11 @@ namespace FluentCassandra.Operations
 {
 	public class CassandraColumnSlicePredicate : CassandraSlicePredicate
 	{
-		public CassandraColumnSlicePredicate(IEnumerable<CassandraType> columns)
+		public CassandraColumnSlicePredicate(IEnumerable<CassandraObject> columns)
 		{
 			Columns = columns;
 		}
 
-		public IEnumerable<CassandraType> Columns { get; private set; }
+		public IEnumerable<CassandraObject> Columns { get; private set; }
 	}
 }

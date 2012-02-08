@@ -4,7 +4,7 @@ using System.ComponentModel;
 
 namespace FluentCassandra.Types
 {
-	internal abstract class CassandraTypeConverter<T>
+	internal abstract class CassandraObjectConverter<T>
 	{
 		public abstract bool CanConvertFrom(Type sourceType);
 
@@ -35,8 +35,8 @@ namespace FluentCassandra.Types
 
 		public T ConvertFrom(object obj)
 		{
-			if (obj is CassandraType)
-				return ((CassandraType)obj).GetValue<T>();
+			if (obj is CassandraObject)
+				return ((CassandraObject)obj).GetValue<T>();
 
 			if (!CanConvertFrom(obj.GetType()))
 				throw new InvalidCastException(String.Format("{0} cannot be cast to {1}", obj.GetType(), typeof(T)));

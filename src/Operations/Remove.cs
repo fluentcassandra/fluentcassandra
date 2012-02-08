@@ -4,17 +4,17 @@ using FluentCassandra.Types;
 
 namespace FluentCassandra.Operations
 {
-	public class RemoveColumn : ColumnFamilyOperation<Void>
+	public class Remove : ColumnFamilyOperation<Void>
 	{
 		/*
 		 * remove(keyspace, key, column_path, timestamp, consistency_level)
 		 */
 
-		public CassandraType Key { get; private set; }
+		public CassandraObject Key { get; private set; }
 
-		public CassandraType SuperColumnName { get; private set; }
+		public CassandraObject SuperColumnName { get; private set; }
 
-		public CassandraType ColumnName { get; private set; }
+		public CassandraObject ColumnName { get; private set; }
 
 		public override Void Execute()
 		{
@@ -38,16 +38,21 @@ namespace FluentCassandra.Operations
 			return new Void();
 		}
 
-		public RemoveColumn(CassandraType key, CassandraType superColumnName, CassandraType columnName)
+		public Remove(CassandraObject key)
 		{
 			Key = key;
-			SuperColumnName = superColumnName;
+		}
+
+		public Remove(CassandraObject key, CassandraObject columnName)
+		{
+			Key = key;
 			ColumnName = columnName;
 		}
 
-		public RemoveColumn(CassandraType key, CassandraType columnName)
+		public Remove(CassandraObject key, CassandraObject superColumnName, CassandraObject columnName)
 		{
 			Key = key;
+			SuperColumnName = superColumnName;
 			ColumnName = columnName;
 		}
 	}

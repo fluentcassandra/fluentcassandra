@@ -98,7 +98,7 @@ namespace FluentCassandra
 				throw new ArgumentNullException("expression");
 
 			if (typeof(ICqlRow) != typeof(TElement))
-				throw new ApplicationException("The resulting column type must be " + typeof(CassandraType));
+				throw new ApplicationException("The resulting column type must be " + typeof(CassandraObject));
 
 			return (IQueryable<TElement>)new CqlQuery(expression, this);
 		}

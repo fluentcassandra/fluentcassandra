@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using FluentCassandra.Operations;
+using FluentCassandra.Types;
 
 namespace FluentCassandra
 {
@@ -76,6 +77,16 @@ namespace FluentCassandra
 		public void TryCreateSelf()
 		{
 			Context.Keyspace.TryCreateColumnFamily(GetSchema());
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="key"></param>
+		public void RemoveKey(CassandraObject key)
+		{
+			var op = new Remove(key);
+			ExecuteOperation(op);
 		}
 
 		/// <summary>

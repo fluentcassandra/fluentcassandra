@@ -10,9 +10,9 @@ namespace FluentCassandra.Operations
 		 * ColumnOrSuperColumn get(keyspace, key, column_path, consistency_level)
 		 */
 
-		public CassandraType Key { get; private set; }
+		public CassandraObject Key { get; private set; }
 
-		public CassandraType SuperColumnName { get; private set; }
+		public CassandraObject SuperColumnName { get; private set; }
 
 		public override FluentSuperColumn Execute()
 		{
@@ -32,7 +32,7 @@ namespace FluentCassandra.Operations
 			return (FluentSuperColumn)Helper.ConvertToFluentBaseColumn(output);
 		}
 
-		public GetSuperColumn(CassandraType key, CassandraType superColumnName)
+		public GetSuperColumn(CassandraObject key, CassandraObject superColumnName)
 		{
 			Key = key;
 			SuperColumnName = superColumnName;

@@ -2,7 +2,7 @@
 
 namespace FluentCassandra.Types
 {
-	public class LexicalUUIDType : CassandraType
+	public class LexicalUUIDType : CassandraObject
 	{
 		private static readonly LexicalUUIDTypeConverter Converter = new LexicalUUIDTypeConverter();
 

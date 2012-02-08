@@ -8,29 +8,28 @@ namespace FluentCassandra
 	{
 		public CassandraColumnSchema()
 		{
-			NameType = typeof(BytesType);
-			ValueType = typeof(BytesType);
+			NameType = CassandraType.BytesType;
+			ValueType = CassandraType.BytesType;
 		}
 
-		public CassandraColumnSchema(ColumnDef def, Type columnNameType)
+		public CassandraColumnSchema(ColumnDef def, CassandraType columnNameType)
 		{
 			NameType = columnNameType;
 			Name = def.Name;
-			ValueType = CassandraType.GetCassandraType(def.Validation_class);
+			ValueType = CassandraObject.ParseType(def.Validation_class);
 		}
 
-		private CassandraType _name;
-
-		public CassandraType Name
+		private CassandraObject _name;
+		public CassandraObject Name
 		{
 			get { return _name; }
 			set
 			{
-				_name = (CassandraType)value.GetValue(NameType);
+				_name = (CassandraObject)value.GetValue(NameType);
 			}
 		}
 
-		public Type NameType { get; set; }
-		public Type ValueType { get; set; }
+		public CassandraType NameType { get; set; }
+		public CassandraType ValueType { get; set; }
 	}
 }

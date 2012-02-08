@@ -2,7 +2,7 @@
 
 namespace FluentCassandra.Types
 {
-	public class DecimalType : CassandraType
+	public class DecimalType : CassandraObject
 	{
 		private static readonly DecimalTypeConverter Converter = new DecimalTypeConverter();
 

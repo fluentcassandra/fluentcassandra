@@ -7,17 +7,18 @@ namespace FluentCassandra.Operations
 {
 	public class MultiGetSuperColumnFamilySlice : QueryableColumnFamilyOperation<FluentSuperColumnFamily>
 	{
-		/*
-		 * map<string,list<ColumnOrSuperColumn>> multiget_slice(keyspace, keys, column_parent, predicate, consistency_level)
-		 */
+		public List<CassandraObject> Keys { get; private set; }
 
-		public List<BytesType> Keys { get; private set; }
+		public CassandraObject SuperColumnName { get; private set; }
 
 		public override IEnumerable<FluentSuperColumnFamily> Execute()
 		{
 			var parent = new CassandraColumnParent {
 				ColumnFamily = ColumnFamily.FamilyName
 			};
+
+			if (SuperColumnName != null)
+				parent.SuperColumn = SuperColumnName;
 
 			var output = Session.GetClient().multiget_slice(
 				Keys,
@@ -28,7 +29,7 @@ namespace FluentCassandra.Operations
 
 			foreach (var result in output)
 			{
-				var key = CassandraType.GetTypeFromDatabaseValue<BytesType>(result.Key);
+				var key = CassandraObject.GetTypeFromDatabaseValue(result.Key, CassandraType.BytesType);
 
 				var superColumns = result.Value.Select(col => {
 					var superCol = Helper.ConvertSuperColumnToFluentSuperColumn(col.Super_column);
@@ -48,9 +49,10 @@ namespace FluentCassandra.Operations
 			}
 		}
 
-		public MultiGetSuperColumnFamilySlice(IEnumerable<BytesType> keys, CassandraSlicePredicate columnSlicePredicate)
+		public MultiGetSuperColumnFamilySlice(IEnumerable<CassandraObject> keys, CassandraObject superColumnName, CassandraSlicePredicate columnSlicePredicate)
 		{
 			Keys = keys.ToList();
+			SuperColumnName = superColumnName;
 			SlicePredicate = columnSlicePredicate;
 		}
 	}

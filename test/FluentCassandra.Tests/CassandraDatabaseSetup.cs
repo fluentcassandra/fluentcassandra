@@ -56,7 +56,9 @@ namespace FluentCassandra
 			{
 				DB.DropKeyspace(keyspaceName);
 
-				var keyspace = DB.Keyspace;
+				var keyspace = new CassandraKeyspace(new CassandraKeyspaceSchema { Name = keyspaceName, Strategy = CassandraKeyspaceSchema.ReplicaPlacementStrategySimple, ReplicationFactor = 1 }, DB);
+				DB.Keyspace = keyspace;
+
 				keyspace.TryCreateSelf();
 				keyspace.TryCreateColumnFamily<AsciiType>("Standard");
 				keyspace.TryCreateColumnFamily<AsciiType, AsciiType>("Super");

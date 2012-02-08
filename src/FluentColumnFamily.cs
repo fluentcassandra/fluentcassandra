@@ -8,9 +8,9 @@ namespace FluentCassandra
 {
 	[Obsolete("Use \"FluentColumnFamily\" class with out generic type")]
 	public class FluentColumnFamily<CompareWith> : FluentColumnFamily
-		where CompareWith : CassandraType
+		where CompareWith : CassandraObject
 	{
-		public FluentColumnFamily(CassandraType key, string columnFamily)
+		public FluentColumnFamily(CassandraObject key, string columnFamily)
 			: base(key, columnFamily, new CassandraColumnFamilySchema {
 				FamilyName = columnFamily,
 				KeyType = typeof(BytesType),
@@ -20,7 +20,7 @@ namespace FluentCassandra
 
 	public class FluentColumnFamily : FluentRecord<FluentColumn>, IFluentBaseColumnFamily, IFluentRecordExpression, ICqlRow
 	{
-		private CassandraType _key;
+		private CassandraObject _key;
 		private FluentColumnList<FluentColumn> _columns;
 		private CassandraColumnFamilySchema _schema;
 
@@ -29,7 +29,7 @@ namespace FluentCassandra
 		/// </summary>
 		/// <param name="key"></param>
 		/// <param name="columnFamily"></param>
-		public FluentColumnFamily(CassandraType key, string columnFamily, CassandraColumnFamilySchema schema = null)
+		public FluentColumnFamily(CassandraObject key, string columnFamily, CassandraColumnFamilySchema schema = null)
 		{
 			SetSchema(schema);
 
@@ -45,7 +45,7 @@ namespace FluentCassandra
 		/// <param name="key"></param>
 		/// <param name="columnFamily"></param>
 		/// <param name="columns"></param>
-		internal FluentColumnFamily(CassandraType key, string columnFamily, CassandraColumnFamilySchema schema, IEnumerable<FluentColumn> columns)
+		internal FluentColumnFamily(CassandraObject key, string columnFamily, CassandraColumnFamilySchema schema, IEnumerable<FluentColumn> columns)
 		{
 			SetSchema(schema);
 
@@ -58,12 +58,12 @@ namespace FluentCassandra
 		/// <summary>
 		/// The column name.
 		/// </summary>
-		public CassandraType Key
+		public CassandraObject Key
 		{
 			get { return _key; }
 			set
 			{
-				_key = (CassandraType)value.GetValue(GetSchema().KeyType);
+				_key = (CassandraObject)value.GetValue(GetSchema().KeyType);
 			}
 		}
 
@@ -82,7 +82,7 @@ namespace FluentCassandra
 		/// </summary>
 		/// <param name="columnName"></param>
 		/// <returns></returns>
-		public CassandraType this[CassandraType columnName]
+		public CassandraObject this[CassandraObject columnName]
 		{
 			get
 			{
@@ -131,7 +131,7 @@ namespace FluentCassandra
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		public FluentColumn CreateColumn(CassandraType name)
+		public FluentColumn CreateColumn(CassandraObject name)
 		{
 			return new FluentColumn(GetColumnSchema(name)) {
 				ColumnName = name
@@ -171,7 +171,7 @@ namespace FluentCassandra
 		/// <param name="name"></param>
 		/// <param name="result"></param>
 		/// <returns></returns>
-		private CassandraType GetColumnValue(object name)
+		private CassandraObject GetColumnValue(object name)
 		{
 			var col = Columns.FirstOrDefault(c => c.ColumnName == name);
 
@@ -179,7 +179,7 @@ namespace FluentCassandra
 				return NullType.Value;
 
 			var schema = GetColumnSchema(name);
-			return (CassandraType)col.ColumnValue.GetValue(schema.ValueType);
+			return (CassandraObject)col.ColumnValue.GetValue(schema.ValueType);
 		}
 
 		/// <summary>
@@ -234,7 +234,7 @@ namespace FluentCassandra
 				mutationType = MutationType.Added;
 
 				col = new FluentColumn(schema);
-				col.ColumnName = CassandraType.GetTypeFromObject(name, schema.NameType);
+				col.ColumnName = CassandraObject.GetTypeFromObject(name, schema.NameType);
 
 				_columns.SupressChangeNotification = true;
 				_columns.Add(col);
@@ -242,7 +242,7 @@ namespace FluentCassandra
 			}
 
 			// set the column value
-			col.ColumnValue = CassandraType.GetTypeFromObject(value);
+			col.ColumnValue = CassandraObject.GetTypeFromObject(value);
 
 			// notify the tracker that the column has changed
 			OnColumnMutated(mutationType, col);

@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace FluentCassandra.Types
 {
-	internal class DynamicCompositeTypeConverter : CassandraTypeConverter<List<CassandraType>>
+	internal class DynamicCompositeTypeConverter : CassandraObjectConverter<List<CassandraObject>>
 	{
 		private readonly IDictionary<char, Type> _aliases;
 
@@ -16,19 +16,19 @@ namespace FluentCassandra.Types
 
 		public override bool CanConvertFrom(Type sourceType)
 		{
-			return sourceType == typeof(byte[]) || sourceType.GetInterfaces().Contains(typeof(IEnumerable<CassandraType>));
+			return sourceType == typeof(byte[]) || sourceType.GetInterfaces().Contains(typeof(IEnumerable<CassandraObject>));
 		}
 
 		public override bool CanConvertTo(Type destinationType)
 		{
-			return destinationType == typeof(byte[]) || destinationType == typeof(List<CassandraType>) || destinationType == typeof(CassandraType[]) || destinationType == typeof(string);
+			return destinationType == typeof(byte[]) || destinationType == typeof(List<CassandraObject>) || destinationType == typeof(CassandraObject[]) || destinationType == typeof(string);
 		}
 
-		public override List<CassandraType> ConvertFromInternal(object value)
+		public override List<CassandraObject> ConvertFromInternal(object value)
 		{
 			if (value is byte[])
 			{
-				var components = new List<CassandraType>();
+				var components = new List<CassandraObject>();
 
 				using (var bytes = new MemoryStream((byte[])value))
 				{
@@ -50,7 +50,7 @@ namespace FluentCassandra.Types
 						var buffer = new byte[length];
 
 						bytes.Read(buffer, 0, length);
-						components.Add(CassandraType.GetTypeFromObject(buffer, type));
+						components.Add(CassandraObject.GetTypeFromObject(buffer, type));
 
 						// end of component
 						if (bytes.ReadByte() != 0)
@@ -61,19 +61,19 @@ namespace FluentCassandra.Types
 				return components;
 			}
 
-			if (value.GetType().GetInterfaces().Contains(typeof(IEnumerable<CassandraType>)))
-				return new List<CassandraType>((IEnumerable<CassandraType>)value);
+			if (value.GetType().GetInterfaces().Contains(typeof(IEnumerable<CassandraObject>)))
+				return new List<CassandraObject>((IEnumerable<CassandraObject>)value);
 
 			return null;
 		}
 
-		public override object ConvertToInternal(List<CassandraType> value, Type destinationType)
+		public override object ConvertToInternal(List<CassandraObject> value, Type destinationType)
 		{
-			if (!(value is List<CassandraType>))
+			if (!(value is List<CassandraObject>))
 				return null;
 
 			if (destinationType == typeof(string))
-				return String.Join(":", (IEnumerable<CassandraType>)value);
+				return String.Join(":", (IEnumerable<CassandraObject>)value);
 
 			if (destinationType == typeof(byte[]))
 			{
@@ -104,22 +104,22 @@ namespace FluentCassandra.Types
 				}
 			}
 
-			if (destinationType == typeof(CassandraType[]))
+			if (destinationType == typeof(CassandraObject[]))
 				return value.ToArray();
 
-			if (destinationType == typeof(List<CassandraType>))
+			if (destinationType == typeof(List<CassandraObject>))
 				return value;
 
 			return null;
 		}
 
-		public override byte[] ToBigEndian(List<CassandraType> value)
+		public override byte[] ToBigEndian(List<CassandraObject> value)
 		{
 			var bytes = ConvertTo<byte[]>(value);
 			return bytes;
 		}
 
-		public override List<CassandraType> FromBigEndian(byte[] value)
+		public override List<CassandraObject> FromBigEndian(byte[] value)
 		{
 			var obj = ConvertFromInternal(value);
 			return obj;

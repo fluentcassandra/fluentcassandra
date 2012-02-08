@@ -8,7 +8,7 @@ using FluentCassandra.Types;
 namespace FluentCassandra.LinqPad
 {
 	public class FluentCassandraMemberProvider<CompareWith> : ICustomMemberProvider
-		where CompareWith : CassandraType
+		where CompareWith : CassandraObject
 	{
 		private IDictionary<string, object> _columns;
 		private IList<Type> _types;
@@ -18,7 +18,7 @@ namespace FluentCassandra.LinqPad
 			var row = (ICqlRow)objectToWrite;
 	
 			_columns = new Dictionary<string, object>();
-			_types = row.Columns.Select(c => c.GetSchema().ValueType).ToList();
+			_types = row.Columns.Select(c => c.GetSchema().ValueType.FluentType).ToList();
 			_types.Insert(0, row.Key.GetType());
 
 			_columns.Add("KEY", row.Key.GetValue<string>());

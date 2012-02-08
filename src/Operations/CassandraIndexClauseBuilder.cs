@@ -76,7 +76,7 @@ namespace FluentCassandra.Operations
 			}
 		}
 
-		private static CassandraType GetColumnName(Expression exp)
+		private static CassandraObject GetColumnName(Expression exp)
 		{
 			exp = SimplifyExpression(exp);
 
@@ -86,8 +86,8 @@ namespace FluentCassandra.Operations
 			var mExp = (MethodCallExpression)exp;
 			var columnName = Expression.Lambda(mExp.Arguments[0]).Compile().DynamicInvoke();
 
-			if (columnName is CassandraType)
-				return (CassandraType)columnName;
+			if (columnName is CassandraObject)
+				return (CassandraObject)columnName;
 
 			throw new CassandraException("The column name must be a CassandraType.");
 		}
@@ -118,7 +118,7 @@ namespace FluentCassandra.Operations
 			Cassandra.IndexExpression indexExpression;
 
 			var columnName = GetColumnName(exp.Left);
-			var value = CassandraType.GetTypeFromObject<BytesType>(Expression.Lambda(exp.Right).Compile().DynamicInvoke());
+			var value = CassandraObject.GetTypeFromObject(Expression.Lambda(exp.Right).Compile().DynamicInvoke(), CassandraType.BytesType);
 
 			indexExpression = new Cassandra.IndexExpression {
 				Column_name = columnName.ToBigEndian(),

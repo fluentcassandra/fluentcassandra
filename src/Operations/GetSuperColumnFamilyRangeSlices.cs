@@ -8,11 +8,9 @@ namespace FluentCassandra.Operations
 {
 	public class GetSuperColumnFamilyRangeSlices : QueryableColumnFamilyOperation<FluentSuperColumnFamily>
 	{
-		/*
-		 * list<KeySlice> get_range_slices(keyspace, column_parent, predicate, range, consistency_level)
-		 */
-
 		public CassandraKeyRange KeyRange { get; private set; }
+
+		public CassandraObject SuperColumnName { get; private set; }
 
 		public override IEnumerable<FluentSuperColumnFamily> Execute()
 		{
@@ -43,9 +41,10 @@ namespace FluentCassandra.Operations
 			}
 		}
 
-		public GetSuperColumnFamilyRangeSlices(CassandraKeyRange keyRange, CassandraSlicePredicate columnSlicePredicate)
+		public GetSuperColumnFamilyRangeSlices(CassandraKeyRange keyRange, CassandraObject superColumnName, CassandraSlicePredicate columnSlicePredicate)
 		{
 			KeyRange = keyRange;
+			SuperColumnName = superColumnName;
 			SlicePredicate = columnSlicePredicate;
 		}
 	}

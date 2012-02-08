@@ -15,7 +15,7 @@ namespace FluentCassandra.Types
 			IntegerType actualType = expected;
 
 			// act
-			CassandraType actual = actualType;
+			CassandraObject actual = actualType;
 
 			// assert
 			Assert.AreEqual(expected, (long)actual);

@@ -171,7 +171,6 @@
     <Compile Include="Operations\ExecuteCqlQuery.cs" />
     <Compile Include="Operations\Operation.cs" />
     <Compile Include="Operations\CassandraIndexClauseBuilder.cs" />
-    <Compile Include="Operations\GetSuperColumnIndexedSlices.cs" />
     <Compile Include="Operations\GetSuperColumnFamilyIndexedSlices.cs" />
     <Compile Include="Operations\GetColumnFamilyIndexedSlices.cs" />
     <Compile Include="Operations\GetSuperColumn.cs" />
@@ -185,11 +184,9 @@
     </Compile>
     <Compile Include="Operations\GetColumnFamilyRangeSlices.cs" />
     <Compile Include="Operations\GetSuperColumnFamilyRangeSlices.cs" />
-    <Compile Include="Operations\GetSuperColumnRangeSlices.cs" />
     <Compile Include="Operations\ICassandraQueryProvider.cs" />
     <Compile Include="Operations\MultiGetColumnCount.cs" />
     <Compile Include="Operations\MultiGetSuperColumnFamilySlice.cs" />
-    <Compile Include="Operations\MultiGetSuperColumnSlice.cs" />
     <Compile Include="Operations\GetColumn.cs" />
     <Compile Include="Operations\GetColumnFamilySlice.cs" />
     <Compile Include="Operations\GetSuperColumnFamilySlice.cs" />
@@ -201,9 +198,7 @@
     </Compile>
     <Compile Include="Operations\QueryableColumnFamilyOperation.cs" />
     <Compile Include="Operations\CassandraRangeSlicePredicate.cs" />
-    <Compile Include="Operations\RemoveColumn.cs" />
-    <Compile Include="Operations\RemoveKey.cs" />
-    <Compile Include="Operations\RemoveSuperColumn.cs" />
+    <Compile Include="Operations\Remove.cs" />
     <Compile Include="Operations\SimpleOperation.cs" />
     <Compile Include="Operations\Void.cs">
       <SubType>Code</SubType>
@@ -249,9 +244,10 @@
     <Compile Include="Types\BytesType.cs" />
     <Compile Include="IFluentBaseColumnFamily.cs" />
     <Compile Include="IFluentRecord.cs" />
-    <Compile Include="Types\CassandraType.cs" />
+    <Compile Include="Types\CassandraObject.cs" />
+    <Compile Include="Types\CassandraObjectConverter.cs" />
     <Compile Include="Types\CassandraConversionHelper.cs" />
-    <Compile Include="Types\CassandraTypeConverter.cs" />
+    <Compile Include="Types\CassandraType.cs" />
     <Compile Include="Types\CompositeType.cs">
       <SubType>Code</SubType>
     </Compile>

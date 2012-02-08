@@ -2,7 +2,7 @@
 
 namespace FluentCassandra.Types
 {
-	internal class BooleanTypeConverter : CassandraTypeConverter<bool>
+	internal class BooleanTypeConverter : CassandraObjectConverter<bool>
 	{
 		public override bool CanConvertFrom(Type sourceType)
 		{

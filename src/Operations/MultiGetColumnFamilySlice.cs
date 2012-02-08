@@ -11,7 +11,7 @@ namespace FluentCassandra.Operations
 		 * map<string,list<ColumnOrSuperColumn>> multiget_slice(keyspace, keys, column_parent, predicate, consistency_level)
 		 */
 
-		public List<BytesType> Keys { get; private set; }
+		public List<CassandraObject> Keys { get; private set; }
 
 		public override IEnumerable<FluentColumnFamily> Execute()
 		{
@@ -30,7 +30,7 @@ namespace FluentCassandra.Operations
 
 			foreach (var result in output)
 			{
-				var key = CassandraType.GetTypeFromDatabaseValue(result.Key, schema.KeyType);
+				var key = CassandraObject.GetTypeFromDatabaseValue(result.Key, schema.KeyType);
 
 				var r = new FluentColumnFamily(key, ColumnFamily.FamilyName, schema, result.Value.Select(col => {
 					return Helper.ConvertColumnToFluentColumn(col.Column, schema);
@@ -42,7 +42,7 @@ namespace FluentCassandra.Operations
 			}
 		}
 
-		public MultiGetColumnFamilySlice(IEnumerable<BytesType> keys, CassandraSlicePredicate columnSlicePredicate)
+		public MultiGetColumnFamilySlice(IEnumerable<CassandraObject> keys, CassandraSlicePredicate columnSlicePredicate)
 		{
 			Keys = keys.ToList();
 			SlicePredicate = columnSlicePredicate;

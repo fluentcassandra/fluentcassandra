@@ -1,340 +1,162 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Numerics;
 
 namespace FluentCassandra.Types
 {
-	public abstract class CassandraType : IConvertible
+	public sealed class CassandraType
 	{
-		public T GetValue<T>()
+		public static readonly CassandraType AsciiType = new CassandraType("org.apache.cassandra.db.marshal.AsciiType");
+		public static readonly CassandraType BooleanType = new CassandraType("org.apache.cassandra.db.marshal.BooleanType");
+		public static readonly CassandraType BytesType = new CassandraType("org.apache.cassandra.db.marshal.BytesType");
+		public static readonly CassandraType DateType = new CassandraType("org.apache.cassandra.db.marshal.DateType");
+		public static readonly CassandraType DecimalType = new CassandraType("org.apache.cassandra.db.marshal.DecimalType");
+		public static readonly CassandraType DoubleType = new CassandraType("org.apache.cassandra.db.marshal.DoubleType");
+		public static readonly CassandraType FloatType = new CassandraType("org.apache.cassandra.db.marshal.FloatType");
+		public static readonly CassandraType Int32Type = new CassandraType("org.apache.cassandra.db.marshal.Int32Type");
+		public static readonly CassandraType IntegerType = new CassandraType("org.apache.cassandra.db.marshal.IntegerType");
+		public static readonly CassandraType LexicalUUIDType = new CassandraType("org.apache.cassandra.db.marshal.LexicalUUIDType");
+		public static readonly CassandraType LongType = new CassandraType("org.apache.cassandra.db.marshal.LongType");
+		public static readonly CassandraType TimeUUIDType = new CassandraType("org.apache.cassandra.db.marshal.TimeUUIDType");
+		public static readonly CassandraType UTF8Type = new CassandraType("org.apache.cassandra.db.marshal.UTF8Type");
+		public static readonly CassandraType UUIDType = new CassandraType("org.apache.cassandra.db.marshal.UUIDType");
+
+		private readonly string _dbType;
+		private Type _type;
+
+		public CassandraType(string type)
 		{
-			return (T)GetValue(typeof(T));
+			if (type == null || type.Length == 0)
+				throw new ArgumentNullException("type");
+
+			_dbType = type;
 		}
 
-		public abstract void SetValue(object obj);
-
-		public object GetValue(Type type)
+		public CassandraObject CreateInstance()
 		{
-			if (type == GetType())
-				return this;
+			if (_type == null)
+				Parse();
 
-			if (GetType() == typeof(BytesType) && type.BaseType == typeof(CassandraType))
-				return GetTypeFromDatabaseValue((byte[])GetRawValue(), type);
-
-			if (type.BaseType == typeof(CassandraType))
-				return GetTypeFromObject(GetRawValue(), type);
-
-			return GetValueInternal(type);
-		}
-
-		protected abstract object GetValueInternal(Type type);
-		protected abstract object GetRawValue();
-		protected abstract TypeCode TypeCode { get; }
-
-		public abstract byte[] ToBigEndian();
-		public abstract void SetValueFromBigEndian(byte[] value);
-
-		#region Equality
-
-		public override bool Equals(object obj)
-		{
-			return base.Equals(obj);
-		}
-
-		public override int GetHashCode()
-		{
-			return base.GetHashCode();
-		}
-
-		public static bool operator ==(CassandraType type, object obj)
-		{
-			if (Object.Equals(type, null))
-				return obj == null;
-
-			if (obj == null)
-				return Object.Equals(type, null);
-
-			return type.Equals(obj);
-		}
-
-		public static bool operator !=(CassandraType type, object obj)
-		{
-			if (Object.Equals(type, null))
-				return obj != null;
-
-			if (obj == null)
-				return !Object.Equals(type, null);
-
-			return !type.Equals(obj);
-		}
-
-		#endregion
-
-		#region Conversion
-
-		private static T ConvertTo<T>(CassandraType type)
-		{
-			if (type == null)
-				return default(T);
-
-			return type.GetValue<T>();
-		}
-
-		private static CassandraType ConvertFrom(object o)
-		{
-			return GetTypeFromObject(o);
-		}
-
-		public static implicit operator CassandraType(byte[] o) { return ConvertFrom(o); }
-		public static implicit operator CassandraType(char[] o) { return ConvertFrom(o); }
-
-		public static implicit operator CassandraType(byte o) { return ConvertFrom(o); }
-		public static implicit operator CassandraType(sbyte o) { return ConvertFrom(o); }
-		public static implicit operator CassandraType(short o) { return ConvertFrom(o); }
-		public static implicit operator CassandraType(ushort o) { return ConvertFrom(o); }
-		public static implicit operator CassandraType(int o) { return ConvertFrom(o); }
-		public static implicit operator CassandraType(uint o) { return ConvertFrom(o); }
-		public static implicit operator CassandraType(long o) { return ConvertFrom(o); }
-		public static implicit operator CassandraType(ulong o) { return ConvertFrom(o); }
-		public static implicit operator CassandraType(float o) { return ConvertFrom(o); }
-		public static implicit operator CassandraType(double o) { return ConvertFrom(o); }
-		public static implicit operator CassandraType(decimal o) { return ConvertFrom(o); }
-		public static implicit operator CassandraType(bool o) { return ConvertFrom(o); }
-		public static implicit operator CassandraType(string o) { return ConvertFrom(o); }
-		public static implicit operator CassandraType(char o) { return ConvertFrom(o); }
-		public static implicit operator CassandraType(Guid o) { return ConvertFrom(o); }
-		public static implicit operator CassandraType(DateTime o) { return ConvertFrom(o); }
-		public static implicit operator CassandraType(DateTimeOffset o) { return ConvertFrom(o); }
-		public static implicit operator CassandraType(BigInteger o) { return ConvertFrom(o); }
-
-		public static implicit operator byte[](CassandraType o) { return ConvertTo<byte[]>(o); }
-		public static implicit operator char[](CassandraType o) { return ConvertTo<char[]>(o); }
-
-		public static implicit operator byte(CassandraType o) { return ConvertTo<byte>(o); }
-		public static implicit operator sbyte(CassandraType o) { return ConvertTo<sbyte>(o); }
-		public static implicit operator short(CassandraType o) { return ConvertTo<short>(o); }
-		public static implicit operator ushort(CassandraType o) { return ConvertTo<ushort>(o); }
-		public static implicit operator int(CassandraType o) { return ConvertTo<int>(o); }
-		public static implicit operator uint(CassandraType o) { return ConvertTo<uint>(o); }
-		public static implicit operator long(CassandraType o) { return ConvertTo<long>(o); }
-		public static implicit operator ulong(CassandraType o) { return ConvertTo<ulong>(o); }
-		public static implicit operator float(CassandraType o) { return ConvertTo<float>(o); }
-		public static implicit operator double(CassandraType o) { return ConvertTo<double>(o); }
-		public static implicit operator decimal(CassandraType o) { return ConvertTo<decimal>(o); }
-		public static implicit operator bool(CassandraType o) { return ConvertTo<bool>(o); }
-		public static implicit operator string(CassandraType o) { return ConvertTo<string>(o); }
-		public static implicit operator char(CassandraType o) { return ConvertTo<char>(o); }
-		public static implicit operator Guid(CassandraType o) { return ConvertTo<Guid>(o); }
-		public static implicit operator DateTime(CassandraType o) { return ConvertTo<DateTime>(o); }
-		public static implicit operator DateTimeOffset(CassandraType o) { return ConvertTo<DateTimeOffset>(o); }
-		public static implicit operator BigInteger(CassandraType o) { return ConvertTo<BigInteger>(o); }
-
-		public static implicit operator byte?(CassandraType o) { return ConvertTo<byte?>(o); }
-		public static implicit operator sbyte?(CassandraType o) { return ConvertTo<sbyte?>(o); }
-		public static implicit operator short?(CassandraType o) { return ConvertTo<short?>(o); }
-		public static implicit operator ushort?(CassandraType o) { return ConvertTo<ushort?>(o); }
-		public static implicit operator int?(CassandraType o) { return ConvertTo<int?>(o); }
-		public static implicit operator uint?(CassandraType o) { return ConvertTo<uint?>(o); }
-		public static implicit operator long?(CassandraType o) { return ConvertTo<long?>(o); }
-		public static implicit operator ulong?(CassandraType o) { return ConvertTo<ulong?>(o); }
-		public static implicit operator float?(CassandraType o) { return ConvertTo<float?>(o); }
-		public static implicit operator double?(CassandraType o) { return ConvertTo<double?>(o); }
-		public static implicit operator decimal?(CassandraType o) { return ConvertTo<decimal?>(o); }
-		public static implicit operator bool?(CassandraType o) { return ConvertTo<bool?>(o); }
-		//public static implicit operator string(CassandraType o) { return Convert<string>(o); }
-		public static implicit operator char?(CassandraType o) { return ConvertTo<char?>(o); }
-		public static implicit operator Guid?(CassandraType o) { return ConvertTo<Guid?>(o); }
-		public static implicit operator DateTime?(CassandraType o) { return ConvertTo<DateTime?>(o); }
-		public static implicit operator DateTimeOffset?(CassandraType o) { return ConvertTo<DateTimeOffset?>(o); }
-		public static implicit operator BigInteger?(CassandraType o) { return ConvertTo<BigInteger?>(o); }
-
-		public static implicit operator object[](CassandraType o) { return ConvertTo<object[]>(o); }
-		public static implicit operator List<object>(CassandraType o) { return ConvertTo<List<object>>(o); }
-		public static implicit operator CassandraType[](CassandraType o) { return ConvertTo<CassandraType[]>(o); }
-		public static implicit operator List<CassandraType>(CassandraType o) { return ConvertTo<List<CassandraType>>(o); }
-
-		#endregion
-
-		#region IConvertible Members
-
-		TypeCode IConvertible.GetTypeCode()
-		{
-			return TypeCode;
-		}
-
-		object IConvertible.ToType(Type conversionType, IFormatProvider provider)
-		{
-			return GetValue(conversionType);
-		}
-
-		bool IConvertible.ToBoolean(IFormatProvider provider) { return GetValue<bool>(); }
-		byte IConvertible.ToByte(IFormatProvider provider) { return GetValue<byte>(); }
-		char IConvertible.ToChar(IFormatProvider provider) { return GetValue<char>(); }
-		DateTime IConvertible.ToDateTime(IFormatProvider provider) { return GetValue<DateTime>(); }
-		decimal IConvertible.ToDecimal(IFormatProvider provider) { return GetValue<decimal>(); }
-		double IConvertible.ToDouble(IFormatProvider provider) { return GetValue<double>(); }
-		short IConvertible.ToInt16(IFormatProvider provider) { return GetValue<short>(); }
-		int IConvertible.ToInt32(IFormatProvider provider) { return GetValue<int>(); }
-		long IConvertible.ToInt64(IFormatProvider provider) { return GetValue<long>(); }
-		sbyte IConvertible.ToSByte(IFormatProvider provider) { return GetValue<sbyte>(); }
-		float IConvertible.ToSingle(IFormatProvider provider) { return GetValue<float>(); }
-		string IConvertible.ToString(IFormatProvider provider) { return GetValue<string>(); }
-		ushort IConvertible.ToUInt16(IFormatProvider provider) { return GetValue<ushort>(); }
-		uint IConvertible.ToUInt32(IFormatProvider provider) { return GetValue<uint>(); }
-		ulong IConvertible.ToUInt64(IFormatProvider provider) { return GetValue<ulong>(); }
-
-		#endregion
-
-		public static T GetTypeFromDatabaseValue<T>(byte[] value)
-			where T : CassandraType
-		{
-			T type = Activator.CreateInstance<T>();
-			type.SetValueFromBigEndian(value);
-			return type;
-		}
-
-		public static CassandraType GetTypeFromDatabaseValue(byte[] value, Type cassandraType)
-		{
-			CassandraType type = Activator.CreateInstance(cassandraType) as CassandraType;
+			var type = Activator.CreateInstance(_type) as CassandraObject;
 
 			if (type == null)
 				return null;
 
-			type.SetValueFromBigEndian(value);
 			return type;
 		}
 
-		public static CassandraType GetTypeFromDatabaseValue(byte[] value, string type)
+		public string DatabaseType { get { return _dbType; } }
+
+		public Type FluentType
 		{
-			return GetTypeFromDatabaseValue(value, GetCassandraType(type));
+			get
+			{
+				if (_type == null)
+					Parse();
+
+				return _type;
+			}
 		}
 
-		public static T GetTypeFromObject<T>(object obj)
-			where T : CassandraType
+		private void Parse() 
 		{
-			T type = Activator.CreateInstance<T>();
-			type.SetValue(obj);
-			return type;
+			switch (_dbType.Substring(_dbType.LastIndexOf('.') + 1).ToLower())
+			{
+				case "asciitype": _type = typeof(AsciiType); break;
+				case "booleantype": _type = typeof(BooleanType); break;
+				case "bytestype": _type = typeof(BytesType); break;
+				case "datetype": _type = typeof(DateType); break;
+				case "decimaltype": _type = typeof(DecimalType); break;
+				case "doubletype": _type = typeof(DoubleType); break;
+				case "floattype": _type = typeof(FloatType); break;
+				case "int32type": _type = typeof(Int32Type); break;
+				case "integertype": _type = typeof(IntegerType); break;
+				case "lexicaluuidtype": _type = typeof(LexicalUUIDType); break;
+				case "longtype": _type = typeof(LongType); break;
+				case "timeuuidtype": _type = typeof(TimeUUIDType); break;
+				case "utf8type": _type = typeof(UTF8Type); break;
+				case "uuidtype": _type = typeof(UUIDType); break;
+				default: throw new CassandraException("Type '" + _dbType + "' not found.");
+			}
 		}
 
-		public static CassandraType GetTypeFromObject(object obj)
+		public static CassandraType GetCassandraType(Type sourceType)
 		{
-			if (obj == null)
-				return NullType.Value;
+			if (sourceType.BaseType == typeof(CassandraType))
+				return new CassandraType(sourceType.Name) { _type = sourceType };
 
-			var sourceType = obj.GetType();
-			var destinationType = (Type)null;
+			var destinationType = (CassandraType)null;
 
 			switch (Type.GetTypeCode(sourceType))
 			{
-
 				case TypeCode.DateTime:
-					destinationType = typeof(DateType);
+					destinationType = DateType;
 					break;
 
 				case TypeCode.Boolean:
-					destinationType = typeof(BooleanType);
+					destinationType = BooleanType;
 					break;
 
 				case TypeCode.Double:
-					destinationType = typeof(DoubleType);
+					destinationType = DoubleType;
 					break;
 
 				case TypeCode.Single:
-					destinationType = typeof(FloatType);
+					destinationType = FloatType;
 					break;
 
 				case TypeCode.Int64:
 				case TypeCode.UInt64:
-					destinationType = typeof(LongType);
+					destinationType = LongType;
 					break;
 
 				case TypeCode.Int16:
 				case TypeCode.Int32:
 				case TypeCode.UInt16:
 				case TypeCode.UInt32:
-					destinationType = typeof(Int32Type);
+					destinationType = Int32Type;
 					break;
 
 				case TypeCode.Decimal:
-					destinationType = typeof(DecimalType);
+					destinationType = DecimalType;
 					break;
 
 				case TypeCode.Char:
 				case TypeCode.String:
-					destinationType = typeof(UTF8Type);
+					destinationType = UTF8Type;
 					break;
 
 				case TypeCode.Byte:
 				case TypeCode.SByte:
-					destinationType = typeof(BytesType);
+					destinationType = BytesType;
 					break;
 
 				default:
 					if (sourceType == typeof(DateTimeOffset))
-						destinationType = typeof(DateType);
+						destinationType = DateType;
 
 					if (sourceType == typeof(BigInteger))
-						destinationType = typeof(IntegerType);
+						destinationType = IntegerType;
 
 					if (sourceType == typeof(Guid))
-						destinationType = typeof(UUIDType);
+						destinationType = UUIDType;
 
 					if (sourceType == typeof(char[]))
-						destinationType = typeof(UTF8Type);
+						destinationType = UTF8Type;
 
 					if (destinationType == null)
-						destinationType = typeof(BytesType);
+						destinationType = BytesType;
 					break;
 			}
 
-			var type = (CassandraType)Activator.CreateInstance(destinationType);
-			type.SetValue(obj);
-			return type;
+			return destinationType;
 		}
 
-		public static CassandraType GetTypeFromObject(object obj, Type cassandraType)
+		public static implicit operator CassandraType(Type type)
 		{
-			CassandraType type = Activator.CreateInstance(cassandraType) as CassandraType;
-
-			if (type == null)
-				return null;
-
-			type.SetValue(obj);
-			return type;
-		}
-
-		public static CassandraType GetTypeFromObject(object obj, string type)
-		{
-			return GetTypeFromObject(obj, GetCassandraType(type));
-		}
-
-		public static Type GetCassandraType(string type)
-		{
-			if (type == null || type.Length == 0)
-				throw new ArgumentNullException("type");
-
-			Type cassandraType;
-			switch (type.Substring(type.LastIndexOf('.') + 1).ToLower())
-			{
-				case "asciitype": cassandraType = typeof(AsciiType); break;
-				case "booleantype": cassandraType = typeof(BooleanType); break;
-				case "bytestype": cassandraType = typeof(BytesType); break;
-				case "datetype": cassandraType = typeof(DateType); break;
-				case "decimaltype": cassandraType = typeof(DecimalType); break;
-				case "doubletype": cassandraType = typeof(DoubleType); break;
-				case "floattype": cassandraType = typeof(FloatType); break;
-				case "int32type": cassandraType = typeof(Int32Type); break;
-				case "integertype": cassandraType = typeof(IntegerType); break;
-				case "lexicaluuidtype": cassandraType = typeof(LexicalUUIDType); break;
-				case "longtype": cassandraType = typeof(LongType); break;
-				case "timeuuidtype": cassandraType = typeof(TimeUUIDType); break;
-				case "utf8type": cassandraType = typeof(UTF8Type); break;
-				case "uuidtype": cassandraType = typeof(UUIDType); break;
-				default: throw new CassandraException("Type '" + type + "' not found.");
-			}
-
-			return cassandraType;
+			return GetCassandraType(type);
 		}
 	}
 }

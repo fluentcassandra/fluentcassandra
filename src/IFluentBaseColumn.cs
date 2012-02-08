@@ -5,7 +5,7 @@ namespace FluentCassandra
 {
 	public interface IFluentBaseColumn
 	{
-		CassandraType ColumnName { get; }
+		CassandraObject ColumnName { get; }
 
 		IFluentBaseColumnFamily Family { get; }
 

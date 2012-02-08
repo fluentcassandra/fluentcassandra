@@ -9,11 +9,11 @@ namespace FluentCassandra.Operations
 		 * ColumnOrSuperColumn get(keyspace, key, column_path, consistency_level)
 		 */
 
-		public CassandraType Key { get; private set; }
+		public CassandraObject Key { get; private set; }
 
-		public CassandraType SuperColumnName { get; private set; }
+		public CassandraObject SuperColumnName { get; private set; }
 
-		public CassandraType ColumnName { get; private set; }
+		public CassandraObject ColumnName { get; private set; }
 
 		public override FluentColumn Execute()
 		{
@@ -24,10 +24,10 @@ namespace FluentCassandra.Operations
 			};
 
 			if (SuperColumnName != null)
-				path.SuperColumn = SuperColumnName.GetValue(schema.SuperColumnNameType) as CassandraType;
+				path.SuperColumn = SuperColumnName.GetValue(schema.SuperColumnNameType) as CassandraObject;
 
 			if (ColumnName != null)
-				path.Column = ColumnName.GetValue(schema.ColumnNameType) as CassandraType;
+				path.Column = ColumnName.GetValue(schema.ColumnNameType) as CassandraObject;
 
 			var output = Session.GetClient().get(
 				Key,
@@ -38,14 +38,14 @@ namespace FluentCassandra.Operations
 			return (FluentColumn)Helper.ConvertToFluentBaseColumn(output, schema);
 		}
 
-		public GetColumn(CassandraType key, CassandraType superColumnName, CassandraType columnName)
+		public GetColumn(CassandraObject key, CassandraObject superColumnName, CassandraObject columnName)
 		{
 			Key = key;
 			SuperColumnName = superColumnName;
 			ColumnName = columnName;
 		}
 
-		public GetColumn(CassandraType key, CassandraType columnName)
+		public GetColumn(CassandraObject key, CassandraObject columnName)
 		{
 			Key = key;
 			ColumnName = columnName;

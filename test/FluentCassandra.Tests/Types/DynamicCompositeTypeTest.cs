@@ -20,7 +20,7 @@ namespace FluentCassandra.Types
 				{ 'u', typeof(UUIDType) }
 			};
 
-		private byte[] GetBytes(CassandraType[] components)
+		private byte[] GetBytes(CassandraObject[] components)
 		{
 			using (var bytes = new MemoryStream())
 			{
@@ -51,21 +51,21 @@ namespace FluentCassandra.Types
 		public void CassandraType_Cast()
 		{
 			// arranage
-			var expected = new CassandraType[] { (AsciiType)"string1", (LongType)300L };
+			var expected = new CassandraObject[] { (AsciiType)"string1", (LongType)300L };
 
 			// act
 			DynamicCompositeType actualType = expected;
-			CassandraType actual = actualType;
+			CassandraObject actual = actualType;
 
 			// assert
-			Assert.IsTrue(expected.SequenceEqual((CassandraType[])actual));
+			Assert.IsTrue(expected.SequenceEqual((CassandraObject[])actual));
 		}
 
 		[Test]
 		public void Implicit_ByteArray_Cast()
 		{
 			// arrange
-			var expected = new CassandraType[] { (AsciiType)"string1", (LongType)300 };
+			var expected = new CassandraObject[] { (AsciiType)"string1", (LongType)300 };
 			byte[] bytes = GetBytes(expected);
 
 			// act

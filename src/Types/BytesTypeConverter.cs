@@ -5,7 +5,7 @@ using System.Text;
 
 namespace FluentCassandra.Types
 {
-	internal class BytesTypeConverter : CassandraTypeConverter<byte[]>
+	internal class BytesTypeConverter : CassandraObjectConverter<byte[]>
 	{
 		private static readonly DateTimeOffset UnixStartOffset = new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero);
 

@@ -2,7 +2,7 @@
 
 namespace FluentCassandra.Types
 {
-	public class DateType : CassandraType
+	public class DateType : CassandraObject
 	{
 		private static readonly DateTypeConverter Converter = new DateTypeConverter();
 
