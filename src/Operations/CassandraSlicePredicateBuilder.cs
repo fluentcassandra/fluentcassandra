@@ -44,14 +44,14 @@ namespace FluentCassandra.Operations
 
 			if (columns.Length > 1)
 			{
-				if (calls.Count > 1)
-					throw new CassandraException("A multi column fetch cannot be used with the following query options: " + String.Join(", ", calls.Keys.Where(x => x != "Fetch")));
+				if (calls.Keys.Where(x => x != "Fetch" && x != "ForSuperColumn").Count() > 0)
+					throw new CassandraException("A multi column fetch cannot be used with the following query options: " + String.Join(", ", calls.Keys.Where(x => x != "Fetch" && x != "ForSuperColumn")));
 
 				return new CassandraColumnSlicePredicate(columns);
 			}
 			else if (columns.Length == 1)
 			{
-				if (calls.Count == 1)
+				if (calls.Keys.Where(x => x != "Fetch" && x != "ForSuperColumn").Count() == 0)
 					return new CassandraColumnSlicePredicate(columns);
 
 				predicate = new CassandraRangeSlicePredicate(columns[0], null);

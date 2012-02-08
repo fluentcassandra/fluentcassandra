@@ -14,6 +14,8 @@ namespace FluentCassandra.Operations
 
 		public override IEnumerable<FluentSuperColumnFamily> Execute()
 		{
+			var schema = ColumnFamily.GetSchema();
+
 			var parent = new CassandraColumnParent {
 				ColumnFamily = ColumnFamily.FamilyName
 			};
@@ -27,8 +29,8 @@ namespace FluentCassandra.Operations
 
 			foreach (var result in output)
 			{
-				var r = new FluentSuperColumnFamily(result.Key, ColumnFamily.FamilyName, ColumnFamily.GetSchema(), result.Columns.Select(col => {
-					var superCol = Helper.ConvertSuperColumnToFluentSuperColumn(col.Super_column);
+				var r = new FluentSuperColumnFamily(result.Key, ColumnFamily.FamilyName, schema, result.Columns.Select(col => {
+					var superCol = Helper.ConvertSuperColumnToFluentSuperColumn(col.Super_column, schema);
 					ColumnFamily.Context.Attach(superCol);
 					superCol.MutationTracker.Clear();
 

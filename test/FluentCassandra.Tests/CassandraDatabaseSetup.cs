@@ -54,7 +54,8 @@ namespace FluentCassandra
 
 			using (var session = DB.OpenSession())
 			{
-				DB.DropKeyspace(keyspaceName);
+				if (exists)
+					DB.DropKeyspace(keyspaceName);
 
 				var keyspace = new CassandraKeyspace(new CassandraKeyspaceSchema { Name = keyspaceName, Strategy = CassandraKeyspaceSchema.ReplicaPlacementStrategySimple, ReplicationFactor = 1 }, DB);
 				DB.Keyspace = keyspace;

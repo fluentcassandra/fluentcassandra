@@ -74,6 +74,7 @@
     <Compile Include="Apache\Cassandra\CqlResultType.cs" />
     <Compile Include="Apache\Cassandra\CqlRow.cs" />
     <Compile Include="Apache\Cassandra\Deletion.cs" />
+    <Compile Include="Apache\Cassandra\EndpointDetails.cs" />
     <Compile Include="Apache\Cassandra\IndexClause.cs" />
     <Compile Include="Apache\Cassandra\IndexExpression.cs" />
     <Compile Include="Apache\Cassandra\IndexOperator.cs" />

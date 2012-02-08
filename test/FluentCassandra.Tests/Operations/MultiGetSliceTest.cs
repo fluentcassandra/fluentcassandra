@@ -38,7 +38,10 @@ namespace FluentCassandra.Operations
 			int expectedCount = 2;
 
 			// act
-			var columns = _family.Get(new BytesType[] { _testKey, _testKey2 }, new AsciiType[] { "Test1", "Test2" });
+			var columns = _family
+				.Get(new BytesType[] { _testKey, _testKey2 })
+				.Fetch(new AsciiType[] { "Test1", "Test2" })
+				.Execute();
 
 			// assert
 			Assert.AreEqual(expectedCount, columns.Count());
@@ -51,7 +54,11 @@ namespace FluentCassandra.Operations
 			int expectedCount = 2;
 
 			// act
-			var columns = _superFamily.GetSuperColumns(new BytesType[] { _testKey, _testKey2 }, _testSuperName, new AsciiType[] { "Test1", "Test2" });
+			var columns = _superFamily
+				.Get(new BytesType[] { _testKey, _testKey2 })
+				.ForSuperColumn(_testSuperName)
+				.Fetch(new AsciiType[] { "Test1", "Test2" })
+				.Execute();
 
 			// assert
 			Assert.AreEqual(expectedCount, columns.Count());
@@ -64,7 +71,10 @@ namespace FluentCassandra.Operations
 			int expectedCount = 2;
 
 			// act
-			var columns = _superFamily.Get(new BytesType[] { _testKey, _testKey2 }, new AsciiType[] { _testSuperName });
+			var columns = _superFamily
+				.Get(new BytesType[] { _testKey, _testKey2 })
+				.Fetch(new AsciiType[] { _testSuperName })
+				.Execute();
 
 			// assert
 			Assert.AreEqual(expectedCount, columns.Count());
@@ -77,7 +87,11 @@ namespace FluentCassandra.Operations
 			int expectedCount = 2;
 
 			// act
-			var columns = _family.Get(new BytesType[] { _testKey, _testKey2 }, _testName, null, columnCount: 2);
+			var columns = _family
+				.Get(new BytesType[] { _testKey, _testKey2 })
+				.Fetch(_testName)
+				.Take(2)
+				.Execute();
 
 			// assert
 			Assert.AreEqual(expectedCount, columns.Count());
@@ -90,7 +104,11 @@ namespace FluentCassandra.Operations
 			int expectedCount = 2;
 
 			// act
-			var columns = _superFamily.GetSuperColumns(new BytesType[] { _testKey, _testKey2 }, _testSuperName, _testName, null, columnCount: 2);
+			var columns = _superFamily.Get(new BytesType[] { _testKey, _testKey2 })
+				.ForSuperColumn(_testSuperName)
+				.Fetch(_testName)
+				.Take(2)
+				.Execute();
 
 			// assert
 			Assert.AreEqual(expectedCount, columns.Count());
@@ -103,7 +121,11 @@ namespace FluentCassandra.Operations
 			int expectedCount = 2;
 
 			// act
-			var columns = _superFamily.Get(new BytesType[] { _testKey, _testKey2 }, _testSuperName, null, columnCount: 1);
+			var columns = _superFamily
+				.Get(new BytesType[] { _testKey, _testKey2 })
+				.Fetch(_testSuperName)
+				.Take(1)
+				.Execute();
 
 			// assert
 			Assert.AreEqual(expectedCount, columns.Count());

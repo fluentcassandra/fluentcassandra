@@ -78,7 +78,7 @@ namespace FluentCassandra.Operations
 			int expectedCount = 0;
 
 			// act
-			_superFamily.RemoveSuperColumn(_testKey, _testSuperName);
+			_superFamily.RemoveColumn(_testKey, _testSuperName);
 
 			// assert
 			int actualCount = _superFamily.ColumnCount(_testKey, null, null);

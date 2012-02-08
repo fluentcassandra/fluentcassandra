@@ -156,15 +156,19 @@ namespace FluentCassandra.Operations
 
 		public static FluentSuperColumn ConvertSuperColumnToFluentSuperColumn(SuperColumn col, CassandraColumnFamilySchema schema = null)
 		{
-			var nameType = CassandraType.BytesType;
+			var superColSchema = new CassandraColumnSchema {
+				Name = col.Name
+			};
 
 			if (schema != null)
-			{
-				nameType = schema.SuperColumnNameType;
-			}
+				superColSchema = new CassandraColumnSchema {
+					NameType = schema.SuperColumnNameType,
+					Name = col.Name,
+					ValueType = schema.ColumnNameType
+				};
 
-			var superCol = new FluentSuperColumn {
-				ColumnName = CassandraObject.GetTypeFromDatabaseValue(col.Name, nameType)
+			var superCol = new FluentSuperColumn(superColSchema) {
+				ColumnName = col.Name
 			};
 
 			foreach (var xcol in col.Columns)
