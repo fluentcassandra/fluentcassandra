@@ -17,34 +17,48 @@ namespace Apache.Cassandra
 {
 
   [Serializable]
-  public partial class CqlRow : TBase
+  public partial class EndpointDetails : TBase
   {
-    private byte[] _key;
-    private List<Column> _columns;
+    private string _host;
+    private string _datacenter;
+    private string _rack;
 
-    public byte[] Key
+    public string Host
     {
       get
       {
-        return _key;
+        return _host;
       }
       set
       {
-        __isset.key = true;
-        this._key = value;
+        __isset.host = true;
+        this._host = value;
       }
     }
 
-    public List<Column> Columns
+    public string Datacenter
     {
       get
       {
-        return _columns;
+        return _datacenter;
       }
       set
       {
-        __isset.columns = true;
-        this._columns = value;
+        __isset.datacenter = true;
+        this._datacenter = value;
+      }
+    }
+
+    public string Rack
+    {
+      get
+      {
+        return _rack;
+      }
+      set
+      {
+        __isset.rack = true;
+        this._rack = value;
       }
     }
 
@@ -52,11 +66,12 @@ namespace Apache.Cassandra
     public Isset __isset;
     [Serializable]
     public struct Isset {
-      public bool key;
-      public bool columns;
+      public bool host;
+      public bool datacenter;
+      public bool rack;
     }
 
-    public CqlRow() {
+    public EndpointDetails() {
     }
 
     public void Read (TProtocol iprot)
@@ -73,25 +88,21 @@ namespace Apache.Cassandra
         {
           case 1:
             if (field.Type == TType.String) {
-              Key = iprot.ReadBinary();
+              Host = iprot.ReadString();
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
             break;
           case 2:
-            if (field.Type == TType.List) {
-              {
-                Columns = new List<Column>();
-                TList _list65 = iprot.ReadListBegin();
-                for( int _i66 = 0; _i66 < _list65.Count; ++_i66)
-                {
-                  Column _elem67 = new Column();
-                  _elem67 = new Column();
-                  _elem67.Read(iprot);
-                  Columns.Add(_elem67);
-                }
-                iprot.ReadListEnd();
-              }
+            if (field.Type == TType.String) {
+              Datacenter = iprot.ReadString();
+            } else { 
+              TProtocolUtil.Skip(iprot, field.Type);
+            }
+            break;
+          case 3:
+            if (field.Type == TType.String) {
+              Rack = iprot.ReadString();
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
@@ -106,30 +117,31 @@ namespace Apache.Cassandra
     }
 
     public void Write(TProtocol oprot) {
-      TStruct struc = new TStruct("CqlRow");
+      TStruct struc = new TStruct("EndpointDetails");
       oprot.WriteStructBegin(struc);
       TField field = new TField();
-      if (Key != null && __isset.key) {
-        field.Name = "key";
+      if (Host != null && __isset.host) {
+        field.Name = "host";
         field.Type = TType.String;
         field.ID = 1;
         oprot.WriteFieldBegin(field);
-        oprot.WriteBinary(Key);
+        oprot.WriteString(Host);
         oprot.WriteFieldEnd();
       }
-      if (Columns != null && __isset.columns) {
-        field.Name = "columns";
-        field.Type = TType.List;
+      if (Datacenter != null && __isset.datacenter) {
+        field.Name = "datacenter";
+        field.Type = TType.String;
         field.ID = 2;
         oprot.WriteFieldBegin(field);
-        {
-          oprot.WriteListBegin(new TList(TType.Struct, Columns.Count));
-          foreach (Column _iter68 in Columns)
-          {
-            _iter68.Write(oprot);
-          }
-          oprot.WriteListEnd();
-        }
+        oprot.WriteString(Datacenter);
+        oprot.WriteFieldEnd();
+      }
+      if (Rack != null && __isset.rack) {
+        field.Name = "rack";
+        field.Type = TType.String;
+        field.ID = 3;
+        oprot.WriteFieldBegin(field);
+        oprot.WriteString(Rack);
         oprot.WriteFieldEnd();
       }
       oprot.WriteFieldStop();
@@ -137,11 +149,13 @@ namespace Apache.Cassandra
     }
 
     public override string ToString() {
-      StringBuilder sb = new StringBuilder("CqlRow(");
-      sb.Append("Key: ");
-      sb.Append(Key);
-      sb.Append(",Columns: ");
-      sb.Append(Columns);
+      StringBuilder sb = new StringBuilder("EndpointDetails(");
+      sb.Append("Host: ");
+      sb.Append(Host);
+      sb.Append(",Datacenter: ");
+      sb.Append(Datacenter);
+      sb.Append(",Rack: ");
+      sb.Append(Rack);
       sb.Append(")");
       return sb.ToString();
     }
