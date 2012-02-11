@@ -202,8 +202,6 @@ namespace FluentCassandra.Linq
 				AddCriteria(exp.Arguments[1]);
 			else if (exp.Method.Name == "Select")
 				AddField(SimplifyExpression(exp.Arguments[1]));
-			else if (exp.Method.Name.StartsWith("First"))
-				FirstCount = "1";
 			else
 				throw new NotSupportedException("Method call to " + exp.Method.Name + " is not supported.");
 		}

@@ -129,6 +129,9 @@ namespace FluentCassandra
 			if (!typeof(TResult).IsAssignableFrom(typeof(ICqlRow)))
 				throw new CassandraException("'TElement' must inherit from IFluentBaseColumnFamily");
 
+			if (expression.NodeType == ExpressionType.Call)
+				expression = ((MethodCallExpression)expression).Arguments[0];
+
 			var result = new CqlQuery(expression, this);
 			return (TResult)Enumerable.FirstOrDefault(result);
 		}

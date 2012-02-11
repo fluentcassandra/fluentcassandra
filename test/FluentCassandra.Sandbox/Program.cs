@@ -28,7 +28,7 @@ namespace FluentCassandra.Sandbox
 				keyspace.TryCreateSelf();
 				db.ExecuteNonQuery(@"
 CREATE COLUMNFAMILY Posts (
-	KEY blob PRIMARY KEY,
+	KEY text PRIMARY KEY,
 	Title text,
 	Body text,
 	Author text,
@@ -36,6 +36,7 @@ CREATE COLUMNFAMILY Posts (
 );");
 				keyspace.TryCreateColumnFamily(new CassandraColumnFamilySchema {
 					FamilyName = "Tags",
+					KeyType = CassandraType.UTF8Type,
 					ColumnNameType = CassandraType.Int32Type,
 					DefaultColumnValueType = CassandraType.UTF8Type
 				});
@@ -117,7 +118,10 @@ CREATE COLUMNFAMILY Posts (
 				// get the post back from the database
 				ConsoleHeader("getting 'first-blog-post'");
 				dynamic post = postFamily.Get(key).FirstOrDefault();
-				dynamic tags = tagsFamily.Get(key).FirstOrDefault();
+				dynamic tags = (
+					from t in tagsFamily
+					where t.Key == key
+					select t).FirstOrDefault();
 
 				// show details
 				ConsoleHeader("showing post");
@@ -131,7 +135,7 @@ CREATE COLUMNFAMILY Posts (
 				// show tags
 				ConsoleHeader("showing tags");
 				foreach (var tag in tags)
-					Console.WriteLine(String.Format("{0}:{1},", tag.ColumnName, tag.ColumnValue));
+					Console.WriteLine(String.Format("{0}:{1}", tag.ColumnName, tag.ColumnValue));
 			}
 		}
 

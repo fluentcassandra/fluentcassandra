@@ -26,10 +26,12 @@ namespace FluentCassandra.Operations
 			var keyName = CassandraColumnFamilySchema.DefaultKeyName.ToBigEndian();
 			var resultSchema = result.Schema;
 			var colNameType = CassandraObject.ParseType(resultSchema.Default_name_type);
+			var colValueType = CassandraObject.ParseType(resultSchema.Default_value_type);
 
 			var schema = new CassandraColumnFamilySchema();
 			schema.FamilyName = familyName;
 			schema.ColumnNameType = colNameType;
+			schema.DefaultColumnValueType = colValueType;
 
 			foreach (var s in resultSchema.Value_types)
 			{
@@ -99,11 +101,7 @@ namespace FluentCassandra.Operations
 				if (col.Timestamp == -1)
 					continue;
 
-				
-				var colSchema = schema.Columns.Where(x => x.Name == col.Name).FirstOrDefault();
-				var fcol = Helper.ConvertColumnToFluentColumn(col);
-				fcol.SetSchema(colSchema);
-
+				var fcol = Helper.ConvertColumnToFluentColumn(col, schema);
 				yield return fcol;
 			}
 		}
