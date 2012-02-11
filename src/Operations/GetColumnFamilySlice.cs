@@ -25,9 +25,13 @@ namespace FluentCassandra.Operations
 
 		private IEnumerable<FluentColumn> GetColumns(BaseCassandraColumnFamily columnFamily)
 		{
+			var schema = ColumnFamily.GetSchema();
+
 			var parent = new CassandraColumnParent {
 				ColumnFamily = columnFamily.FamilyName
 			};
+
+			SlicePredicate = Helper.SetSchemaForSlicePredicate(SlicePredicate, schema);
 
 			var output = Session.GetClient().get_slice(
 				Key,

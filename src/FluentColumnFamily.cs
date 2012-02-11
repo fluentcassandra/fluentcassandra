@@ -61,10 +61,7 @@ namespace FluentCassandra
 		public CassandraObject Key
 		{
 			get { return _key; }
-			set
-			{
-				_key = (CassandraObject)value.GetValue(GetSchema().KeyType);
-			}
+			set { _key = value.GetValue(GetSchema().KeyType); }
 		}
 
 		/// <summary>
@@ -224,13 +221,13 @@ namespace FluentCassandra
 		/// <returns></returns>
 		public override bool TrySetColumn(object name, object value)
 		{
+			var schema = GetColumnSchema(name);
 			var col = Columns.FirstOrDefault(c => c.ColumnName == name);
 			var mutationType = MutationType.Changed;
 
 			// if column doesn't exisit create it and add it to the columns
 			if (col == null)
 			{
-				var schema = GetColumnSchema(name);
 				mutationType = MutationType.Added;
 
 				col = new FluentColumn(schema);
@@ -242,7 +239,7 @@ namespace FluentCassandra
 			}
 
 			// set the column value
-			col.ColumnValue = CassandraObject.GetTypeFromObject(value);
+			col.ColumnValue = CassandraObject.GetTypeFromObject(value, schema.ValueType);
 
 			// notify the tracker that the column has changed
 			OnColumnMutated(mutationType, col);

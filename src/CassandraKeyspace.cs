@@ -15,7 +15,13 @@ namespace FluentCassandra
 		private CassandraContext _context;
 
 		public CassandraKeyspace(string keyspaceName, CassandraContext context)
-			: this(new CassandraKeyspaceSchema { Name = keyspaceName }, context) { }
+		{
+			if (keyspaceName == null)
+				throw new ArgumentNullException("keyspaceName");
+
+			_keyspaceName = keyspaceName;
+			_context = context;
+		}
 
 		public CassandraKeyspace(CassandraKeyspaceSchema schema, CassandraContext context)
 		{
@@ -136,7 +142,7 @@ namespace FluentCassandra
 			return GetSchema().ColumnFamilies.Any(cf => cf.FamilyName == columnFamilyName);
 		}
 
-		public void ClearCachedKeyspaceDescription()
+		public void ClearCachedKeyspaceSchema()
 		{
 			_cachedSchema = null;
 		}
@@ -146,9 +152,18 @@ namespace FluentCassandra
 		public CassandraKeyspaceSchema GetSchema()
 		{
 			if (_cachedSchema == null)
-				_cachedSchema = new CassandraKeyspaceSchema(_context.ExecuteOperation(new SimpleOperation<Apache.Cassandra.KsDef>(ctx => {
-					return ctx.Session.GetClient().describe_keyspace(KeyspaceName);
-				})));
+				try
+				{
+					_cachedSchema = new CassandraKeyspaceSchema(_context.ExecuteOperation(new SimpleOperation<Apache.Cassandra.KsDef>(ctx => {
+						return ctx.Session.GetClient().describe_keyspace(KeyspaceName);
+					})));
+				}
+				catch (CassandraOperationException)
+				{
+					_cachedSchema = new CassandraKeyspaceSchema {
+						Name = KeyspaceName
+					};
+				}
 
 			return _cachedSchema;
 		}

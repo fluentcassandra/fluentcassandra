@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using FluentCassandra.Types;
 
 namespace FluentCassandra.Linq
 {
@@ -38,7 +37,7 @@ namespace FluentCassandra.Linq
 
 		#endregion
 
-		#region IEnumerable<ICqlRow<CompareWith>> Members
+		#region IEnumerable<ICqlRow> Members
 
 		/// <summary>
 		/// 
@@ -46,8 +45,8 @@ namespace FluentCassandra.Linq
 		/// <returns></returns>
 		public IEnumerator<ICqlRow> GetEnumerator()
 		{
-			var result = CqlQueryEvaluator.GetEvaluator(Expression);
-			return Provider.Cql(result.Query).GetEnumerator();
+			var result = CqlQueryEvaluator.GetCql(Expression);
+			return Provider.Cql(result).GetEnumerator();
 		}
 
 		#endregion

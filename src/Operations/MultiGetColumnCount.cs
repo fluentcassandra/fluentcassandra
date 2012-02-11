@@ -16,12 +16,16 @@ namespace FluentCassandra.Operations
 
 		public override IDictionary<CassandraObject, int> Execute()
 		{
+			var schema = ColumnFamily.GetSchema();
+
 			var parent = new CassandraColumnParent {
 				ColumnFamily = ColumnFamily.FamilyName
 			};
 
 			if (SuperColumnName != null)
 				parent.SuperColumn = SuperColumnName;
+
+			SlicePredicate = Helper.SetSchemaForSlicePredicate(SlicePredicate, schema, SuperColumnName == null);
 
 			var output = Session.GetClient().multiget_count(
 				Keys,

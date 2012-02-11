@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using FluentCassandra.Types;
 
 namespace FluentCassandra.Operations
 {
@@ -20,9 +19,13 @@ namespace FluentCassandra.Operations
 
 		private IEnumerable<FluentColumnFamily> GetFamilies(BaseCassandraColumnFamily columnFamily)
 		{
+			var schema = ColumnFamily.GetSchema();
+
 			var parent = new CassandraColumnParent {
 				ColumnFamily = columnFamily.FamilyName
 			};
+
+			SlicePredicate = Helper.SetSchemaForSlicePredicate(SlicePredicate, schema);
 
 			var output = Session.GetClient().get_range_slices(
 				parent,

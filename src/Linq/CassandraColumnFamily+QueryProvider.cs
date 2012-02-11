@@ -126,10 +126,11 @@ namespace FluentCassandra
 		/// <returns></returns>
 		TResult IQueryProvider.Execute<TResult>(Expression expression)
 		{
-			if (!typeof(TResult).IsAssignableFrom(typeof(IFluentBaseColumnFamily)))
+			if (!typeof(TResult).IsAssignableFrom(typeof(ICqlRow)))
 				throw new CassandraException("'TElement' must inherit from IFluentBaseColumnFamily");
 
-			return (TResult)new CqlQuery(expression, this).FirstOrDefault();
+			var result = new CqlQuery(expression, this);
+			return (TResult)Enumerable.FirstOrDefault(result);
 		}
 
 		/// <summary>

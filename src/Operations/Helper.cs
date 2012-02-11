@@ -52,6 +52,32 @@ namespace FluentCassandra.Operations
 			};
 		}
 
+		public static CassandraSlicePredicate SetSchemaForSlicePredicate(CassandraSlicePredicate predicate, CassandraColumnFamilySchema schema, bool forSuperColumn = false)
+		{
+			CassandraType columnType = forSuperColumn ? schema.SuperColumnNameType : schema.ColumnNameType;
+
+			if (predicate is CassandraRangeSlicePredicate)
+			{
+				var x = (CassandraRangeSlicePredicate)predicate;
+				var start = CassandraObject.GetTypeFromObject(x.Start, columnType);
+				var finish = CassandraObject.GetTypeFromObject(x.Finish, columnType);
+
+				return new CassandraRangeSlicePredicate(start, finish, x.Reversed, x.Count);
+			}
+			else if (predicate is CassandraColumnSlicePredicate)
+			{
+				var x = (CassandraColumnSlicePredicate)predicate;
+				var cols = x.Columns.ToList();
+
+				for (int i = 0; i < cols.Count; i++)
+					cols[i] = CassandraObject.GetTypeFromObject(cols[i], columnType);
+
+				return new CassandraColumnSlicePredicate(cols);
+			}
+
+			return null;
+		}
+
 		public static SlicePredicate CreateSlicePredicate(CassandraSlicePredicate predicate)
 		{
 			if (predicate is CassandraRangeSlicePredicate)
@@ -139,6 +165,7 @@ namespace FluentCassandra.Operations
 				{
 					colSchema = new CassandraColumnSchema();
 					colSchema.NameType = schema.ColumnNameType;
+					colSchema.ValueType = schema.DefaultColumnValueType;
 				}
 			}
 
@@ -168,7 +195,7 @@ namespace FluentCassandra.Operations
 				};
 
 			var superCol = new FluentSuperColumn(superColSchema) {
-				ColumnName = col.Name
+				ColumnName = CassandraObject.GetTypeFromDatabaseValue(col.Name, superColSchema.NameType)
 			};
 
 			foreach (var xcol in col.Columns)

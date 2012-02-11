@@ -44,6 +44,8 @@ namespace FluentCassandra.Operations
 				SuperColumn = SuperColumnName
 			};
 
+			SlicePredicate = Helper.SetSchemaForSlicePredicate(SlicePredicate, schema, SuperColumnName == null);
+
 			var output = Session.GetClient().get_slice(
 				Key,
 				parent,

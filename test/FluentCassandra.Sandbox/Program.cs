@@ -21,11 +21,31 @@ namespace FluentCassandra.Sandbox
 				if (db.KeyspaceExists(KeyspaceName))
 					db.DropKeyspace(KeyspaceName);
 
-				var keyspace = db.Keyspace;
+				var keyspace = new CassandraKeyspace(new CassandraKeyspaceSchema { 
+					Name = KeyspaceName, 
+					Strategy = CassandraKeyspaceSchema.ReplicaPlacementStrategySimple, 
+					ReplicationFactor = 1 }, db);
 				keyspace.TryCreateSelf();
-				keyspace.TryCreateColumnFamily<UTF8Type>("Posts");
-				keyspace.TryCreateColumnFamily<LongType>("Tags");
-				keyspace.TryCreateColumnFamily<TimeUUIDType, UTF8Type>("Comments");
+				db.ExecuteNonQuery(@"
+CREATE COLUMNFAMILY Posts (
+	KEY blob PRIMARY KEY,
+	Title text,
+	Body text,
+	Author text,
+	PostedOn timestamp
+);");
+				keyspace.TryCreateColumnFamily(new CassandraColumnFamilySchema {
+					FamilyName = "Tags",
+					ColumnNameType = CassandraType.Int32Type,
+					DefaultColumnValueType = CassandraType.UTF8Type
+				});
+				keyspace.TryCreateColumnFamily(new CassandraColumnFamilySchema {
+					FamilyName = "Comments",
+					FamilyType = ColumnType.Super,
+					SuperColumnNameType = CassandraType.TimeUUIDType,
+					ColumnNameType = CassandraType.UTF8Type,
+					DefaultColumnValueType = CassandraType.UTF8Type
+				});
 			}
 		}
 
@@ -51,8 +71,8 @@ namespace FluentCassandra.Sandbox
 			{
 				var key = "first-blog-post";
 
-				var postFamily = db.GetColumnFamily<UTF8Type>("Posts");
-				var tagsFamily = db.GetColumnFamily<LongType>("Tags");
+				var postFamily = db.GetColumnFamily("Posts");
+				var tagsFamily = db.GetColumnFamily("Tags");
 
 				// create post
 				ConsoleHeader("create post");
@@ -91,8 +111,8 @@ namespace FluentCassandra.Sandbox
 			{
 				var key = "first-blog-post";
 
-				var postFamily = db.GetColumnFamily<UTF8Type>("Posts");
-				var tagsFamily = db.GetColumnFamily<LongType>("Tags");
+				var postFamily = db.GetColumnFamily("Posts");
+				var tagsFamily = db.GetColumnFamily("Tags");
 
 				// get the post back from the database
 				ConsoleHeader("getting 'first-blog-post'");
@@ -111,7 +131,7 @@ namespace FluentCassandra.Sandbox
 				// show tags
 				ConsoleHeader("showing tags");
 				foreach (var tag in tags)
-					Console.WriteLine(String.Format("{0}:{1},", (long)tag.ColumnName, tag.ColumnValue));
+					Console.WriteLine(String.Format("{0}:{1},", tag.ColumnName, tag.ColumnValue));
 			}
 		}
 
@@ -124,7 +144,8 @@ namespace FluentCassandra.Sandbox
 			{
 				var key = "first-blog-post";
 
-				var postFamily = db.GetColumnFamily<UTF8Type>("Posts");
+				var postFamily = db.GetColumnFamily("Posts");
+
 				// get the post back from the database
 				ConsoleHeader("getting 'first-blog-post' for update");
 				dynamic post = postFamily.Get(key).FirstOrDefault();
@@ -154,13 +175,15 @@ namespace FluentCassandra.Sandbox
 				var key = "first-blog-post";
 
 				// get the comments family
-				var commentsFamily = db.GetColumnFamily<TimeUUIDType, UTF8Type>("Comments");
+				var commentsFamily = db.GetSuperColumnFamily("Comments");
 
 				ConsoleHeader("create comments");
 				dynamic postComments = commentsFamily.CreateRecord(key: key);
 
 				// lets attach it to the database before we add the comments
 				db.Attach(postComments);
+
+				var dt = new DateTime(2010, 11, 29, 5, 03, 00, DateTimeKind.Local);
 
 				// add 5 comments
 				for (int i = 0; i < 5; i++)
@@ -171,11 +194,11 @@ namespace FluentCassandra.Sandbox
 					comment.Website = "www.coderjournal.com";
 					comment.Comment = "Wow fluent cassandra is really great and easy to use.";
 
-					var commentPostedOn = DateTime.Now;
+					var commentPostedOn = dt;
 					postComments[commentPostedOn] = comment;
 
 					Console.WriteLine("Comment " + (i + 1) + " Posted On " + commentPostedOn.ToLongTimeString());
-					Thread.Sleep(TimeSpan.FromSeconds(2));
+					dt = dt.AddMinutes(2);
 				}
 
 				// save the comments
@@ -195,7 +218,7 @@ namespace FluentCassandra.Sandbox
 				var lastDate = DateTime.Now;
 
 				// get the comments family
-				var commentsFamily = db.GetColumnFamily<TimeUUIDType, UTF8Type>("Comments");
+				var commentsFamily = db.GetSuperColumnFamily("Comments");
 
 				for (int page = 0; page < 2; page++)
 				{

@@ -22,6 +22,8 @@ namespace FluentCassandra.Operations
 			if (SuperColumnName != null)
 				parent.SuperColumn = SuperColumnName;
 
+			SlicePredicate = Helper.SetSchemaForSlicePredicate(SlicePredicate, schema, SuperColumnName == null);
+
 			var output = Session.GetClient().multiget_slice(
 				Keys,
 				parent,
@@ -52,7 +54,7 @@ namespace FluentCassandra.Operations
 				else
 				{
 					superColumns = result.Value.Select(col => {
-						var superCol = Helper.ConvertSuperColumnToFluentSuperColumn(col.Super_column);
+						var superCol = Helper.ConvertSuperColumnToFluentSuperColumn(col.Super_column, schema);
 						ColumnFamily.Context.Attach(superCol);
 						superCol.MutationTracker.Clear();
 

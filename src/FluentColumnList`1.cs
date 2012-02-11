@@ -27,12 +27,14 @@ namespace FluentCassandra
 		public FluentColumnList(FluentColumnParent parent, IEnumerable<T> columns)
 		{
 			Parent = parent;
+			Columns = new List<T>();
 
 			// make sure all columns have the same parent
 			foreach (var col in columns)
-				col.SetParent(Parent);
-
-			Columns = columns.ToList();
+			{
+				col.SetParent(parent);
+				Columns.Add(col);
+			}
 
 			SupressChangeNotification = false;
 		}

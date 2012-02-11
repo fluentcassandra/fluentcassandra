@@ -14,5 +14,11 @@ namespace FluentCassandra.Operations
 
 		public CassandraOperationException(AuthorizationException exc)
 			: base(exc.Why, exc) { }
+
+		public CassandraOperationException(UnavailableException exc)
+			: base("Cassandra server is unavailable.", exc) { }
+
+		public CassandraOperationException(TimedOutException exc)
+			: base("Connection to Cassandra has timed out.", exc) { }
 	}
 }

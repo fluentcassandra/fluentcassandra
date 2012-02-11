@@ -21,6 +21,8 @@ namespace FluentCassandra.Operations
 				ColumnFamily = ColumnFamily.FamilyName
 			};
 
+			SlicePredicate = Helper.SetSchemaForSlicePredicate(SlicePredicate, schema);
+
 			var output = Session.GetClient().multiget_slice(
 				Keys,
 				parent,

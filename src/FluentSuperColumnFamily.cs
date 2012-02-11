@@ -63,10 +63,7 @@ namespace FluentCassandra
 		public CassandraObject Key
 		{
 			get { return _key; }
-			set
-			{
-				_key = (CassandraObject)value.GetValue(GetSchema().KeyType);
-			}
+			set { _key = value.GetValue(GetSchema().KeyType); }
 		}
 
 		/// <summary>
@@ -85,7 +82,10 @@ namespace FluentCassandra
 		/// <returns></returns>
 		public FluentSuperColumn CreateSuperColumn()
 		{
-			return new FluentSuperColumn(GetColumnSchema(""));
+			var col = new FluentSuperColumn(GetColumnSchema(null));
+			col.SetParent(GetSelf());
+
+			return col;
 		}
 
 		/// <summary>
@@ -94,9 +94,12 @@ namespace FluentCassandra
 		/// <returns></returns>
 		public FluentSuperColumn CreateSuperColumn(CassandraObject name)
 		{
-			return new FluentSuperColumn(GetColumnSchema(name)) {
+			var col = new FluentSuperColumn(GetColumnSchema(name)) {
 				ColumnName = name
 			};
+			col.SetParent(GetSelf());
+
+			return col;
 		}
 
 		/// <summary>
@@ -170,10 +173,15 @@ namespace FluentCassandra
 			var schema = GetSchema();
 
 			// mock up a fake schema to send to the fluent column
-			return new CassandraColumnSchema { 
-				Name = CassandraObject.GetTypeFromObject(name, schema.ColumnNameType),
-				NameType = schema.SuperColumnNameType, 
-				ValueType = schema.ColumnNameType };
+			var colSchema = new CassandraColumnSchema {
+				NameType = schema.SuperColumnNameType,
+				ValueType = schema.DefaultColumnValueType
+			};
+
+			if (name != null)
+				colSchema.Name = CassandraObject.GetTypeFromObject(name, schema.SuperColumnNameType);
+
+			return colSchema;
 		}
 
 		/// <summary>
@@ -201,11 +209,12 @@ namespace FluentCassandra
 			if (!(value is FluentSuperColumn))
 				throw new ArgumentException("Value must be of type " + typeof(FluentSuperColumn) + ", because this column family is of type Super.", "value");
 
+			var schema = GetSchema();
 			var col = GetColumnValue(name);
 			var mutationType = col == null ? MutationType.Added : MutationType.Changed;
 
 			col = (FluentSuperColumn)value;
-			col.ColumnName = CassandraObject.GetTypeFromObject(name, GetSchema().ColumnNameType);
+			col.ColumnName = CassandraObject.GetTypeFromObject(name, schema.SuperColumnNameType);
 
 			int index = Columns.IndexOf(col);
 

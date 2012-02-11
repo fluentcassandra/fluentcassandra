@@ -31,7 +31,7 @@ namespace FluentCassandra.Types
 
 		public override byte[] ToBigEndian()
 		{
-			return Converter.ToBigEndian(_value, _sourceType);
+			return _bigEndianValue;
 		}
 
 		public override void SetValueFromBigEndian(byte[] value)
@@ -46,7 +46,7 @@ namespace FluentCassandra.Types
 
 		public override string ToString()
 		{
-			return (_sourceType != null ? _sourceType.Name : "byte[]") + " of lenght = " + (_value != null ? _value.Length : _bigEndianValue.Length);
+			return (_sourceType != null ? _sourceType.Name : "byte[]") + " of length = " + (_value != null ? _value.Length : _bigEndianValue.Length);
 		}
 
 		#endregion
@@ -101,8 +101,8 @@ namespace FluentCassandra.Types
 				const int p = 16777619;
 				int hash = (int)2166136261;
 
-				for (int i = 0; i < _value.Length; i++)
-					hash = (hash ^ _value[i]) * p;
+				for (int i = 0; i < _bigEndianValue.Length; i++)
+					hash = (hash ^ _bigEndianValue[i]) * p;
 
 				hash += hash << 13;
 				hash ^= hash >> 7;

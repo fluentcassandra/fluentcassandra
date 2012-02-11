@@ -14,9 +14,13 @@ namespace FluentCassandra.Operations
 
 		public override IEnumerable<FluentSuperColumnFamily> Execute()
 		{
+			var schema = ColumnFamily.GetSchema();
+
 			var parent = new CassandraColumnParent {
 				ColumnFamily = ColumnFamily.FamilyName
 			};
+
+			SlicePredicate = Helper.SetSchemaForSlicePredicate(SlicePredicate, schema);
 
 			var output = Session.GetClient().get_indexed_slices(
 				parent,

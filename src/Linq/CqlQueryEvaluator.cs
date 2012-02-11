@@ -36,12 +36,26 @@ namespace FluentCassandra.Linq
 
 		private IList<string> FieldsArray { get; set; }
 
+		private string FirstCount { get; set; }
+
 		private string Fields
 		{
 			get
 			{
+				var firstCount = FirstCount;
+				var query = "";
+
+				if (!String.IsNullOrWhiteSpace(firstCount))
+					query += "FIRST " + firstCount;
+
+				if (query.Length > 0)
+					query += " ";
+
 				if (FieldsArray.Count == 0)
-					return "*";
+				{
+					query += "*";
+					return query;
+				}
 
 				return String.Join(", ", FieldsArray.ToArray());
 			}
@@ -123,7 +137,7 @@ namespace FluentCassandra.Linq
 			return eval.Query;
 		}
 
-		public static CqlQueryEvaluator GetEvaluator(Expression expression)
+		private static CqlQueryEvaluator GetEvaluator(Expression expression)
 		{
 			var eval = new CqlQueryEvaluator();
 			eval.Evaluate(expression);
@@ -188,6 +202,8 @@ namespace FluentCassandra.Linq
 				AddCriteria(exp.Arguments[1]);
 			else if (exp.Method.Name == "Select")
 				AddField(SimplifyExpression(exp.Arguments[1]));
+			else if (exp.Method.Name.StartsWith("First"))
+				FirstCount = "1";
 			else
 				throw new NotSupportedException("Method call to " + exp.Method.Name + " is not supported.");
 		}

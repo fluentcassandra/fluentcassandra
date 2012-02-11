@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Dynamic;
 using System.ComponentModel;
-using FluentCassandra.Types;
+using System.Dynamic;
+using System.Linq;
 
 namespace FluentCassandra
 {
@@ -111,7 +110,7 @@ namespace FluentCassandra
 
 		public IEnumerator<IFluentBaseColumn> GetEnumerator()
 		{
-			return ((IFluentRecord)Columns).GetEnumerator();
+			return Columns.Cast<IFluentBaseColumn>().GetEnumerator();
 		}
 
 		#endregion

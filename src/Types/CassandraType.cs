@@ -82,6 +82,11 @@ namespace FluentCassandra.Types
 			}
 		}
 
+		public override string ToString()
+		{
+			return FluentType.Name;
+		}
+
 		public static CassandraType GetCassandraType(Type sourceType)
 		{
 			if (sourceType.BaseType == typeof(CassandraObject))

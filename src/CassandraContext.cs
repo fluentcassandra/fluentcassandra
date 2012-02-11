@@ -69,9 +69,9 @@ namespace FluentCassandra
 		/// </summary>
 		/// <typeparam name="CompareWith"></typeparam>
 		/// <returns></returns>
-		public CassandraColumnFamily GetSuperColumnFamily(string columnFamily)
+		public CassandraSuperColumnFamily GetSuperColumnFamily(string columnFamily)
 		{
-			return new CassandraColumnFamily(this, columnFamily);
+			return new CassandraSuperColumnFamily(this, columnFamily);
 		}
 
 		/// <summary>
@@ -133,7 +133,7 @@ namespace FluentCassandra
 
 		public string AddColumnFamily(CfDef definition)
 		{
-			Keyspace.ClearCachedKeyspaceDescription();
+			Keyspace.ClearCachedKeyspaceSchema();
 
 			return ExecuteOperation(new SimpleOperation<string>(ctx => {
 				return ctx.Session.GetClient().system_add_column_family(definition);
@@ -142,7 +142,7 @@ namespace FluentCassandra
 
 		public string UpdateColumnFamily(CfDef definition)
 		{
-			Keyspace.ClearCachedKeyspaceDescription();
+			Keyspace.ClearCachedKeyspaceSchema();
 
 			return ExecuteOperation(new SimpleOperation<string>(ctx => {
 				return ctx.Session.GetClient().system_update_column_family(definition);
@@ -151,7 +151,7 @@ namespace FluentCassandra
 
 		public string DropColumnFamily(string columnFamily)
 		{
-			Keyspace.ClearCachedKeyspaceDescription();
+			Keyspace.ClearCachedKeyspaceSchema();
 
 			return ExecuteOperation(new SimpleOperation<string>(ctx => {
 				return ctx.Session.GetClient().system_drop_column_family(columnFamily);

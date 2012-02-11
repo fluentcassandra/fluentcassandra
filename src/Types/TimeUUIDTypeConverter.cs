@@ -36,7 +36,7 @@ namespace FluentCassandra.Types
 			Guid guid = value;
 
 			if (destinationType == typeof(DateTime))
-				return GuidGenerator.GetDateTime(guid);
+				return GuidGenerator.GetUtcDateTime(guid);
 
 			if (destinationType == typeof(DateTimeOffset))
 				return GuidGenerator.GetDateTimeOffset(guid);

@@ -36,14 +36,42 @@ namespace FluentCassandra
 		}
 
 		[Test]
-		public void GetDateTime()
+		public void GetDateTimeUnspecified()
+		{
+			// arrange
+			var expected = new DateTime(1980, 3, 14, 12, 23, 42, 112, DateTimeKind.Unspecified);
+			var guid = GuidGenerator.GenerateTimeBasedGuid(expected);
+
+			// act
+			var actual = GuidGenerator.GetDateTime(guid).ToLocalTime();
+
+			// assert
+			Assert.AreEqual(expected, actual);
+		}
+
+		[Test]
+		public void GetDateTimeLocal()
+		{
+			// arrange
+			var expected = new DateTime(1980, 3, 14, 12, 23, 42, 112, DateTimeKind.Local);
+			var guid = GuidGenerator.GenerateTimeBasedGuid(expected);
+
+			// act
+			var actual = GuidGenerator.GetLocalDateTime(guid);
+
+			// assert
+			Assert.AreEqual(expected, actual);
+		}
+
+		[Test]
+		public void GetDateTimeUtc()
 		{
 			// arrange
 			var expected = new DateTime(1980, 3, 14, 12, 23, 42, 112, DateTimeKind.Utc);
 			var guid = GuidGenerator.GenerateTimeBasedGuid(expected);
 
 			// act
-			var actual = GuidGenerator.GetDateTime(guid);
+			var actual = GuidGenerator.GetUtcDateTime(guid);
 
 			// assert
 			Assert.AreEqual(expected, actual);

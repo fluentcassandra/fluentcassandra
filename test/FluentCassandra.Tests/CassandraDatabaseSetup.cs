@@ -101,7 +101,7 @@ CREATE COLUMNFAMILY Users (
 	Age int
 );");
 				DB.ExecuteNonQuery(@"CREATE INDEX User_Age ON Users (Age);");
-				DB.Keyspace.ClearCachedKeyspaceDescription();
+				DB.Keyspace.ClearCachedKeyspaceSchema();
 				UserFamily = DB.GetColumnFamily("Users");
 
 				foreach (var user in Users)

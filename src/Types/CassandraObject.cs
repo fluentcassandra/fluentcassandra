@@ -13,7 +13,7 @@ namespace FluentCassandra.Types
 
 		public abstract void SetValue(object obj);
 
-		public object GetValue(CassandraType type)
+		public CassandraObject GetValue(CassandraType type)
 		{
 			if (type.FluentType == GetType())
 				return this;
@@ -284,6 +284,12 @@ namespace FluentCassandra.Types
 
 		public static CassandraObject GetTypeFromObject(object obj, CassandraType cassandraType)
 		{
+			if (obj == null)
+				return null;
+
+			if (obj is CassandraObject)
+				return ((CassandraObject)obj).GetValue(cassandraType);
+
 			var type = cassandraType.CreateInstance();
 
 			if (type == null)

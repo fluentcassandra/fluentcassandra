@@ -15,7 +15,7 @@ namespace FluentCassandra
 		public CassandraColumnSchema(ColumnDef def, CassandraType columnNameType)
 		{
 			NameType = columnNameType;
-			Name = def.Name;
+			Name = CassandraObject.GetTypeFromDatabaseValue(def.Name, columnNameType);
 			ValueType = CassandraObject.ParseType(def.Validation_class);
 		}
 

@@ -24,6 +24,8 @@ namespace FluentCassandra
 	public class FluentSuperColumn : FluentRecord<FluentColumn>, IFluentBaseColumn, IFluentRecordExpression
 	{
 		private CassandraObject _name;
+		private FluentColumnParent _parent;
+		private FluentSuperColumnFamily _family;
 		private FluentColumnList<FluentColumn> _columns;
 		private CassandraColumnSchema _schema;
 
@@ -54,10 +56,7 @@ namespace FluentCassandra
 		public CassandraObject ColumnName
 		{
 			get { return _name; }
-			set
-			{
-				_name = (CassandraObject)value.GetValue(GetSchema().NameType);
-			}
+			set { _name = value.GetValue(GetSchema().NameType); }
 		}
 
 		/// <summary>
@@ -93,8 +92,18 @@ namespace FluentCassandra
 		/// </summary>
 		public FluentSuperColumnFamily Family
 		{
-			get;
-			internal set;
+			get
+			{
+				if (_family == null && _parent != null)
+					_family = _parent.ColumnFamily as FluentSuperColumnFamily;
+
+				return _family;
+			}
+			internal set
+			{
+				_family = value;
+				UpdateParent(GetParent());
+			}
 		}
 
 		/// <summary>
@@ -153,7 +162,7 @@ namespace FluentCassandra
 		/// <returns></returns>
 		public FluentColumnParent GetParent()
 		{
-			return new FluentColumnParent(Family, null);
+			return _parent ?? new FluentColumnParent(Family, this);
 		}
 
 		/// <summary>
@@ -170,7 +179,7 @@ namespace FluentCassandra
 				return NullType.Value;
 
 			var schema = GetColumnSchema(name);
-			return (CassandraObject)col.ColumnValue.GetValue(schema.ValueType);
+			return col.ColumnValue.GetValue(schema.ValueType);
 		}
 
 		/// <summary>
@@ -181,9 +190,13 @@ namespace FluentCassandra
 		private CassandraColumnSchema GetColumnSchema(object name)
 		{
 			var schema = GetSchema();
+			var valueType = CassandraType.BytesType;
+
+			if (Family != null)
+				valueType = Family.GetSchema().DefaultColumnValueType;
 
 			// mock up a fake schema to send to the fluent column
-			return new CassandraColumnSchema { NameType = schema.ValueType, ValueType = typeof(BytesType) };
+			return new CassandraColumnSchema { NameType = schema.ValueType, ValueType = valueType };
 		}
 
 		/// <summary>
@@ -233,18 +246,17 @@ namespace FluentCassandra
 			return true;
 		}
 
-		#region IFluentBaseColumn Members
-
-		IFluentBaseColumnFamily IFluentBaseColumn.Family { get { return Family; } }
-
-		void IFluentBaseColumn.SetParent(FluentColumnParent parent)
+		public void SetParent(FluentColumnParent parent)
 		{
 			UpdateParent(parent);
 		}
 
 		private void UpdateParent(FluentColumnParent parent)
 		{
-			Family = parent.ColumnFamily as FluentSuperColumnFamily;
+			if (!(parent.ColumnFamily is FluentSuperColumnFamily))
+				throw new ArgumentException("ColumnFamily must be of type FluentSuperColumnFamily.", "parent");
+
+			_parent = parent;
 
 			var columnParent = GetPath();
 			_columns.Parent = columnParent;
@@ -254,6 +266,10 @@ namespace FluentCassandra
 
 			ResetMutationAndAddAllColumns();
 		}
+
+		#region IFluentBaseColumn Members
+
+		IFluentBaseColumnFamily IFluentBaseColumn.Family { get { return Family; } }
 
 		#endregion
 	}
