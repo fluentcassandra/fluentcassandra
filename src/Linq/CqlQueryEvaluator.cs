@@ -8,6 +8,7 @@ using FluentCassandra.Types;
 namespace FluentCassandra.Linq
 {
 	/// <see href="https://github.com/apache/cassandra/blob/trunk/doc/cql/CQL.textile"/>
+	/// <see href="http://www.datastax.com/docs/1.0/references/cql/index"/>
 	internal class CqlQueryEvaluator
 	{
 		private string _columnFamily;

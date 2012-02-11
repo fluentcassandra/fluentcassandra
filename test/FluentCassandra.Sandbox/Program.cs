@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Threading;
 using FluentCassandra.Connections;
 using FluentCassandra.Types;
 
@@ -25,10 +24,11 @@ namespace FluentCassandra.Sandbox
 					Name = KeyspaceName, 
 					Strategy = CassandraKeyspaceSchema.ReplicaPlacementStrategySimple, 
 					ReplicationFactor = 1 }, db);
+
 				keyspace.TryCreateSelf();
 				db.ExecuteNonQuery(@"
 CREATE COLUMNFAMILY Posts (
-	KEY text PRIMARY KEY,
+	KEY ascii PRIMARY KEY,
 	Title text,
 	Body text,
 	Author text,
@@ -36,13 +36,14 @@ CREATE COLUMNFAMILY Posts (
 );");
 				keyspace.TryCreateColumnFamily(new CassandraColumnFamilySchema {
 					FamilyName = "Tags",
-					KeyType = CassandraType.UTF8Type,
+					KeyType = CassandraType.AsciiType,
 					ColumnNameType = CassandraType.Int32Type,
 					DefaultColumnValueType = CassandraType.UTF8Type
 				});
 				keyspace.TryCreateColumnFamily(new CassandraColumnFamilySchema {
 					FamilyName = "Comments",
 					FamilyType = ColumnType.Super,
+					KeyType = CassandraType.AsciiType,
 					SuperColumnNameType = CassandraType.TimeUUIDType,
 					ColumnNameType = CassandraType.UTF8Type,
 					DefaultColumnValueType = CassandraType.UTF8Type
