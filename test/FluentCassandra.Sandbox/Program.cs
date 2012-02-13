@@ -67,7 +67,7 @@ CREATE COLUMNFAMILY Posts (
 
 		#region Create Post
 
-		private static void CreatePost()
+		private static void CreateFirstPost()
 		{
 			using (var db = new CassandraContext(keyspace: KeyspaceName, server: Server))
 			{
@@ -103,11 +103,47 @@ CREATE COLUMNFAMILY Posts (
 			}
 		}
 
+		private static void CreateSecondPost()
+		{
+			using (var db = new CassandraContext(keyspace: KeyspaceName, server: Server))
+			{
+				var key = "second-blog-post";
+
+				var postFamily = db.GetColumnFamily("Posts");
+				var tagsFamily = db.GetColumnFamily("Tags");
+
+				// create post
+				ConsoleHeader("create post");
+				dynamic post = postFamily.CreateRecord(key: key);
+				post.Title = "My Second Cassandra Post";
+				post.Body = "Blah. Blah. Blah. about my second post on how great Cassandra is to work with.";
+				post.Author = "Nick Berardi";
+				post.PostedOn = DateTimeOffset.Now;
+
+				// create tags
+				ConsoleHeader("create post tags");
+				dynamic tags = tagsFamily.CreateRecord(key: key);
+				tags[0] = "Cassandra";
+				tags[1] = ".NET";
+				tags[2] = "Database";
+				tags[3] = "NoSQL";
+
+				// attach the post to the database
+				ConsoleHeader("attaching record");
+				db.Attach(post);
+				db.Attach(tags);
+
+				// save the changes
+				ConsoleHeader("saving changes");
+				db.SaveChanges();
+			}
+		}
+
 		#endregion
 
 		#region Read Post
 
-		private static void ReadPost()
+		private static void ReadFirstPost()
 		{
 			using (var db = new CassandraContext(keyspace: KeyspaceName, server: Server))
 			{
@@ -140,10 +176,46 @@ CREATE COLUMNFAMILY Posts (
 			}
 		}
 
+		private static void ReadAllPosts()
+		{
+			using (var db = new CassandraContext(keyspace: KeyspaceName, server: Server))
+			{
+				var key = "first-blog-post";
+
+				var tagsFamily = db.GetColumnFamily("Tags");
+
+				// get the post back from the database
+				ConsoleHeader("getting 'first-blog-post'");
+				var posts = db.ExecuteQuery("SELECT * FROM Posts LIMIT 25");
+				dynamic tags = (
+					from t in tagsFamily
+					where t.Key == key
+					select t).FirstOrDefault();
+
+				// show details
+				ConsoleHeader("showing post");
+				foreach (dynamic post in posts)
+				{
+					Console.WriteLine(
+						String.Format("=={0} by {1}==\n{2}",
+							post.Title,
+							post.Author,
+							post.Body
+						));
+				}
+
+				// show tags
+				ConsoleHeader("showing tags");
+				foreach (var tag in tags)
+					Console.WriteLine(String.Format("{0}:{1}", tag.ColumnName, tag.ColumnValue));
+			}
+		}
+
 		#endregion
 
 		#region Update Post
-		private static void UpdatePost()
+		
+		private static void UpdateFirstPost()
 		{
 			using (var db = new CassandraContext(keyspace: KeyspaceName, server: Server))
 			{
@@ -169,6 +241,7 @@ CREATE COLUMNFAMILY Posts (
 				db.SaveChanges();
 			}
 		}
+		
 		#endregion
 
 		#region Create Comments
@@ -261,13 +334,17 @@ CREATE COLUMNFAMILY Posts (
 		{
 			SetupKeyspace();
 
-			CreatePost();
+			CreateFirstPost();
 
-			ReadPost();
+			CreateSecondPost();
 
-			UpdatePost();
+			ReadFirstPost();
 
-			ReadPost();
+			ReadAllPosts();
+
+			UpdateFirstPost();
+
+			ReadFirstPost();
 
 			CreateComments();
 
