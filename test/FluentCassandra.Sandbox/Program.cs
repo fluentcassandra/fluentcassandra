@@ -182,6 +182,7 @@ CREATE COLUMNFAMILY Posts (
 			{
 				var key = "first-blog-post";
 
+				var postFamily = db.GetColumnFamily("Posts");
 				var tagsFamily = db.GetColumnFamily("Tags");
 
 				// get the post back from the database

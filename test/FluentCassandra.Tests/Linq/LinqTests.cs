@@ -58,6 +58,20 @@ namespace FluentCassandra.Linq
 		}
 
 		[Test]
+		public void LIMIT()
+		{
+			var expected = "SELECT * FROM Users LIMIT 25";
+
+			var query = (
+				from f in _family
+				select f).Take(25);
+
+			var actual = query.ToString();
+
+			AreEqual(expected, actual);
+		}
+
+		[Test]
 		public void SELECT_One_Column()
 		{
 			var expected = "SELECT Age FROM Users";

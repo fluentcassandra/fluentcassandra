@@ -25,11 +25,15 @@ namespace FluentCassandra.Linq
 				var select = Fields;
 				var from = _columnFamily;
 				var where = WhereCriteria;
+				var limit = LimitCount;
 
 				var query = String.Format("SELECT {0} \nFROM {1}", select, from);
 
 				if (!String.IsNullOrWhiteSpace(where))
 					query += " \nWHERE " + where;
+
+				if (limit > 0)
+					query += " \nLIMIT " + limit;
 
 				return query;
 			}
@@ -37,7 +41,9 @@ namespace FluentCassandra.Linq
 
 		private IList<string> FieldsArray { get; set; }
 
-		private string FirstCount { get; set; }
+		private int FirstCount { get; set; }
+
+		private int LimitCount { get; set; }
 
 		private string Fields
 		{
@@ -46,7 +52,7 @@ namespace FluentCassandra.Linq
 				var firstCount = FirstCount;
 				var query = "";
 
-				if (!String.IsNullOrWhiteSpace(firstCount))
+				if (firstCount > 0)
 					query += "FIRST " + firstCount;
 
 				if (query.Length > 0)
@@ -203,8 +209,18 @@ namespace FluentCassandra.Linq
 				AddCriteria(exp.Arguments[1]);
 			else if (exp.Method.Name == "Select")
 				AddField(SimplifyExpression(exp.Arguments[1]));
+			else if (exp.Method.Name == "Take")
+				SetLimit(exp.Arguments[1]);
 			else
 				throw new NotSupportedException("Method call to " + exp.Method.Name + " is not supported.");
+		}
+
+		private void SetLimit(Expression exp)
+		{
+			if (exp.NodeType == ExpressionType.Constant)
+			{
+				LimitCount = (int)((ConstantExpression)exp).Value;
+			}
 		}
 
 		private IEnumerable<CassandraObject> VisitSelectExpression(Expression exp)
