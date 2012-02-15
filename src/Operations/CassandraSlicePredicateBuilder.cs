@@ -32,11 +32,11 @@ namespace FluentCassandra.Operations
 			if (calls.ContainsKey("CountColumns") && !calls.ContainsKey("FetchKeys"))
 				throw new CassandraException("'CountColumns' must be used with the following query option: 'FetchKeys'");
 
-			if (calls.ContainsKey("FetchKeys") && (calls.ContainsKey("StartWithKey") || calls.ContainsKey("TakeUntilKey") || calls.ContainsKey("StartWithToken") || calls.ContainsKey("TakeUntilToken")))
-				throw new CassandraException("'FetchKeys' cannot be used with the following query options: 'StartWithKey', 'TakeUntilKey', 'StartWithToken', 'TakeUntilToken'");
+			if (calls.ContainsKey("FetchKeys") && (calls.ContainsKey("StartWithKey") || calls.ContainsKey("TakeUntilKey") || calls.ContainsKey("StartWithToken") || calls.ContainsKey("TakeUntilToken") || calls.ContainsKey("TakeKeys")))
+				throw new CassandraException("'FetchKeys' cannot be used with the following query options: 'TakeKeys', 'StartWithKey', 'TakeUntilKey', 'StartWithToken', 'TakeUntilToken'");
 
-			if (calls.ContainsKey("FetchColumns") && (calls.ContainsKey("StartWithColumn") || calls.ContainsKey("TakeUntilColumn") || calls.ContainsKey("ReverseColumns")))
-				throw new CassandraException("'FetchColumns' cannot be used with the following query options: 'StartWithColumn', 'TakeUntilColumn', 'ReverseColumns'");
+			if (calls.ContainsKey("FetchColumns") && (calls.ContainsKey("StartWithColumn") || calls.ContainsKey("TakeUntilColumn") || calls.ContainsKey("ReverseColumns") || calls.ContainsKey("TakeColumns")))
+				throw new CassandraException("'FetchColumns' cannot be used with the following query options: 'TakeColumns', 'StartWithColumn', 'TakeUntilColumn', 'ReverseColumns'");
 		}
 
 		private static CassandraQuerySetup BuildQuerySetup(IDictionary<string, object> calls)
@@ -88,7 +88,7 @@ namespace FluentCassandra.Operations
 				setup.SuperColumnName = (CassandraObject)superColumnName;
 
 			object indexClause;
-			if (calls.TryGetValue("ForSuperColumn", out indexClause))
+			if (calls.TryGetValue("Where", out indexClause))
 				setup.IndexClause = (Expression<Func<IFluentRecordExpression, bool>>)indexClause;
 
 			setup.Reverse = calls.ContainsKey("ReverseColumns");
@@ -161,8 +161,6 @@ namespace FluentCassandra.Operations
 					return new GetColumnFamilyRangeSlices(keyRange, predicate);
 				}
 			}
-
-			throw new CassandraException("Your opperation could not be executed.");
 		}
 
 		private static IDictionary<string, object> BuildCallDictionary(IDictionary<string, object> calls, Expression exp)

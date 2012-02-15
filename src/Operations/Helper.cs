@@ -156,41 +156,20 @@ namespace FluentCassandra.Operations
 				return null;
 		}
 
-		public static FluentSuperColumn ConvertSuperColumnToFluentCounterSuperColumn(CounterSuperColumn col, CassandraColumnFamilySchema schema = null)
-		{
-			var superColSchema = new CassandraColumnSchema {
-				Name = col.Name
-			};
-
-			if (schema != null)
-				superColSchema = new CassandraColumnSchema {
-					NameType = schema.SuperColumnNameType,
-					Name = col.Name,
-					ValueType = schema.ColumnNameType
-				};
-
-			var superCol = new FluentSuperColumn(superColSchema) {
-				ColumnName = CassandraObject.GetTypeFromDatabaseValue(col.Name, superColSchema.NameType)
-			};
-
-			foreach (var xcol in col.Columns)
-				superCol.Columns.Add(ConvertColumnToFluentCounterColumn(xcol, schema));
-
-			return superCol;
-		}
-
 		public static FluentCounterColumn ConvertColumnToFluentCounterColumn(CounterColumn col, CassandraColumnFamilySchema schema = null)
 		{
 			var colSchema = new CassandraColumnSchema();
 
 			if (schema != null)
 			{
-				colSchema = schema.Columns.Where(x => x.Name == col.Name).FirstOrDefault();
+				var name = CassandraObject.GetTypeFromDatabaseValue(col.Name, schema.ColumnNameType);
+				colSchema = schema.Columns.Where(x => x.Name == name).FirstOrDefault();
 
 				if (colSchema == null)
 				{
 					colSchema = new CassandraColumnSchema();
 					colSchema.NameType = schema.ColumnNameType;
+					colSchema.Name = name;
 					colSchema.ValueType = schema.DefaultColumnValueType;
 				}
 			}
@@ -209,12 +188,14 @@ namespace FluentCassandra.Operations
 
 			if (schema != null)
 			{
-				colSchema = schema.Columns.Where(x => x.Name == col.Name).FirstOrDefault();
+				var name = CassandraObject.GetTypeFromDatabaseValue(col.Name, schema.ColumnNameType);
+				colSchema = schema.Columns.Where(x => x.Name == name).FirstOrDefault();
 
 				if (colSchema == null)
 				{
 					colSchema = new CassandraColumnSchema();
 					colSchema.NameType = schema.ColumnNameType;
+					colSchema.Name = name;
 					colSchema.ValueType = schema.DefaultColumnValueType;
 				}
 			}
@@ -231,6 +212,29 @@ namespace FluentCassandra.Operations
 			return fcol;
 		}
 
+		public static FluentSuperColumn ConvertSuperColumnToFluentCounterSuperColumn(CounterSuperColumn col, CassandraColumnFamilySchema schema = null)
+		{
+			var superColSchema = new CassandraColumnSchema {
+				Name = col.Name
+			};
+
+			if (schema != null)
+				superColSchema = new CassandraColumnSchema {
+					NameType = schema.SuperColumnNameType,
+					Name = CassandraObject.GetTypeFromDatabaseValue(col.Name, schema.SuperColumnNameType),
+					ValueType = schema.ColumnNameType
+				};
+
+			var superCol = new FluentSuperColumn(superColSchema) {
+				ColumnName = CassandraObject.GetTypeFromDatabaseValue(col.Name, superColSchema.NameType)
+			};
+
+			foreach (var xcol in col.Columns)
+				superCol.Columns.Add(ConvertColumnToFluentCounterColumn(xcol, schema));
+
+			return superCol;
+		}
+
 		public static FluentSuperColumn ConvertSuperColumnToFluentSuperColumn(SuperColumn col, CassandraColumnFamilySchema schema = null)
 		{
 			var superColSchema = new CassandraColumnSchema {
@@ -240,7 +244,7 @@ namespace FluentCassandra.Operations
 			if (schema != null)
 				superColSchema = new CassandraColumnSchema {
 					NameType = schema.SuperColumnNameType,
-					Name = col.Name,
+					Name = CassandraObject.GetTypeFromDatabaseValue(col.Name, schema.SuperColumnNameType),
 					ValueType = schema.ColumnNameType
 				};
 

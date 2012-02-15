@@ -16,7 +16,6 @@ namespace FluentCassandra.Sandbox
 		{
 			using (var db = new CassandraContext(keyspace: KeyspaceName, server: Server))
 			{
-
 				if (db.KeyspaceExists(KeyspaceName))
 					db.DropKeyspace(KeyspaceName);
 
@@ -44,7 +43,7 @@ CREATE COLUMNFAMILY Posts (
 					FamilyName = "Comments",
 					FamilyType = ColumnType.Super,
 					KeyType = CassandraType.AsciiType,
-					SuperColumnNameType = CassandraType.TimeUUIDType,
+					SuperColumnNameType = CassandraType.DateType,
 					ColumnNameType = CassandraType.UTF8Type,
 					DefaultColumnValueType = CassandraType.UTF8Type
 				});

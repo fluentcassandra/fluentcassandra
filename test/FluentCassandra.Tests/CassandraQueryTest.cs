@@ -61,7 +61,7 @@ namespace FluentCassandra
 			var expected = Math.PI;
 
 			// act
-			var actual = _family.Get(_testKey).FetchColumns("Test1").TakeColumns(2).FirstOrDefault().AsDynamic();
+			var actual = _family.Get(_testKey).StartWithColumn("Test1").TakeColumns(2).FirstOrDefault().AsDynamic();
 
 			// assert
 			Assert.AreEqual(expected, (double)actual.Test1);
@@ -75,7 +75,7 @@ namespace FluentCassandra
 			var expected = Math.PI;
 
 			// act
-			var actual = _family.Get(_testKey).FetchColumns("Test1").TakeUntilColumn("Test2").FirstOrDefault().AsDynamic();
+			var actual = _family.Get(_testKey).StartWithColumn("Test1").TakeUntilColumn("Test2").FirstOrDefault().AsDynamic();
 
 			// assert
 			Assert.AreEqual(expected, (double)actual.Test1);
