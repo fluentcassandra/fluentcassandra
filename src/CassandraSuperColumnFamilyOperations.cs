@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using FluentCassandra.Types;
 using FluentCassandra.Operations;
-using System.Linq.Expressions;
+using FluentCassandra.Types;
 
 namespace FluentCassandra
 {
@@ -70,7 +69,7 @@ namespace FluentCassandra
 
 		#region AddColumn
 
-		public static void InsertColumn(this CassandraSuperColumnFamily family, CassandraObject key, CassandraObject superColumnName, CassandraObject columnName, long columnValue)
+		public static void InsertCounterColumn(this CassandraSuperColumnFamily family, CassandraObject key, CassandraObject superColumnName, CassandraObject columnName, long columnValue)
 		{
 			var op = new AddColumn(key, superColumnName, columnName, columnValue);
 			family.ExecuteOperation(op);

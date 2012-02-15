@@ -139,7 +139,7 @@ namespace FluentCassandra
 		/// <returns></returns>
 		public FluentColumnPath GetPath()
 		{
-			return new FluentColumnPath(this, null, null);
+			return new FluentColumnPath(this, null, (FluentColumn)null);
 		}
 
 		/// <summary>

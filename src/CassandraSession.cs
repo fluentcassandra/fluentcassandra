@@ -137,12 +137,14 @@ namespace FluentCassandra
 		/// <returns></returns>
 		public TResult ExecuteOperation<TResult>(Operation<TResult> action, bool? throwOnError = null)
 		{
+			if (WasDisposed)
+				throw new ObjectDisposedException(GetType().FullName);
+
 			if (!throwOnError.HasValue)
 				throwOnError = ThrowErrors;
 
-			action.Session = this;
-
 			LastError = null;
+			action.Session = this;
 
 			TResult result;
 			bool success = action.TryExecute(out result);

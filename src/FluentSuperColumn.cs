@@ -153,7 +153,7 @@ namespace FluentCassandra
 		/// <returns></returns>
 		public FluentColumnPath GetPath()
 		{
-			return new FluentColumnPath(Family, this, null);
+			return new FluentColumnPath(Family, this, (FluentColumn)null);
 		}
 
 		/// <summary>

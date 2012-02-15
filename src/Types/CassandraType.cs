@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Numerics;
 
 namespace FluentCassandra.Types
@@ -22,6 +20,7 @@ namespace FluentCassandra.Types
 		public static readonly CassandraType TimeUUIDType = new CassandraType("org.apache.cassandra.db.marshal.TimeUUIDType");
 		public static readonly CassandraType UTF8Type = new CassandraType("org.apache.cassandra.db.marshal.UTF8Type");
 		public static readonly CassandraType UUIDType = new CassandraType("org.apache.cassandra.db.marshal.UUIDType");
+		public static readonly CassandraType ColumnCounterType = new CassandraType("org.apache.cassandra.db.marshal.ColumnCounterType");
 
 		private readonly string _dbType;
 		private Type _type;

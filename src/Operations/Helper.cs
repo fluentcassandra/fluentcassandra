@@ -146,11 +146,58 @@ namespace FluentCassandra.Operations
 			else if (col.Column != null)
 				return ConvertColumnToFluentColumn(col.Column, schema);
 			else if (col.Counter_super_column != null)
-				throw new NotSupportedException("Reading CounterSuperColumns isn't supported yet.");
+				return ConvertColumnToFluentCounterColumn(col.Counter_column, schema);
 			else if (col.Counter_column != null)
-				throw new NotSupportedException("Reading CounterSuperColumns isn't supported yet.");
+				return ConvertSuperColumnToFluentCounterSuperColumn(col.Counter_super_column, schema);
 			else
 				return null;
+		}
+
+		public static FluentSuperColumn ConvertSuperColumnToFluentCounterSuperColumn(CounterSuperColumn col, CassandraColumnFamilySchema schema = null)
+		{
+			var superColSchema = new CassandraColumnSchema {
+				Name = col.Name
+			};
+
+			if (schema != null)
+				superColSchema = new CassandraColumnSchema {
+					NameType = schema.SuperColumnNameType,
+					Name = col.Name,
+					ValueType = schema.ColumnNameType
+				};
+
+			var superCol = new FluentSuperColumn(superColSchema) {
+				ColumnName = CassandraObject.GetTypeFromDatabaseValue(col.Name, superColSchema.NameType)
+			};
+
+			foreach (var xcol in col.Columns)
+				superCol.Columns.Add(ConvertColumnToFluentCounterColumn(xcol, schema));
+
+			return superCol;
+		}
+
+		public static FluentCounterColumn ConvertColumnToFluentCounterColumn(CounterColumn col, CassandraColumnFamilySchema schema = null)
+		{
+			var colSchema = new CassandraColumnSchema();
+
+			if (schema != null)
+			{
+				colSchema = schema.Columns.Where(x => x.Name == col.Name).FirstOrDefault();
+
+				if (colSchema == null)
+				{
+					colSchema = new CassandraColumnSchema();
+					colSchema.NameType = schema.ColumnNameType;
+					colSchema.ValueType = schema.DefaultColumnValueType;
+				}
+			}
+
+			var fcol = new FluentCounterColumn(colSchema) {
+				ColumnName = CassandraObject.GetTypeFromDatabaseValue(col.Name, colSchema.NameType),
+				ColumnValue = col.Value
+			};
+
+			return fcol;
 		}
 
 		public static FluentColumn ConvertColumnToFluentColumn(Column col, CassandraColumnFamilySchema schema = null)

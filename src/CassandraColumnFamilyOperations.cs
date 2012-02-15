@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using FluentCassandra.Types;
-using FluentCassandra.Operations;
 using System.Linq.Expressions;
 using FluentCassandra.Linq;
+using FluentCassandra.Operations;
+using FluentCassandra.Types;
 
 namespace FluentCassandra
 {
@@ -58,7 +58,7 @@ namespace FluentCassandra
 
 		#region AddColumn
 
-		public static void InsertColumn(this CassandraColumnFamily family, CassandraObject key, CassandraObject columnName, long columnValue)
+		public static void InsertCounterColumn(this CassandraColumnFamily family, CassandraObject key, CassandraObject columnName, long columnValue)
 		{
 			var op = new AddColumn(key, columnName, columnValue);
 			family.ExecuteOperation(op);
