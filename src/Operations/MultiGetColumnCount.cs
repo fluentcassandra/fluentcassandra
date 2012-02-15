@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using FluentCassandra.Types;
-using Apache.Cassandra;
 
 namespace FluentCassandra.Operations
 {

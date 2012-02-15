@@ -6,10 +6,6 @@ namespace FluentCassandra.Operations
 {
 	public class GetColumnFamilyRangeSlices : QueryableColumnFamilyOperation<FluentColumnFamily>
 	{
-		/*
-		 * list<KeySlice> get_range_slices(keyspace, column_parent, predicate, range, consistency_level)
-		 */
-
 		public CassandraKeyRange KeyRange { get; private set; }
 
 		public override IEnumerable<FluentColumnFamily> Execute()

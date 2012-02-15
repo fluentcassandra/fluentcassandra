@@ -40,7 +40,7 @@ namespace FluentCassandra.Operations
 			// act
 			var columns = _family
 				.Get(new BytesType[] { _testKey, _testKey2 })
-				.Fetch(new AsciiType[] { "Test1", "Test2" })
+				.FetchColumns(new AsciiType[] { "Test1", "Test2" })
 				.Execute();
 
 			// assert
@@ -57,7 +57,7 @@ namespace FluentCassandra.Operations
 			var columns = _superFamily
 				.Get(new BytesType[] { _testKey, _testKey2 })
 				.ForSuperColumn(_testSuperName)
-				.Fetch(new AsciiType[] { "Test1", "Test2" })
+				.FetchColumns(new AsciiType[] { "Test1", "Test2" })
 				.Execute();
 
 			// assert
@@ -73,7 +73,7 @@ namespace FluentCassandra.Operations
 			// act
 			var columns = _superFamily
 				.Get(new BytesType[] { _testKey, _testKey2 })
-				.Fetch(new AsciiType[] { _testSuperName })
+				.FetchColumns(new AsciiType[] { _testSuperName })
 				.Execute();
 
 			// assert
@@ -89,8 +89,8 @@ namespace FluentCassandra.Operations
 			// act
 			var columns = _family
 				.Get(new BytesType[] { _testKey, _testKey2 })
-				.Fetch(_testName)
-				.Take(2)
+				.FetchColumns(_testName)
+				.TakeColumns(2)
 				.Execute();
 
 			// assert
@@ -106,8 +106,8 @@ namespace FluentCassandra.Operations
 			// act
 			var columns = _superFamily.Get(new BytesType[] { _testKey, _testKey2 })
 				.ForSuperColumn(_testSuperName)
-				.Fetch(_testName)
-				.Take(2)
+				.FetchColumns(_testName)
+				.TakeColumns(2)
 				.Execute();
 
 			// assert
@@ -123,8 +123,8 @@ namespace FluentCassandra.Operations
 			// act
 			var columns = _superFamily
 				.Get(new BytesType[] { _testKey, _testKey2 })
-				.Fetch(_testSuperName)
-				.Take(1)
+				.FetchColumns(_testSuperName)
+				.TakeColumns(1)
 				.Execute();
 
 			// assert

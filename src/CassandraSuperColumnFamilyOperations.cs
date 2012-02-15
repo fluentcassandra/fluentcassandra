@@ -168,22 +168,14 @@ namespace FluentCassandra
 
 		// queryable
 
-		public static ICassandraQueryable<FluentSuperColumnFamily, CassandraObject> Get(this CassandraSuperColumnFamily family, params CassandraObject[] keys)
+		public static CassandraSlicePredicateQuery<FluentSuperColumnFamily> Get(this CassandraSuperColumnFamily family)
 		{
-			var setup = new CassandraQuerySetup<FluentSuperColumnFamily, CassandraObject> {
-				Keys = keys,
-				CreateQueryOperation = (x, slice) => new MultiGetSuperColumnFamilySlice(x.Keys, x.SuperColumnName, slice)
-			};
-			return ((ICassandraQueryProvider)family).CreateQuery(setup, null);
+			return family.CreateCassandraSlicePredicateQuery<FluentSuperColumnFamily>(null);
 		}
 
-		public static ICassandraQueryable<FluentSuperColumnFamily, CassandraObject> Get(this CassandraSuperColumnFamily family, CassandraObject startKey, CassandraObject endKey, string startToken, string endToken, int keyCount)
+		public static CassandraSlicePredicateQuery<FluentSuperColumnFamily> Get(this CassandraSuperColumnFamily family, params CassandraObject[] keys)
 		{
-			var setup = new CassandraQuerySetup<FluentSuperColumnFamily, CassandraObject> {
-				KeyRange = new CassandraKeyRange(startKey, endKey, startToken, endToken, keyCount),
-				CreateQueryOperation = (x, slice) => new GetSuperColumnFamilyRangeSlices(x.KeyRange, x.SuperColumnName, slice)
-			};
-			return ((ICassandraQueryProvider)family).CreateQuery(setup, null);
+			return Get(family).FetchKeys(keys);
 		}
 
 		#endregion

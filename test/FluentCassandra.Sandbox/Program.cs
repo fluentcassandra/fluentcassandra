@@ -182,16 +182,12 @@ CREATE COLUMNFAMILY Posts (
 			{
 				var key = "first-blog-post";
 
-				var postFamily = db.GetColumnFamily("Posts");
 				var tagsFamily = db.GetColumnFamily("Tags");
 
 				// get the post back from the database
 				ConsoleHeader("getting 'first-blog-post'");
 				var posts = db.ExecuteQuery("SELECT * FROM Posts LIMIT 25");
-				dynamic tags = (
-					from t in tagsFamily
-					where t.Key == key
-					select t).FirstOrDefault();
+				dynamic tags = tagsFamily.Get(key).FirstOrDefault();
 
 				// show details
 				ConsoleHeader("showing post");
@@ -307,9 +303,9 @@ CREATE COLUMNFAMILY Posts (
 					ConsoleHeader("showing page " + page + " of comments starting at " + lastDate.ToLocalTime());
 
 					var comments = commentsFamily.Get(key)
-						.Reverse()
-						.Fetch(lastDate)
-						.Take(3)
+						.ReverseColumns()
+						.StartWithColumn(lastDate)
+						.TakeColumns(3)
 						.FirstOrDefault();
 
 					foreach (dynamic comment in comments)

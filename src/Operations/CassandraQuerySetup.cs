@@ -2,23 +2,21 @@
 using System.Collections.Generic;
 using System.Linq;
 using FluentCassandra.Types;
+using System.Linq.Expressions;
 
 namespace FluentCassandra.Operations
 {
-	public class CassandraQuerySetup
+	internal class CassandraQuerySetup
 	{
-		public CassandraObject Key
+		public CassandraQuerySetup()
 		{
-			get
-			{
-				if (Keys != null)
-					return Keys.FirstOrDefault();
+			Reverse = false;
 
-				if (KeyRange != null)
-					return KeyRange.StartKey;
+			KeyCount = 100;
+			ColumnCount = 100;
 
-				return new byte[0];
-			}
+			Keys = new CassandraObject[0];
+			Columns = new CassandraObject[0];
 		}
 
 		public IEnumerable<CassandraObject> Keys
@@ -27,7 +25,7 @@ namespace FluentCassandra.Operations
 			internal set;
 		}
 
-		public CassandraKeyRange KeyRange
+		public IEnumerable<CassandraObject> Columns
 		{
 			get;
 			internal set;
@@ -39,17 +37,61 @@ namespace FluentCassandra.Operations
 			internal set;
 		}
 
-		public CassandraIndexClause IndexClause
+		public int KeyCount
 		{
 			get;
 			internal set;
 		}
-	}
-	
-	public class CassandraQuerySetup<TResult, CompareWith> : CassandraQuerySetup
-		where CompareWith : CassandraObject
-	{
-		public Func<CassandraQuerySetup, CassandraSlicePredicate, QueryableColumnFamilyOperation<TResult>> CreateQueryOperation
+
+		public int ColumnCount
+		{
+			get;
+			internal set;
+		}
+
+		public CassandraObject StartKey
+		{
+			get;
+			internal set;
+		}
+
+		public CassandraObject EndKey
+		{
+			get;
+			internal set;
+		}
+
+		public CassandraObject StartColumn
+		{
+			get;
+			internal set;
+		}
+
+		public CassandraObject EndColumn
+		{
+			get;
+			internal set;
+		}
+
+		public string StartToken
+		{
+			get;
+			internal set;
+		}
+
+		public string EndToken
+		{
+			get;
+			internal set;
+		}
+
+		public bool Reverse
+		{
+			get;
+			internal set;
+		}
+
+		public Expression<Func<IFluentRecordExpression, bool>> IndexClause
 		{
 			get;
 			internal set;

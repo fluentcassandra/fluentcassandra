@@ -8,78 +8,161 @@ namespace FluentCassandra.Operations
 {
 	internal static class CassandraSlicePredicateBuilder
 	{
-		public static QueryableColumnFamilyOperation<TResult> BuildQueryableOperation<TResult, CompareWith>(this ICassandraQueryable<TResult, CompareWith> source)
-			where CompareWith : CassandraObject
-		{
-			return BuildOperation<QueryableColumnFamilyOperation<TResult>>(source, source.Setup.CreateQueryOperation);
-		}
-
-		public static ColumnFamilyOperation<TResult> BuildOperation<TResult>(this ICassandraQueryable source, Func<CassandraQuerySetup, CassandraSlicePredicate, ColumnFamilyOperation<TResult>> createOp)
-		{
-			return BuildOperation<ColumnFamilyOperation<TResult>>(source, createOp);
-		}
-
-		private static TOperation BuildOperation<TOperation>(this ICassandraQueryable source, Func<CassandraQuerySetup, CassandraSlicePredicate, TOperation> createOp)
+		public static object BuildQueryableOperation<TResult>(this CassandraSlicePredicateQuery<TResult> source)
 		{
 			if (source == null)
 				throw new ArgumentNullException("source");
 
 			var calls = BuildCallDictionary(new Dictionary<string, object>(), source.Expression);
+			
+			DoPreCheck(calls);
 
-			var predicate = BuildPredicateFromExpression(source.Setup, calls);
-			var operation = createOp(source.Setup, predicate);
+			var setup = BuildQuerySetup(calls);
+			var predicate = BuildSlicePredicate(setup);
+			var operation = BuildOperation<TResult>(setup, predicate, calls);
 
 			return operation;
 		}
 
-		private static CassandraSlicePredicate BuildPredicateFromExpression(CassandraQuerySetup setup, IDictionary<string, object> calls)
+		private static void DoPreCheck(IDictionary<string, object> calls)
 		{
-			object fetch, take, takeUntil, superColumnName;
+			if (calls.ContainsKey("CountColumnsByKey") && !calls.ContainsKey("FetchKeys"))
+				throw new CassandraException("'CountColumnsByKey' must be used with the following query option: 'FetchKeys'");
 
-			if (!calls.TryGetValue("Fetch", out fetch))
-				fetch = new CassandraObject[0];
+			if (calls.ContainsKey("CountColumns") && !calls.ContainsKey("FetchKeys"))
+				throw new CassandraException("'CountColumns' must be used with the following query option: 'FetchKeys'");
 
-			var columns = (CassandraObject[])fetch;
-			CassandraRangeSlicePredicate predicate;
+			if (calls.ContainsKey("FetchKeys") && (calls.ContainsKey("StartWithKey") || calls.ContainsKey("TakeUntilKey") || calls.ContainsKey("StartWithToken") || calls.ContainsKey("TakeUntilToken")))
+				throw new CassandraException("'FetchKeys' cannot be used with the following query options: 'StartWithKey', 'TakeUntilKey', 'StartWithToken', 'TakeUntilToken'");
 
-			if (columns.Length > 1)
-			{
-				if (calls.Keys.Where(x => x != "Fetch" && x != "ForSuperColumn").Count() > 0)
-					throw new CassandraException("A multi column fetch cannot be used with the following query options: " + String.Join(", ", calls.Keys.Where(x => x != "Fetch" && x != "ForSuperColumn")));
+			if (calls.ContainsKey("FetchColumns") && (calls.ContainsKey("StartWithColumn") || calls.ContainsKey("TakeUntilColumn") || calls.ContainsKey("ReverseColumns")))
+				throw new CassandraException("'FetchColumns' cannot be used with the following query options: 'StartWithColumn', 'TakeUntilColumn', 'ReverseColumns'");
+		}
 
-				return new CassandraColumnSlicePredicate(columns);
-			}
-			else if (columns.Length == 1)
-			{
-				if (calls.Keys.Where(x => x != "Fetch" && x != "ForSuperColumn").Count() == 0)
-					return new CassandraColumnSlicePredicate(columns);
+		private static CassandraQuerySetup BuildQuerySetup(IDictionary<string, object> calls)
+		{
+			var setup = new CassandraQuerySetup();
 
-				predicate = new CassandraRangeSlicePredicate(columns[0], null);
-			}
-			else
-			{
-				predicate = new CassandraRangeSlicePredicate(null, null);
-			}
+			object keyCount;
+			if (calls.TryGetValue("TakeKeys", out keyCount))
+				setup.KeyCount = (int)keyCount;
 
-			if (calls.TryGetValue("Take", out take))
-			{
-				int count = (int)take;
-				predicate.Count = count;
-			}
+			object columnCount;
+			if (calls.TryGetValue("TakeColumns", out columnCount))
+				setup.ColumnCount = (int)columnCount;
 
-			if (calls.TryGetValue("TakeUntil", out takeUntil))
-			{
-				CassandraObject column = (CassandraObject)takeUntil;
-				predicate.Finish = column;
-			}
+			object keys;
+			if (calls.TryGetValue("FetchKeys", out keys))
+				setup.Keys = (CassandraObject[])keys;
 
-			if (calls.ContainsKey("Reverse"))
-				predicate.Reversed = true;
+			object columns;
+			if (calls.TryGetValue("FetchColumns", out columns))
+				setup.Columns = (CassandraObject[])columns;
 
+			object startKey;
+			if (calls.TryGetValue("StartWithKey", out startKey))
+				setup.StartKey = (CassandraObject)startKey;
+
+			object endKey;
+			if (calls.TryGetValue("TakeUntilKey", out endKey))
+				setup.EndKey = (CassandraObject)endKey;
+
+			object startColumn;
+			if (calls.TryGetValue("StartWithColumn", out startColumn))
+				setup.StartColumn = (CassandraObject)startColumn;
+
+			object endColumn;
+			if (calls.TryGetValue("TakeUntilColumn", out endColumn))
+				setup.EndColumn = (CassandraObject)endColumn;
+
+			object startToken;
+			if (calls.TryGetValue("StartWithToken", out startToken))
+				setup.StartToken = (string)startToken;
+
+			object endToken;
+			if (calls.TryGetValue("TakeUntilToken", out endToken))
+				setup.EndToken = (string)endToken;
+
+			object superColumnName;
 			if (calls.TryGetValue("ForSuperColumn", out superColumnName))
 				setup.SuperColumnName = (CassandraObject)superColumnName;
 
-			return predicate;
+			object indexClause;
+			if (calls.TryGetValue("ForSuperColumn", out indexClause))
+				setup.IndexClause = (Expression<Func<IFluentRecordExpression, bool>>)indexClause;
+
+			setup.Reverse = calls.ContainsKey("ReverseColumns");
+
+			if (calls.ContainsKey("CountColumnsByKey") && setup.Columns.Count() > 0)
+				throw new CassandraException("'FetchKeys' must contain at least one key when being used with 'CountColumnsByKey'");
+
+			if (calls.ContainsKey("CountColumns") && setup.Columns.Count() > 1)
+				throw new CassandraException("'FetchKeys' must contain only one key when being used with 'CountColumns'");
+
+			return setup;
+		}
+
+		private static CassandraSlicePredicate BuildSlicePredicate(CassandraQuerySetup setup)
+		{
+			if (setup.Columns.Count() > 0)
+				return new CassandraColumnSlicePredicate(setup.Columns);
+
+			return new CassandraRangeSlicePredicate(
+				setup.StartColumn,
+				setup.EndColumn,
+				setup.Reverse,
+				setup.ColumnCount);
+		}
+
+		private static object BuildOperation<TResult>(CassandraQuerySetup setup, CassandraSlicePredicate predicate, IDictionary<string, object> calls)
+		{
+			if (calls.ContainsKey("CountColumnsByKey"))
+				return new MultiGetColumnCount(setup.Keys, setup.SuperColumnName, predicate);
+
+			if (calls.ContainsKey("CountColumns"))
+				return new ColumnCount(setup.Keys.First(), setup.SuperColumnName, predicate);
+
+			var forSuperColumn = typeof(TResult) == typeof(FluentSuperColumnFamily);
+
+			if (!forSuperColumn && setup.SuperColumnName != null)
+				throw new CassandraException("'ForSuperColumn' can only be used on a super column family.");
+
+			if (forSuperColumn)
+			{
+				if (setup.IndexClause != null)
+				{
+					var indexClause = new CassandraIndexClause(setup.StartKey, setup.ColumnCount, setup.IndexClause);
+					return new GetSuperColumnFamilyIndexedSlices(indexClause, predicate);
+				}
+				else if (setup.Keys.Count() > 0)
+				{
+					return new MultiGetSuperColumnFamilySlice(setup.Keys, setup.SuperColumnName, predicate);
+				}
+				else
+				{
+					var keyRange = new CassandraKeyRange(setup.StartKey, setup.EndKey, setup.StartToken, setup.EndToken, setup.KeyCount);
+					return new GetSuperColumnFamilyRangeSlices(keyRange, setup.SuperColumnName, predicate);
+				}
+			}
+			else
+			{
+				if (setup.IndexClause != null)
+				{
+					var indexClause = new CassandraIndexClause(setup.StartKey, setup.ColumnCount, setup.IndexClause);
+					return new GetColumnFamilyIndexedSlices(indexClause, predicate);
+				}
+				else if (setup.Keys.Count() > 0)
+				{
+					return new MultiGetColumnFamilySlice(setup.Keys, predicate);
+				}
+				else
+				{
+					var keyRange = new CassandraKeyRange(setup.StartKey, setup.EndKey, setup.StartToken, setup.EndToken, setup.KeyCount);
+					return new GetColumnFamilyRangeSlices(keyRange, predicate);
+				}
+			}
+
+			throw new CassandraException("Your opperation could not be executed.");
 		}
 
 		private static IDictionary<string, object> BuildCallDictionary(IDictionary<string, object> calls, Expression exp)
@@ -103,14 +186,24 @@ namespace FluentCassandra.Operations
 
 			switch (exp.Method.Name)
 			{
-				case "Fetch":
-				case "Take":
-				case "TakeUntil":
+				case "TakeKeys":
+				case "TakeColumns":
+				case "FetchKeys":
+				case "FetchColumns":
+				case "StartWithKey":
+				case "TakeUntilKey":
+				case "StartWithToken":
+				case "TakeUntilToken":
+				case "StartWithColumn":
+				case "TakeUntilColumn":
 				case "ForSuperColumn":
+				case "Where":
 					calls.Add(exp.Method.Name, ((ConstantExpression)exp.Arguments[1]).Value);
 					break;
 
-				case "Reverse":
+				case "ReverseColumns":
+				case "CountColumns":
+				case "CountColumnsByKey":
 					calls.Add(exp.Method.Name, null);
 					break;
 

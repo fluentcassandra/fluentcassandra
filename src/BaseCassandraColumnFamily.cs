@@ -8,7 +8,7 @@ using FluentCassandra.Types;
 namespace FluentCassandra
 {
 	/// <seealso href="http://wiki.apache.org/cassandra/API"/>
-	public abstract class BaseCassandraColumnFamily : ICassandraQueryProvider
+	public abstract class BaseCassandraColumnFamily
 	{
 		private CassandraContext _context;
 
@@ -134,26 +134,16 @@ namespace FluentCassandra
 			}
 		}
 
-		#region ICassandraQueryProvider Members
-
-		ICassandraQueryable<TResult, CompareWith> ICassandraQueryProvider.CreateQuery<TResult, CompareWith>(CassandraQuerySetup<TResult, CompareWith> setup, Expression expression) 
+		public CassandraSlicePredicateQuery<TResult> CreateCassandraSlicePredicateQuery<TResult>(Expression expression) 
 		{
-			return new CassandraSlicePredicateQuery<TResult, CompareWith>(setup, this, expression);
+			return new CassandraSlicePredicateQuery<TResult>(this, expression);
 		}
 
-		IEnumerable<TResult> ICassandraQueryProvider.ExecuteQuery<TResult, CompareWith>(ICassandraQueryable<TResult, CompareWith> query)
+		public IEnumerable<TResult> ExecuteCassandraSlicePredicateQuery<TResult>(CassandraSlicePredicateQuery<TResult> query)
 		{
 			var op = query.BuildQueryableOperation();
-			return ExecuteOperation(op, true);
+			return ExecuteOperation((QueryableColumnFamilyOperation<TResult>)op);
 		}
-
-		TResult ICassandraQueryProvider.Execute<TResult>(ICassandraQueryable query, Func<CassandraQuerySetup, CassandraSlicePredicate, ColumnFamilyOperation<TResult>> createOp)
-		{
-			var op = query.BuildOperation<TResult>(createOp);
-			return ExecuteOperation(op, true);
-		}
-
-		#endregion
 
 		public override string ToString()
 		{

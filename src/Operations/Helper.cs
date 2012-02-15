@@ -17,6 +17,9 @@ namespace FluentCassandra.Operations
 
 		public static KeyRange CreateKeyRange(CassandraKeyRange range)
 		{
+			if (range.StartKey == null && range.EndKey == null && range.StartToken == null && range.EndToken == null)
+				range = new CassandraKeyRange("", "", null, null, range.Count);
+
 			return new KeyRange {
 				Start_key = range.StartKey.TryToBigEndian(),
 				End_key = range.EndKey.TryToBigEndian(),

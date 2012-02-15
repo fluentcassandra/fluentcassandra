@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
 using FluentCassandra.Linq;
 using FluentCassandra.Operations;
 using FluentCassandra.Types;
@@ -118,31 +117,14 @@ namespace FluentCassandra
 
 		// queryable
 
-		public static ICassandraQueryable<FluentColumnFamily, CassandraObject> Get(this CassandraColumnFamily family, params CassandraObject[] keys)
+		public static CassandraSlicePredicateQuery<FluentColumnFamily> Get(this CassandraColumnFamily family)
 		{
-			var setup = new CassandraQuerySetup<FluentColumnFamily, CassandraObject> {
-				Keys = keys,
-				CreateQueryOperation = (s, slice) => new MultiGetColumnFamilySlice(s.Keys, slice)
-			};
-			return ((ICassandraQueryProvider)family).CreateQuery(setup, null);
+			return family.CreateCassandraSlicePredicateQuery<FluentColumnFamily>(null);
 		}
 
-		public static ICassandraQueryable<FluentColumnFamily, CassandraObject> Get(this CassandraColumnFamily family, CassandraObject startKey, CassandraObject endKey, string startToken, string endToken, int keyCount)
+		public static CassandraSlicePredicateQuery<FluentColumnFamily> Get(this CassandraColumnFamily family, params CassandraObject[] keys)
 		{
-			var setup = new CassandraQuerySetup<FluentColumnFamily, CassandraObject> {
-				KeyRange = new CassandraKeyRange(startKey, endKey, startToken, endToken, keyCount),
-				CreateQueryOperation = (s, slice) => new GetColumnFamilyRangeSlices(s.KeyRange, slice)
-			};
-			return ((ICassandraQueryProvider)family).CreateQuery(setup, null);
-		}
-
-		public static ICassandraQueryable<FluentColumnFamily, CassandraObject> Get(this CassandraColumnFamily family, CassandraObject startKey, int keyCount, Expression<Func<IFluentRecordExpression, bool>> expression)
-		{
-			var setup = new CassandraQuerySetup<FluentColumnFamily, CassandraObject> {
-				IndexClause = new CassandraIndexClause(startKey, keyCount, expression),
-				CreateQueryOperation = (s, slice) => new GetColumnFamilyIndexedSlices(s.IndexClause, slice)
-			};
-			return ((ICassandraQueryProvider)family).CreateQuery(setup, null);
+			return Get(family).FetchKeys(keys);
 		}
 
 		#endregion

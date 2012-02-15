@@ -14,11 +14,8 @@ namespace FluentCassandra.Operations
 		}
 
 		public CassandraObject Start { get; private set; }
-
 		public CassandraObject Finish { get; internal set; }
-
 		public bool Reversed { get; internal set; }
-
 		public int Count { get; internal set; }
 	}
 }

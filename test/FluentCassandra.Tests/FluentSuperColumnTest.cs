@@ -69,7 +69,7 @@ namespace FluentCassandra
 
 			// assert
 			Assert.AreEqual(colName, (string)actual.Name);
-			//Assert.AreEqual(2, actual.Columns.Count);
+			//Assert.AreEqual(2, actual.Columns.CountColumns);
 			Assert.AreEqual(colValue1, (decimal)actual.Test1);
 			Assert.AreEqual(colValue1, (decimal)actual[col1]);
 			Assert.AreEqual(colValue2, (string)actual.Test2);
