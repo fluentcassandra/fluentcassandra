@@ -7,9 +7,9 @@ namespace FluentCassandra.Types
 {
 	internal class DynamicCompositeTypeConverter : CassandraObjectConverter<List<CassandraObject>>
 	{
-		private readonly IDictionary<char, Type> _aliases;
+		private readonly IDictionary<char, CassandraType> _aliases;
 
-		public DynamicCompositeTypeConverter(IDictionary<char, Type> aliases)
+		public DynamicCompositeTypeConverter(IDictionary<char, CassandraType> aliases)
 		{
 			this._aliases = aliases;
 		}
@@ -88,7 +88,7 @@ namespace FluentCassandra.Types
 
 						// comparator part
 						bytes.WriteByte((byte)1);
-						bytes.WriteByte((byte)_aliases.FirstOrDefault(x => x.Value == c.GetType()).Key);
+						bytes.WriteByte((byte)_aliases.FirstOrDefault(x => x.Value.FluentType == c.GetType()).Key);
 
 						// value length
 						bytes.Write(BitConverter.GetBytes(length), 0, 2);

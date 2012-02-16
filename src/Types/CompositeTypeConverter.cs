@@ -139,12 +139,12 @@ namespace FluentCassandra.Types
 			return FromBigEndian(value, null);
 		}
 
-		public List<CassandraObject> FromBigEndian(byte[] value, List<Type> hints)
+		public List<CassandraObject> FromBigEndian(byte[] value, List<CassandraType> hints)
 		{
 			var components = new List<CassandraObject>();
 			var hintIndex = 0;
 
-			hints = hints ?? new List<Type>();
+			hints = hints ?? new List<CassandraType>();
 
 			using (var bytes = new MemoryStream(value))
 			{
@@ -158,7 +158,7 @@ namespace FluentCassandra.Types
 					// value
 					var length = BitConverter.ToUInt16(ConvertEndian(byteLength), 0);
 					var buffer = new byte[length];
-					var typeHint = (hints.Count >= (hintIndex + 1)) ? hints[hintIndex++] : typeof(BytesType);
+					var typeHint = (hints.Count >= (hintIndex + 1)) ? hints[hintIndex++] : CassandraType.BytesType;
 					bytes.Read(buffer, 0, length);
 
 					var component = CassandraObject.GetTypeFromDatabaseValue(buffer, typeHint);

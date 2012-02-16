@@ -97,7 +97,7 @@ namespace FluentCassandra.Types
 
 			// act
 			var actual = new CompositeType();
-			actual.ComponentTypeHints = _compositeType.Select(t => t.GetType()).ToList();
+			actual.ComponentTypeHints = _compositeType.Select(t => new CassandraType(t.GetType().Name)).ToList();
 			actual.SetValueFromBigEndian(_javaByteOrder);
 
 			// assert

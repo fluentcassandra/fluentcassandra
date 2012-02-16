@@ -2,6 +2,7 @@
 using System.Linq;
 using FluentCassandra.Connections;
 using FluentCassandra.Types;
+using System.Collections.Generic;
 
 namespace FluentCassandra
 {
@@ -71,8 +72,14 @@ namespace FluentCassandra
 				keyspace.TryCreateColumnFamily<TimeUUIDType>("StandardTimeUUIDType");
 				keyspace.TryCreateColumnFamily<UTF8Type>("StandardUTF8Type");
 				keyspace.TryCreateColumnFamily<UUIDType>("StandardUUIDType");
-				keyspace.TryCreateColumnFamily<CompositeType<LongType, UTF8Type>>("StandardCompositeType");
-				keyspace.TryCreateColumnFamily<DynamicCompositeType>("StandardDynamicCompositeType");
+				keyspace.TryCreateColumnFamily(new CassandraColumnFamilySchema {
+					FamilyName = "StandardCompositeType",
+					ColumnNameType = CassandraType.CompositeType(new[] { CassandraType.AsciiType, CassandraType.DoubleType })
+				});
+				keyspace.TryCreateColumnFamily(new CassandraColumnFamilySchema {
+					FamilyName = "StandardDynamicCompositeType",
+					ColumnNameType = CassandraType.DynamicCompositeType(new Dictionary<char, CassandraType> { { 'a', CassandraType.AsciiType }, { 'd', CassandraType.DoubleType } })
+				});
 
 				Family = DB.GetColumnFamily<AsciiType>("Standard");
 				SuperFamily = DB.GetColumnFamily<AsciiType, AsciiType>("Super");

@@ -59,7 +59,13 @@ namespace FluentCassandra.Types
 
 		public CompositeType()
 		{
-			ComponentTypeHints = new List<Type>();
+			ComponentTypeHints = new List<CassandraType>();
+			_value = new List<CassandraObject>();
+		}
+
+		public CompositeType(IEnumerable<CassandraType> hints)
+		{
+			ComponentTypeHints = new List<CassandraType>(hints);
 			_value = new List<CassandraObject>();
 		}
 
@@ -73,7 +79,7 @@ namespace FluentCassandra.Types
 		public override void SetValue(object obj)
 		{
 			if (obj != null && obj.GetType().GetInterfaces().Contains(typeof(IEnumerable<CassandraObject>)))
-				ComponentTypeHints = ((IEnumerable<CassandraObject>)obj).Select(t => t.GetType()).ToList();
+				ComponentTypeHints = ((IEnumerable<CassandraObject>)obj).Select(t => new CassandraType(t.GetType().Name)).ToList();
 
 			_value = Converter.ConvertFrom(obj);
 		}
@@ -102,7 +108,7 @@ namespace FluentCassandra.Types
 
 		protected override object GetRawValue() { return _value; }
 
-		public List<Type> ComponentTypeHints { get; set; }
+		public List<CassandraType> ComponentTypeHints { get; set; }
 
 		private List<CassandraObject> _value;
 
@@ -152,7 +158,7 @@ namespace FluentCassandra.Types
 
 			return new CompositeType { 
 				_value = value,
-				ComponentTypeHints = value.Select(t => t.GetType()).ToList()
+				ComponentTypeHints = value.Select(t => new CassandraType(t.GetType().Name)).ToList()
 			};
 		}
 
@@ -167,7 +173,7 @@ namespace FluentCassandra.Types
 
 			return new CompositeType {
 				_value = value,
-				ComponentTypeHints = value.Select(t => t.GetType()).ToList()
+				ComponentTypeHints = value.Select(t => new CassandraType(t.GetType().Name)).ToList()
 			};
 		}
 
@@ -177,7 +183,7 @@ namespace FluentCassandra.Types
 
 			return new CompositeType {
 				_value = value,
-				ComponentTypeHints = value.Select(t => t.GetType()).ToList()
+				ComponentTypeHints = value.Select(t => new CassandraType(t.GetType().Name)).ToList()
 			};
 		}
 

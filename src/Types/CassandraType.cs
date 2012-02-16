@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Numerics;
+using System.Collections.Generic;
+using System.Text;
 
 namespace FluentCassandra.Types
 {
@@ -22,8 +24,14 @@ namespace FluentCassandra.Types
 		public static readonly CassandraType UUIDType = new CassandraType("org.apache.cassandra.db.marshal.UUIDType");
 		public static readonly CassandraType ColumnCounterType = new CassandraType("org.apache.cassandra.db.marshal.ColumnCounterType");
 
+		private static readonly CassandraType _CompositeType = new CassandraType("org.apache.cassandra.db.marshal.CompositeType");
+		private static readonly CassandraType _DynamicCompositeType = new CassandraType("org.apache.cassandra.db.marshal.DynamicCompositeType");
+
 		private readonly string _dbType;
 		private Type _type;
+
+		private IList<Type> _compositeTypes;
+		private IDictionary<char, Type> _dynamicCompositeType;
 
 		public CassandraType(string type)
 		{
@@ -38,12 +46,19 @@ namespace FluentCassandra.Types
 			if (_type == null)
 				Parse();
 
-			var type = Activator.CreateInstance(_type) as CassandraObject;
+			CassandraObject obj;
 
-			if (type == null)
+			if (_type == typeof(CompositeType))
+				obj = Activator.CreateInstance(_type, _compositeTypes) as CassandraObject;
+			else if (_type == typeof(DynamicCompositeType))
+				obj = Activator.CreateInstance(_type, _dynamicCompositeType) as CassandraObject;
+			else
+				obj = Activator.CreateInstance(_type) as CassandraObject;
+
+			if (obj == null)
 				return null;
 
-			return type;
+			return obj;
 		}
 
 		public string DatabaseType { get { return _dbType; } }
@@ -59,31 +74,119 @@ namespace FluentCassandra.Types
 			}
 		}
 
-		private void Parse() 
+		private void Parse()
 		{
-			switch (_dbType.Substring(_dbType.LastIndexOf('.') + 1).ToLower())
+			int compositeStart = _dbType.IndexOf('(');
+
+			// check for composite type
+			if (compositeStart == -1) {
+				_type = Parse(_dbType);
+				return;
+			}
+
+			var part1 = _dbType.Substring(0, compositeStart);
+			var part2 = _dbType.Substring(compositeStart);
+
+			_type = Parse(part1);
+
+			if (_type == typeof(CompositeType))
 			{
-				case "asciitype": _type = typeof(AsciiType); break;
-				case "booleantype": _type = typeof(BooleanType); break;
-				case "bytestype": _type = typeof(BytesType); break;
-				case "datetype": _type = typeof(DateType); break;
-				case "decimaltype": _type = typeof(DecimalType); break;
-				case "doubletype": _type = typeof(DoubleType); break;
-				case "floattype": _type = typeof(FloatType); break;
-				case "int32type": _type = typeof(Int32Type); break;
-				case "integertype": _type = typeof(IntegerType); break;
-				case "lexicaluuidtype": _type = typeof(LexicalUUIDType); break;
-				case "longtype": _type = typeof(LongType); break;
-				case "timeuuidtype": _type = typeof(TimeUUIDType); break;
-				case "utf8type": _type = typeof(UTF8Type); break;
-				case "uuidtype": _type = typeof(UUIDType); break;
+				ParseCompositeType(part2);
+			}
+			else if (_type == typeof(DynamicCompositeType))
+			{
+				ParseDynamicCompositeType(part2);
+			}
+			else
+			{
+				throw new CassandraException("Type '" + _dbType + "' not found.");
+			}
+		}
+
+		public void ParseCompositeType(string part)
+		{
+			part = part.Trim('(', ')');
+			var parts = part.Split(',');
+
+			_compositeTypes = new List<Type>();
+			foreach (var p in parts)
+				_compositeTypes.Add(Parse(p));
+		}
+
+		public void ParseDynamicCompositeType(string part)
+		{
+			part = part.Trim('(', ')');
+			var parts = part.Split(',');
+
+			_dynamicCompositeType = new Dictionary<char, Type>();
+			foreach (var p in parts)
+			{
+				char alias = p[0];
+
+				if (alias < 33 || alias > 127)
+					throw new CassandraException("An alias should be a single character in [0..9a..bA..B-+._&]");
+
+				if (p[1] != '=' || p[2] != '>')
+					throw new CassandraException("Expecting operator '=>' after the alias");
+
+				string type = p.Substring(3);
+				_dynamicCompositeType.Add(alias, Parse(type));
+			}
+		}
+
+		private Type Parse(string dbType) 
+		{
+			Type type;
+
+			switch (dbType.Substring(dbType.LastIndexOf('.') + 1).ToLower())
+			{
+				case "asciitype": type = typeof(AsciiType); break;
+				case "booleantype": type = typeof(BooleanType); break;
+				case "bytestype": type = typeof(BytesType); break;
+				case "datetype": type = typeof(DateType); break;
+				case "decimaltype": type = typeof(DecimalType); break;
+				case "doubletype": type = typeof(DoubleType); break;
+				case "floattype": type = typeof(FloatType); break;
+				case "int32type": type = typeof(Int32Type); break;
+				case "integertype": type = typeof(IntegerType); break;
+				case "lexicaluuidtype": type = typeof(LexicalUUIDType); break;
+				case "longtype": type = typeof(LongType); break;
+				case "timeuuidtype": type = typeof(TimeUUIDType); break;
+				case "utf8type": type = typeof(UTF8Type); break;
+				case "uuidtype": type = typeof(UUIDType); break;
+				case "compositetype": type = typeof(CompositeType); break;
+				case "dynamiccompositetype": type = typeof(DynamicCompositeType); break;
 				default: throw new CassandraException("Type '" + _dbType + "' not found.");
 			}
+
+			return type;
 		}
 
 		public override string ToString()
 		{
-			return FluentType.Name;
+			return _dbType;
+		}
+
+		public static CassandraType CompositeType(IEnumerable<CassandraType> hints)
+		{
+			var sb = new StringBuilder();
+			sb.Append(_CompositeType);
+			sb.Append("(");
+			sb.Append(String.Join(",", hints));
+			sb.Append(")");
+
+			return new CassandraType(sb.ToString());
+		}
+
+		public static CassandraType DynamicCompositeType(IDictionary<char, CassandraType> aliases)
+		{
+			var sb = new StringBuilder();
+			sb.Append(_DynamicCompositeType);
+			sb.Append("(");
+			sb.Append(String.Join(",", aliases.Select(x => x.Key + "=>" + x.Value)));
+			sb.Append(")");
+
+			return new CassandraType(sb.ToString());
 		}
 
 		public static CassandraType GetCassandraType(Type sourceType)

@@ -9,24 +9,24 @@ namespace FluentCassandra.Types
 		private readonly DynamicCompositeTypeConverter Converter;
 
 		public DynamicCompositeType()
-			: this(new Dictionary<char, Type> {
-				{ 'b', typeof(BooleanType) },
-				{ 't', typeof(DateType) },
-				{ 'm', typeof(DecimalType) },
-				{ 'f', typeof(FloatType) },
-				{ 'd', typeof(DoubleType) },
-				{ 'i', typeof(Int32Type) },
-				{ 'l', typeof(LongType) },
-				{ 'z', typeof(IntegerType) },
-				{ 'a', typeof(AsciiType) },
-				{ 's', typeof(UTF8Type) },
-				{ 'x', typeof(BytesType) },
-				{ 'u', typeof(UUIDType) },
-				{ '1', typeof(TimeUUIDType) },
-				{ '2', typeof(LexicalUUIDType) }
+			: this(new Dictionary<char, CassandraType> {
+				{ 'b', CassandraType.BooleanType },
+				{ 't', CassandraType.DateType },
+				{ 'm', CassandraType.DecimalType },
+				{ 'f', CassandraType.FloatType },
+				{ 'd', CassandraType.DoubleType },
+				{ 'i', CassandraType.Int32Type },
+				{ 'l', CassandraType.LongType },
+				{ 'z', CassandraType.IntegerType },
+				{ 'a', CassandraType.AsciiType },
+				{ 's', CassandraType.UTF8Type },
+				{ 'x', CassandraType.BytesType },
+				{ 'u', CassandraType.UUIDType },
+				{ '1', CassandraType.TimeUUIDType },
+				{ '2', CassandraType.LexicalUUIDType }
 			}) { }
 
-		public DynamicCompositeType(IDictionary<char, Type> aliases)
+		public DynamicCompositeType(IDictionary<char, CassandraType> aliases)
 		{
 			Converter = new DynamicCompositeTypeConverter(aliases);
 			_value = new List<CassandraObject>();

@@ -14,7 +14,7 @@ namespace FluentCassandra.Types
 
 		public CompositeType()
 		{
-			ComponentTypeHints = GetType().GetGenericArguments().ToList();
+			ComponentTypeHints = GetType().GetGenericArguments().Select(x => new CassandraType(x.Name)).ToList();
 		}
 
 		public T1 Item1 { get { return (T1)GetValue<List<CassandraObject>>()[0]; } }
@@ -31,7 +31,7 @@ namespace FluentCassandra.Types
 
 		public CompositeType()
 		{
-			ComponentTypeHints = GetType().GetGenericArguments().ToList();
+			ComponentTypeHints = GetType().GetGenericArguments().Select(x => new CassandraType(x.Name)).ToList();
 		}
 
 		public T1 Item1 { get { return (T1)GetValue<List<CassandraObject>>()[0]; } }
@@ -50,7 +50,7 @@ namespace FluentCassandra.Types
 
 		public CompositeType()
 		{
-			ComponentTypeHints = GetType().GetGenericArguments().ToList();
+			ComponentTypeHints = GetType().GetGenericArguments().Select(x => new CassandraType(x.Name)).ToList();
 		}
 
 		public T1 Item1 { get { return (T1)GetValue<List<CassandraObject>>()[0]; } }
@@ -71,7 +71,7 @@ namespace FluentCassandra.Types
 
 		public CompositeType()
 		{
-			ComponentTypeHints = GetType().GetGenericArguments().ToList();
+			ComponentTypeHints = GetType().GetGenericArguments().Select(x => new CassandraType(x.Name)).ToList();
 		}
 
 		public T1 Item1 { get { return (T1)GetValue<List<CassandraObject>>()[0]; } }
@@ -94,7 +94,7 @@ namespace FluentCassandra.Types
 
 		public CompositeType()
 		{
-			ComponentTypeHints = GetType().GetGenericArguments().ToList();
+			ComponentTypeHints = GetType().GetGenericArguments().Select(x => new CassandraType(x.Name)).ToList();
 		}
 
 		public T1 Item1 { get { return (T1)GetValue<List<CassandraObject>>()[0]; } }
