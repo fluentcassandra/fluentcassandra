@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -74,6 +74,7 @@
     <Compile Include="TypesToDatabase\LongTypeTest.cs" />
     <Compile Include="TypesToDatabase\UTF8TypeTest.cs" />
     <Compile Include="Types\CompositeTypeTest.cs" />
+    <Compile Include="Types\CassandraTypeTest.cs" />
     <Compile Include="Types\DynamicCompositeTypeTest.cs" />
     <Compile Include="Types\IntegerTypeTest.cs" />
     <Compile Include="CassandraDatabaseSetup.cs" />
