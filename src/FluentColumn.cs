@@ -125,8 +125,8 @@ namespace FluentCassandra
 
 				if (value.HasValue)
 					ColumnSecondsUntilDeleted = Convert.ToInt32(value.Value.TotalSeconds);
-
-				ColumnSecondsUntilDeleted = null;
+                else
+				    ColumnSecondsUntilDeleted = null;
 			}
 		}
 

@@ -22,6 +22,9 @@ namespace FluentCassandra.Types
 		public static readonly CassandraType UUIDType = new CassandraType("org.apache.cassandra.db.marshal.UUIDType");
 		public static readonly CassandraType ColumnCounterType = new CassandraType("org.apache.cassandra.db.marshal.ColumnCounterType");
 
+        private static readonly Type[] _fluentCompositeTypes = new Type[] { typeof(CompositeType<>), typeof(CompositeType<,>), typeof(CompositeType<,,>), typeof(CompositeType<,,,>), typeof(CompositeType<,,,,>) };
+
+
 		private readonly string _dbType;
 		private Type _type;
 
@@ -61,7 +64,14 @@ namespace FluentCassandra.Types
 
 		private void Parse() 
 		{
-			switch (_dbType.Substring(_dbType.LastIndexOf('.') + 1).ToLower())
+            var baseType = _dbType;
+            if (baseType.EndsWith(")", StringComparison.Ordinal))
+            {
+                baseType = baseType.Substring(0, baseType.IndexOf("("));
+            }
+            baseType = baseType.Substring(baseType.LastIndexOf('.') + 1).ToLower();
+
+            switch (baseType)
 			{
 				case "asciitype": _type = typeof(AsciiType); break;
 				case "booleantype": _type = typeof(BooleanType); break;
@@ -77,9 +87,24 @@ namespace FluentCassandra.Types
 				case "timeuuidtype": _type = typeof(TimeUUIDType); break;
 				case "utf8type": _type = typeof(UTF8Type); break;
 				case "uuidtype": _type = typeof(UUIDType); break;
+                case "compositetype": _type = ParseCompositeType(_dbType); break;
 				default: throw new CassandraException("Type '" + _dbType + "' not found.");
 			}
 		}
+
+        private static Type ParseCompositeType(string dbType)
+        {
+            var typesStart = dbType.IndexOf('(') + 1;
+            var typesEnd = dbType.LastIndexOf(')');
+            var fluentTypes = dbType.Substring(typesStart, typesEnd - typesStart).Split(',').Select(type => new CassandraType(type).FluentType).ToArray();
+
+            var matchingCompositeType = _fluentCompositeTypes.Where(t => t.GetGenericArguments().Count() == fluentTypes.Count()).FirstOrDefault();
+            if (matchingCompositeType == null)
+            {
+                throw new CassandraException("Type '" + dbType + "' has unsupported number of composite keys " + fluentTypes.Length + ".");
+            }
+            return matchingCompositeType.MakeGenericType(fluentTypes);
+        }
 
 		public override string ToString()
 		{
