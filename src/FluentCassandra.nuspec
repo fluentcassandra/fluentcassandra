@@ -2,7 +2,7 @@
 <package>
 	<metadata>
 		<id>FluentCassandra</id>
-		<version>$version$</version>
+		<version>1.0.0</version>
 		<title>Fluent Cassandra</title>
 		<authors>Nick Berardi</authors>
 		<owners>Managed Fusion, LLC</owners>
@@ -15,7 +15,9 @@
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
 		<tags>fluent cassandra apache nosql database managedfusion .net40</tags>
 		<frameworkAssemblies>
+			<frameworkAssembly assemblyName="System.Core" targetFramework="net40" />
 			<frameworkAssembly assemblyName="System.Numerics" targetFramework="net40" />
+			<frameworkAssembly assemblyName="System.Web" targetFramework="net40" />
 		</frameworkAssemblies>
 	</metadata>
 </package>
