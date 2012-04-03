@@ -1,3 +1,6 @@
+# nuget package files
+*.nupkg
+
 # Don't include NuGet Packages
 packages/
 
