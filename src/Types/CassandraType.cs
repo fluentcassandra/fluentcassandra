@@ -30,8 +30,8 @@ namespace FluentCassandra.Types
 		private readonly string _dbType;
 		private Type _type;
 
-		private IList<Type> _compositeTypes;
-		private IDictionary<char, Type> _dynamicCompositeType;
+		private IList<CassandraType> _compositeTypes;
+		private IDictionary<char, CassandraType> _dynamicCompositeType;
 
 		public CassandraType(string type)
 		{
@@ -49,9 +49,9 @@ namespace FluentCassandra.Types
 			CassandraObject obj;
 
 			if (_type == typeof(CompositeType))
-				obj = Activator.CreateInstance(_type, _compositeTypes) as CassandraObject;
+				obj = new CompositeType(_compositeTypes);
 			else if (_type == typeof(DynamicCompositeType))
-				obj = Activator.CreateInstance(_type, _dynamicCompositeType) as CassandraObject;
+				obj = new DynamicCompositeType(_dynamicCompositeType);
 			else
 				obj = Activator.CreateInstance(_type) as CassandraObject;
 
@@ -103,22 +103,22 @@ namespace FluentCassandra.Types
 			}
 		}
 
-		public void ParseCompositeType(string part)
+		private void ParseCompositeType(string part)
 		{
 			part = part.Trim('(', ')');
 			var parts = part.Split(',');
 
-			_compositeTypes = new List<Type>();
+			_compositeTypes = new List<CassandraType>();
 			foreach (var p in parts)
 				_compositeTypes.Add(Parse(p));
 		}
 
-		public void ParseDynamicCompositeType(string part)
+		private void ParseDynamicCompositeType(string part)
 		{
 			part = part.Trim('(', ')');
 			var parts = part.Split(',');
 
-			_dynamicCompositeType = new Dictionary<char, Type>();
+			_dynamicCompositeType = new Dictionary<char, CassandraType>();
 			foreach (var p in parts)
 			{
 				char alias = p[0];

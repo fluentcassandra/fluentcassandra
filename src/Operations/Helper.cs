@@ -313,11 +313,11 @@ namespace FluentCassandra.Operations
 				Value = column.ColumnValue.TryToBigEndian(),
 				Timestamp = column.ColumnTimestamp.ToTimestamp()
 			};
-            if (column.ColumnSecondsUntilDeleted.HasValue)
-            {
-                col.Ttl = column.ColumnSecondsUntilDeleted.Value;
-            }
-            return col;
+
+			if (column.ColumnSecondsUntilDeleted.HasValue)
+				col.Ttl = column.ColumnSecondsUntilDeleted.Value;
+
+			return col;
 		}
 
 		public static ColumnOrSuperColumn CreateColumnOrSuperColumn(IFluentBaseColumn column)
