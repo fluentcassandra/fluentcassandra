@@ -22,7 +22,7 @@ namespace FluentCassandra.Types
 		public static readonly CassandraType TimeUUIDType = new CassandraType("org.apache.cassandra.db.marshal.TimeUUIDType");
 		public static readonly CassandraType UTF8Type = new CassandraType("org.apache.cassandra.db.marshal.UTF8Type");
 		public static readonly CassandraType UUIDType = new CassandraType("org.apache.cassandra.db.marshal.UUIDType");
-		public static readonly CassandraType ColumnCounterType = new CassandraType("org.apache.cassandra.db.marshal.ColumnCounterType");
+		public static readonly CassandraType CounterColumnType = new CassandraType("org.apache.cassandra.db.marshal.CounterColumnType");
 
 		private static readonly CassandraType _CompositeType = new CassandraType("org.apache.cassandra.db.marshal.CompositeType");
 		private static readonly CassandraType _DynamicCompositeType = new CassandraType("org.apache.cassandra.db.marshal.DynamicCompositeType");
@@ -156,6 +156,7 @@ namespace FluentCassandra.Types
 				case "uuidtype": type = typeof(UUIDType); break;
 				case "compositetype": type = typeof(CompositeType); break;
 				case "dynamiccompositetype": type = typeof(DynamicCompositeType); break;
+				case "countercolumntype": type = typeof(CounterColumnType); break;
 				default: throw new CassandraException("Type '" + _dbType + "' not found.");
 			}
 

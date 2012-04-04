@@ -9,7 +9,7 @@ namespace FluentCassandra
 			: base(schema)
 		{
 			schema = GetSchema();
-			schema.ValueType = CassandraType.ColumnCounterType;
+			schema.ValueType = CassandraType.CounterColumnType;
 			
 			// ensure value type is set to column counter type
 			SetSchema(schema);
