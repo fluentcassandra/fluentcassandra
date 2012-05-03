@@ -35,7 +35,7 @@ namespace FluentCassandra.Types
 
 		public CassandraType(string type)
 		{
-			if (type == null || type.Length == 0)
+			if (string.IsNullOrEmpty(type))
 				throw new ArgumentNullException("type");
 
 			_dbType = type;
@@ -76,16 +76,27 @@ namespace FluentCassandra.Types
 
 		private void Parse()
 		{
-			int compositeStart = _dbType.IndexOf('(');
+            // Pay attention to any ReversedType on the Column Index
+		    const string reversedTypeString = ".ReversedType(";
+            var reversedIndex = _dbType.IndexOf(reversedTypeString, StringComparison.Ordinal);
+		    var workingtype = _dbType;
+            if (reversedIndex > 0)
+            {
+                workingtype = workingtype.Substring(reversedIndex + reversedTypeString.Length);
+                var lastClosing = workingtype.LastIndexOf(")", StringComparison.Ordinal);
+                workingtype = workingtype.Substring(0, lastClosing);
+            }
+
+			var compositeStart = workingtype.IndexOf('(');
 
 			// check for composite type
 			if (compositeStart == -1) {
-				_type = Parse(_dbType);
+				_type = Parse(workingtype);
 				return;
 			}
 
-			var part1 = _dbType.Substring(0, compositeStart);
-			var part2 = _dbType.Substring(compositeStart);
+			var part1 = workingtype.Substring(0, compositeStart);
+			var part2 = workingtype.Substring(compositeStart);
 
 			_type = Parse(part1);
 
@@ -157,7 +168,7 @@ namespace FluentCassandra.Types
 				case "compositetype": type = typeof(CompositeType); break;
 				case "dynamiccompositetype": type = typeof(DynamicCompositeType); break;
 				case "countercolumntype": type = typeof(CounterColumnType); break;
-				default: throw new CassandraException("Type '" + _dbType + "' not found.");
+				    default: throw new CassandraException("Type '" + _dbType + "' not found.");
 			}
 
 			return type;
