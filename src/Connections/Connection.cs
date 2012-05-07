@@ -12,11 +12,12 @@ namespace FluentCassandra.Connections
 	/// <see href="http://github.com/robconery/NoRM/tree/master/NoRM/Connections/"/>
 	public class Connection : IConnection, IDisposable
 	{
-		private bool _disposed;
+		private readonly ConnectionType _connectionType;
+		private readonly int _bufferSize;
 
-		private TTransport _transport;
-		private TProtocol _protocol;
-		private Cassandra.Client _client;
+		private readonly TTransport _transport;
+		private readonly TProtocol _protocol;
+		private readonly Cassandra.Client _client;
 
 		/// <summary>
 		/// 
@@ -24,19 +25,22 @@ namespace FluentCassandra.Connections
 		/// <param name="builder"></param>
 		internal Connection(Server server, ConnectionBuilder builder)
 		{
+			_connectionType = builder.ConnectionType;
+			_bufferSize = builder.BufferSize;
+
 			Created = DateTime.Now;
 			Server = server;
 
 			var socket = new TSocket(server.Host, server.Port, server.Timeout * 1000);
 
-			switch(builder.ConnectionType)
+			switch (_connectionType)
 			{
 				case ConnectionType.Simple:
 					_transport = socket;
 					break;
 
 				case ConnectionType.Buffered:
-					_transport = new TBufferedTransport(socket, builder.BufferSize);
+					_transport = new TBufferedTransport(socket, _bufferSize);
 					break;
 
 				case ConnectionType.Framed:
@@ -71,7 +75,17 @@ namespace FluentCassandra.Connections
 		/// </summary>
 		public bool IsOpen
 		{
-			get { return _transport.IsOpen; }
+			get
+			{
+				lock (_transport)
+				{
+					if (_transport == null)
+						return false;
+
+					try { return _transport.IsOpen; }
+					catch { return false; }
+				}
+			}
 		}
 
 		/// <summary>
@@ -82,7 +96,8 @@ namespace FluentCassandra.Connections
 			if (IsOpen)
 				return;
 
-			_transport.Open();
+			lock (_transport)
+				_transport.Open();
 		}
 
 		/// <summary>
@@ -93,10 +108,11 @@ namespace FluentCassandra.Connections
 			if (!IsOpen)
 				return;
 
-			_transport.Close();
+			lock (_transport)
+				_transport.Close();
 		}
 
-		public void SetKeyspace(string keyspace) 
+		public void SetKeyspace(string keyspace)
 		{
 			Client.set_keyspace(keyspace);
 		}
@@ -117,6 +133,17 @@ namespace FluentCassandra.Connections
 			return String.Format("{0}/{1}", Server, Created);
 		}
 
+		#region IDisposable Members
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public bool WasDisposed
+		{
+			get;
+			private set;
+		}
+
 		/// <summary>
 		/// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
 		/// </summary>
@@ -132,12 +159,11 @@ namespace FluentCassandra.Connections
 		/// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
 		protected virtual void Dispose(bool disposing)
 		{
-			if (_disposed) {
+			if (WasDisposed)
 				return;
-			}
 
 			Close();
-			_disposed = true;
+			WasDisposed = true;
 		}
 
 		/// <summary>
@@ -148,5 +174,7 @@ namespace FluentCassandra.Connections
 		{
 			Dispose(false);
 		}
+
+		#endregion
 	}
 }
