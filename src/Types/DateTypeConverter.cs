@@ -74,12 +74,7 @@ namespace FluentCassandra.Types
 				return FromUnixTime(Convert.ToInt64((ulong)value));
 
 			if (value is DateTime)
-			{
-				var dt = (DateTime)value;
-				var utc = dt.Kind == DateTimeKind.Utc;
-
-				return new DateTimeOffset(dt.Ticks, utc ? TimeSpan.Zero : (DateTimeOffset.Now.Offset));
-			}
+				return new DateTimeOffset((DateTime)value);
 
 			return default(DateTimeOffset);
 		}
@@ -99,11 +94,7 @@ namespace FluentCassandra.Types
 				return (ulong)ToUnixTime(value);
 
 			if (destinationType == typeof(DateTime))
-			{
-				var offset = DateTimeOffset.Now.Offset;
-				var localDateTime = new DateTime((value.UtcDateTime + offset).Ticks, DateTimeKind.Local);
-				return localDateTime;
-			}
+				return value.LocalDateTime;
 
 			if (destinationType == typeof(string))
 				return value.ToString("u");
