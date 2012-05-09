@@ -34,6 +34,26 @@ namespace FluentCassandra.Connections
 			ConnectionString = GetConnectionString();
 		}
 
+		public ConnectionBuilder(string keyspace, Server server, bool pooling = false, int minPoolSize = 0, int maxPoolSize = 100, int connectionLifetime = 0, ConnectionType connectionType = ConnectionType.Framed, int bufferSize = 1024, ConsistencyLevel read = ConsistencyLevel.QUORUM, ConsistencyLevel write = ConsistencyLevel.QUORUM, bool compressCqlQueries = false, string username = null, string password = null)
+		{
+			Keyspace = keyspace;
+			Servers = new List<Server>() { server };
+			ConnectionTimeout = TimeSpan.FromSeconds(server.Timeout);
+			Pooling = pooling;
+			MinPoolSize = minPoolSize;
+			MaxPoolSize = maxPoolSize;
+			ConnectionLifetime = TimeSpan.FromSeconds(connectionLifetime);
+			ConnectionType = connectionType;
+			BufferSize = bufferSize;
+			ReadConsistency = read;
+			WriteConsistency = write;
+			CompressCqlQueries = compressCqlQueries;
+			Username = username;
+			Password = password;
+
+			ConnectionString = GetConnectionString();
+		}
+
 		/// <summary>
 		/// 
 		/// </summary>

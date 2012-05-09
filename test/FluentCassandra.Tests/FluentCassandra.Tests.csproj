@@ -62,6 +62,7 @@
     <Compile Include="Linq\LinqTests.cs" />
     <Compile Include="Linq\LinqToCassandraTests.cs" />
     <Compile Include="Operations\CassandraIndexClauseTest.cs" />
+    <Compile Include="Operations\CqlTest.cs" />
     <Compile Include="ReportedIssuesTests.cs" />
     <Compile Include="TestSetup.cs" />
     <Compile Include="TypesToDatabase\AsciiTypeTest.cs" />
