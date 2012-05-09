@@ -10,6 +10,11 @@ namespace FluentCassandra
 {
 	public partial class CassandraColumnFamily : IQueryable, IQueryable<ICqlRow>, IQueryProvider
 	{
+		public CqlObjectQueryProvider<T> QueryWithObject<T>()
+		{
+			return new CqlObjectQueryProvider<T>(this);
+		}
+
 		public CqlQuery ToQuery()
 		{
 			var queryable = (IQueryable)this;

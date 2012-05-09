@@ -150,6 +150,8 @@
     <Compile Include="IFluentBaseColumn.cs" />
     <Compile Include="CassandraColumnFamilyOperations.cs" />
     <Compile Include="IFluentRecordExpression.cs" />
+    <Compile Include="ObjectSerializer\ObjectSerializerConventions.cs" />
+    <Compile Include="Linq\CqlObjectQueryProvider.cs" />
     <Compile Include="Linq\CqlQuery.cs" />
     <Compile Include="Linq\CqlQueryEvaluator.cs" />
     <Compile Include="Linq\CassandraColumnFamily+QueryProvider.cs" />
