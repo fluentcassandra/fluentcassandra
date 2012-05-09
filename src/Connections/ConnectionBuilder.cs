@@ -72,27 +72,6 @@ namespace FluentCassandra.Connections
 
 			#endregion
 
-			#region ConnectionTimeout
-
-			if (!pairs.ContainsKey("Connection Timeout"))
-			{
-				ConnectionTimeout = TimeSpan.Zero;
-			}
-			else
-			{
-				int connectionTimeout;
-
-				if (!Int32.TryParse(pairs["Connection Timeout"], out connectionTimeout))
-					throw new CassandraException("Connection Timeout is not valid.");
-
-				if (connectionTimeout < 0)
-					connectionTimeout = 0;
-				
-				ConnectionTimeout = TimeSpan.FromSeconds(connectionTimeout);
-			}
-
-			#endregion
-
 			#region Server
 
 			Servers = new List<Server>();
@@ -180,6 +159,27 @@ namespace FluentCassandra.Connections
 					maxPoolSize = 100;
 
 				MaxPoolSize = maxPoolSize;
+			}
+
+			#endregion
+
+			#region ConnectionTimeout
+
+			if (!pairs.ContainsKey("Connection Timeout"))
+			{
+				ConnectionTimeout = TimeSpan.Zero;
+			}
+			else
+			{
+				int connectionTimeout;
+
+				if (!Int32.TryParse(pairs["Connection Timeout"], out connectionTimeout))
+					throw new CassandraException("Connection Timeout is not valid.");
+
+				if (connectionTimeout < 0)
+					connectionTimeout = 0;
+
+				ConnectionTimeout = TimeSpan.FromSeconds(connectionTimeout);
 			}
 
 			#endregion
@@ -281,7 +281,7 @@ namespace FluentCassandra.Connections
 
 			if (!pairs.ContainsKey("Compress CQL Queries"))
 			{
-				CompressCqlQueries = true;
+				CompressCqlQueries = false;
 			}
 			else
 			{
@@ -319,16 +319,20 @@ namespace FluentCassandra.Connections
 
 			b.AppendFormat(format, "Keyspace", Keyspace);
 			b.AppendFormat(format, "Server", String.Join(",", Servers));
-			b.AppendFormat(format, "Connection Timeout", Convert.ToInt32(ConnectionTimeout.TotalSeconds));
+
 			b.AppendFormat(format, "Pooling", Pooling);
 			b.AppendFormat(format, "Min Pool Size", MinPoolSize);
 			b.AppendFormat(format, "Max Pool Size", MaxPoolSize);
+			b.AppendFormat(format, "Connection Timeout", Convert.ToInt32(ConnectionTimeout.TotalSeconds));
 			b.AppendFormat(format, "Connection Lifetime", Convert.ToInt32(ConnectionLifetime.TotalSeconds));
 			b.AppendFormat(format, "Connection Type", ConnectionType);
 
 			b.AppendFormat(format, "Buffer Size", BufferSize);
 			b.AppendFormat(format, "Read", ReadConsistency);
 			b.AppendFormat(format, "Write", WriteConsistency);
+
+			b.AppendFormat(format, "Compress CQL Queries", CompressCqlQueries);
+
 			b.AppendFormat(format, "Username", Username);
 			b.AppendFormat(format, "Password", Password);
 
