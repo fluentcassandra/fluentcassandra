@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using FluentCassandra.Types;
+using FluentCassandra.ObjectSerializer;
 
 namespace FluentCassandra.Linq
 {
@@ -12,10 +13,13 @@ namespace FluentCassandra.Linq
 	internal class CqlQueryEvaluator
 	{
 		private string _columnFamily;
+		private readonly ObjectSerializerConventions _conventions;
 
-		internal CqlQueryEvaluator()
+		internal CqlQueryEvaluator(ObjectSerializerConventions conventions = null)
 		{
 			FieldsArray = new List<string>();
+
+			_conventions = conventions;
 		}
 
 		public string Query
@@ -70,7 +74,7 @@ namespace FluentCassandra.Linq
 
 		private string WhereCriteria { get; set; }
 
-		private void AddTable(CassandraColumnFamily provider)
+		private void AddTable(ICassandraColumnFamilyInfo provider)
 		{
 			_columnFamily = provider.FamilyName;
 		}
@@ -93,7 +97,7 @@ namespace FluentCassandra.Linq
 
 		#region Expression Helpers
 
-		private static Expression SimplifyExpression(Expression exp)
+		private Expression SimplifyExpression(Expression exp)
 		{
 			switch (exp.NodeType)
 			{
@@ -109,7 +113,7 @@ namespace FluentCassandra.Linq
 			}
 		}
 
-		private static string GetPropertyName(Expression exp)
+		private string GetPropertyName(Expression exp)
 		{
 			exp = SimplifyExpression(exp);
 
@@ -118,7 +122,17 @@ namespace FluentCassandra.Linq
 
 			if (exp.NodeType == ExpressionType.MemberAccess)
 			{
-				var name = ((MemberExpression)exp).Member.Name;
+				var memExp = (MemberExpression)exp;
+				var name = memExp.Member.Name;
+
+				// if object queries
+				if (memExp.Expression.Type != typeof(ICqlRow))
+				{
+					if (_conventions.KeyPropertyNames.Contains(name, _conventions.AreKeyPropertyNamesCaseSensitive ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal))
+						name = "KEY";
+
+					return name;
+				}
 
 				if (name != "Key")
 					throw new NotSupportedException(name + " is not a supported property.");
@@ -138,18 +152,12 @@ namespace FluentCassandra.Linq
 
 		#region Expression Parsing
 
-		public static string GetCql(Expression expression)
+		public static string GetCql(Expression expression, ObjectSerializerConventions conventions = null)
 		{
-			var eval = GetEvaluator(expression);
-			return eval.Query;
-		}
-
-		private static CqlQueryEvaluator GetEvaluator(Expression expression)
-		{
-			var eval = new CqlQueryEvaluator();
+			var eval = new CqlQueryEvaluator(conventions);
 			eval.Evaluate(expression);
 
-			return eval;
+			return eval.Query;
 		}
 
 		private void Evaluate(Expression exp, Action<string> call = null)
@@ -164,41 +172,23 @@ namespace FluentCassandra.Linq
 					VisitMethodCall((MethodCallExpression)exp);
 					break;
 
-				case ExpressionType.New:
-					VisitNew((NewExpression)exp, call);
-					break;
-
 				case ExpressionType.MemberInit:
 					VisitMemberInit((MemberInitExpression)exp, call);
 					break;
 
-				case ExpressionType.MemberAccess:
-					VisitMemberAccess((MemberExpression)exp, call);
-					break;
-
 				case ExpressionType.Constant:
-					AddTable(((ConstantExpression)exp).Value as CassandraColumnFamily);
+					var obj = ((ConstantExpression)exp).Value;
+					var family = obj as ICassandraColumnFamilyInfo;
+
+					AddTable(family);
 					break;
 			}
-		}
-
-		private void VisitMemberAccess(MemberExpression exp, Action<string> call)
-		{
-			call(GetPropertyName(exp));
 		}
 
 		private void VisitMemberInit(MemberInitExpression exp, Action<string> call)
 		{
 			foreach (MemberAssignment member in exp.Bindings)
 				call(GetPropertyName(member.Expression));
-		}
-
-		private void VisitNew(NewExpression exp, Action<string> call)
-		{
-			foreach (var arg in exp.Arguments)
-				call(GetPropertyName(arg));
-
-			VisitMemberInit(Expression.MemberInit(exp, new MemberBinding[0]), call);
 		}
 
 		private void VisitMethodCall(MethodCallExpression exp)
@@ -218,9 +208,7 @@ namespace FluentCassandra.Linq
 		private void SetLimit(Expression exp)
 		{
 			if (exp.NodeType == ExpressionType.Constant)
-			{
 				LimitCount = (int)((ConstantExpression)exp).Value;
-			}
 		}
 
 		private IEnumerable<CassandraObject> VisitSelectExpression(Expression exp)
@@ -233,9 +221,37 @@ namespace FluentCassandra.Linq
 				case ExpressionType.Constant:
 					return VisitSelectColumnExpression((ConstantExpression)exp);
 
+				case ExpressionType.MemberAccess:
+					var list = new List<CassandraObject>();
+					VisitSelectMemberAccess((MemberExpression)exp, x => {
+						list.Add(x);
+					});
+					return list;
+
+				case ExpressionType.New:
+					return VisitSelectNew((NewExpression)exp);
+
 				default:
 					throw new NotSupportedException(exp.NodeType.ToString() + " is not supported.");
 			}
+		}
+
+		private IEnumerable<CassandraObject> VisitSelectNew(NewExpression exp)
+		{
+			var list = new List<CassandraObject>();
+
+			foreach (var arg in exp.Arguments)
+				VisitSelectMemberAccess((MemberExpression)arg, x => {
+					list.Add(x);
+				});
+
+			return list;
+		}
+
+		private void VisitSelectMemberAccess(MemberExpression exp, Action<string> call)
+		{
+			var name = exp.Member.Name;
+			call(name);
 		}
 
 		private IEnumerable<CassandraObject> VisitSelectColumnExpression(ConstantExpression exp)
@@ -381,6 +397,7 @@ namespace FluentCassandra.Linq
 
 			return criteria;
 		}
+		
 		#endregion
 	}
 }

@@ -114,7 +114,7 @@ namespace FluentCassandra.Linq
 		/// <returns></returns>
 		public override string ToString()
 		{
-			return CqlQueryEvaluator.GetCql(Expression);
+			return CqlQueryEvaluator.GetCql(Expression, _family.ObjectConventions);
 		}
 	}
 }

@@ -7,7 +7,7 @@ using System;
 namespace FluentCassandra.Linq
 {
 	[TestFixture]
-	public class LinqTests
+	public class LinqToCqlTests
 	{
 		private CassandraContext _db;
 		private CassandraColumnFamily<AsciiType> _family;

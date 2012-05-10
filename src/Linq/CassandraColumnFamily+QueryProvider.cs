@@ -8,9 +8,9 @@ using FluentCassandra.Linq;
 
 namespace FluentCassandra
 {
-	public partial class CassandraColumnFamily : IQueryable, IQueryable<ICqlRow>, IQueryProvider
+	public partial class CassandraColumnFamily : IQueryable, IQueryable<ICqlRow>, IQueryProvider, ICassandraColumnFamilyInfo
 	{
-		public CqlObjectQueryProvider<T> QueryWithObject<T>()
+		public CqlObjectQueryProvider<T> AsObjectQueryable<T>()
 		{
 			return new CqlObjectQueryProvider<T>(this);
 		}

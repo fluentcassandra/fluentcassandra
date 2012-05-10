@@ -22,11 +22,12 @@ namespace FluentCassandra
 	public partial class CassandraColumnFamily : BaseCassandraColumnFamily
 	{
 		private CassandraColumnFamilySchema _cachedSchema;
+		private ObjectSerializerConventions _conventions;
 
 		public CassandraColumnFamily(CassandraContext context, string columnFamily)
 			: base(context, columnFamily)
 		{
-
+			_conventions = new ObjectSerializerConventions();
 		}
 
 		public FluentColumnFamily CreateRecord(CassandraObject key)
@@ -37,7 +38,17 @@ namespace FluentCassandra
 			return new FluentColumnFamily(key, FamilyName, GetSchema());
 		}
 
-		public ObjectSerializerConventions ObjectConventions { get; set; }
+		public ObjectSerializerConventions ObjectConventions
+		{
+			get { return _conventions; }
+			set
+			{
+				if (value == null)
+					throw new ArgumentNullException("value");
+				
+				_conventions = value;
+			}
+		}
 
 		public override CassandraColumnFamilySchema GetSchema()
 		{

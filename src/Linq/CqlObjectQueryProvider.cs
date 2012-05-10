@@ -6,13 +6,18 @@ using System.Linq.Expressions;
 
 namespace FluentCassandra.Linq
 {
-	public class CqlObjectQueryProvider<T> : IQueryable, IQueryable<T>, IQueryProvider
+	public class CqlObjectQueryProvider<T> : IQueryable, IQueryable<T>, IQueryProvider, ICassandraColumnFamilyInfo
 	{
 		private readonly CassandraColumnFamily _family;
 
 		public CqlObjectQueryProvider(CassandraColumnFamily family)
 		{
 			_family = family;
+		}
+
+		public string FamilyName
+		{
+			get { return _family.FamilyName; }
 		}
 
 		public CqlObjectQuery<T> ToQuery()
@@ -104,7 +109,11 @@ namespace FluentCassandra.Linq
 
 		public TResult Execute<TResult>(Expression expression)
 		{
-			throw new NotImplementedException();
+			if (expression.NodeType == ExpressionType.Call)
+				expression = ((MethodCallExpression)expression).Arguments[0];
+
+			var result = new CqlObjectQuery<TResult>(expression, this, _family);
+			return Enumerable.FirstOrDefault(result);
 		}
 
 		public object Execute(Expression expression)
