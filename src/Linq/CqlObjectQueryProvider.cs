@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -12,6 +13,12 @@ namespace FluentCassandra.Linq
 		public CqlObjectQueryProvider(CassandraColumnFamily family)
 		{
 			_family = family;
+		}
+
+		public CqlObjectQuery<T> ToQuery()
+		{
+			var queryable = (IQueryable)this;
+			return new CqlObjectQuery<T>(queryable.Expression, this, _family);
 		}
 
 		#region IQueryable Members
@@ -57,18 +64,28 @@ namespace FluentCassandra.Linq
 
 		#region IEnumerable Members
 
-		public System.Collections.IEnumerator GetEnumerator()
+		/// <summary>
+		/// Returns an enumerator that iterates through a collection.
+		/// </summary>
+		/// <returns>
+		/// An <see cref="T:System.Collections.IEnumerator"/> object that can be used to iterate through the collection.
+		/// </returns>
+		IEnumerator IEnumerable.GetEnumerator()
 		{
-			throw new NotImplementedException();
+			return ToQuery().GetEnumerator();
 		}
 
 		#endregion
 
-		#region IEnumerable<T> Members
+		#region IEnumerable<ICqlRow> Members
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
 		IEnumerator<T> IEnumerable<T>.GetEnumerator()
 		{
-			throw new NotImplementedException();
+			return ToQuery().GetEnumerator();
 		}
 
 		#endregion
@@ -77,7 +94,7 @@ namespace FluentCassandra.Linq
 
 		public IQueryable<TElement> CreateQuery<TElement>(Expression expression)
 		{
-			throw new NotImplementedException();
+			return new CqlObjectQuery<TElement>(expression, this, _family);
 		}
 
 		public IQueryable CreateQuery(Expression expression)
