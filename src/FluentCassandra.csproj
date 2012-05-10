@@ -150,6 +150,7 @@
     <Compile Include="IFluentBaseColumn.cs" />
     <Compile Include="CassandraColumnFamilyOperations.cs" />
     <Compile Include="IFluentRecordExpression.cs" />
+    <Compile Include="ObjectSerializer\IObjectSerializer.cs" />
     <Compile Include="ObjectSerializer\ObjectSerializerConventions.cs" />
     <Compile Include="Linq\CqlObjectQueryProvider.cs" />
     <Compile Include="Linq\CqlQuery.cs" />
@@ -157,6 +158,8 @@
     <Compile Include="Linq\CassandraColumnFamily+QueryProvider.cs" />
     <Compile Include="Linq\CqlQueryExtensions.cs" />
     <Compile Include="Linq\ICqlRow.cs" />
+    <Compile Include="ObjectSerializer\ReflectionObjectSerializer.cs" />
+    <Compile Include="ObjectSerializer\ObjectSerializerFactory.cs" />
     <Compile Include="Operations\BatchMutate.cs" />
     <Compile Include="Operations\CassandraClientWrapper.cs" />
     <Compile Include="Operations\CassandraColumn.cs" />
