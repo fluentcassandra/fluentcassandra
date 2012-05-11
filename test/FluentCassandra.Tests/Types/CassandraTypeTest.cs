@@ -87,5 +87,18 @@ namespace FluentCassandra.Types
 			// act
 			Type actual = new CassandraType(cassandraString).FluentType;
 		}
+
+        [Test]
+        public void ReversedTypeHelper()
+        {
+            // arrange
+            Type expected = typeof (AsciiType);
+
+            // act
+            var actual = CassandraType.Reversed(CassandraType.AsciiType).FluentType;
+
+            // assert
+            Assert.AreEqual(expected, actual);
+        }
 	}
 }

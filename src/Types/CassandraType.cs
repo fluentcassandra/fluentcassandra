@@ -74,17 +74,17 @@ namespace FluentCassandra.Types
 			}
 		}
 
-		private void Parse()
+	    private void Parse()
 		{
             // Pay attention to any ReversedType on the Column Index
-		    const string reversedTypeString = ".ReversedType(";
+		    const string reversedTypeString = "ReversedType(";
             var reversedIndex = _dbType.IndexOf(reversedTypeString, StringComparison.Ordinal);
 		    var workingtype = _dbType;
             if (reversedIndex > 0)
             {
                 workingtype = workingtype.Substring(reversedIndex + reversedTypeString.Length);
                 var lastClosing = workingtype.LastIndexOf(")", StringComparison.Ordinal);
-                workingtype = workingtype.Substring(0, lastClosing);
+                workingtype = workingtype.Substring(0, lastClosing).TrimEnd('.');
             }
 
 			var compositeStart = workingtype.IndexOf('(');
@@ -277,5 +277,19 @@ namespace FluentCassandra.Types
 		{
 			return GetCassandraType(type);
 		}
+
+	    public static CassandraType Reversed(CassandraType baseType)
+	    {
+	        var underlyingType = baseType.DatabaseType;
+            // Add the Reversed keyword
+	        var lastDot = underlyingType.LastIndexOf('.');
+	        underlyingType = underlyingType.Insert(lastDot + 1, "ReversedType(");
+	        underlyingType = underlyingType + ")";
+
+	        var result = new CassandraType(underlyingType);
+	        result.Parse();
+
+	        return result;
+	    }
 	}
 }
