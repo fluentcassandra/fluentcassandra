@@ -1,0 +1,67 @@
+*.doc   diff=astextplain
+*.DOC	diff=astextplain
+*.docx	diff=astextplain
+*.DOCX	diff=astextplain
+*.dot	diff=astextplain
+*.DOT	diff=astextplain
+*.pdf	diff=astextplain
+*.PDF	diff=astextplain
+*.rtf	diff=astextplain
+*.RTF	diff=astextplain
+
+*.jpg  	binary
+*.png 	binary
+*.gif 	binary
+*.bmp	binary
+
+*.aspx text=auto
+*.ascx text=auto
+*.cs text=auto diff=csharp 
+*.vb text=auto
+*.c text=auto
+*.cpp text=auto
+*.cxx text=auto
+*.cmd text=auto
+*.h text=auto
+*.hxx text=auto
+*.py text=auto
+*.rb text=auto
+*.java text=auto
+*.html text=auto
+*.htm text=auto
+*.cshtml text=auto
+*.vbhtml text=auto
+*.css text=auto
+*.config text=auto
+*.scss text=auto
+*.sass text=auto
+*.less text=auto
+*.js text=auto
+*.lisp text=auto
+*.clj text=auto
+*.sql text=auto
+*.php text=auto
+*.lua text=auto
+*.m text=auto
+*.asm text=auto
+*.erl text=auto
+*.fs text=auto
+*.fsx text=auto
+*.hs text=auto
+*.msbuild text=auto
+*.xml text=auto
+*.xunit text=auto
+*.targets text
+*.tt text
+*.txt text
+*.coffee text
+*.ruleset text
+*.stylecop text
+*.resx text merge=union
+
+
+*.csproj text=auto merge=union 
+*.vbproj text=auto merge=union 
+*.fsproj text=auto merge=union 
+*.dbproj text=auto merge=union 
+*.sln text=auto eol=crlf merge=union 

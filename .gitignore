@@ -44,8 +44,9 @@ ipch/
 *.psess
 *.vsp
 
-# ReSharper is a .NET coding add-in
+# .NET coding add-in
 _ReSharper*
+.JustCode*
 
 # Installshield output folder 
 [Ee]xpress

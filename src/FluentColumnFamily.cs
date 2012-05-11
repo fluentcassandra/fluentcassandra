@@ -176,7 +176,7 @@ namespace FluentCassandra
 				return NullType.Value;
 
 			var schema = GetColumnSchema(name);
-			return (CassandraObject)col.ColumnValue.GetValue(schema.ValueType);
+			return col.ColumnValue.GetValue(schema.ValueType);
 		}
 
 		/// <summary>

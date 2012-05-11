@@ -74,12 +74,7 @@ namespace FluentCassandra.Types
 				return FromUnixTime(Convert.ToInt64((ulong)value));
 
 			if (value is DateTime)
-			{
-				var dt = (DateTime)value;
-				var utc = dt.Kind == DateTimeKind.Utc;
-
-				return new DateTimeOffset(dt, utc ? TimeSpan.Zero : (DateTimeOffset.Now.Offset));
-			}
+				return new DateTimeOffset((DateTime)value);
 
 			return default(DateTimeOffset);
 		}

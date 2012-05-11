@@ -91,8 +91,7 @@ namespace FluentCassandra
 
 		public static Guid GenerateTimeBasedGuid(DateTime dateTime, byte[] node)
 		{
-			var utc = dateTime.Kind == DateTimeKind.Utc;
-			return GenerateTimeBasedGuid(new DateTimeOffset(dateTime, utc ? TimeSpan.Zero : (DateTimeOffset.Now.Offset)), node);
+			return GenerateTimeBasedGuid(new DateTimeOffset(dateTime), node);
 		}
 
 		public static Guid GenerateTimeBasedGuid(DateTimeOffset dateTime, byte[] node)

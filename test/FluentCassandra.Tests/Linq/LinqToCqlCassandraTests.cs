@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Linq;
-using FluentCassandra.Types;
 using NUnit.Framework;
 
 namespace FluentCassandra.Linq
 {
 	[TestFixture]
-	public class LinqToCassandraTests
+	public class LinqToCqlCassandraTests
 	{
 		private CassandraContext _db;
 		private CassandraColumnFamily _family;
