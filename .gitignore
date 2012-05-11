@@ -47,6 +47,9 @@ ipch/
 # ReSharper is a .NET coding add-in
 _ReSharper*
 
+# DotCover is a code coverage tool
+*.dotCover
+
 # Installshield output folder 
 [Ee]xpress
 
