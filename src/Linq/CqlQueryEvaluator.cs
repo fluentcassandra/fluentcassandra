@@ -113,6 +113,14 @@ namespace FluentCassandra.Linq
 			}
 		}
 
+		private Type GetBaseType(MemberExpression exp)
+		{
+			while (exp.Expression.NodeType == ExpressionType.MemberAccess)
+				exp = (MemberExpression)exp.Expression;
+
+			return exp.Expression.Type;
+		}
+
 		private string GetPropertyName(Expression exp)
 		{
 			exp = SimplifyExpression(exp);
@@ -126,7 +134,7 @@ namespace FluentCassandra.Linq
 				var name = memExp.Member.Name;
 
 				// if object queries
-				if (memExp.Expression.Type != typeof(ICqlRow))
+				if (GetBaseType(memExp) != typeof(ICqlRow))
 				{
 					if (_conventions.KeyPropertyNames.Contains(name, _conventions.AreKeyPropertyNamesCaseSensitive ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal))
 						name = "KEY";
