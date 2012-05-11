@@ -53,12 +53,13 @@ namespace FluentCassandra.Linq
 		public void SELECT_One_Column()
 		{
 			var query = _family.AsObjectQueryable<User>().Select(x => x.Age);
-			var actual = query.ToList();
+			var actual = query.ToList().OrderBy(x => x).ToList();
+			var users = _users.OrderBy(x => x.Age).ToList();
 
-			Assert.AreEqual(_users.Length, actual.Count);
-			for (int i = 0; i < _users.Length; i++)
+			Assert.AreEqual(users.Count, actual.Count);
+			for (int i = 0; i < users.Count; i++)
 			{
-				var objUser = _users[i];
+				var objUser = users[i];
 				var dbAge = actual[i];
 
 				Assert.AreEqual(objUser.Age, dbAge);
@@ -69,12 +70,13 @@ namespace FluentCassandra.Linq
 		public void SELECT_Two_Columns()
 		{
 			var query = _family.AsObjectQueryable<User>().Select(x => new { x.Age, x.Name });
-			var actual = query.ToList();
+			var actual = query.ToList().OrderBy(x => x.Age).ToList();
+			var users = _users.OrderBy(x => x.Age).ToList();
 
-			Assert.AreEqual(_users.Length, actual.Count);
-			for (int i = 0; i < _users.Length; i++)
+			Assert.AreEqual(users.Count, actual.Count);
+			for (int i = 0; i < users.Count; i++)
 			{
-				var objUser = _users[i];
+				var objUser = users[i];
 				var dbUser = actual[i];
 
 				Assert.AreEqual(objUser.Age, dbUser.Age);
@@ -92,13 +94,13 @@ namespace FluentCassandra.Linq
 				where f.Id == 2
 				select f;
 			var response = query.ToList();
-			dynamic actual = response.FirstOrDefault();
+			var actual = response.FirstOrDefault();
 
 			Assert.AreEqual(1, response.Count);
-			Assert.AreEqual(expected.Id, actual.Key);
-			Assert.AreEqual(expected.Name, (string)actual.Name);
-			Assert.AreEqual(expected.Email, (string)actual.Email);
-			Assert.AreEqual(expected.Age, (int)actual.Age);
+			Assert.AreEqual(expected.Id, actual.Id);
+			Assert.AreEqual(expected.Name, actual.Name);
+			Assert.AreEqual(expected.Email, actual.Email);
+			Assert.AreEqual(expected.Age, actual.Age);
 		}
 
 		[Test]
@@ -111,13 +113,13 @@ namespace FluentCassandra.Linq
 				where f.Id == 2 && f.Age == 23
 				select f;
 			var response = query.ToList();
-			dynamic actual = response.FirstOrDefault();
+			var actual = response.FirstOrDefault();
 
 			Assert.AreEqual(1, response.Count);
-			Assert.AreEqual(expected.Id, actual.Key);
-			Assert.AreEqual(expected.Name, (string)actual.Name);
-			Assert.AreEqual(expected.Email, (string)actual.Email);
-			Assert.AreEqual(expected.Age, (int)actual.Age);
+			Assert.AreEqual(expected.Id, actual.Id);
+			Assert.AreEqual(expected.Name, actual.Name);
+			Assert.AreEqual(expected.Email, actual.Email);
+			Assert.AreEqual(expected.Age, actual.Age);
 		}
 
 		[Test]
@@ -130,13 +132,13 @@ namespace FluentCassandra.Linq
 				where f.Age == 23
 				select f;
 			var response = query.ToList();
-			dynamic actual = response.FirstOrDefault();
+			var actual = response.FirstOrDefault();
 
 			Assert.AreEqual(1, response.Count);
-			Assert.AreEqual(expected.Id, actual.Key);
-			Assert.AreEqual(expected.Name, (string)actual.Name);
-			Assert.AreEqual(expected.Email, (string)actual.Email);
-			Assert.AreEqual(expected.Age, (int)actual.Age);
+			Assert.AreEqual(expected.Id, actual.Id);
+			Assert.AreEqual(expected.Name, actual.Name);
+			Assert.AreEqual(expected.Email, actual.Email);
+			Assert.AreEqual(expected.Age, actual.Age);
 		}
 	}
 }
