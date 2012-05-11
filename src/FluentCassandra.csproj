@@ -245,6 +245,7 @@
     <Compile Include="Thrift\Transport\TTransportFactory.cs" />
     <Compile Include="Types\AsciiType.cs" />
     <Compile Include="Types\AsciiTypeConverter.cs" />
+    <Compile Include="Types\BigDecimal.cs" />
     <Compile Include="Types\BytesTypeConverter.cs" />
     <Compile Include="ColumnType.cs" />
     <Compile Include="Types\BytesType.cs" />

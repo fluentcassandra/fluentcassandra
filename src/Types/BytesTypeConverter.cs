@@ -304,19 +304,8 @@ namespace FluentCassandra.Types
 
 		private static decimal FromJavaBigDecimalToDecimal(byte[] bytes)
 		{
-			bool negative = false;
-			byte[] number = new byte[12];
-			byte[] flags = new byte[4];
-			Array.Copy(bytes, 0, number, 0, bytes.Length - 4);
-			Array.Copy(bytes, bytes.Length - 4, flags, 0, 4);
-			byte scale = flags[0];
-
-			int[] bits = new int[4];
-			bits[0] = ((number[0] | (number[1] << 8)) | (number[2] << 0x10)) | (number[3] << 0x18); //lo
-			bits[1] = ((number[4] | (number[5] << 8)) | (number[6] << 0x10)) | (number[7] << 0x18); //mid
-			bits[2] = ((number[8] | (number[9] << 8)) | (number[10] << 0x10)) | (number[11] << 0x18); //hi
-
-			return new Decimal(bits[0], bits[1], bits[2], negative, scale);
+			var bigDec = new BigDecimal(bytes);
+			return (decimal)bigDec;
 		}
 	}
 }
