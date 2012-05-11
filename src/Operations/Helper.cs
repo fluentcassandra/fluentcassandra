@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using Apache.Cassandra;
 using FluentCassandra.Types;
+using System.IO;
+using System.IO.Compression;
 
 namespace FluentCassandra.Operations
 {
@@ -142,6 +145,16 @@ namespace FluentCassandra.Operations
 			return Convert.ToInt64((dt - UnixStart).TotalMilliseconds);
 		}
 
+		public static DateTimeOffset FromTimestamp(long ts)
+		{
+			double ms = 0D;
+
+			if (ts > 9999999999999L)
+				ms = ts / 1000D;
+
+			return UnixStart.AddMilliseconds(ms);
+		}
+
 		public static IFluentBaseColumn ConvertToFluentBaseColumn(ColumnOrSuperColumn col, CassandraColumnFamilySchema schema = null)
 		{
 			if (col.Super_column != null)
@@ -203,7 +216,7 @@ namespace FluentCassandra.Operations
 			var fcol = new FluentColumn(colSchema) {
 				ColumnName = CassandraObject.GetTypeFromDatabaseValue(col.Name, colSchema.NameType),
 				ColumnValue = CassandraObject.GetTypeFromDatabaseValue(col.Value, colSchema.ValueType),
-				ColumnTimestamp = UnixStart.AddMilliseconds(col.Timestamp),
+				ColumnTimestamp = FromTimestamp(col.Timestamp),
 			};
 
 			if (col.__isset.ttl)
@@ -354,6 +367,42 @@ namespace FluentCassandra.Operations
 			return new SlicePredicate {
 				Column_names = columnNames.Select(o => o.TryToBigEndian()).ToList()
 			};
+		}
+
+		public static byte[] ZlibCompress(byte[] data)
+		{
+			// Note: even though Cassandra calls this GZIP compression it is actually ZLIB compression provided by the
+			// Java Inflator class http://docs.oracle.com/javase/1.4.2/docs/api/java/util/zip/Inflater.html
+			// If it wasn't for this post explaining how to get Deflator to mimic ZLIB compression none of the following
+			// code would work http://tlzprgmr.wordpress.com/2010/03/17/net-deflatestreamzlib-compatibility/
+			using (MemoryStream outStream = new MemoryStream())
+			{
+				// zlib header
+				outStream.WriteByte(0x58);
+				outStream.WriteByte(0x85);
+
+				// zlib body
+				using (var compressor = new DeflateStream(outStream, CompressionMode.Compress, true))
+					compressor.Write(data, 0, data.Length);
+
+				// zlib checksum - a naive implementation of adler-32 checksum
+				const uint A32Mod = 65521;
+				uint s1 = 1, s2 = 0;
+				foreach (byte b in data)
+				{
+					s1 = (s1 + b) % A32Mod;
+					s2 = (s2 + s1) % A32Mod;
+				}
+
+				int adler32 = unchecked((int)((s2 << 16) + s1));
+				outStream.Write(BitConverter.GetBytes(IPAddress.HostToNetworkOrder(adler32)), 0, sizeof(uint));
+
+				// zlib compatible compressed query
+				var bytes = outStream.ToArray();
+				outStream.Close();
+
+				return bytes;
+			}
 		}
 	}
 }

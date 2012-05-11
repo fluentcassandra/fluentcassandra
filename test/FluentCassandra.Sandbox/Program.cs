@@ -25,6 +25,8 @@ namespace FluentCassandra.Sandbox
 					ReplicationFactor = 1 }, db);
 
 				keyspace.TryCreateSelf();
+				
+				// create column family using CQL
 				db.ExecuteNonQuery(@"
 CREATE COLUMNFAMILY Posts (
 	KEY ascii PRIMARY KEY,
@@ -33,12 +35,16 @@ CREATE COLUMNFAMILY Posts (
 	Author text,
 	PostedOn timestamp
 );");
+
+				// create column family using API
 				keyspace.TryCreateColumnFamily(new CassandraColumnFamilySchema {
 					FamilyName = "Tags",
 					KeyType = CassandraType.AsciiType,
 					ColumnNameType = CassandraType.Int32Type,
 					DefaultColumnValueType = CassandraType.UTF8Type
 				});
+				
+				// create super column family using API
 				keyspace.TryCreateColumnFamily(new CassandraColumnFamilySchema {
 					FamilyName = "Comments",
 					FamilyType = ColumnType.Super,
@@ -153,7 +159,11 @@ CREATE COLUMNFAMILY Posts (
 
 				// get the post back from the database
 				ConsoleHeader("getting 'first-blog-post'");
+				
+				// query using API
 				dynamic post = postFamily.Get(key).FirstOrDefault();
+				
+				// query using CQL-LINQ
 				dynamic tags = (
 					from t in tagsFamily
 					where t.Key == key
@@ -185,7 +195,11 @@ CREATE COLUMNFAMILY Posts (
 
 				// get the post back from the database
 				ConsoleHeader("getting 'first-blog-post'");
+				
+				// query using CQL
 				var posts = db.ExecuteQuery("SELECT * FROM Posts LIMIT 25");
+				
+				// query using API
 				dynamic tags = tagsFamily.Get(key).FirstOrDefault();
 
 				// show details
@@ -221,6 +235,8 @@ CREATE COLUMNFAMILY Posts (
 
 				// get the post back from the database
 				ConsoleHeader("getting 'first-blog-post' for update");
+				
+				// query using API
 				dynamic post = postFamily.Get(key).FirstOrDefault();
 
 				post.Title = post.Title + "(updated)";
@@ -301,6 +317,7 @@ CREATE COLUMNFAMILY Posts (
 
 					ConsoleHeader("showing page " + page + " of comments starting at " + lastDate.ToLocalTime());
 
+					// query using API
 					var comments = commentsFamily.Get(key)
 						.ReverseColumns()
 						.StartWithColumn(lastDate)

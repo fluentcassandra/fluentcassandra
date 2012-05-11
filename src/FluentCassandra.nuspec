@@ -2,7 +2,7 @@
 <package>
 	<metadata>
 		<id>FluentCassandra</id>
-		<version>1.0.0</version>
+		<version>1.0.2</version>
 		<title>Fluent Cassandra</title>
 		<authors>Nick Berardi</authors>
 		<owners>Managed Fusion, LLC</owners>

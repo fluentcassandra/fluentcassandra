@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using FluentCassandra.Types;
-using System.IO;
-using System.IO.Compression;
-using FluentCassandra.Linq;
-using System.Text.RegularExpressions;
 using System.Diagnostics;
+using System.Linq;
+using System.Text.RegularExpressions;
+using FluentCassandra.Linq;
+using FluentCassandra.Types;
 
 namespace FluentCassandra.Operations
 {
@@ -68,13 +66,15 @@ namespace FluentCassandra.Operations
 		{
 			Debug.Write(CqlQuery.ToString(), "query");
 			byte[] query = CqlQuery;
+			bool isCqlQueryCompressed = query.Length > 200 && CompressCqlQuery;
 
-			if (CompressCqlQuery)
-				query = GzipCompress(query);
+			// it doesn't make sense to compress queryies that are really small
+			if (isCqlQueryCompressed)
+				query = Helper.ZlibCompress(query);
 
 			var result = Session.GetClient().execute_cql_query(
 				query,
-				CompressCqlQuery ? Apache.Cassandra.Compression.GZIP : Apache.Cassandra.Compression.NONE
+				isCqlQueryCompressed ? Apache.Cassandra.Compression.GZIP : Apache.Cassandra.Compression.NONE
 			);
 
 			return GetRows(result);
@@ -103,16 +103,6 @@ namespace FluentCassandra.Operations
 
 				var fcol = Helper.ConvertColumnToFluentColumn(col, schema);
 				yield return fcol;
-			}
-		}
-
-		private byte[] GzipCompress(byte[] cqlQuery)
-		{
-			using (MemoryStream inStream = new MemoryStream(cqlQuery), outStream = new MemoryStream())
-			using (GZipStream gzip = new GZipStream(outStream, CompressionMode.Compress))
-			{
-				inStream.CopyTo(gzip);
-				return outStream.ToArray();
 			}
 		}
 

@@ -55,13 +55,17 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Bugs\Issue25JavaBigDecimalBinaryConversion.cs" />
     <Compile Include="CassandraQueryTest.cs" />
     <Compile Include="Connections\ConnectionProviderTests.cs" />
     <Compile Include="Connections\NormalConnectionProviderTests.cs" />
     <Compile Include="Helper.cs" />
-    <Compile Include="Linq\LinqTests.cs" />
-    <Compile Include="Linq\LinqToCassandraTests.cs" />
+    <Compile Include="Linq\LinqToCqlObjectsCassandraTests.cs" />
+    <Compile Include="Linq\LinqToCqlObjectsTests.cs" />
+    <Compile Include="Linq\LinqToCqlTests.cs" />
+    <Compile Include="Linq\LinqToCqlCassandraTests.cs" />
     <Compile Include="Operations\CassandraIndexClauseTest.cs" />
+    <Compile Include="Operations\CqlTest.cs" />
     <Compile Include="ReportedIssuesTests.cs" />
     <Compile Include="TestSetup.cs" />
     <Compile Include="TypesToDatabase\AsciiTypeTest.cs" />
@@ -108,6 +112,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -5,19 +5,19 @@ namespace FluentCassandra.Connections
 {
 	public static class ConnectionProviderFactory
 	{
-		private static readonly object _lock = new object();
-		private static volatile IDictionary<string, IConnectionProvider> _providers = new Dictionary<string, IConnectionProvider>();
+		private static readonly object Lock = new object();
+		private static volatile IDictionary<string, IConnectionProvider> Providers = new Dictionary<string, IConnectionProvider>();
 
 		public static IConnectionProvider Get(ConnectionBuilder connectionBuilder)
 		{
-			lock(_lock)
+			lock(Lock)
 			{
 				IConnectionProvider provider;
 	
-				if (!_providers.TryGetValue(connectionBuilder.ConnectionString, out provider))
+				if (!Providers.TryGetValue(connectionBuilder.ConnectionString, out provider))
 				{
 					provider = CreateProvider(connectionBuilder);
-					_providers.Add(connectionBuilder.ConnectionString, provider);
+					Providers.Add(connectionBuilder.ConnectionString, provider);
 				}
 
 				return provider;
