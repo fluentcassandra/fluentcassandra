@@ -10,8 +10,16 @@ namespace FluentCassandra
 	{
 		public static readonly AsciiType DefaultKeyName = "KEY";
 
+#if DEBUG
+		private CfDef _def;
+#endif
+
 		public CassandraColumnFamilySchema(CfDef def)
 		{
+#if DEBUG
+			_def = def;
+#endif
+
 			var familyType = ColumnType.Standard;
 			Enum.TryParse<ColumnType>(def.Column_type, out familyType);
 
