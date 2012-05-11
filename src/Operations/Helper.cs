@@ -11,7 +11,18 @@ namespace FluentCassandra.Operations
 {
 	internal static class Helper
 	{
-		private static readonly DateTimeOffset UnixStart = new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero);
+		private static readonly DateTimeOffset UnixStart;
+		private static readonly long MaxUnixSeconds;
+		private static readonly long MaxUnixMilliseconds;
+		private static readonly long MaxUnixMicroseconds;
+
+		static Helper()
+		{
+			UnixStart = new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero);
+			MaxUnixSeconds = Convert.ToInt64((DateTimeOffset.MaxValue - UnixStart).TotalSeconds);
+			MaxUnixMilliseconds = Convert.ToInt64((DateTimeOffset.MaxValue - UnixStart).TotalMilliseconds);
+			MaxUnixMicroseconds = Convert.ToInt64((DateTimeOffset.MaxValue - UnixStart).Ticks / 10L);
+		}
 
 		public static List<byte[]> ToByteArrayList(List<CassandraObject> list)
 		{
@@ -141,18 +152,22 @@ namespace FluentCassandra.Operations
 
 		public static long ToTimestamp(this DateTimeOffset dt)
 		{
-			// this was changed from .NET Ticks to the Unix Epoch to be compatible with other cassandra libraries
-			return Convert.ToInt64((dt - UnixStart).TotalMilliseconds);
+			// we are using the microsecond format from 1/1/1970 00:00:00 UTC same as the Cassandra server
+			return (dt - UnixStart).Ticks / 10L;
 		}
 
 		public static DateTimeOffset FromTimestamp(long ts)
 		{
-			double ms = 0D;
+			if (ts <= MaxUnixSeconds)
+				ts *= 1000L;
 
-			if (ts > 9999999999999L)
-				ms = ts / 1000D;
+			if (ts <= MaxUnixMilliseconds)
+				ts *= 1000L;
 
-			return UnixStart.AddMilliseconds(ms);
+			if (ts <= MaxUnixMicroseconds)
+				ts *= 10L;
+
+			return UnixStart.AddTicks(ts);
 		}
 
 		public static IFluentBaseColumn ConvertToFluentBaseColumn(ColumnOrSuperColumn col, CassandraColumnFamilySchema schema = null)
