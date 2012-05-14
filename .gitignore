@@ -48,6 +48,9 @@ ipch/
 _ReSharper*
 .JustCode*
 
+# DotCover is a code coverage tool
+*.dotCover
+
 # Installshield output folder 
 [Ee]xpress
 
