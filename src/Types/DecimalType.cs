@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Numerics;
 
 namespace FluentCassandra.Types
 {
@@ -42,7 +43,7 @@ namespace FluentCassandra.Types
 
 		protected override object GetRawValue() { return _value; }
 
-		private decimal _value;
+		private BigDecimal _value;
 
 		#region Equality
 
@@ -63,9 +64,22 @@ namespace FluentCassandra.Types
 
 		#region Conversion
 
-		public static implicit operator decimal(DecimalType type)
+		public static implicit operator BigDecimal(DecimalType type)
 		{
 			return type._value;
+		}
+
+
+		public static implicit operator decimal(DecimalType type)
+		{
+			return (decimal)type._value;
+		}
+
+		public static implicit operator DecimalType(BigDecimal o)
+		{
+			return new DecimalType {
+				_value = o
+			};
 		}
 
 		public static implicit operator DecimalType(decimal o)

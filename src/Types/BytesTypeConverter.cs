@@ -104,6 +104,9 @@ namespace FluentCassandra.Types
 			if (value is BigInteger)
 				bytes = ((BigInteger)value).ToByteArray();
 
+			if (value is BigDecimal)
+				bytes = ((BigDecimal)value).ToByteArray();
+
 			if (value is DateTimeOffset || value is DateTime)
 			{
 				var dto = DateTimeOffset.MinValue;
@@ -190,6 +193,9 @@ namespace FluentCassandra.Types
 
 			if (destinationType == typeof(BigInteger))
 				return new BigInteger(bytes);
+
+			if (destinationType == typeof(BigDecimal))
+				return new BigDecimal(bytes);
 
 			if (destinationType == typeof(char[]))
 				return value.Select(b => (char)b).ToArray();

@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Numerics;
 
 namespace FluentCassandra.Types
 {
-	internal class DecimalTypeConverter : CassandraObjectConverter<decimal>
+	internal class DecimalTypeConverter : CassandraObjectConverter<BigDecimal>
 	{
 		public override bool CanConvertFrom(Type sourceType)
 		{
@@ -20,15 +21,15 @@ namespace FluentCassandra.Types
 			return destinationType == typeof(byte[]);
 		}
 
-		public override decimal ConvertFromInternal(object value)
+		public override BigDecimal ConvertFromInternal(object value)
 		{
 			if (value is byte[])
-				return ((byte[])value).FromBytes<decimal>();
+				return ((byte[])value).FromBytes<BigDecimal>();
 
-			return (decimal)Convert.ChangeType(value, typeof(decimal));
+			return (BigDecimal)Convert.ChangeType(value, typeof(BigDecimal));
 		}
 
-		public override object ConvertToInternal(decimal value, Type destinationType)
+		public override object ConvertToInternal(BigDecimal value, Type destinationType)
 		{
 			if (destinationType == typeof(byte[]))
 				return value.ToBytes();
