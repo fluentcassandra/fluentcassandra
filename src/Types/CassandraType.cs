@@ -31,7 +31,7 @@ namespace FluentCassandra.Types
 
 		private readonly string _dbType;
 		private Type _type;
-		private bool? _dbTypeReversed;
+		private bool? _typeReversed;
 
 		private IList<CassandraType> _compositeTypes;
 		private IDictionary<char, CassandraType> _dynamicCompositeType;
@@ -47,7 +47,7 @@ namespace FluentCassandra.Types
 		public CassandraObject CreateInstance()
 		{
 			if (_type == null)
-				Parse();
+				Init();
 
 			CassandraObject obj;
 
@@ -70,10 +70,10 @@ namespace FluentCassandra.Types
 		{
 			get
 			{
-				if (_dbTypeReversed == null)
-					Parse();
+				if (_typeReversed == null)
+					Init();
 
-				return _dbTypeReversed.Value;
+				return _typeReversed.Value;
 			}
 		}
 
@@ -82,15 +82,15 @@ namespace FluentCassandra.Types
 			get
 			{
 				if (_type == null)
-					Parse();
+					Init();
 
 				return _type;
 			}
 		}
 
-		private void Parse()
+		private void Init()
 		{
-			_dbTypeReversed = false;
+			_typeReversed = false;
 			int compositeStart = _dbType.IndexOf('(');
 
 			// check for composite type
@@ -117,7 +117,7 @@ namespace FluentCassandra.Types
 		private void ParseReversedType(string part)
 		{
 			part = part.Trim('(', ')');
-			_dbTypeReversed = true;
+			_typeReversed = true;
 			_type = Parse(part);
 		}
 
