@@ -1,35 +1,34 @@
 ﻿using System;
 using System.Linq;
-using NUnit.Framework;
+using Xunit;
 using FluentCassandra.Types;
 
 namespace FluentCassandra.Operations
 {
-	[TestFixture]
-	public class ColumnCountTest
+	
+	public class ColumnCountTest : IUseFixture<CassandraDatabaseSetupFixture>, IDisposable
 	{
 		private CassandraContext _db;
 		private CassandraColumnFamily<AsciiType> _family;
 		private CassandraSuperColumnFamily<AsciiType, AsciiType> _superFamily;
-		private const string _testKey = "Test1";
-		private const string _testSuperName = "SubTest1";
 
-		[TestFixtureSetUp]
-		public void TestInit()
+		public void SetFixture(CassandraDatabaseSetupFixture data)
 		{
-			var setup = new CassandraDatabaseSetup();
+			var setup = data.DatabaseSetup();
 			_db = setup.DB;
 			_family = setup.Family;
 			_superFamily = setup.SuperFamily;
 		}
 
-		[TestFixtureTearDown]
-		public void TestCleanup()
+		public void Dispose()
 		{
 			_db.Dispose();
 		}
 
-		[Test]
+		private const string _testKey = "Test1";
+		private const string _testSuperName = "SubTest1";
+
+		[Fact]
 		public void ColumnFamily_Key()
 		{
 			// arrange
@@ -39,10 +38,10 @@ namespace FluentCassandra.Operations
 			int actual = _family.ColumnCount(_testKey, null, null);
 
 			// assert
-			Assert.AreEqual(expected, actual);
+			Assert.Equal(expected, actual);
 		}
 
-		[Test]
+		[Fact]
 		public void SuperColumnFamily_Key()
 		{
 			// arrange
@@ -52,10 +51,10 @@ namespace FluentCassandra.Operations
 			int actual = _superFamily.ColumnCount(_testKey, null, null);
 
 			// assert
-			Assert.AreEqual(expected, actual);
+			Assert.Equal(expected, actual);
 		}
 
-		[Test]
+		[Fact]
 		public void SuperColumnFamily_Key_And_SuperColumnName()
 		{
 			// arrange
@@ -65,7 +64,7 @@ namespace FluentCassandra.Operations
 			int actual = _superFamily.SuperColumnCount(_testKey, _testSuperName, null, null);
 
 			// assert
-			Assert.AreEqual(expected, actual);
+			Assert.Equal(expected, actual);
 		}
 	}
 }

@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Linq;
-using NUnit.Framework;
+using Xunit;
 
 namespace FluentCassandra.Types
 {
-	[TestFixture]
+	
 	public class CassandraTypeTest
 	{
-		[Test]
+		[Fact]
 		public void Parse_CompositeType()
 		{
 			// arrange
@@ -22,14 +22,14 @@ namespace FluentCassandra.Types
 			Type actual = cassandraType.FluentType;
 
 			// assert
-			Assert.AreEqual(expected, actual);
-			Assert.AreEqual(2, instance.ComponentTypeHints.Count);
+			Assert.Equal(expected, actual);
+			Assert.Equal(2, instance.ComponentTypeHints.Count);
 
 			foreach (var e in expectedInternals)
 				Assert.True(instance.ComponentTypeHints.Any(x => x.FluentType == e), e.Name + " couldn't be found");
 		}
 
-		[Test]
+		[Fact]
 		public void Parse_Type()
 		{
 			// arrange
@@ -40,10 +40,10 @@ namespace FluentCassandra.Types
 			Type actual = new CassandraType(cassandraString).FluentType;
 
 			// assert
-			Assert.AreEqual(expected, actual);
+			Assert.Equal(expected, actual);
 		}
 
-		[Test]
+		[Fact]
 		public void Parse_Reversed_Type()
 		{
 			// arrange
@@ -54,41 +54,46 @@ namespace FluentCassandra.Types
 			Type actual = new CassandraType(cassandraString).FluentType;
 
 			// assert
-			Assert.AreEqual(expected, actual);
+			Assert.Equal(expected, actual);
 		}
 		
-		[Test, ExpectedException(typeof(CassandraException))]
+		[Fact]
 		public void Parse_CompositeType_UnknownInnerType()
 		{
 			// arranage
 			string cassandraString = "org.apache.cassandra.db.marshal.CompositeType(org.apache.cassandra.db.marshal.TimeUUIDType,org.apache.cassandra.db.marshal.UnkownTypeForTesting)";
 
 			// act
-			Type actual = new CassandraType(cassandraString).FluentType;
+			Assert.Throws(typeof(CassandraException), delegate {
+				Type actual = new CassandraType(cassandraString).FluentType;
+			});
 		}
 
-		[Test,ExpectedException(typeof(CassandraException))]
+		[Fact]
 		public void Parse_UnknownType()
 		{
 			// arranage
 			string cassandraString = "org.apache.cassandra.db.marshal.UnkownTypeForTesting";
 
 			// act
-			Type actual = new CassandraType(cassandraString).FluentType;
+			Assert.Throws(typeof(CassandraException), delegate {
+				Type actual = new CassandraType(cassandraString).FluentType;
+			});
 		}
 
-		[Test, ExpectedException(typeof(CassandraException))]
+		[Fact]
 		public void Parse_UnknownTypeWithParams()
 		{
 			// arranage
-			Type expected = typeof(UTF8Type);
 			string cassandraString = "org.apache.cassandra.db.marshal.UnkownTypeForTesting(org.apache.cassandra.db.marshal.TimeUUIDType,org.apache.cassandra.db.marshal.UTF8Type)";
 
 			// act
-			Type actual = new CassandraType(cassandraString).FluentType;
+			Assert.Throws(typeof(CassandraException), delegate {
+				Type actual = new CassandraType(cassandraString).FluentType;
+			});
 		}
 
-		[Test]
+		[Fact]
 		public void ReversedTypeHelper()
 		{
 			// arrange
@@ -98,7 +103,7 @@ namespace FluentCassandra.Types
 			var actual = CassandraType.ReversedType(CassandraType.UTF8Type).DatabaseType;
 
 			// assert
-			Assert.AreEqual(expected, actual);
+			Assert.Equal(expected, actual);
 		}
 	}
 }

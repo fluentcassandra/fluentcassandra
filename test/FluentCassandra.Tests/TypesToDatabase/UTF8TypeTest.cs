@@ -1,31 +1,30 @@
 ﻿using System;
 using System.Linq;
-using NUnit.Framework;
+using Xunit;
 using FluentCassandra.Types;
 
 namespace FluentCassandra.TypesToDatabase
 {
-	[TestFixture]
-	public class UTF8TypeTest
+	
+	public class UTF8TypeTest : IUseFixture<CassandraDatabaseSetupFixture>, IDisposable
 	{
-		public const string FamilyName = "StandardUTF8Type";
-		public const string TestKey = "Test1";
 		private CassandraContext _db;
 
-		[TestFixtureSetUp]
-		public void TestInit()
+		public void SetFixture(CassandraDatabaseSetupFixture data)
 		{
-			var setup = new CassandraDatabaseSetup();
+			var setup = data.DatabaseSetup();
 			_db = setup.DB;
 		}
 
-		[TestFixtureTearDown]
-		public void TestCleanup()
+		public void Dispose()
 		{
 			_db.Dispose();
 		}
 
-		[Test]
+		public const string FamilyName = "StandardUTF8Type";
+		public const string TestKey = "Test1";
+
+		[Fact]
 		public void Save_String()
 		{
 			// arrange
@@ -38,7 +37,7 @@ namespace FluentCassandra.TypesToDatabase
 			var actual = family.GetColumn(TestKey, expected);
 
 			// assert
-			Assert.AreEqual(expected, (string)actual.ColumnName);
+			Assert.Equal(expected, (string)actual.ColumnName);
 		}
 	}
 }

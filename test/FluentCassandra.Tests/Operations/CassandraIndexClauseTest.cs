@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Linq;
-using NUnit.Framework;
+using Xunit;
 using FluentCassandra.Types;
 using Apache.Cassandra;
 
 namespace FluentCassandra.Operations
 {
-	[TestFixture]
+	
 	public class CassandraIndexClauseTest
 	{
-		[Test]
+		[Fact]
 		public void StartKeySet()
 		{
 			// arrange
@@ -25,10 +25,10 @@ namespace FluentCassandra.Operations
 				family => family[columnName] == columnValue);
 
 			// assert
-			Assert.AreEqual(index.StartKey, key);
+			Assert.Same((string)index.StartKey, key);
 		}
 
-		[Test]
+		[Fact]
 		public void CountSet()
 		{
 			// arrange
@@ -44,10 +44,10 @@ namespace FluentCassandra.Operations
 				family => family[columnName] == columnValue);
 
 			// assert
-			Assert.AreEqual(index.Count, count);
+			Assert.Equal(index.Count, count);
 		}
 
-		[Test]
+		[Fact]
 		public void SingleExpression()
 		{
 			// arrange
@@ -64,16 +64,16 @@ namespace FluentCassandra.Operations
 			var expressions = index.CompiledExpressions;
 
 			// assert
-			Assert.AreEqual(1, expressions.Count);
+			Assert.Equal(1, expressions.Count);
 
 			var firstExpression = expressions[0];
-			Assert.IsNotNull(firstExpression);
-			Assert.AreEqual(CassandraObject.GetTypeFromDatabaseValue(firstExpression.Column_name, typeof(BytesType)), (BytesType)columnName);
-			Assert.AreEqual(firstExpression.Op, IndexOperator.EQ);
-			Assert.AreEqual(CassandraObject.GetTypeFromDatabaseValue(firstExpression.Value, typeof(BytesType)), (BytesType)columnValue);
+			Assert.NotNull(firstExpression);
+			Assert.Equal(CassandraObject.GetTypeFromDatabaseValue(firstExpression.Column_name, typeof(BytesType)), (BytesType)columnName);
+			Assert.Equal(firstExpression.Op, IndexOperator.EQ);
+			Assert.Equal(CassandraObject.GetTypeFromDatabaseValue(firstExpression.Value, typeof(BytesType)), (BytesType)columnValue);
 		}
 
-		[Test]
+		[Fact]
 		public void TwoExpressions()
 		{
 			// arrange
@@ -93,21 +93,21 @@ namespace FluentCassandra.Operations
 			var expressions = index.CompiledExpressions;
 
 			// assert
-			Assert.AreEqual(2, expressions.Count);
+			Assert.Equal(2, expressions.Count);
 
 			var firstExpression = expressions[0];
-			Assert.IsNotNull(firstExpression);
-			Assert.AreEqual(CassandraObject.GetTypeFromDatabaseValue(firstExpression.Column_name, typeof(BytesType)), (BytesType)columnName1);
-			Assert.AreEqual(firstExpression.Op, IndexOperator.EQ);
-			Assert.AreEqual(CassandraObject.GetTypeFromDatabaseValue(firstExpression.Value, typeof(BytesType)), (BytesType)columnValue1);
+			Assert.NotNull(firstExpression);
+			Assert.Equal(CassandraObject.GetTypeFromDatabaseValue(firstExpression.Column_name, typeof(BytesType)), (BytesType)columnName1);
+			Assert.Equal(firstExpression.Op, IndexOperator.EQ);
+			Assert.Equal(CassandraObject.GetTypeFromDatabaseValue(firstExpression.Value, typeof(BytesType)), (BytesType)columnValue1);
 
 			var secondExpression = expressions[1];
-			Assert.AreEqual(CassandraObject.GetTypeFromDatabaseValue(secondExpression.Column_name, typeof(BytesType)), (BytesType)columnName2);
-			Assert.AreEqual(secondExpression.Op, IndexOperator.GT);
-			Assert.AreEqual(CassandraObject.GetTypeFromDatabaseValue(secondExpression.Value, typeof(BytesType)), (BytesType)columnValue2);
+			Assert.Equal(CassandraObject.GetTypeFromDatabaseValue(secondExpression.Column_name, typeof(BytesType)), (BytesType)columnName2);
+			Assert.Equal(secondExpression.Op, IndexOperator.GT);
+			Assert.Equal(CassandraObject.GetTypeFromDatabaseValue(secondExpression.Value, typeof(BytesType)), (BytesType)columnValue2);
 		}
 
-		[Test]
+		[Fact]
 		public void ThreeExpressions()
 		{
 			// arrange
@@ -130,26 +130,26 @@ namespace FluentCassandra.Operations
 			var expressions = index.CompiledExpressions;
 
 			// assert
-			Assert.AreEqual(3, expressions.Count);
+			Assert.Equal(3, expressions.Count);
 
 			var firstExpression = expressions[0];
-			Assert.IsNotNull(firstExpression);
-			Assert.AreEqual(CassandraObject.GetTypeFromDatabaseValue(firstExpression.Column_name, typeof(BytesType)), (BytesType)columnName1);
-			Assert.AreEqual(firstExpression.Op, IndexOperator.EQ);
-			Assert.AreEqual(CassandraObject.GetTypeFromDatabaseValue(firstExpression.Value, typeof(BytesType)), (BytesType)columnValue1);
+			Assert.NotNull(firstExpression);
+			Assert.Equal(CassandraObject.GetTypeFromDatabaseValue(firstExpression.Column_name, typeof(BytesType)), (BytesType)columnName1);
+			Assert.Equal(firstExpression.Op, IndexOperator.EQ);
+			Assert.Equal(CassandraObject.GetTypeFromDatabaseValue(firstExpression.Value, typeof(BytesType)), (BytesType)columnValue1);
 
 			var secondExpression = expressions[1];
-			Assert.AreEqual(CassandraObject.GetTypeFromDatabaseValue(secondExpression.Column_name, typeof(BytesType)), (BytesType)columnName2);
-			Assert.AreEqual(secondExpression.Op, IndexOperator.GT);
-			Assert.AreEqual(CassandraObject.GetTypeFromDatabaseValue(secondExpression.Value, typeof(BytesType)), (BytesType)columnValue2);
+			Assert.Equal(CassandraObject.GetTypeFromDatabaseValue(secondExpression.Column_name, typeof(BytesType)), (BytesType)columnName2);
+			Assert.Equal(secondExpression.Op, IndexOperator.GT);
+			Assert.Equal(CassandraObject.GetTypeFromDatabaseValue(secondExpression.Value, typeof(BytesType)), (BytesType)columnValue2);
 
 			var thirdExpression = expressions[2];
-			Assert.AreEqual(CassandraObject.GetTypeFromDatabaseValue(thirdExpression.Column_name, typeof(BytesType)), (BytesType)columnName3);
-			Assert.AreEqual(secondExpression.Op, IndexOperator.GT);
-			Assert.AreEqual(CassandraObject.GetTypeFromDatabaseValue(thirdExpression.Value, typeof(BytesType)), (BytesType)columnValue3);
+			Assert.Equal(CassandraObject.GetTypeFromDatabaseValue(thirdExpression.Column_name, typeof(BytesType)), (BytesType)columnName3);
+			Assert.Equal(secondExpression.Op, IndexOperator.GT);
+			Assert.Equal(CassandraObject.GetTypeFromDatabaseValue(thirdExpression.Value, typeof(BytesType)), (BytesType)columnValue3);
 		}
 
-		[Test]
+		[Fact]
 		public void EqualsExpression()
 		{
 			// arrange
@@ -166,16 +166,16 @@ namespace FluentCassandra.Operations
 			var expressions = index.CompiledExpressions;
 
 			// assert
-			Assert.AreEqual(1, expressions.Count);
+			Assert.Equal(1, expressions.Count);
 
 			var firstExpression = expressions[0];
-			Assert.IsNotNull(firstExpression);
-			Assert.AreEqual(CassandraObject.GetTypeFromDatabaseValue(firstExpression.Column_name, typeof(BytesType)), (BytesType)columnName);
-			Assert.AreEqual(firstExpression.Op, IndexOperator.EQ);
-			Assert.AreEqual(CassandraObject.GetTypeFromDatabaseValue(firstExpression.Value, typeof(BytesType)), (BytesType)columnValue);
+			Assert.NotNull(firstExpression);
+			Assert.Equal(CassandraObject.GetTypeFromDatabaseValue(firstExpression.Column_name, typeof(BytesType)), (BytesType)columnName);
+			Assert.Equal(firstExpression.Op, IndexOperator.EQ);
+			Assert.Equal(CassandraObject.GetTypeFromDatabaseValue(firstExpression.Value, typeof(BytesType)), (BytesType)columnValue);
 		}
 
-		[Test]
+		[Fact]
 		public void GreaterThanExpression()
 		{
 			// arrange
@@ -192,16 +192,16 @@ namespace FluentCassandra.Operations
 			var expressions = index.CompiledExpressions;
 
 			// assert
-			Assert.AreEqual(1, expressions.Count);
+			Assert.Equal(1, expressions.Count);
 
 			var firstExpression = expressions[0];
-			Assert.IsNotNull(firstExpression);
-			Assert.AreEqual(CassandraObject.GetTypeFromDatabaseValue(firstExpression.Column_name, typeof(BytesType)), (BytesType)columnName);
-			Assert.AreEqual(firstExpression.Op, IndexOperator.GT);
-			Assert.AreEqual(CassandraObject.GetTypeFromDatabaseValue(firstExpression.Value, typeof(BytesType)), (BytesType)columnValue);
+			Assert.NotNull(firstExpression);
+			Assert.Equal(CassandraObject.GetTypeFromDatabaseValue(firstExpression.Column_name, typeof(BytesType)), (BytesType)columnName);
+			Assert.Equal(firstExpression.Op, IndexOperator.GT);
+			Assert.Equal(CassandraObject.GetTypeFromDatabaseValue(firstExpression.Value, typeof(BytesType)), (BytesType)columnValue);
 		}
 
-		[Test]
+		[Fact]
 		public void GreaterThanOrEqualExpression()
 		{
 			// arrange
@@ -218,16 +218,16 @@ namespace FluentCassandra.Operations
 			var expressions = index.CompiledExpressions;
 
 			// assert
-			Assert.AreEqual(1, expressions.Count);
+			Assert.Equal(1, expressions.Count);
 
 			var firstExpression = expressions[0];
-			Assert.IsNotNull(firstExpression);
-			Assert.AreEqual(CassandraObject.GetTypeFromDatabaseValue(firstExpression.Column_name, typeof(BytesType)), (BytesType)columnName);
-			Assert.AreEqual(firstExpression.Op, IndexOperator.GTE);
-			Assert.AreEqual(CassandraObject.GetTypeFromDatabaseValue(firstExpression.Value, typeof(BytesType)), (BytesType)columnValue);
+			Assert.NotNull(firstExpression);
+			Assert.Equal(CassandraObject.GetTypeFromDatabaseValue(firstExpression.Column_name, typeof(BytesType)), (BytesType)columnName);
+			Assert.Equal(firstExpression.Op, IndexOperator.GTE);
+			Assert.Equal(CassandraObject.GetTypeFromDatabaseValue(firstExpression.Value, typeof(BytesType)), (BytesType)columnValue);
 		}
 
-		[Test]
+		[Fact]
 		public void LessThanExpression()
 		{
 			// arrange
@@ -244,16 +244,16 @@ namespace FluentCassandra.Operations
 			var expressions = index.CompiledExpressions;
 
 			// assert
-			Assert.AreEqual(1, expressions.Count);
+			Assert.Equal(1, expressions.Count);
 
 			var firstExpression = expressions[0];
-			Assert.IsNotNull(firstExpression);
-			Assert.AreEqual(CassandraObject.GetTypeFromDatabaseValue(firstExpression.Column_name, typeof(BytesType)), (BytesType)columnName);
-			Assert.AreEqual(firstExpression.Op, IndexOperator.LT);
-			Assert.AreEqual(CassandraObject.GetTypeFromDatabaseValue(firstExpression.Value, typeof(BytesType)), (BytesType)columnValue);
+			Assert.NotNull(firstExpression);
+			Assert.Equal(CassandraObject.GetTypeFromDatabaseValue(firstExpression.Column_name, typeof(BytesType)), (BytesType)columnName);
+			Assert.Equal(firstExpression.Op, IndexOperator.LT);
+			Assert.Equal(CassandraObject.GetTypeFromDatabaseValue(firstExpression.Value, typeof(BytesType)), (BytesType)columnValue);
 		}
 
-		[Test]
+		[Fact]
 		public void LessThanOrEqualExpression()
 		{
 			// arrange
@@ -270,13 +270,13 @@ namespace FluentCassandra.Operations
 			var expressions = index.CompiledExpressions;
 
 			// assert
-			Assert.AreEqual(1, expressions.Count);
+			Assert.Equal(1, expressions.Count);
 
 			var firstExpression = expressions[0];
-			Assert.IsNotNull(firstExpression);
-			Assert.AreEqual(CassandraObject.GetTypeFromDatabaseValue(firstExpression.Column_name, typeof(BytesType)), (BytesType)columnName);
-			Assert.AreEqual(firstExpression.Op, IndexOperator.LTE);
-			Assert.AreEqual(CassandraObject.GetTypeFromDatabaseValue(firstExpression.Value, typeof(BytesType)), (BytesType)columnValue);
+			Assert.NotNull(firstExpression);
+			Assert.Equal(CassandraObject.GetTypeFromDatabaseValue(firstExpression.Column_name, typeof(BytesType)), (BytesType)columnName);
+			Assert.Equal(firstExpression.Op, IndexOperator.LTE);
+			Assert.Equal(CassandraObject.GetTypeFromDatabaseValue(firstExpression.Value, typeof(BytesType)), (BytesType)columnValue);
 		}
 	}
 }

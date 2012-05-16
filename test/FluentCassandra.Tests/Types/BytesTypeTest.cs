@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Linq;
-using NUnit.Framework;
+using Xunit;
 
 namespace FluentCassandra.Types
 {
-	[TestFixture]
+	
 	public class BytesTypeTest
 	{
-		[Test]
+		[Fact]
 		public void CassandraType_Cast()
 		{
 			// arranage
@@ -19,10 +19,10 @@ namespace FluentCassandra.Types
 			byte[] actual = actualCassandraType;
 
 			// assert
-			Assert.IsTrue(expected.SequenceEqual(actual));
+			Assert.True(expected.SequenceEqual(actual));
 		}
 
-		[Test]
+		[Fact]
 		public void Implicit_ByteArray_Cast()
 		{
 			// arrange
@@ -33,10 +33,10 @@ namespace FluentCassandra.Types
 			byte[] actual = actualType;
 
 			// assert
-			Assert.IsTrue(expected.SequenceEqual(actual));
+			Assert.True(expected.SequenceEqual(actual));
 		}
 
-		[Test]
+		[Fact]
 		public void Implicit_Byte_Cast()
 		{
 			// arrange
@@ -46,10 +46,10 @@ namespace FluentCassandra.Types
 			BytesType actual = expected;
 
 			// assert
-			Assert.AreEqual(expected, (byte)actual);
+			Assert.Equal(expected, (byte)actual);
 		}
 
-		[Test]
+		[Fact]
 		public void Implicit_Int16_Cast()
 		{
 			// arrange
@@ -59,10 +59,10 @@ namespace FluentCassandra.Types
 			BytesType actual = expected;
 
 			// assert
-			Assert.AreEqual(expected, (short)actual);
+			Assert.Equal(expected, (short)actual);
 		}
 
-		[Test]
+		[Fact]
 		public void Implicit_Int32_Cast()
 		{
 			// arrange
@@ -72,10 +72,10 @@ namespace FluentCassandra.Types
 			BytesType actual = expected;
 
 			// assert
-			Assert.AreEqual(expected, (int)actual);
+			Assert.Equal(expected, (int)actual);
 		}
 
-		[Test]
+		[Fact]
 		public void Implicit_Int64_Cast()
 		{
 			// arrange
@@ -85,10 +85,10 @@ namespace FluentCassandra.Types
 			BytesType actual = expected;
 
 			// assert
-			Assert.AreEqual(expected, (long)actual);
+			Assert.Equal(expected, (long)actual);
 		}
 
-		[Test]
+		[Fact]
 		public void Implicit_SByte_Cast()
 		{
 			// arrange
@@ -98,10 +98,10 @@ namespace FluentCassandra.Types
 			BytesType actual = expected;
 
 			// assert
-			Assert.AreEqual(expected, (sbyte)actual);
+			Assert.Equal(expected, (sbyte)actual);
 		}
 
-		[Test]
+		[Fact]
 		public void Implicit_UInt16_Cast()
 		{
 			// arrange
@@ -111,10 +111,10 @@ namespace FluentCassandra.Types
 			BytesType actual = expected;
 
 			// assert
-			Assert.AreEqual(expected, (ushort)actual);
+			Assert.Equal(expected, (ushort)actual);
 		}
 
-		[Test]
+		[Fact]
 		public void Implicit_UInt32_Cast()
 		{
 			// arrange
@@ -124,10 +124,10 @@ namespace FluentCassandra.Types
 			BytesType actual = expected;
 
 			// assert
-			Assert.AreEqual(expected, (uint)actual);
+			Assert.Equal(expected, (uint)actual);
 		}
 
-		[Test]
+		[Fact]
 		public void Implicit_UInt64_Cast()
 		{
 			// arrange
@@ -137,10 +137,10 @@ namespace FluentCassandra.Types
 			BytesType actual = expected;
 
 			// assert
-			Assert.AreEqual(expected, (ulong)actual);
+			Assert.Equal(expected, (ulong)actual);
 		}
 
-		[Test]
+		[Fact]
 		public void Implicit_Single_Cast()
 		{
 			// arrange
@@ -150,10 +150,10 @@ namespace FluentCassandra.Types
 			BytesType actual = expected;
 
 			// assert
-			Assert.AreEqual(expected, (float)actual);
+			Assert.Equal(expected, (float)actual);
 		}
 
-		[Test]
+		[Fact]
 		public void Implicit_Double_Cast()
 		{
 			// arrange
@@ -163,10 +163,10 @@ namespace FluentCassandra.Types
 			BytesType actual = expected;
 
 			// assert
-			Assert.AreEqual(expected, (double)actual);
+			Assert.Equal(expected, (double)actual);
 		}
 
-		[Test]
+		[Fact]
 		public void Implicit_Decimal_Cast()
 		{
 			// arrange
@@ -176,10 +176,10 @@ namespace FluentCassandra.Types
 			BytesType actual = expected;
 
 			// assert
-			Assert.AreEqual(expected, (decimal)actual);
+			Assert.Equal(expected, (decimal)actual);
 		}
 
-		[Test]
+		[Fact]
 		public void Implicit_Boolean_True_Cast()
 		{
 			// arrange
@@ -189,10 +189,10 @@ namespace FluentCassandra.Types
 			BytesType actual = expected;
 
 			// assert
-			Assert.AreEqual(expected, (bool)actual);
+			Assert.Equal(expected, (bool)actual);
 		}
 
-		[Test]
+		[Fact]
 		public void Implicit_Boolean_False_Cast()
 		{
 			// arrange
@@ -202,10 +202,10 @@ namespace FluentCassandra.Types
 			BytesType actual = expected;
 
 			// assert
-			Assert.AreEqual(expected, (bool)actual);
+			Assert.Equal(expected, (bool)actual);
 		}
 
-		[Test]
+		[Fact]
 		public void Implicit_String_Cast()
 		{
 			// arrange
@@ -215,10 +215,10 @@ namespace FluentCassandra.Types
 			BytesType actual = expected;
 
 			// assert
-			Assert.AreEqual(expected, (string)actual);
+			Assert.Equal(expected, (string)actual);
 		}
 
-		[Test]
+		[Fact]
 		public void Implicit_Char_Cast()
 		{
 			// arrange
@@ -228,10 +228,10 @@ namespace FluentCassandra.Types
 			BytesType actual = expected;
 
 			// assert
-			Assert.AreEqual(expected, (char)actual);
+			Assert.Equal(expected, (char)actual);
 		}
 
-		[Test]
+		[Fact]
 		public void Implicit_Guid_Cast()
 		{
 			// arrange
@@ -241,10 +241,10 @@ namespace FluentCassandra.Types
 			BytesType actual = expected;
 
 			// assert
-			Assert.AreEqual(expected, (Guid)actual);
+			Assert.Equal(expected, (Guid)actual);
 		}
 
-		[Test]
+		[Fact]
 		public void Implicit_DateTime_Cast()
 		{
 			// arrange
@@ -254,10 +254,10 @@ namespace FluentCassandra.Types
 			BytesType actual = expected;
 
 			// assert
-			Assert.AreEqual(expected, (DateTime)actual);
+			Assert.Equal(expected, (DateTime)actual);
 		}
 
-		[Test]
+		[Fact]
 		public void Implicit_DateTimeOffset_Cast()
 		{
 			// arrange
@@ -267,10 +267,10 @@ namespace FluentCassandra.Types
 			BytesType actual = expected;
 
 			// assert
-			Assert.AreEqual(expected, (DateTimeOffset)actual);
+			Assert.Equal(expected, (DateTimeOffset)actual);
 		}
 
-		[Test]
+		[Fact]
 		public void Operator_EqualTo()
 		{
 			// arrange
@@ -281,10 +281,10 @@ namespace FluentCassandra.Types
 			bool actual = type == value;
 
 			// assert
-			Assert.IsTrue(actual);
+			Assert.True(actual);
 		}
 
-		[Test]
+		[Fact]
 		public void Operator_NotEqualTo()
 		{
 			// arrange
@@ -295,10 +295,10 @@ namespace FluentCassandra.Types
 			bool actual = type != value;
 
 			// assert
-			Assert.IsFalse(actual);
+			Assert.False(actual);
 		}
 
-		[Test]
+		[Fact]
 		public void HashCode_String_AcceptsShortStrings()
 		{
 			// arrange
@@ -309,10 +309,10 @@ namespace FluentCassandra.Types
 			var hashcode = type.GetHashCode();
 
 			// assert
-			Assert.IsNotNull(hashcode);
+			Assert.NotNull(hashcode);
 		}
 
-		[Test]
+		[Fact]
 		public void HashCode_String_NotEqualTo()
 		{
 			// arrange
@@ -327,10 +327,10 @@ namespace FluentCassandra.Types
 			var hashcode2 = type2.GetHashCode();
 
 			// assert
-			Assert.AreNotEqual(hashcode1, hashcode2);
+			Assert.NotEqual(hashcode1, hashcode2);
 		}
 
-		[Test]
+		[Fact]
 		public void HashCode_String_EqualTo()
 		{
 			// arrange
@@ -344,7 +344,7 @@ namespace FluentCassandra.Types
 			var hashcode2 = type2.GetHashCode();
 
 			// assert
-			Assert.AreEqual(hashcode1, hashcode2);
+			Assert.Equal(hashcode1, hashcode2);
 		}
 	}
 }

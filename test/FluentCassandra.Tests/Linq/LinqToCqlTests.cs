@@ -1,25 +1,29 @@
 ﻿using System.Linq;
 using FluentCassandra.Connections;
-using NUnit.Framework;
+using Xunit;
 using FluentCassandra.Types;
 using System;
 
 namespace FluentCassandra.Linq
 {
-	[TestFixture]
-	public class LinqToCqlTests
+	
+	public class LinqToCqlTests : IDisposable
 	{
 		private CassandraContext _db;
 		private CassandraColumnFamily<AsciiType> _family;
 
-		[TestFixtureSetUp]
-		public void TestInit()
+		public LinqToCqlTests()
 		{
 			var keyspaceName = "Testing";
 			var server = new Server("localhost");
 
 			_db = new CassandraContext(keyspace: keyspaceName, server: server);
 			_family = _db.GetColumnFamily<AsciiType>("Users");
+		}
+
+		public void Dispose()
+		{
+			_db.Dispose();
 		}
 
 		private string ScrubLineBreaks(string query)
@@ -29,10 +33,10 @@ namespace FluentCassandra.Linq
 
 		private void AreEqual(string expected, string actual)
 		{
-			Assert.AreEqual(ScrubLineBreaks(expected), ScrubLineBreaks(actual));
+			Assert.Equal(ScrubLineBreaks(expected), ScrubLineBreaks(actual));
 		}
 
-		[Test]
+		[Fact]
 		public void Provider()
 		{
 			var expected = "SELECT * FROM Users";
@@ -43,7 +47,7 @@ namespace FluentCassandra.Linq
 			AreEqual(expected, actual);
 		}
 
-		[Test]
+		[Fact]
 		public void SELECT()
 		{
 			var expected = "SELECT * FROM Users";
@@ -57,7 +61,7 @@ namespace FluentCassandra.Linq
 			AreEqual(expected, actual);
 		}
 
-		[Test]
+		[Fact]
 		public void LIMIT()
 		{
 			var expected = "SELECT * FROM Users LIMIT 25";
@@ -71,7 +75,7 @@ namespace FluentCassandra.Linq
 			AreEqual(expected, actual);
 		}
 
-		[Test]
+		[Fact]
 		public void SELECT_One_Column()
 		{
 			var expected = "SELECT Age FROM Users";
@@ -82,7 +86,7 @@ namespace FluentCassandra.Linq
 			AreEqual(expected, actual);
 		}
 
-		[Test]
+		[Fact]
 		public void SELECT_Two_Columns()
 		{
 			var expected = "SELECT Age, Name FROM Users";
@@ -93,7 +97,7 @@ namespace FluentCassandra.Linq
 			AreEqual(expected, actual);
 		}
 
-		[Test]
+		[Fact]
 		public void Cannot_Use_Columns_Property()
 		{
 			var query =
@@ -106,7 +110,7 @@ namespace FluentCassandra.Linq
 			});
 		}
 
-		[Test]
+		[Fact]
 		public void WHERE_Using_KEY()
 		{
 			var expected = "SELECT * FROM Users WHERE KEY = 1234";
@@ -121,7 +125,7 @@ namespace FluentCassandra.Linq
 			AreEqual(expected, actual);
 		}
 
-		[Test]
+		[Fact]
 		public void WHERE_Using_KEY_And_One_Parameter()
 		{
 			var expected = "SELECT * FROM Users WHERE KEY = 1234 AND Age = 10";
@@ -136,7 +140,7 @@ namespace FluentCassandra.Linq
 			AreEqual(expected, actual);
 		}
 
-		[Test]
+		[Fact]
 		public void WHERE_One_Parameter()
 		{
 			var expected = "SELECT * FROM Users WHERE Id = 1234";
@@ -151,7 +155,7 @@ namespace FluentCassandra.Linq
 			AreEqual(expected, actual);
 		}
 
-		[Test]
+		[Fact]
 		public void WHERE_Two_AND_Parameter()
 		{
 			var expected = "SELECT * FROM Users WHERE Id = 1234 AND Age = 10";
@@ -166,17 +170,17 @@ namespace FluentCassandra.Linq
 			AreEqual(expected, actual);
 		}
 
-		[Test]
+		[Fact]
 		public void WHERE_Two_OR_Parameter()
 		{
-			Assert.Throws<NotSupportedException>(delegate {
+			Assert.Throws(typeof(NotSupportedException), delegate {
 				var query =
 					from f in _family
 					where f["Id"] == 1234 || f["Age"] == 10
 					select f;
 
 				query.ToString();
-			}, "OR is not supported");
+			});
 		}
 	}
 }

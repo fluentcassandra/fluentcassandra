@@ -35,12 +35,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="nunit.mocks">
-      <HintPath>..\..\packages\NUnit.2.5.10.11092\lib\nunit.mocks.dll</HintPath>
-    </Reference>
-    <Reference Include="pnunit.framework">
-      <HintPath>..\..\packages\NUnit.2.5.10.11092\lib\pnunit.framework.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -50,12 +44,13 @@
     <Reference Include="System.Numerics" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="nunit.framework">
-      <HintPath>..\..\packages\NUnit.2.5.10.11092\lib\nunit.framework.dll</HintPath>
+    <Reference Include="xunit">
+      <HintPath>..\..\packages\xunit.1.9.0.1566\lib\xunit.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bugs\Issue25JavaBigDecimalBinaryConversion.cs" />
+    <Compile Include="CassandraDatabaseSetupFixture.cs" />
     <Compile Include="CassandraQueryTest.cs" />
     <Compile Include="Connections\ConnectionProviderTests.cs" />
     <Compile Include="Connections\NormalConnectionProviderTests.cs" />
@@ -67,7 +62,6 @@
     <Compile Include="Operations\CassandraIndexClauseTest.cs" />
     <Compile Include="Operations\CqlTest.cs" />
     <Compile Include="ReportedIssuesTests.cs" />
-    <Compile Include="TestSetup.cs" />
     <Compile Include="TypesToDatabase\AsciiTypeTest.cs" />
     <Compile Include="TypesToDatabase\BytesTypeTest.cs" />
     <Compile Include="TypesToDatabase\CompositeTypeTest.cs" />

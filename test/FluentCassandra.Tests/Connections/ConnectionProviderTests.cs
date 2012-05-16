@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Linq;
-using NUnit.Framework;
+using Xunit;
 
 namespace FluentCassandra.Connections
 {
-	[TestFixture]
+	
 	public class ConnectionProviderTests
 	{
-		[Test]
+		[Fact]
 		public void NormalConnectionProvider()
 		{
 			// arrange
@@ -19,10 +19,10 @@ namespace FluentCassandra.Connections
 			var actual = ConnectionProviderFactory.Get(result).GetType();
 
 			// assert
-			Assert.AreEqual(expected, actual);
+			Assert.Equal(expected, actual);
 		}
 
-		[Test]
+		[Fact]
 		public void PooledConnectionProvider()
 		{
 			// arrange
@@ -34,7 +34,7 @@ namespace FluentCassandra.Connections
 			var actual = ConnectionProviderFactory.Get(result).GetType();
 
 			// assert
-			Assert.AreEqual(expected, actual);
+			Assert.Equal(expected, actual);
 		}
 	}
 }

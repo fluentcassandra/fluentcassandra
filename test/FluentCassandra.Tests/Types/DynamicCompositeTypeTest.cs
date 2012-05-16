@@ -1,12 +1,12 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using NUnit.Framework;
+using Xunit;
 using System.Collections.Generic;
 
 namespace FluentCassandra.Types
 {
-	[TestFixture]
+	
 	public class DynamicCompositeTypeTest
 	{
 		private readonly IDictionary<char, Type> _aliases = new Dictionary<char, Type> {
@@ -47,7 +47,7 @@ namespace FluentCassandra.Types
 			}
 		}
 
-		[Test]
+		[Fact]
 		public void CassandraType_Cast()
 		{
 			// arranage
@@ -58,10 +58,10 @@ namespace FluentCassandra.Types
 			CassandraObject actual = actualType;
 
 			// assert
-			Assert.IsTrue(expected.SequenceEqual((CassandraObject[])actual));
+			Assert.True(expected.SequenceEqual((CassandraObject[])actual));
 		}
 
-		[Test]
+		[Fact]
 		public void Implicit_ByteArray_Cast()
 		{
 			// arrange
@@ -72,7 +72,7 @@ namespace FluentCassandra.Types
 			DynamicCompositeType actual = bytes;
 
 			// assert
-			Assert.IsTrue(expected.SequenceEqual(actual));
+			Assert.True(expected.SequenceEqual(actual));
 		}
 	}
 }

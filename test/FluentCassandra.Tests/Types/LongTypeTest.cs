@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Linq;
-using NUnit.Framework;
+using Xunit;
 
 namespace FluentCassandra.Types
 {
-	[TestFixture]
+	
 	public class LongTypeTest
 	{
-		[Test]
+		[Fact]
 		public void CassandraType_Cast()
 		{
 			// arranage
@@ -18,10 +18,10 @@ namespace FluentCassandra.Types
 			CassandraObject actual = actualType;
 
 			// assert
-			Assert.AreEqual(expected, (long)actual);
+			Assert.Equal(expected, (long)actual);
 		}
 
-		[Test]
+		[Fact]
 		public void Implicit_ByteArray_Cast()
 		{
 			// arrange
@@ -32,10 +32,10 @@ namespace FluentCassandra.Types
 			byte[] actual = actualType;
 
 			// assert
-			Assert.IsTrue(expected.SequenceEqual(actual));
+			Assert.True(expected.SequenceEqual(actual));
 		}
 
-		[Test]
+		[Fact]
 		public void Implicit_Byte_Cast()
 		{
 			// arrange
@@ -45,10 +45,10 @@ namespace FluentCassandra.Types
 			LongType actual = expected;
 
 			// assert
-			Assert.AreEqual(expected, (byte)actual);
+			Assert.Equal(expected, (byte)actual);
 		}
 
-		[Test]
+		[Fact]
 		public void Implicit_Int16_Cast()
 		{
 			// arrange
@@ -58,10 +58,10 @@ namespace FluentCassandra.Types
 			LongType actual = expected;
 
 			// assert
-			Assert.AreEqual(expected, (short)actual);
+			Assert.Equal(expected, (short)actual);
 		}
 
-		[Test]
+		[Fact]
 		public void Implicit_Int32_Cast()
 		{
 			// arrange
@@ -71,10 +71,10 @@ namespace FluentCassandra.Types
 			LongType actual = expected;
 
 			// assert
-			Assert.AreEqual(expected, (int)actual);
+			Assert.Equal(expected, (int)actual);
 		}
 
-		[Test]
+		[Fact]
 		public void Implicit_Int64_Cast()
 		{
 			// arrange
@@ -84,10 +84,10 @@ namespace FluentCassandra.Types
 			LongType actual = expected;
 
 			// assert
-			Assert.AreEqual(expected, (long)actual);
+			Assert.Equal(expected, (long)actual);
 		}
 
-		[Test]
+		[Fact]
 		public void Implicit_SByte_Cast()
 		{
 			// arrange
@@ -97,10 +97,10 @@ namespace FluentCassandra.Types
 			LongType actual = expected;
 
 			// assert
-			Assert.AreEqual(expected, (sbyte)actual);
+			Assert.Equal(expected, (sbyte)actual);
 		}
 
-		[Test]
+		[Fact]
 		public void Implicit_UInt16_Cast()
 		{
 			// arrange
@@ -110,10 +110,10 @@ namespace FluentCassandra.Types
 			LongType actual = expected;
 
 			// assert
-			Assert.AreEqual(expected, (ushort)actual);
+			Assert.Equal(expected, (ushort)actual);
 		}
 
-		[Test]
+		[Fact]
 		public void Implicit_UInt32_Cast()
 		{
 			// arrange
@@ -123,10 +123,10 @@ namespace FluentCassandra.Types
 			LongType actual = expected;
 
 			// assert
-			Assert.AreEqual(expected, (uint)actual);
+			Assert.Equal(expected, (uint)actual);
 		}
 
-		[Test]
+		[Fact]
 		public void Implicit_UInt64_Cast()
 		{
 			// arrange
@@ -136,10 +136,10 @@ namespace FluentCassandra.Types
 			LongType actual = expected;
 
 			// assert
-			Assert.AreEqual(expected, (ulong)actual);
+			Assert.Equal(expected, (ulong)actual);
 		}
 
-		[Test]
+		[Fact]
 		public void Operator_EqualTo()
 		{
 			// arrange
@@ -150,10 +150,10 @@ namespace FluentCassandra.Types
 			bool actual = type == value;
 
 			// assert
-			Assert.IsTrue(actual);
+			Assert.True(actual);
 		}
 
-		[Test]
+		[Fact]
 		public void Operator_NotEqualTo()
 		{
 			// arrange
@@ -164,7 +164,7 @@ namespace FluentCassandra.Types
 			bool actual = type != value;
 
 			// assert
-			Assert.IsFalse(actual);
+			Assert.False(actual);
 		}
 	}
 }

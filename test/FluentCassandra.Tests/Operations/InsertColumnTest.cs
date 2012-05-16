@@ -1,36 +1,35 @@
 ﻿using System;
 using System.Linq;
-using NUnit.Framework;
+using Xunit;
 using FluentCassandra.Types;
 
 namespace FluentCassandra.Operations
 {
-	[TestFixture]
-	public class InsertColumnTest
+	
+	public class InsertColumnTest : IUseFixture<CassandraDatabaseSetupFixture>, IDisposable
 	{
 		private CassandraContext _db;
 		private CassandraColumnFamily<AsciiType> _family;
 		private CassandraSuperColumnFamily<AsciiType, AsciiType> _superFamily;
-		private const string _testKey = "Test1";
-		private const string _testName = "Test1";
-		private const string _testSuperName = "SubTest1";
 
-		[TestFixtureSetUp]
-		public void TestInit()
+		public void SetFixture(CassandraDatabaseSetupFixture data)
 		{
-			var setup = new CassandraDatabaseSetup();
+			var setup = data.DatabaseSetup();
 			_db = setup.DB;
 			_family = setup.Family;
 			_superFamily = setup.SuperFamily;
 		}
 
-		[TestFixtureTearDown]
-		public void TestCleanup()
+		public void Dispose()
 		{
 			_db.Dispose();
 		}
 
-		[Test]
+		private const string _testKey = "Test1";
+		private const string _testName = "Test1";
+		private const string _testSuperName = "SubTest1";
+
+		[Fact]
 		public void ColumnFamily()
 		{
 			// arrange
@@ -44,11 +43,11 @@ namespace FluentCassandra.Operations
 			var actual = column.FirstOrDefault().Columns.FirstOrDefault();
 
 			// assert
-			Assert.AreEqual(_testName, (string)actual.ColumnName);
-			Assert.AreEqual(value, (double)actual.ColumnValue);
+			Assert.Equal(_testName, (string)actual.ColumnName);
+			Assert.Equal(value, (double)actual.ColumnValue);
 		}
 
-		[Test]
+		[Fact]
 		public void SuperColumnFamily()
 		{
 			// arrange
@@ -62,8 +61,8 @@ namespace FluentCassandra.Operations
 			var actual = column.FirstOrDefault().Columns.FirstOrDefault();
 
 			// assert
-			Assert.AreEqual(_testName, (string)actual.ColumnName);
-			Assert.AreEqual(value, (double)actual.ColumnValue);
+			Assert.Equal(_testName, (string)actual.ColumnName);
+			Assert.Equal(value, (double)actual.ColumnValue);
 		}
 	}
 }

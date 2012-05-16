@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Text;
 using System.Linq;
-using NUnit.Framework;
+using Xunit;
 
 namespace FluentCassandra.Types
 {
-	[TestFixture]
+	
 	public class UTF8TypeTest
 	{
-		[Test]
+		[Fact]
 		public void CassandraType_Cast()
 		{
 			// arranage
@@ -19,10 +19,10 @@ namespace FluentCassandra.Types
 			CassandraObject actual = actualType;
 
 			// assert
-			Assert.AreEqual(expected, (string)actual);
+			Assert.Equal(expected, (string)actual);
 		}
 
-		[Test]
+		[Fact]
 		public void Implicit_ByteArray_Cast()
 		{
 			// arrange
@@ -34,10 +34,10 @@ namespace FluentCassandra.Types
 			byte[] actual = actualType;
 
 			// assert
-			Assert.IsTrue(expected.SequenceEqual(actual));
+			Assert.True(expected.SequenceEqual(actual));
 		}
 
-		[Test]
+		[Fact]
 		public void Implicit_String_Cast()
 		{
 			// arrange
@@ -47,10 +47,10 @@ namespace FluentCassandra.Types
 			UTF8Type actual = expected;
 
 			// assert
-			Assert.AreEqual(expected, (string)actual);
+			Assert.Equal(expected, (string)actual);
 		}
 
-		[Test]
+		[Fact]
 		public void Operator_EqualTo()
 		{
 			// arrange
@@ -61,10 +61,10 @@ namespace FluentCassandra.Types
 			bool actual = type == value;
 
 			// assert
-			Assert.IsTrue(actual);
+			Assert.True(actual);
 		}
 
-		[Test]
+		[Fact]
 		public void Operator_NotEqualTo()
 		{
 			// arrange
@@ -75,7 +75,7 @@ namespace FluentCassandra.Types
 			bool actual = type != value;
 
 			// assert
-			Assert.IsFalse(actual);
+			Assert.False(actual);
 		}
 	}
 }

@@ -1,36 +1,35 @@
 ﻿using System;
 using System.Linq;
-using NUnit.Framework;
+using Xunit;
 using FluentCassandra.Types;
 
 namespace FluentCassandra.Operations
 {
-	[TestFixture]
-	public class GetColumnTest
+	
+	public class GetColumnTest : IUseFixture<CassandraDatabaseSetupFixture>, IDisposable
 	{
 		private CassandraContext _db;
 		private CassandraColumnFamily<AsciiType> _family;
 		private CassandraSuperColumnFamily<AsciiType, AsciiType> _superFamily;
-		private const string _testKey = "Test1";
-		private const string _testName = "Test1";
-		private const string _testSuperName = "SubTest1";
 
-		[TestFixtureSetUp]
-		public void TestInit()
+		public void SetFixture(CassandraDatabaseSetupFixture data)
 		{
-			var setup = new CassandraDatabaseSetup();
+			var setup = data.DatabaseSetup();
 			_db = setup.DB;
 			_family = setup.Family;
 			_superFamily = setup.SuperFamily;
 		}
 
-		[TestFixtureTearDown]
-		public void TestCleanup()
+		public void Dispose()
 		{
 			_db.Dispose();
 		}
 
-		[Test]
+		private const string _testKey = "Test1";
+		private const string _testName = "Test1";
+		private const string _testSuperName = "SubTest1";
+
+		[Fact]
 		public void Standard_GetColumn()
 		{
 			// arrange
@@ -40,11 +39,11 @@ namespace FluentCassandra.Operations
 			var column = _family.GetColumn(_testKey, _testName);
 
 			// assert
-			Assert.AreEqual(_testName, (string)column.ColumnName);
-			Assert.AreEqual(expected, (double)column.ColumnValue);
+			Assert.Equal(_testName, (string)column.ColumnName);
+			Assert.Equal(expected, (double)column.ColumnValue);
 		}
 
-		[Test]
+		[Fact]
 		public void Super_GetColumn()
 		{
 			// arrange
@@ -54,11 +53,11 @@ namespace FluentCassandra.Operations
 			var column = _superFamily.GetColumn(_testKey, _testSuperName, _testName);
 
 			// assert
-			Assert.AreEqual(_testName, (string)column.ColumnName);
-			Assert.AreEqual(expected, (double)column.ColumnValue);
+			Assert.Equal(_testName, (string)column.ColumnName);
+			Assert.Equal(expected, (double)column.ColumnValue);
 		}
 
-		[Test]
+		[Fact]
 		public void Super_GetSuperColumn()
 		{
 			// arrange
@@ -67,7 +66,7 @@ namespace FluentCassandra.Operations
 			var column = _superFamily.GetSuperColumn(_testKey, _testSuperName);
 
 			// assert
-			Assert.AreEqual(_testSuperName, (string)column.ColumnName);
+			Assert.Equal(_testSuperName, (string)column.ColumnName);
 		}
 	}
 }

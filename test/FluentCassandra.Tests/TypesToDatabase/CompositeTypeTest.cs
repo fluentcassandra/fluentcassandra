@@ -1,31 +1,30 @@
 ﻿using System;
 using System.Linq;
 using FluentCassandra.Types;
-using NUnit.Framework;
+using Xunit;
 
 namespace FluentCassandra.TypesToDatabase
 {
-	[TestFixture]
-	public class CompositeTypeTest
+	
+	public class CompositeTypeTest : IUseFixture<CassandraDatabaseSetupFixture>, IDisposable
 	{
-		public const string FamilyName = "StandardCompositeType";
-		public const string TestKey = "Test1";
 		private CassandraContext _db;
 
-		[TestFixtureSetUp]
-		public void TestInit()
+		public void SetFixture(CassandraDatabaseSetupFixture data)
 		{
-			var setup = new CassandraDatabaseSetup();
+			var setup = data.DatabaseSetup();
 			_db = setup.DB;
 		}
 
-		[TestFixtureTearDown]
-		public void TestCleanup()
+		public void Dispose()
 		{
 			_db.Dispose();
 		}
 
-		[Test]
+		public const string FamilyName = "StandardCompositeType";
+		public const string TestKey = "Test1";
+
+		[Fact]
 		public void Save_CompositeType()
 		{
 			// arrange
@@ -38,7 +37,7 @@ namespace FluentCassandra.TypesToDatabase
 			var actual = value.FirstOrDefault().Columns.FirstOrDefault();
 
 			// assert
-			Assert.AreEqual((object)expected, (object)actual.ColumnName);
+			Assert.Equal((object)expected, (object)actual.ColumnName);
 		}
 	}
 }

@@ -1,30 +1,29 @@
 ﻿using System;
-using NUnit.Framework;
+using Xunit;
 using FluentCassandra.Types;
 
 namespace FluentCassandra.TypesToDatabase
 {
-	[TestFixture]
-	public class LongTypeTest
+	
+	public class LongTypeTest : IUseFixture<CassandraDatabaseSetupFixture>, IDisposable
 	{
-		public const string FamilyName = "StandardLongType";
-		public const string TestKey = "Test1";
 		private CassandraContext _db;
 
-		[TestFixtureSetUp]
-		public void TestInit()
+		public void SetFixture(CassandraDatabaseSetupFixture data)
 		{
-			var setup = new CassandraDatabaseSetup();
+			var setup = data.DatabaseSetup();
 			_db = setup.DB;
 		}
 
-		[TestFixtureTearDown]
-		public void TestCleanup()
+		public void Dispose()
 		{
 			_db.Dispose();
 		}
 
-		[Test]
+		public const string FamilyName = "StandardLongType";
+		public const string TestKey = "Test1";
+
+		[Fact]
 		public void Save_Byte()
 		{
 			// arrange
@@ -36,10 +35,10 @@ namespace FluentCassandra.TypesToDatabase
 			var actual = family.GetColumn(TestKey, expected);
 
 			// assert
-			Assert.AreEqual(expected, (byte)actual.ColumnName);
+			Assert.Equal(expected, (byte)actual.ColumnName);
 		}
 
-		[Test]
+		[Fact]
 		public void Save_Int16()
 		{
 			// arrange
@@ -51,10 +50,10 @@ namespace FluentCassandra.TypesToDatabase
 			var actual = family.GetColumn(TestKey, expected);
 
 			// assert
-			Assert.AreEqual(expected, (short)actual.ColumnName);
+			Assert.Equal(expected, (short)actual.ColumnName);
 		}
 
-		[Test]
+		[Fact]
 		public void Save_Int32()
 		{
 			// arrange
@@ -66,10 +65,10 @@ namespace FluentCassandra.TypesToDatabase
 			var actual = family.GetColumn(TestKey, expected);
 
 			// assert
-			Assert.AreEqual(expected, (int)actual.ColumnName);
+			Assert.Equal(expected, (int)actual.ColumnName);
 		}
 
-		[Test]
+		[Fact]
 		public void Save_Int64()
 		{
 			// arrange
@@ -81,10 +80,10 @@ namespace FluentCassandra.TypesToDatabase
 			var actual = family.GetColumn(TestKey, expected);
 
 			// assert
-			Assert.AreEqual(expected, (long)actual.ColumnName);
+			Assert.Equal(expected, (long)actual.ColumnName);
 		}
 
-		[Test]
+		[Fact]
 		public void Save_SByte()
 		{
 			// arrange
@@ -96,10 +95,10 @@ namespace FluentCassandra.TypesToDatabase
 			var actual = family.GetColumn(TestKey, expected);
 
 			// assert
-			Assert.AreEqual(expected, (sbyte)actual.ColumnName);
+			Assert.Equal(expected, (sbyte)actual.ColumnName);
 		}
 
-		[Test]
+		[Fact]
 		public void Save_UInt16()
 		{
 			// arrange
@@ -111,10 +110,10 @@ namespace FluentCassandra.TypesToDatabase
 			var actual = family.GetColumn(TestKey, expected);
 
 			// assert
-			Assert.AreEqual(expected, (ushort)actual.ColumnName);
+			Assert.Equal(expected, (ushort)actual.ColumnName);
 		}
 
-		[Test]
+		[Fact]
 		public void Save_UInt32()
 		{
 			// arrange
@@ -126,10 +125,10 @@ namespace FluentCassandra.TypesToDatabase
 			var actual = family.GetColumn(TestKey, expected);
 
 			// assert
-			Assert.AreEqual(expected, (uint)actual.ColumnName);
+			Assert.Equal(expected, (uint)actual.ColumnName);
 		}
 
-		[Test]
+		[Fact]
 		public void Save_UInt64()
 		{
 			// arrange
@@ -141,7 +140,7 @@ namespace FluentCassandra.TypesToDatabase
 			var actual = family.GetColumn(TestKey, expected);
 
 			// assert
-			Assert.AreEqual(expected, (ulong)actual.ColumnName);
+			Assert.Equal(expected, (ulong)actual.ColumnName);
 		}
 	}
 }

@@ -1,29 +1,27 @@
 ﻿using System;
 using System.Linq;
 using FluentCassandra.Connections;
-using NUnit.Framework;
+using Xunit;
 
 namespace FluentCassandra.Operations
 {
-	[TestFixture]
-	public class CqlTest
+
+	public class CqlTest : IUseFixture<CassandraDatabaseSetupFixture>, IDisposable
 	{
 		private CassandraContext _db;
 
-		[TestFixtureSetUp]
-		public void TestInit()
+		public void SetFixture(CassandraDatabaseSetupFixture data)
 		{
-			var setup = new CassandraDatabaseSetup();
+			var setup = data.DatabaseSetup();
 			_db = setup.DB;
 		}
 
-		[TestFixtureTearDown]
-		public void TestCleanup()
+		public void Dispose()
 		{
 			_db.Dispose();
 		}
 
-		[Test]
+		[Fact]
 		public void With_Compression()
 		{
 			var cb = new ConnectionBuilder(
@@ -44,7 +42,7 @@ namespace FluentCassandra.Operations
 				var actual = db.ExecuteQuery("SELECT * FROM Users");
 
 				// assert
-				Assert.AreEqual(6, actual.Count());
+				Assert.Equal(6, actual.Count());
 			}
 		}
 	}

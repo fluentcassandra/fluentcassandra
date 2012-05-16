@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Linq;
-using NUnit.Framework;
+using Xunit;
 
 namespace FluentCassandra
 {
-	[TestFixture]
+	
 	public class GuidGeneratorTest
 	{
-		[Test]
+		[Fact]
 		public void Type1Check()
 		{
 			// arrange
@@ -18,10 +18,10 @@ namespace FluentCassandra
 			var actual = guid.GetVersion();
 
 			// assert
-			Assert.AreEqual(expected, actual);
+			Assert.Equal(expected, actual);
 		}
 
-		[Test]
+		[Fact]
 		public void SanityType1Check()
 		{
 			// arrange
@@ -32,10 +32,10 @@ namespace FluentCassandra
 			var actual = guid.GetVersion();
 
 			// assert
-			Assert.AreNotEqual(expected, actual);
+			Assert.NotEqual(expected, actual);
 		}
 
-		[Test]
+		[Fact]
 		public void GetDateTimeUnspecified()
 		{
 			// arrange
@@ -46,10 +46,10 @@ namespace FluentCassandra
 			var actual = GuidGenerator.GetDateTime(guid).ToLocalTime();
 
 			// assert
-			Assert.AreEqual(expected, actual);
+			Assert.Equal(expected, actual);
 		}
 
-		[Test]
+		[Fact]
 		public void GetDateTimeLocal()
 		{
 			// arrange
@@ -60,10 +60,10 @@ namespace FluentCassandra
 			var actual = GuidGenerator.GetLocalDateTime(guid);
 
 			// assert
-			Assert.AreEqual(expected, actual);
+			Assert.Equal(expected, actual);
 		}
 
-		[Test]
+		[Fact]
 		public void GetDateTimeUtc()
 		{
 			// arrange
@@ -74,10 +74,10 @@ namespace FluentCassandra
 			var actual = GuidGenerator.GetUtcDateTime(guid);
 
 			// assert
-			Assert.AreEqual(expected, actual);
+			Assert.Equal(expected, actual);
 		}
 
-		[Test]
+		[Fact]
 		public void GetDateTimeOffset()
 		{
 			// arrange
@@ -88,7 +88,7 @@ namespace FluentCassandra
 			var actual = GuidGenerator.GetDateTimeOffset(guid);
 
 			// assert
-			Assert.AreEqual(expected, actual);
+			Assert.Equal(expected, actual);
 		}
 	}
 }

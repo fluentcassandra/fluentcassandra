@@ -1,30 +1,29 @@
 ﻿using System;
-using NUnit.Framework;
+using Xunit;
 using FluentCassandra.Types;
 
 namespace FluentCassandra.TypesToDatabase
 {
-	[TestFixture]
-	public class TimeUUIDTypeTest
+	
+	public class TimeUUIDTypeTest : IUseFixture<CassandraDatabaseSetupFixture>, IDisposable
 	{
-		public const string FamilyName = "StandardTimeUUIDType";
-		public const string TestKey = "Test1";
 		private CassandraContext _db;
 
-		[TestFixtureSetUp]
-		public void TestInit()
+		public void SetFixture(CassandraDatabaseSetupFixture data)
 		{
-			var setup = new CassandraDatabaseSetup();
+			var setup = data.DatabaseSetup();
 			_db = setup.DB;
 		}
 
-		[TestFixtureTearDown]
-		public void TestCleanup()
+		public void Dispose()
 		{
 			_db.Dispose();
 		}
 
-		[Test]
+		public const string FamilyName = "StandardTimeUUIDType";
+		public const string TestKey = "Test1";
+
+		[Fact]
 		public void Save_Guid()
 		{
 			// arrange
@@ -36,10 +35,10 @@ namespace FluentCassandra.TypesToDatabase
 			var actual = family.GetColumn(TestKey, expected);
 
 			// assert
-			Assert.AreEqual(expected, (Guid)actual.ColumnName);
+			Assert.Equal(expected, (Guid)actual.ColumnName);
 		}
 
-		[Test]
+		[Fact]
 		public void Save_DateTime_Local()
 		{
 			// arrange
@@ -52,10 +51,10 @@ namespace FluentCassandra.TypesToDatabase
 			var actual = ((DateTime)actualColumn.ColumnName).ToLocalTime();
 
 			// assert
-			Assert.AreEqual(expected, actual);
+			Assert.Equal(expected, actual);
 		}
 
-		[Test]
+		[Fact]
 		public void Save_DateTime_Universal()
 		{
 			// arrange
@@ -67,10 +66,10 @@ namespace FluentCassandra.TypesToDatabase
 			var actual = family.GetColumn(TestKey, expected);
 
 			// assert
-			Assert.AreEqual(expected, (DateTime)actual.ColumnName);
+			Assert.Equal(expected, (DateTime)actual.ColumnName);
 		}
 
-		[Test]
+		[Fact]
 		public void Save_DateTimeOffset()
 		{
 			// arrange
@@ -82,7 +81,7 @@ namespace FluentCassandra.TypesToDatabase
 			var actual = family.GetColumn(TestKey, expected);
 
 			// assert
-			Assert.AreEqual(expected, (DateTimeOffset)actual.ColumnName);
+			Assert.Equal(expected, (DateTimeOffset)actual.ColumnName);
 		}
 	}
 }

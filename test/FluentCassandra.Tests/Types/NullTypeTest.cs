@@ -1,12 +1,12 @@
 ﻿using System;
-using NUnit.Framework;
+using Xunit;
 
 namespace FluentCassandra.Types
 {
-	[TestFixture]
+	
 	public class NullTypeTest
 	{
-		[Test]
+		[Fact]
 		public void Implicity_Cast_To_Int64()
 		{
 			// arranage
@@ -17,10 +17,10 @@ namespace FluentCassandra.Types
 			long? actual = family.ShouldNotBeFound;
 
 			// assert
-			Assert.AreEqual(expected, actual);
+			Assert.Equal(expected, actual);
 		}
 
-		[Test]
+		[Fact]
 		public void Implicity_Cast_To_FluentSuperColumn()
 		{
 			// arranage
@@ -32,8 +32,8 @@ namespace FluentCassandra.Types
 			FluentSuperColumn actual = family.ShouldNotBeFound;
 
 			// assert
-			Assert.AreEqual(expectedName, (string)actual.ColumnName);
-			Assert.AreEqual(expectedColumnCount, actual.Columns.Count);
+			Assert.Equal(expectedName, (string)actual.ColumnName);
+			Assert.Equal(expectedColumnCount, actual.Columns.Count);
 		}
 	}
 }

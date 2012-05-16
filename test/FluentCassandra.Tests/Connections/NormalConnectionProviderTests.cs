@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Linq;
-using NUnit.Framework;
+using Xunit;
 
 namespace FluentCassandra.Connections
 {
-	[TestFixture]
+	
 	public class NormalConnectionProviderTests
 	{
 		/// <summary>
@@ -12,7 +12,7 @@ namespace FluentCassandra.Connections
 		/// </summary>
 		private readonly string _failoverConnectionString = "Keyspace=Testing;Connection Timeout=1;Server=127.0.0.1:1234,127.0.0.1:4567,127.0.0.1";
 
-		[Test]
+		[Fact]
 		public void Fails_Over()
 		{
 			// arrange
@@ -27,8 +27,8 @@ namespace FluentCassandra.Connections
 			var actualPort = conn.Server.Port;
 
 			// assert
-			Assert.AreEqual(expectedHost, actualHost);
-			Assert.AreEqual(expectedPort, actualPort);
+			Assert.Equal(expectedHost, actualHost);
+			Assert.Equal(expectedPort, actualPort);
 		}
 	}
 }

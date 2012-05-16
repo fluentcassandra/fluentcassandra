@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Linq;
-using NUnit.Framework;
+using Xunit;
 
 namespace FluentCassandra.Types
 {
-	[TestFixture]
+	
 	public class LexicalUUIDTypeTest
 	{
 		private readonly Guid guid = new Guid("38400000-8cf0-11bd-b23e-10b96e4ef00d");
 		private readonly byte[] dotNetByteOrder = new byte[] { 0x00, 0x00, 0x40, 0x38, 0xF0, 0x8C, 0xBD, 0x11, 0xB2, 0x3E, 0x10, 0xB9, 0x6E, 0x4E, 0xF0, 0x0D };
 		private readonly byte[] javaByteOrder = new byte[] { 0x38, 0x40, 0x00, 0x00, 0x8C, 0xF0, 0x11, 0xBD, 0xB2, 0x3E, 0x10, 0xB9, 0x6E, 0x4E, 0xF0, 0x0D };
 
-		[Test]
+		[Fact]
 		public void CassandraType_Cast()
 		{
 			// arranage
@@ -22,10 +22,10 @@ namespace FluentCassandra.Types
 			CassandraObject actual = actualType;
 
 			// assert
-			Assert.AreEqual(expected, (Guid)actual);
+			Assert.Equal(expected, (Guid)actual);
 		}
 
-		[Test]
+		[Fact]
 		public void Implicit_ByteArray_Cast()
 		{
 			// arrange
@@ -36,10 +36,10 @@ namespace FluentCassandra.Types
 			byte[] actual = actualType;
 
 			// assert
-			Assert.IsTrue(expected.SequenceEqual(actual));
+			Assert.True(expected.SequenceEqual(actual));
 		}
 
-		[Test]
+		[Fact]
 		public void Implicit_Guid_Cast()
 		{
 			// arrange
@@ -49,10 +49,10 @@ namespace FluentCassandra.Types
 			LexicalUUIDType actual = expected;
 
 			// assert
-			Assert.AreEqual(expected, (Guid)actual);
+			Assert.Equal(expected, (Guid)actual);
 		}
 
-		[Test]
+		[Fact]
 		public void Operator_EqualTo()
 		{
 			// arrange
@@ -63,10 +63,10 @@ namespace FluentCassandra.Types
 			bool actual = type.Equals(value);
 
 			// assert
-			Assert.IsTrue(actual);
+			Assert.True(actual);
 		}
 
-		[Test]
+		[Fact]
 		public void Operator_NotEqualTo()
 		{
 			// arrange
@@ -77,10 +77,10 @@ namespace FluentCassandra.Types
 			bool actual = !type.Equals(value);
 
 			// assert
-			Assert.IsFalse(actual);
+			Assert.False(actual);
 		}
 
-		[Test]
+		[Fact]
 		public void Guid_To_JavaBytes()
 		{
 			// arrange
@@ -89,10 +89,10 @@ namespace FluentCassandra.Types
 			LexicalUUIDType actual = guid;
 
 			// assert
-			Assert.IsTrue(actual.ToBigEndian().SequenceEqual(javaByteOrder));
+			Assert.True(actual.ToBigEndian().SequenceEqual(javaByteOrder));
 		}
 
-		[Test]
+		[Fact]
 		public void JavaBytes_To_Guid()
 		{
 			// arrange
@@ -102,7 +102,7 @@ namespace FluentCassandra.Types
 			actual.SetValueFromBigEndian(javaByteOrder);
 
 			// assert
-			Assert.AreEqual(guid, (Guid)actual);
+			Assert.Equal(guid, (Guid)actual);
 		}
 	}
 }

@@ -1,15 +1,28 @@
 ﻿using System;
 using System.Linq;
-using NUnit.Framework;
+using Xunit;
 
 namespace FluentCassandra.Linq
 {
-	[TestFixture]
-	public class LinqToCqlObjectsCassandraTests
+	
+	public class LinqToCqlObjectsCassandraTests : IUseFixture<CassandraDatabaseSetupFixture>, IDisposable
 	{
 		private CassandraContext _db;
 		private CassandraColumnFamily _family;
 		private CassandraDatabaseSetup.User[] _users;
+
+		public void SetFixture(CassandraDatabaseSetupFixture data)
+		{
+			var setup = data.DatabaseSetup();
+			_db = setup.DB;
+			_family = setup.UserFamily;
+			_users = setup.Users;
+		}
+
+		public void Dispose()
+		{
+			_db.Dispose();
+		}
 
 		public class User
 		{
@@ -19,16 +32,7 @@ namespace FluentCassandra.Linq
 			public int Age { get; set; }
 		}
 
-		[TestFixtureSetUp]
-		public void TestInit()
-		{
-			var setup = new CassandraDatabaseSetup();
-			_db = setup.DB;
-			_family = setup.UserFamily;
-			_users = setup.Users;
-		}
-
-		[Test]
+		[Fact]
 		public void SELECT()
 		{
 			var query =
@@ -36,55 +40,55 @@ namespace FluentCassandra.Linq
 				select f;
 			var actual = query.ToList().OrderBy(x => x.Id).ToList();
 
-			Assert.AreEqual(_users.Length, actual.Count);
+			Assert.Equal(_users.Length, actual.Count);
 			for (int i = 0; i < _users.Length; i++)
 			{
 				var objUser = _users[i];
 				var dbUser = actual[i];
 
-				Assert.AreEqual(objUser.Id, dbUser.Id);
-				Assert.AreEqual(objUser.Name, dbUser.Name);
-				Assert.AreEqual(objUser.Email, dbUser.Email);
-				Assert.AreEqual(objUser.Age, dbUser.Age);
+				Assert.Equal(objUser.Id, dbUser.Id);
+				Assert.Equal(objUser.Name, dbUser.Name);
+				Assert.Equal(objUser.Email, dbUser.Email);
+				Assert.Equal(objUser.Age, dbUser.Age);
 			}
 		}
 
-		[Test]
+		[Fact]
 		public void SELECT_One_Column()
 		{
 			var query = _family.AsObjectQueryable<User>().Select(x => x.Age);
 			var actual = query.ToList().OrderBy(x => x).ToList();
 			var users = _users.OrderBy(x => x.Age).ToList();
 
-			Assert.AreEqual(users.Count, actual.Count);
+			Assert.Equal(users.Count, actual.Count);
 			for (int i = 0; i < users.Count; i++)
 			{
 				var objUser = users[i];
 				var dbAge = actual[i];
 
-				Assert.AreEqual(objUser.Age, dbAge);
+				Assert.Equal(objUser.Age, dbAge);
 			}
 		}
 
-		[Test]
+		[Fact]
 		public void SELECT_Two_Columns()
 		{
 			var query = _family.AsObjectQueryable<User>().Select(x => new { x.Age, x.Name });
 			var actual = query.ToList().OrderBy(x => x.Age).ToList();
 			var users = _users.OrderBy(x => x.Age).ToList();
 
-			Assert.AreEqual(users.Count, actual.Count);
+			Assert.Equal(users.Count, actual.Count);
 			for (int i = 0; i < users.Count; i++)
 			{
 				var objUser = users[i];
 				var dbUser = actual[i];
 
-				Assert.AreEqual(objUser.Age, dbUser.Age);
-				Assert.AreEqual(objUser.Name, dbUser.Name);
+				Assert.Equal(objUser.Age, dbUser.Age);
+				Assert.Equal(objUser.Name, dbUser.Name);
 			}
 		}
 
-		[Test]
+		[Fact]
 		public void WHERE_Using_KEY()
 		{
 			var expected = _users.Where(x => x.Id == 2).FirstOrDefault();
@@ -96,14 +100,14 @@ namespace FluentCassandra.Linq
 			var response = query.ToList();
 			var actual = response.FirstOrDefault();
 
-			Assert.AreEqual(1, response.Count);
-			Assert.AreEqual(expected.Id, actual.Id);
-			Assert.AreEqual(expected.Name, actual.Name);
-			Assert.AreEqual(expected.Email, actual.Email);
-			Assert.AreEqual(expected.Age, actual.Age);
+			Assert.Equal(1, response.Count);
+			Assert.Equal(expected.Id, actual.Id);
+			Assert.Equal(expected.Name, actual.Name);
+			Assert.Equal(expected.Email, actual.Email);
+			Assert.Equal(expected.Age, actual.Age);
 		}
 
-		[Test]
+		[Fact]
 		public void WHERE_Using_KEY_And_One_Parameter()
 		{
 			var expected = _users.Where(x => x.Id == 2).FirstOrDefault();
@@ -115,14 +119,14 @@ namespace FluentCassandra.Linq
 			var response = query.ToList();
 			var actual = response.FirstOrDefault();
 
-			Assert.AreEqual(1, response.Count);
-			Assert.AreEqual(expected.Id, actual.Id);
-			Assert.AreEqual(expected.Name, actual.Name);
-			Assert.AreEqual(expected.Email, actual.Email);
-			Assert.AreEqual(expected.Age, actual.Age);
+			Assert.Equal(1, response.Count);
+			Assert.Equal(expected.Id, actual.Id);
+			Assert.Equal(expected.Name, actual.Name);
+			Assert.Equal(expected.Email, actual.Email);
+			Assert.Equal(expected.Age, actual.Age);
 		}
 
-		[Test]
+		[Fact]
 		public void WHERE_One_Parameter()
 		{
 			var expected = _users.Where(x => x.Id == 2).FirstOrDefault();
@@ -134,11 +138,11 @@ namespace FluentCassandra.Linq
 			var response = query.ToList();
 			var actual = response.FirstOrDefault();
 
-			Assert.AreEqual(1, response.Count);
-			Assert.AreEqual(expected.Id, actual.Id);
-			Assert.AreEqual(expected.Name, actual.Name);
-			Assert.AreEqual(expected.Email, actual.Email);
-			Assert.AreEqual(expected.Age, actual.Age);
+			Assert.Equal(1, response.Count);
+			Assert.Equal(expected.Id, actual.Id);
+			Assert.Equal(expected.Name, actual.Name);
+			Assert.Equal(expected.Email, actual.Email);
+			Assert.Equal(expected.Age, actual.Age);
 		}
 	}
 }

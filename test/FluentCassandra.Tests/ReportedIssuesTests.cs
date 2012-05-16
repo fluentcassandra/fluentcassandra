@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Linq;
 using FluentCassandra.Types;
-using NUnit.Framework;
+using Xunit;
 
 namespace FluentCassandra
 {
-	[TestFixture]
+	
 	public class ReportedIssuesTests
 	{
 		public const string FamilyName = "Standard";
 		public const string TestKey = "Test1";
 
-		[Test]
+		[Fact]
 		public void CreateRecord_Doesnt_Check_BytesType_Zero_Length()
 		{
 			// arrange

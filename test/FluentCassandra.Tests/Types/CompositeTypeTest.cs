@@ -1,11 +1,11 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using NUnit.Framework;
+using Xunit;
 
 namespace FluentCassandra.Types
 {
-	[TestFixture]
+	
 	public class CompositeTypeTest
 	{
 		private readonly CassandraObject[] _compositeType = new CassandraObject[] { (AsciiType)"string1", (LongType)300 };
@@ -34,7 +34,7 @@ namespace FluentCassandra.Types
 			}
 		}
 
-		[Test]
+		[Fact]
 		public void CassandraType_Cast()
 		{
 			// arranage
@@ -45,10 +45,10 @@ namespace FluentCassandra.Types
 			CassandraObject actual = actualType;
 
 			// assert
-			Assert.IsTrue(expected.SequenceEqual((CassandraObject[])actual));
+			Assert.True(expected.SequenceEqual((CassandraObject[])actual));
 		}
 
-		[Test]
+		[Fact]
 		public void Implicit_ByteArray_Cast()
 		{
 			// arrange
@@ -59,10 +59,10 @@ namespace FluentCassandra.Types
 			CompositeType actual = bytes;
 
 			// assert
-			Assert.IsTrue(expected.SequenceEqual(actual));
+			Assert.True(expected.SequenceEqual(actual));
 		}
 
-		[Test]
+		[Fact]
 		public void CompositeType_To_JavaBytes()
 		{
 			// arrange
@@ -76,7 +76,7 @@ namespace FluentCassandra.Types
 			Assert.True(expected.SequenceEqual(actual));
 		}
 
-		[Test]
+		[Fact]
 		public void JavaBytes_To_CompositeType()
 		{
 			// arrange
@@ -90,7 +90,7 @@ namespace FluentCassandra.Types
 			Assert.True(expected.SequenceEqual((CassandraObject[])actual));
 		}
 
-		[Test]
+		[Fact]
 		public void JavaBytes_To_CompositeType_WithHints()
 		{
 			// arrange

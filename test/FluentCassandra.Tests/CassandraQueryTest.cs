@@ -1,33 +1,32 @@
 ﻿using System;
 using System.Linq;
-using NUnit.Framework;
+using Xunit;
 using FluentCassandra.Types;
 
 namespace FluentCassandra
 {
-	[TestFixture]
-	public class CassandraQueryTest
+	
+	public class CassandraQueryTest : IUseFixture<CassandraDatabaseSetupFixture>, IDisposable
 	{
 		private CassandraContext _db;
 		private CassandraColumnFamily<AsciiType> _family;
-		private const string _testKey = "Test1";
-		private const string _testName = "Test1";
 
-		[TestFixtureSetUp]
-		public void TestInit()
+		public void SetFixture(CassandraDatabaseSetupFixture data)
 		{
-			var setup = new CassandraDatabaseSetup();
+			var setup = data.DatabaseSetup();
 			_db = setup.DB;
 			_family = setup.Family;
 		}
 
-		[TestFixtureTearDown]
-		public void TestCleanup()
+		public void Dispose()
 		{
 			_db.Dispose();
 		}
 
-		[Test]
+		private const string _testKey = "Test1";
+		private const string _testName = "Test1";
+
+		[Fact]
 		public void Query_Single_Column()
 		{
 			// arrange
@@ -37,10 +36,10 @@ namespace FluentCassandra
 			var actual = _family.Get(_testKey).FetchColumns(_testName).FirstOrDefault().AsDynamic().Test1;
 
 			// assert
-			Assert.AreEqual(expected, (double)actual);
+			Assert.Equal(expected, (double)actual);
 		}
 
-		[Test]
+		[Fact]
 		public void Query_Multi_Columns()
 		{
 			// arrange
@@ -50,11 +49,11 @@ namespace FluentCassandra
 			var actual = _family.Get(_testKey).FetchColumns("Test1", "Test2").FirstOrDefault().AsDynamic();
 
 			// assert
-			Assert.AreEqual(expected, (double)actual.Test1);
-			Assert.AreEqual(expected, (double)actual.Test2);
+			Assert.Equal(expected, (double)actual.Test1);
+			Assert.Equal(expected, (double)actual.Test2);
 		}
 
-		[Test]
+		[Fact]
 		public void Query_Get_Two_Columns()
 		{
 			// arrange
@@ -64,11 +63,11 @@ namespace FluentCassandra
 			var actual = _family.Get(_testKey).StartWithColumn("Test1").TakeColumns(2).FirstOrDefault().AsDynamic();
 
 			// assert
-			Assert.AreEqual(expected, (double)actual.Test1);
-			Assert.AreEqual(expected, (double)actual.Test2);
+			Assert.Equal(expected, (double)actual.Test1);
+			Assert.Equal(expected, (double)actual.Test2);
 		}
 
-		[Test]
+		[Fact]
 		public void Query_Get_Until_Test2_Column()
 		{
 			// arrange
@@ -78,11 +77,11 @@ namespace FluentCassandra
 			var actual = _family.Get(_testKey).StartWithColumn("Test1").TakeUntilColumn("Test2").FirstOrDefault().AsDynamic();
 
 			// assert
-			Assert.AreEqual(expected, (double)actual.Test1);
-			Assert.AreEqual(expected, (double)actual.Test2);
+			Assert.Equal(expected, (double)actual.Test1);
+			Assert.Equal(expected, (double)actual.Test2);
 		}
 
-		[Test]
+		[Fact]
 		public void Query_Get_All_Columns()
 		{
 			// arrange
@@ -92,13 +91,13 @@ namespace FluentCassandra
 			var actual = _family.Get(_testKey).FirstOrDefault();
 
 			// assert
-			Assert.AreEqual(expectedCount, actual.Columns.Count);
-			Assert.AreEqual("Test1", (string)actual.Columns[0].ColumnName);
-			Assert.AreEqual("Test2", (string)actual.Columns[1].ColumnName);
-			Assert.AreEqual("Test3", (string)actual.Columns[2].ColumnName);
+			Assert.Equal(expectedCount, actual.Columns.Count);
+			Assert.Equal("Test1", (string)actual.Columns[0].ColumnName);
+			Assert.Equal("Test2", (string)actual.Columns[1].ColumnName);
+			Assert.Equal("Test3", (string)actual.Columns[2].ColumnName);
 		}
 
-		[Test]
+		[Fact]
 		public void Query_Get_All_Columns_Reversed()
 		{
 			// arrange
@@ -108,13 +107,13 @@ namespace FluentCassandra
 			var actual = _family.Get(_testKey).ReverseColumns().FirstOrDefault();
 
 			// assert
-			Assert.AreEqual(expectedCount, actual.Columns.Count);
-			Assert.AreEqual("Test3", (string)actual.Columns[0].ColumnName);
-			Assert.AreEqual("Test2", (string)actual.Columns[1].ColumnName);
-			Assert.AreEqual("Test1", (string)actual.Columns[2].ColumnName);
+			Assert.Equal(expectedCount, actual.Columns.Count);
+			Assert.Equal("Test3", (string)actual.Columns[0].ColumnName);
+			Assert.Equal("Test2", (string)actual.Columns[1].ColumnName);
+			Assert.Equal("Test1", (string)actual.Columns[2].ColumnName);
 		}
 
-		[Test]
+		[Fact]
 		public void Query_Get_All_Columns_DelayedLoading()
 		{
 			// arrange
@@ -126,10 +125,10 @@ namespace FluentCassandra
 			// assert
 			foreach (var actual in actualNotLoaded)
 			{
-				Assert.AreEqual(expectedCount, actual.Columns.Count);
-				Assert.AreEqual("Test1", (string)actual.Columns[0].ColumnName);
-				Assert.AreEqual("Test2", (string)actual.Columns[1].ColumnName);
-				Assert.AreEqual("Test3", (string)actual.Columns[2].ColumnName);
+				Assert.Equal(expectedCount, actual.Columns.Count);
+				Assert.Equal("Test1", (string)actual.Columns[0].ColumnName);
+				Assert.Equal("Test2", (string)actual.Columns[1].ColumnName);
+				Assert.Equal("Test3", (string)actual.Columns[2].ColumnName);
 			}
 		}
 	}

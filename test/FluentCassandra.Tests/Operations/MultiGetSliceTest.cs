@@ -1,37 +1,36 @@
 ﻿using System;
 using System.Linq;
-using NUnit.Framework;
+using Xunit;
 using FluentCassandra.Types;
 
 namespace FluentCassandra.Operations
 {
-	[TestFixture]
-	public class MultiGetSliceTest
+	
+	public class MultiGetSliceTest : IUseFixture<CassandraDatabaseSetupFixture>, IDisposable
 	{
 		private CassandraContext _db;
 		private CassandraColumnFamily<AsciiType> _family;
 		private CassandraSuperColumnFamily<AsciiType, AsciiType> _superFamily;
-		private const string _testKey = "Test1";
-		private const string _testKey2 = "Test2";
-		private const string _testName = "Test1";
-		private const string _testSuperName = "SubTest1";
 
-		[TestFixtureSetUp]
-		public void TestInit()
+		public void SetFixture(CassandraDatabaseSetupFixture data)
 		{
-			var setup = new CassandraDatabaseSetup();
+			var setup = data.DatabaseSetup();
 			_db = setup.DB;
 			_family = setup.Family;
 			_superFamily = setup.SuperFamily;
 		}
 
-		[TestFixtureTearDown]
-		public void TestCleanup()
+		public void Dispose()
 		{
 			_db.Dispose();
 		}
 
-		[Test]
+		private const string _testKey = "Test1";
+		private const string _testKey2 = "Test2";
+		private const string _testName = "Test1";
+		private const string _testSuperName = "SubTest1";
+
+		[Fact]
 		public void Standard_GetSlice_Columns()
 		{
 			// arrange
@@ -44,10 +43,10 @@ namespace FluentCassandra.Operations
 				.Execute();
 
 			// assert
-			Assert.AreEqual(expectedCount, columns.Count());
+			Assert.Equal(expectedCount, columns.Count());
 		}
 
-		[Test]
+		[Fact]
 		public void Super_GetSlice_Columns()
 		{
 			// arrange
@@ -61,10 +60,10 @@ namespace FluentCassandra.Operations
 				.Execute();
 
 			// assert
-			Assert.AreEqual(expectedCount, columns.Count());
+			Assert.Equal(expectedCount, columns.Count());
 		}
 
-		[Test]
+		[Fact]
 		public void Super_GetSuperSlice_Columns()
 		{
 			// arrange
@@ -77,10 +76,10 @@ namespace FluentCassandra.Operations
 				.Execute();
 
 			// assert
-			Assert.AreEqual(expectedCount, columns.Count());
+			Assert.Equal(expectedCount, columns.Count());
 		}
 
-		[Test]
+		[Fact]
 		public void Standard_GetSlice_Range()
 		{
 			// arrange
@@ -94,10 +93,10 @@ namespace FluentCassandra.Operations
 				.Execute();
 
 			// assert
-			Assert.AreEqual(expectedCount, columns.Count());
+			Assert.Equal(expectedCount, columns.Count());
 		}
 
-		[Test]
+		[Fact]
 		public void Super_GetSlice_Range()
 		{
 			// arrange
@@ -111,10 +110,10 @@ namespace FluentCassandra.Operations
 				.Execute();
 
 			// assert
-			Assert.AreEqual(expectedCount, columns.Count());
+			Assert.Equal(expectedCount, columns.Count());
 		}
 
-		[Test]
+		[Fact]
 		public void Super_GetSuperSlice_Range()
 		{
 			// arrange
@@ -128,7 +127,7 @@ namespace FluentCassandra.Operations
 				.Execute();
 
 			// assert
-			Assert.AreEqual(expectedCount, columns.Count());
+			Assert.Equal(expectedCount, columns.Count());
 		}
 	}
 }

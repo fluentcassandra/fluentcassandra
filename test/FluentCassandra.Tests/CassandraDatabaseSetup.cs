@@ -29,7 +29,7 @@ namespace FluentCassandra
 		public const string TestStandardName = "Test1";
 		public const string TestSuperName = "SubTest1";
 
-		public CassandraDatabaseSetup(bool volitile = false)
+		public CassandraDatabaseSetup(bool reset = false)
 		{
 			var keyspaceName = "Testing";
 			var server = new Server("localhost");
@@ -50,7 +50,7 @@ namespace FluentCassandra
 			SuperFamily = DB.GetColumnFamily<AsciiType, AsciiType>("Super");
 			UserFamily = DB.GetColumnFamily("Users");
 
-			if (exists && !volitile)
+			if (exists && !reset)
 				return;
 
 			using (var session = DB.OpenSession())
@@ -84,21 +84,8 @@ namespace FluentCassandra
 				Family = DB.GetColumnFamily<AsciiType>("Standard");
 				SuperFamily = DB.GetColumnFamily<AsciiType, AsciiType>("Super");
 
-				Family.InsertColumn(TestKey1, "Test1", Math.PI);
-				Family.InsertColumn(TestKey1, "Test2", Math.PI);
-				Family.InsertColumn(TestKey1, "Test3", Math.PI);
-
-				SuperFamily.InsertColumn(TestKey1, TestSuperName, "Test1", Math.PI);
-				SuperFamily.InsertColumn(TestKey1, TestSuperName, "Test2", Math.PI);
-				SuperFamily.InsertColumn(TestKey1, TestSuperName, "Test3", Math.PI);
-
-				Family.InsertColumn(TestKey2, "Test1", Math.PI);
-				Family.InsertColumn(TestKey2, "Test2", Math.PI);
-				Family.InsertColumn(TestKey2, "Test3", Math.PI);
-
-				SuperFamily.InsertColumn(TestKey2, TestSuperName, "Test1", Math.PI);
-				SuperFamily.InsertColumn(TestKey2, TestSuperName, "Test2", Math.PI);
-				SuperFamily.InsertColumn(TestKey2, TestSuperName, "Test3", Math.PI);
+				ResetFamily();
+				ResetSuperFamily();
 
 				DB.ExecuteNonQuery(@"
 CREATE COLUMNFAMILY Users (
@@ -122,6 +109,32 @@ CREATE COLUMNFAMILY Users (
 				}
 				DB.SaveChanges();
 			}
+		}
+
+		public void ResetFamily()
+		{
+			Family.RemoveAllRows();
+
+			Family.InsertColumn(TestKey1, "Test1", Math.PI);
+			Family.InsertColumn(TestKey1, "Test2", Math.PI);
+			Family.InsertColumn(TestKey1, "Test3", Math.PI);
+
+			Family.InsertColumn(TestKey2, "Test1", Math.PI);
+			Family.InsertColumn(TestKey2, "Test2", Math.PI);
+			Family.InsertColumn(TestKey2, "Test3", Math.PI);
+		}
+
+		public void ResetSuperFamily()
+		{
+			SuperFamily.RemoveAllRows();
+
+			SuperFamily.InsertColumn(TestKey1, TestSuperName, "Test1", Math.PI);
+			SuperFamily.InsertColumn(TestKey1, TestSuperName, "Test2", Math.PI);
+			SuperFamily.InsertColumn(TestKey1, TestSuperName, "Test3", Math.PI);
+
+			SuperFamily.InsertColumn(TestKey2, TestSuperName, "Test1", Math.PI);
+			SuperFamily.InsertColumn(TestKey2, TestSuperName, "Test2", Math.PI);
+			SuperFamily.InsertColumn(TestKey2, TestSuperName, "Test3", Math.PI);
 		}
 	}
 }

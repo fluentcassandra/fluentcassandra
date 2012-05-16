@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Linq;
-using NUnit.Framework;
+using Xunit;
 using FluentCassandra.Types;
 
 namespace FluentCassandra
 {
-	[TestFixture]
+	
 	public class FluentColumnTest
 	{
-		[Test]
+		[Fact]
 		public void Constructor_Test()
 		{
 			// arrange
@@ -23,9 +23,9 @@ namespace FluentCassandra
 			};
 
 			// assert
-			Assert.AreEqual(nameExpected, (string)actual.ColumnName);
-			Assert.AreEqual(valueExpected, (double)actual.ColumnValue);
-			Assert.AreEqual(timestampExpected, actual.ColumnTimestamp.LocalDateTime.Date);
+			Assert.Equal(nameExpected, (string)actual.ColumnName);
+			Assert.Equal(valueExpected, (double)actual.ColumnValue);
+			Assert.Equal(timestampExpected, actual.ColumnTimestamp.LocalDateTime.Date);
 		}
 	}
 }
