@@ -248,6 +248,9 @@ namespace FluentCassandra.Types
 					if (sourceType == typeof(BigInteger))
 						destinationType = IntegerType;
 
+					if (sourceType == typeof(BigDecimal))
+						destinationType = DecimalType;
+
 					if (sourceType == typeof(Guid))
 						destinationType = UUIDType;
 
