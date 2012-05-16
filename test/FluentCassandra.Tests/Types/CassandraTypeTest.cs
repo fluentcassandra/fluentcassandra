@@ -43,7 +43,21 @@ namespace FluentCassandra.Types
 			Assert.AreEqual(expected, actual);
 		}
 
-		[Test, ExpectedException(typeof(CassandraException))]
+        [Test]
+        public void Parse_Reverse_Type()
+        {
+            // arrange
+            Type expected = typeof(LongType);
+            string cassandraString = "org.apache.cassandra.db.marshal.ReversedType(LongType)";
+
+            // act
+            Type actual = new CassandraType(cassandraString).FluentType;
+
+            // assert
+            Assert.AreEqual(expected, actual);
+        }
+        
+        [Test, ExpectedException(typeof(CassandraException))]
 		public void Parse_CompositeType_UnknownInnerType()
 		{
 			// arranage
@@ -73,5 +87,18 @@ namespace FluentCassandra.Types
 			// act
 			Type actual = new CassandraType(cassandraString).FluentType;
 		}
+
+        [Test]
+        public void ReversedTypeHelper()
+        {
+            // arrange
+            Type expected = typeof (AsciiType);
+
+            // act
+            var actual = CassandraType.Reversed(CassandraType.AsciiType).FluentType;
+
+            // assert
+            Assert.AreEqual(expected, actual);
+        }
 	}
 }
