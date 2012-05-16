@@ -76,8 +76,8 @@ namespace FluentCassandra.Operations
 			if (predicate is CassandraRangeSlicePredicate)
 			{
 				var x = (CassandraRangeSlicePredicate)predicate;
-				var start = CassandraObject.GetTypeFromObject(x.Start, columnType);
-				var finish = CassandraObject.GetTypeFromObject(x.Finish, columnType);
+				var start = CassandraObject.GetCassandraObjectFromObject(x.Start, columnType);
+				var finish = CassandraObject.GetCassandraObjectFromObject(x.Finish, columnType);
 
 				return new CassandraRangeSlicePredicate(start, finish, x.Reversed, x.Count);
 			}
@@ -87,7 +87,7 @@ namespace FluentCassandra.Operations
 				var cols = x.Columns.ToList();
 
 				for (int i = 0; i < cols.Count; i++)
-					cols[i] = CassandraObject.GetTypeFromObject(cols[i], columnType);
+					cols[i] = CassandraObject.GetCassandraObjectFromObject(cols[i], columnType);
 
 				return new CassandraColumnSlicePredicate(cols);
 			}
@@ -190,7 +190,7 @@ namespace FluentCassandra.Operations
 
 			if (schema != null)
 			{
-				var name = CassandraObject.GetTypeFromDatabaseValue(col.Name, schema.ColumnNameType);
+				var name = CassandraObject.GetCassandraObjectFromDatabaseByteArray(col.Name, schema.ColumnNameType);
 				colSchema = schema.Columns.Where(x => x.Name == name).FirstOrDefault();
 
 				if (colSchema == null)
@@ -203,7 +203,7 @@ namespace FluentCassandra.Operations
 			}
 
 			var fcol = new FluentCounterColumn(colSchema) {
-				ColumnName = CassandraObject.GetTypeFromDatabaseValue(col.Name, colSchema.NameType),
+				ColumnName = CassandraObject.GetCassandraObjectFromDatabaseByteArray(col.Name, colSchema.NameType),
 				ColumnValue = col.Value
 			};
 
@@ -216,7 +216,7 @@ namespace FluentCassandra.Operations
 
 			if (schema != null)
 			{
-				var name = CassandraObject.GetTypeFromDatabaseValue(col.Name, schema.ColumnNameType);
+				var name = CassandraObject.GetCassandraObjectFromDatabaseByteArray(col.Name, schema.ColumnNameType);
 				colSchema = schema.Columns.Where(x => x.Name == name).FirstOrDefault();
 
 				if (colSchema == null)
@@ -229,8 +229,8 @@ namespace FluentCassandra.Operations
 			}
 
 			var fcol = new FluentColumn(colSchema) {
-				ColumnName = CassandraObject.GetTypeFromDatabaseValue(col.Name, colSchema.NameType),
-				ColumnValue = CassandraObject.GetTypeFromDatabaseValue(col.Value, colSchema.ValueType),
+				ColumnName = CassandraObject.GetCassandraObjectFromDatabaseByteArray(col.Name, colSchema.NameType),
+				ColumnValue = CassandraObject.GetCassandraObjectFromDatabaseByteArray(col.Value, colSchema.ValueType),
 				ColumnTimestamp = FromTimestamp(col.Timestamp),
 			};
 
@@ -249,12 +249,12 @@ namespace FluentCassandra.Operations
 			if (schema != null)
 				superColSchema = new CassandraColumnSchema {
 					NameType = schema.SuperColumnNameType,
-					Name = CassandraObject.GetTypeFromDatabaseValue(col.Name, schema.SuperColumnNameType),
+					Name = CassandraObject.GetCassandraObjectFromDatabaseByteArray(col.Name, schema.SuperColumnNameType),
 					ValueType = schema.ColumnNameType
 				};
 
 			var superCol = new FluentSuperColumn(superColSchema) {
-				ColumnName = CassandraObject.GetTypeFromDatabaseValue(col.Name, superColSchema.NameType)
+				ColumnName = CassandraObject.GetCassandraObjectFromDatabaseByteArray(col.Name, superColSchema.NameType)
 			};
 
 			foreach (var xcol in col.Columns)
@@ -272,12 +272,12 @@ namespace FluentCassandra.Operations
 			if (schema != null)
 				superColSchema = new CassandraColumnSchema {
 					NameType = schema.SuperColumnNameType,
-					Name = CassandraObject.GetTypeFromDatabaseValue(col.Name, schema.SuperColumnNameType),
+					Name = CassandraObject.GetCassandraObjectFromDatabaseByteArray(col.Name, schema.SuperColumnNameType),
 					ValueType = schema.ColumnNameType
 				};
 
 			var superCol = new FluentSuperColumn(superColSchema) {
-				ColumnName = CassandraObject.GetTypeFromDatabaseValue(col.Name, superColSchema.NameType)
+				ColumnName = CassandraObject.GetCassandraObjectFromDatabaseByteArray(col.Name, superColSchema.NameType)
 			};
 
 			foreach (var xcol in col.Columns)

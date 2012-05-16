@@ -298,6 +298,11 @@ namespace FluentCassandra.Types
 			return destinationType;
 		}
 
+		public static CassandraType GetCassandraType(string type)
+		{
+			return new CassandraType(type);
+		}
+
 		public static implicit operator CassandraType(Type type)
 		{
 			return GetCassandraType(type);

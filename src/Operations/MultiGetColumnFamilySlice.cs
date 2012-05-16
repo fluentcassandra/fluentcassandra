@@ -32,7 +32,7 @@ namespace FluentCassandra.Operations
 
 			foreach (var result in output)
 			{
-				var key = CassandraObject.GetTypeFromDatabaseValue(result.Key, schema.KeyType);
+				var key = CassandraObject.GetCassandraObjectFromDatabaseByteArray(result.Key, schema.KeyType);
 
 				var r = new FluentColumnFamily(key, ColumnFamily.FamilyName, schema, result.Value.Select(col => {
 					return Helper.ConvertColumnToFluentColumn(col.Column, schema);

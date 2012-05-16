@@ -231,7 +231,7 @@ namespace FluentCassandra
 				mutationType = MutationType.Added;
 
 				col = new FluentColumn(schema);
-				col.ColumnName = CassandraObject.GetTypeFromObject(name, schema.NameType);
+				col.ColumnName = CassandraObject.GetCassandraObjectFromObject(name, schema.NameType);
 
 				_columns.SupressChangeNotification = true;
 				_columns.Add(col);
@@ -239,7 +239,7 @@ namespace FluentCassandra
 			}
 
 			// set the column value
-			col.ColumnValue = CassandraObject.GetTypeFromObject(value, schema.ValueType);
+			col.ColumnValue = CassandraObject.GetCassandraObjectFromObject(value, schema.ValueType);
 
 			// notify the tracker that the column has changed
 			OnColumnMutated(mutationType, col);

@@ -161,7 +161,7 @@ namespace FluentCassandra.Types
 					var typeHint = (hints.Count >= (hintIndex + 1)) ? hints[hintIndex++] : CassandraType.BytesType;
 					bytes.Read(buffer, 0, length);
 
-					var component = CassandraObject.GetTypeFromDatabaseValue(buffer, typeHint);
+					var component = CassandraObject.GetCassandraObjectFromDatabaseByteArray(buffer, typeHint);
 					components.Add(component);
 
 					// end of component

@@ -179,7 +179,7 @@ namespace FluentCassandra
 			};
 
 			if (name != null)
-				colSchema.Name = CassandraObject.GetTypeFromObject(name, schema.SuperColumnNameType);
+				colSchema.Name = CassandraObject.GetCassandraObjectFromObject(name, schema.SuperColumnNameType);
 
 			return colSchema;
 		}
@@ -193,7 +193,7 @@ namespace FluentCassandra
 		public override bool TryGetColumn(object name, out object result)
 		{
 			var col = GetColumnValue(name);
-			result = (col == null) ? CreateSuperColumn(CassandraObject.GetTypeFromObject(name)) : col;
+			result = (col == null) ? CreateSuperColumn(CassandraObject.GetCassandraObjectFromObject(name)) : col;
 
 			return true;
 		}
@@ -214,7 +214,7 @@ namespace FluentCassandra
 			var mutationType = col == null ? MutationType.Added : MutationType.Changed;
 
 			col = (FluentSuperColumn)value;
-			col.ColumnName = CassandraObject.GetTypeFromObject(name, schema.SuperColumnNameType);
+			col.ColumnName = CassandraObject.GetCassandraObjectFromObject(name, schema.SuperColumnNameType);
 
 			int index = Columns.IndexOf(col);
 

@@ -33,7 +33,7 @@ namespace FluentCassandra.Operations
 
 			foreach (var result in output)
 			{
-				var key = CassandraObject.GetTypeFromDatabaseValue(result.Key, schema.KeyType);
+				var key = CassandraObject.GetCassandraObjectFromDatabaseByteArray(result.Key, schema.KeyType);
 
 				var superColumns = (IEnumerable<FluentSuperColumn>)null;
 

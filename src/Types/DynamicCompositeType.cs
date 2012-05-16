@@ -132,12 +132,12 @@ namespace FluentCassandra.Types
 
 		public static implicit operator DynamicCompositeType(object[] s)
 		{
-			return new DynamicCompositeType { _value = new List<CassandraObject>(s.Select(o => CassandraObject.GetTypeFromObject(o, CassandraType.BytesType))) };
+			return new DynamicCompositeType { _value = new List<CassandraObject>(s.Select(o => CassandraObject.GetCassandraObjectFromObject(o, CassandraType.BytesType))) };
 		}
 
 		public static implicit operator DynamicCompositeType(List<object> s)
 		{
-			return new DynamicCompositeType { _value = new List<CassandraObject>(s.Select(o => CassandraObject.GetTypeFromObject(o, CassandraType.BytesType))) };
+			return new DynamicCompositeType { _value = new List<CassandraObject>(s.Select(o => CassandraObject.GetCassandraObjectFromObject(o, CassandraType.BytesType))) };
 		}
 
 		public static implicit operator byte[](DynamicCompositeType o) { return ConvertTo<byte[]>(o); }

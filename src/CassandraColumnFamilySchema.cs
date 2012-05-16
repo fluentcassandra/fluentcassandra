@@ -23,26 +23,26 @@ namespace FluentCassandra
 			var familyType = ColumnType.Standard;
 			Enum.TryParse<ColumnType>(def.Column_type, out familyType);
 
-			var keyType = CassandraObject.ParseType(def.Key_validation_class);
-			var defaultColumnValueType = CassandraObject.ParseType(def.Default_validation_class);
+			var keyType = CassandraType.GetCassandraType(def.Key_validation_class);
+			var defaultColumnValueType = CassandraType.GetCassandraType(def.Default_validation_class);
 			CassandraType columnNameType, superColumnNameType;
 
 			if (familyType == ColumnType.Super)
 			{
-				superColumnNameType = CassandraObject.ParseType(def.Comparator_type);
-				columnNameType = CassandraObject.ParseType(def.Subcomparator_type);
+				superColumnNameType = CassandraType.GetCassandraType(def.Comparator_type);
+				columnNameType = CassandraType.GetCassandraType(def.Subcomparator_type);
 			}
 			else
 			{
 				superColumnNameType = null;
-				columnNameType = CassandraObject.ParseType(def.Comparator_type);
+				columnNameType = CassandraType.GetCassandraType(def.Comparator_type);
 			}
 
 			FamilyType = familyType;
 			FamilyName = def.Name;
 			FamilyDescription = def.Comment;
 
-			KeyName = CassandraObject.GetTypeFromDatabaseValue(def.Key_alias, CassandraType.BytesType);
+			KeyName = CassandraObject.GetCassandraObjectFromDatabaseByteArray(def.Key_alias, CassandraType.BytesType);
 			KeyType = keyType;
 			SuperColumnNameType = superColumnNameType;
 			ColumnNameType = columnNameType;

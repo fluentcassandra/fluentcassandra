@@ -19,9 +19,9 @@ namespace FluentCassandra.Types
 				return this;
 
 			if (GetType() == typeof(BytesType))
-				return GetTypeFromDatabaseValue((byte[])GetRawValue(), type);
+				return GetCassandraObjectFromDatabaseByteArray((byte[])GetRawValue(), type);
 
-			return GetTypeFromObject(GetRawValue(), type);
+			return GetCassandraObjectFromObject(GetRawValue(), type);
 		}
 
 		public object GetValue(Type type)
@@ -87,7 +87,7 @@ namespace FluentCassandra.Types
 
 		private static CassandraObject ConvertFrom(object o)
 		{
-			return GetTypeFromObject(o);
+			return GetCassandraObjectFromObject(o);
 		}
 
 		public static implicit operator CassandraObject(byte[] o) { return ConvertFrom(o); }
@@ -190,7 +190,7 @@ namespace FluentCassandra.Types
 
 		#endregion
 
-		public static CassandraObject GetTypeFromDatabaseValue(byte[] value, CassandraType cassandraType)
+		public static CassandraObject GetCassandraObjectFromDatabaseByteArray(byte[] value, CassandraType cassandraType)
 		{
 			var type = cassandraType.CreateInstance();
 
@@ -201,20 +201,21 @@ namespace FluentCassandra.Types
 			return type;
 		}
 
-		public static CassandraObject GetTypeFromDatabaseValue(byte[] value, string type)
+		public static CassandraObject GetCassandraObjectFromDatabaseByteArray(byte[] value, string type)
 		{
-			return GetTypeFromDatabaseValue(value, ParseType(type));
+			var cassandraType = CassandraType.GetCassandraType(type);
+			return GetCassandraObjectFromDatabaseByteArray(value, cassandraType);
 		}
 
-		public static CassandraObject GetTypeFromObject(object obj)
+		public static CassandraObject GetCassandraObjectFromObject(object obj)
 		{
 			var sourceType = obj.GetType();
 			var cassandraType = CassandraType.GetCassandraType(sourceType);
 
-			return GetTypeFromObject(obj, cassandraType);
+			return GetCassandraObjectFromObject(obj, cassandraType);
 		}
 
-		public static CassandraObject GetTypeFromObject(object obj, CassandraType cassandraType)
+		public static CassandraObject GetCassandraObjectFromObject(object obj, CassandraType cassandraType)
 		{
 			if (obj == null)
 				return null;
@@ -231,14 +232,10 @@ namespace FluentCassandra.Types
 			return type;
 		}
 
-		public static CassandraObject GetTypeFromObject(object obj, string type)
+		public static CassandraObject GetCassandraObjectFromObject(object obj, string type)
 		{
-			return GetTypeFromObject(obj, ParseType(type));
-		}
-
-		public static CassandraType ParseType(string type)
-		{
-			return new CassandraType(type);
+			var cassandraType = CassandraType.GetCassandraType(type);
+			return GetCassandraObjectFromObject(obj, cassandraType);
 		}
 	}
 }
