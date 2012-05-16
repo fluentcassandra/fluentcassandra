@@ -287,6 +287,9 @@ namespace FluentCassandra.Types
 					if (sourceType == typeof(char[]))
 						destinationType = UTF8Type;
 
+					if (sourceType == typeof(byte[]))
+						destinationType = BytesType;
+
 					if (destinationType == null)
 						destinationType = BytesType;
 					break;

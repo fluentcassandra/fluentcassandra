@@ -208,78 +208,10 @@ namespace FluentCassandra.Types
 
 		public static CassandraObject GetTypeFromObject(object obj)
 		{
-			if (obj == null)
-				return NullType.Value;
-
 			var sourceType = obj.GetType();
-			var destinationType = (Type)null;
+			var cassandraType = CassandraType.GetCassandraType(sourceType);
 
-			switch (Type.GetTypeCode(sourceType))
-			{
-
-				case TypeCode.DateTime:
-					destinationType = typeof(DateType);
-					break;
-
-				case TypeCode.Boolean:
-					destinationType = typeof(BooleanType);
-					break;
-
-				case TypeCode.Double:
-					destinationType = typeof(DoubleType);
-					break;
-
-				case TypeCode.Single:
-					destinationType = typeof(FloatType);
-					break;
-
-				case TypeCode.Int64:
-				case TypeCode.UInt64:
-					destinationType = typeof(LongType);
-					break;
-
-				case TypeCode.Int16:
-				case TypeCode.Int32:
-				case TypeCode.UInt16:
-				case TypeCode.UInt32:
-					destinationType = typeof(Int32Type);
-					break;
-
-				case TypeCode.Decimal:
-					destinationType = typeof(DecimalType);
-					break;
-
-				case TypeCode.Char:
-				case TypeCode.String:
-					destinationType = typeof(UTF8Type);
-					break;
-
-				case TypeCode.Byte:
-				case TypeCode.SByte:
-					destinationType = typeof(BytesType);
-					break;
-
-				default:
-					if (sourceType == typeof(DateTimeOffset))
-						destinationType = typeof(DateType);
-
-					if (sourceType == typeof(BigInteger))
-						destinationType = typeof(IntegerType);
-
-					if (sourceType == typeof(Guid))
-						destinationType = typeof(UUIDType);
-
-					if (sourceType == typeof(char[]))
-						destinationType = typeof(UTF8Type);
-
-					if (destinationType == null)
-						destinationType = typeof(BytesType);
-					break;
-			}
-
-			var type = (CassandraObject)Activator.CreateInstance(destinationType);
-			type.SetValue(obj);
-			return type;
+			return GetTypeFromObject(obj, cassandraType);
 		}
 
 		public static CassandraObject GetTypeFromObject(object obj, CassandraType cassandraType)
