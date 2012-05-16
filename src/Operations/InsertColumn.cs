@@ -32,10 +32,10 @@ namespace FluentCassandra.Operations
 			};
 
 			if (SuperColumnName != null)
-				parent.SuperColumn = SuperColumnName.GetValue(schema.SuperColumnNameType) as CassandraObject;
+				parent.SuperColumn = SuperColumnName.GetValue(schema.SuperColumnNameType);
 
 			var column = new CassandraColumn {
-				Name = ColumnName.GetValue(schema.ColumnNameType) as CassandraObject,
+				Name = ColumnName.GetValue(schema.ColumnNameType),
 				Value = ColumnValue,
 				Timestamp = Timestamp,
 				Ttl = TimeToLive

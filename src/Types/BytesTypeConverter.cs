@@ -26,6 +26,9 @@ namespace FluentCassandra.Types
 			if (sourceType == typeof(BigInteger))
 				return true;
 
+			if (sourceType == typeof(BigDecimal))
+				return true;
+
 			switch (Type.GetTypeCode(sourceType))
 			{
 				case TypeCode.Byte:
@@ -65,6 +68,9 @@ namespace FluentCassandra.Types
 				return true;
 
 			if (destinationType == typeof(BigInteger))
+				return true;
+
+			if (destinationType == typeof(BigDecimal))
 				return true;
 
 			switch (Type.GetTypeCode(destinationType))
@@ -260,41 +266,18 @@ namespace FluentCassandra.Types
 
 		private static byte[] FromDecimal(decimal d)
 		{
-			byte[] bytes = new byte[16];
-
-			int[] bits = decimal.GetBits(d);
-			int lo = bits[0];
-			int mid = bits[1];
-			int hi = bits[2];
-			int flags = bits[3];
-
-			bytes[0] = (byte)lo;
-			bytes[1] = (byte)(lo >> 8);
-			bytes[2] = (byte)(lo >> 0x10);
-			bytes[3] = (byte)(lo >> 0x18);
-			bytes[4] = (byte)mid;
-			bytes[5] = (byte)(mid >> 8);
-			bytes[6] = (byte)(mid >> 0x10);
-			bytes[7] = (byte)(mid >> 0x18);
-			bytes[8] = (byte)hi;
-			bytes[9] = (byte)(hi >> 8);
-			bytes[10] = (byte)(hi >> 0x10);
-			bytes[11] = (byte)(hi >> 0x18);
-			bytes[12] = (byte)flags;
-			bytes[13] = (byte)(flags >> 8);
-			bytes[14] = (byte)(flags >> 0x10);
-			bytes[15] = (byte)(flags >> 0x18);
-
-			return bytes;
+			// we are now always saving byte arrays in BigDecimal format since they are often more compact than the .NET Decimal Type
+			var bigDecimal = new BigDecimal(d);
+			return bigDecimal.ToByteArray();
 		}
 
 		private static decimal ToDecimal(byte[] bytes)
 		{
 			if (bytes.Length != 16)
-				return FromJavaBigDecimalToDecimal(bytes);
+				return FromBigDecimalToDecimal(bytes);
 
 			try { return FromDotNetDecimalToDecimal(bytes); }
-			catch { return FromJavaBigDecimalToDecimal(bytes); }
+			catch { return FromBigDecimalToDecimal(bytes); }
 		}
 
 		private static decimal FromDotNetDecimalToDecimal(byte[] bytes)
@@ -308,7 +291,7 @@ namespace FluentCassandra.Types
 			return new decimal(bits);
 		}
 
-		private static decimal FromJavaBigDecimalToDecimal(byte[] bytes)
+		private static decimal FromBigDecimalToDecimal(byte[] bytes)
 		{
 			var bigDec = new BigDecimal(bytes);
 			return (decimal)bigDec;

@@ -29,7 +29,10 @@ namespace System.Numerics
 			Array.Copy(bytes, unscaledValueBytes, unscaledValueBytes.Length);
 
 			var unscaledValue = new BigInteger(unscaledValueBytes);
-			var scale = BitConverter.ToInt32(bytes, 12);
+			var scale = bytes[14];
+
+			if (bytes[15] == 128)
+				unscaledValue *= BigInteger.MinusOne;
 
 			_unscaledValue = unscaledValue;
 			_scale = scale;
@@ -71,6 +74,16 @@ namespace System.Numerics
 		public bool IsZero { get { return _unscaledValue.IsZero; } }
 		public int Sign { get { return _unscaledValue.Sign; } }
 
+		public override string ToString()
+		{
+			var number = _unscaledValue.ToString("G");
+
+			if (_scale > 0)
+				return number.Insert(number.Length - _scale, ".");
+
+			return number;
+		}
+
 		public byte[] ToByteArray()
 		{
 			var unscaledValue = _unscaledValue.ToByteArray();
@@ -78,7 +91,7 @@ namespace System.Numerics
 
 			var bytes = new byte[unscaledValue.Length + scale.Length];
 			Array.Copy(unscaledValue, 0, bytes, 0, unscaledValue.Length);
-			Array.Copy(scale, 0, bytes, unscaledValue.Length, bytes.Length);
+			Array.Copy(scale, 0, bytes, unscaledValue.Length, scale.Length);
 
 			return bytes;
 		}
@@ -220,6 +233,12 @@ namespace System.Numerics
 		public static explicit operator float(BigDecimal value) { return value.ToType<float>(); }
 		public static explicit operator double(BigDecimal value) { return value.ToType<double>(); }
 		public static explicit operator decimal(BigDecimal value) { return value.ToType<decimal>(); }
+		public static explicit operator BigInteger(BigDecimal value)
+		{
+			var scaleDivisor = BigInteger.Pow(new BigInteger(10), value._scale);
+			var scaledValue = BigInteger.Divide(value._unscaledValue, scaleDivisor);
+			return scaledValue;
+		}
 
 		public static implicit operator BigDecimal(byte value) { return new BigDecimal(value); }
 		public static implicit operator BigDecimal(sbyte value) { return new BigDecimal(value); }
@@ -232,6 +251,7 @@ namespace System.Numerics
 		public static implicit operator BigDecimal(float value) { return new BigDecimal(value); }
 		public static implicit operator BigDecimal(double value) { return new BigDecimal(value); }
 		public static implicit operator BigDecimal(decimal value) { return new BigDecimal(value); }
+		public static implicit operator BigDecimal(BigInteger value) { return new BigDecimal(value, 0); }
 
 		#endregion
 

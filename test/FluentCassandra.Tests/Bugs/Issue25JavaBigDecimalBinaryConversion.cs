@@ -20,7 +20,7 @@ namespace FluentCassandra.Bugs
 			_db.Dispose();
 		}
 
-		[Fact(Skip="Need to work on later")]
+		[Fact]
 		public void Test()
 		{
 			// arrange
