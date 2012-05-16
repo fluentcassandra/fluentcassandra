@@ -280,6 +280,7 @@
     <Compile Include="Types\LexicalUUIDTypeConverter.cs" />
     <Compile Include="Types\LongTypeConverter.cs" />
     <Compile Include="Types\NullType.cs" />
+    <Compile Include="Types\ReversedType.cs" />
     <Compile Include="Types\TimeUUIDTypeConverter.cs" />
     <Compile Include="Types\UTF8TypeConverter.cs" />
     <Compile Include="Types\LexicalUUIDType.cs" />

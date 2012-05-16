@@ -43,21 +43,21 @@ namespace FluentCassandra.Types
 			Assert.AreEqual(expected, actual);
 		}
 
-        [Test]
-        public void Parse_Reverse_Type()
-        {
-            // arrange
-            Type expected = typeof(LongType);
-            string cassandraString = "org.apache.cassandra.db.marshal.ReversedType(LongType)";
+		[Test]
+		public void Parse_Reversed_Type()
+		{
+			// arrange
+			Type expected = typeof(LongType);
+			string cassandraString = "org.apache.cassandra.db.marshal.ReversedType(LongType)";
 
-            // act
-            Type actual = new CassandraType(cassandraString).FluentType;
+			// act
+			Type actual = new CassandraType(cassandraString).FluentType;
 
-            // assert
-            Assert.AreEqual(expected, actual);
-        }
-        
-        [Test, ExpectedException(typeof(CassandraException))]
+			// assert
+			Assert.AreEqual(expected, actual);
+		}
+		
+		[Test, ExpectedException(typeof(CassandraException))]
 		public void Parse_CompositeType_UnknownInnerType()
 		{
 			// arranage
@@ -88,17 +88,17 @@ namespace FluentCassandra.Types
 			Type actual = new CassandraType(cassandraString).FluentType;
 		}
 
-        [Test]
-        public void ReversedTypeHelper()
-        {
-            // arrange
-            Type expected = typeof (AsciiType);
+		[Test]
+		public void ReversedTypeHelper()
+		{
+			// arrange
+			var expected = "org.apache.cassandra.db.marshal.ReversedType(org.apache.cassandra.db.marshal.UTF8Type)";
 
-            // act
-            var actual = CassandraType.Reversed(CassandraType.AsciiType).FluentType;
+			// act
+			var actual = CassandraType.ReversedType(CassandraType.UTF8Type).DatabaseType;
 
-            // assert
-            Assert.AreEqual(expected, actual);
-        }
+			// assert
+			Assert.AreEqual(expected, actual);
+		}
 	}
 }

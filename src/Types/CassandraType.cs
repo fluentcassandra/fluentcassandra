@@ -27,8 +27,11 @@ namespace FluentCassandra.Types
 		private static readonly CassandraType _CompositeType = new CassandraType("org.apache.cassandra.db.marshal.CompositeType");
 		private static readonly CassandraType _DynamicCompositeType = new CassandraType("org.apache.cassandra.db.marshal.DynamicCompositeType");
 
+		private const string _ReversedType = "org.apache.cassandra.db.marshal.ReversedType";
+
 		private readonly string _dbType;
 		private Type _type;
+		private bool? _dbTypeReversed;
 
 		private IList<CassandraType> _compositeTypes;
 		private IDictionary<char, CassandraType> _dynamicCompositeType;
@@ -63,6 +66,17 @@ namespace FluentCassandra.Types
 
 		public string DatabaseType { get { return _dbType; } }
 
+		public bool Reversed
+		{
+			get
+			{
+				if (_dbTypeReversed == null)
+					Parse();
+
+				return _dbTypeReversed.Value;
+			}
+		}
+
 		public Type FluentType
 		{
 			get
@@ -74,44 +88,37 @@ namespace FluentCassandra.Types
 			}
 		}
 
-	    private void Parse()
+		private void Parse()
 		{
-            // Pay attention to any ReversedType on the Column Index
-		    const string reversedTypeString = "ReversedType(";
-            var reversedIndex = _dbType.IndexOf(reversedTypeString, StringComparison.Ordinal);
-		    var workingtype = _dbType;
-            if (reversedIndex > 0)
-            {
-                workingtype = workingtype.Substring(reversedIndex + reversedTypeString.Length);
-                var lastClosing = workingtype.LastIndexOf(")", StringComparison.Ordinal);
-                workingtype = workingtype.Substring(0, lastClosing).TrimEnd('.');
-            }
-
-			var compositeStart = workingtype.IndexOf('(');
+			_dbTypeReversed = false;
+			int compositeStart = _dbType.IndexOf('(');
 
 			// check for composite type
 			if (compositeStart == -1) {
-				_type = Parse(workingtype);
+				_type = Parse(_dbType);
 				return;
 			}
 
-			var part1 = workingtype.Substring(0, compositeStart);
-			var part2 = workingtype.Substring(compositeStart);
+			var part1 = _dbType.Substring(0, compositeStart);
+			var part2 = _dbType.Substring(compositeStart);
 
 			_type = Parse(part1);
 
 			if (_type == typeof(CompositeType))
-			{
 				ParseCompositeType(part2);
-			}
 			else if (_type == typeof(DynamicCompositeType))
-			{
 				ParseDynamicCompositeType(part2);
-			}
+			else if (_type == typeof(ReversedType))
+				ParseReversedType(part2);
 			else
-			{
 				throw new CassandraException("Type '" + _dbType + "' not found.");
-			}
+		}
+
+		private void ParseReversedType(string part)
+		{
+			part = part.Trim('(', ')');
+			_dbTypeReversed = true;
+			_type = Parse(part);
 		}
 
 		private void ParseCompositeType(string part)
@@ -145,7 +152,7 @@ namespace FluentCassandra.Types
 			}
 		}
 
-		private Type Parse(string dbType) 
+		private Type Parse(string dbType)
 		{
 			Type type;
 
@@ -168,7 +175,8 @@ namespace FluentCassandra.Types
 				case "compositetype": type = typeof(CompositeType); break;
 				case "dynamiccompositetype": type = typeof(DynamicCompositeType); break;
 				case "countercolumntype": type = typeof(CounterColumnType); break;
-				    default: throw new CassandraException("Type '" + _dbType + "' not found.");
+				case "reversedtype": type = typeof(ReversedType); break;
+				default: throw new CassandraException("Type '" + _dbType + "' not found.");
 			}
 
 			return type;
@@ -196,6 +204,17 @@ namespace FluentCassandra.Types
 			sb.Append(_DynamicCompositeType);
 			sb.Append("(");
 			sb.Append(String.Join(",", aliases.Select(x => x.Key + "=>" + x.Value)));
+			sb.Append(")");
+
+			return new CassandraType(sb.ToString());
+		}
+
+		public static CassandraType ReversedType(CassandraType baseType)
+		{
+			var sb = new StringBuilder();
+			sb.Append(_ReversedType);
+			sb.Append("(");
+			sb.Append(baseType.DatabaseType);
 			sb.Append(")");
 
 			return new CassandraType(sb.ToString());
@@ -280,19 +299,5 @@ namespace FluentCassandra.Types
 		{
 			return GetCassandraType(type);
 		}
-
-	    public static CassandraType Reversed(CassandraType baseType)
-	    {
-	        var underlyingType = baseType.DatabaseType;
-            // Add the Reversed keyword
-	        var lastDot = underlyingType.LastIndexOf('.');
-	        underlyingType = underlyingType.Insert(lastDot + 1, "ReversedType(");
-	        underlyingType = underlyingType + ")";
-
-	        var result = new CassandraType(underlyingType);
-	        result.Parse();
-
-	        return result;
-	    }
 	}
 }
