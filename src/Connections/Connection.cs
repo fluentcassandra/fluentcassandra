@@ -28,7 +28,7 @@ namespace FluentCassandra.Connections
 			_connectionType = builder.ConnectionType;
 			_bufferSize = builder.BufferSize;
 
-			Created = DateTime.Now;
+			Created = DateTime.UtcNow;
 			Server = server;
 
 			var socket = new TSocket(server.Host, server.Port, server.Timeout * 1000);

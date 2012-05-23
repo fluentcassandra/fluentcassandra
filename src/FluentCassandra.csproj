@@ -119,6 +119,7 @@
     <Compile Include="Connections\TimedLock.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="System\DateTimePrecise.cs" />
     <Compile Include="FluentCassandraException.cs" />
     <Compile Include="FluentColumn.cs">
       <SubType>Code</SubType>

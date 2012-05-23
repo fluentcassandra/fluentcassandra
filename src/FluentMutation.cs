@@ -9,7 +9,7 @@ namespace FluentCassandra
 		/// </summary>
 		internal FluentMutation()
 		{
-			Timestamp = DateTimeOffset.UtcNow;
+			ColumnTimestamp = DateTimePrecise.UtcNow;
 		}
 
 		/// <summary>
@@ -25,6 +25,6 @@ namespace FluentCassandra
 		/// <summary>
 		/// 
 		/// </summary>
-		public DateTimeOffset Timestamp { get; private set; }
+		public DateTimeOffset ColumnTimestamp { get; private set; }
 	}
 }

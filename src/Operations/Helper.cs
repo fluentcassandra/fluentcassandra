@@ -291,7 +291,7 @@ namespace FluentCassandra.Operations
 			foreach (var col in mutation)
 			{
 				var deletion = new Deletion {
-					Timestamp = col.Timestamp.ToTimestamp(),
+					Timestamp = col.ColumnTimestamp.ToTimestamp(),
 					Predicate = CreateSlicePredicate(new[] { col.Column.ColumnName })
 				};
 
@@ -308,7 +308,7 @@ namespace FluentCassandra.Operations
 				var superColumn = col.Column.GetPath().SuperColumn.ColumnName.TryToBigEndian();
 
 				var deletion = new Deletion {
-					Timestamp = col.Timestamp.ToTimestamp(),
+					Timestamp = col.ColumnTimestamp.ToTimestamp(),
 					Super_column = superColumn,
 					Predicate = CreateSlicePredicate(new[] { col.Column.ColumnName })
 				};

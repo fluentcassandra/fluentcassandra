@@ -32,7 +32,7 @@ namespace FluentCassandra
 		{
 			SetSchema(schema);
 
-			ColumnTimestamp = DateTimeOffset.UtcNow;
+			ColumnTimestamp = DateTimePrecise.UtcNow;
 			ColumnSecondsUntilDeleted = null;
 			ColumnTimeUntilDeleted = null;
 		}
@@ -46,7 +46,7 @@ namespace FluentCassandra
 			set
 			{
 				_name = value.GetValue(GetSchema().NameType);
-				ColumnTimestamp = DateTimeOffset.UtcNow;
+				ColumnTimestamp = DateTimePrecise.UtcNow;
 			}
 		}
 
@@ -59,7 +59,7 @@ namespace FluentCassandra
 			set
 			{
 				_value = value.GetValue(GetSchema().ValueType);
-				ColumnTimestamp = DateTimeOffset.UtcNow;
+				ColumnTimestamp = DateTimePrecise.UtcNow;
 			}
 		}
 

@@ -6,13 +6,13 @@ namespace FluentCassandra.Types
 	{
 		private static readonly DateTimeOffset UnixStart = new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero);
 
-		private static long ToUnixTime(DateTimeOffset dt)
+		public static long ToUnixTime(DateTimeOffset dt)
 		{
 			// this was changed from .NET Ticks to the Unix Epoch to be compatible with other cassandra libraries
 			return Convert.ToInt64(Math.Floor((dt - UnixStart).TotalMilliseconds));
 		}
 
-		private static DateTimeOffset FromUnixTime(long ms)
+		public static DateTimeOffset FromUnixTime(long ms)
 		{
 			// this was changed from .NET Ticks to the Unix Epoch to be compatible with other cassandra libraries
 			return UnixStart.AddMilliseconds(ms);

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Linq;
 using Xunit;
-using System.Collections.Generic;
-using System.Collections.Concurrent;
 
 namespace FluentCassandra
 {
@@ -92,22 +90,5 @@ namespace FluentCassandra
 			// assert
 			Assert.Equal(expected, actual);
 		}
-
-        [Fact]
-        public void CheckGuidGenerationPararell()
-        {
-            ConcurrentBag<Guid> guidList = new ConcurrentBag<Guid>();
-            List<int> list = new List<int>();
-            for (int i = 0; i < 10; i++)
-            {
-                list.Add(i);
-            }
-            list.AsParallel().ForAll(index => guidList.Add(GuidGenerator.GenerateTimeBasedGuid()));
-
-            var expected = 10;
-            var actual = guidList.Count;
-            // assert
-            Assert.Equal(expected, actual);
-        }
 	}
 }

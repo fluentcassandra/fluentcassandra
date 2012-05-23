@@ -31,7 +31,7 @@ namespace FluentCassandra.Operations
 			Session.GetClient().remove(
 				Key,
 				path,
-				DateTimeOffset.Now.ToTimestamp(),
+				DateTimePrecise.UtcNow.ToTimestamp(),
 				Session.WriteConsistency
 			);
 

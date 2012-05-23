@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BigDecimalTest.cs" />
+    <Compile Include="Bugs\Issue28GuidGeneratorInParallelContext.cs" />
     <Compile Include="Bugs\Issue25JavaBigDecimalBinaryConversion.cs" />
     <Compile Include="CassandraDatabaseSetupFixture.cs" />
     <Compile Include="CassandraQueryTest.cs" />

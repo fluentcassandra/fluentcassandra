@@ -106,7 +106,7 @@ namespace FluentCassandra.Connections
 		/// <returns>True if alive; otherwise false.</returns>
 		private bool IsAlive(IConnection connection)
 		{
-			if (ConnectionLifetime > TimeSpan.Zero && connection.Created.Add(ConnectionLifetime) < DateTime.Now)
+			if (ConnectionLifetime > TimeSpan.Zero && connection.Created.Add(ConnectionLifetime) < DateTime.UtcNow)
 				return false;
 
 			return connection.IsOpen;

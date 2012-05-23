@@ -121,14 +121,9 @@ namespace FluentCassandra.Types
 					dto = (DateTimeOffset)value;
 
 				if (value is DateTime)
-				{
-					var dt = (DateTime)value;
-					var utc = dt.Kind == DateTimeKind.Utc;
+					dto = new DateTimeOffset((DateTime)value);
 
-					dto = new DateTimeOffset(dt, utc ? TimeSpan.Zero : (DateTimeOffset.Now.Offset));
-				}
-
-				bytes = BitConverter.GetBytes(Convert.ToInt64(Math.Floor((dto - UnixStartOffset).TotalMilliseconds)));
+				bytes = BitConverter.GetBytes(DateTypeConverter.ToUnixTime(dto));
 			}
 
 			if (value is char[])
@@ -189,7 +184,7 @@ namespace FluentCassandra.Types
 
 			if (destinationType == typeof(DateTimeOffset) || destinationType == typeof(DateTime))
 			{
-				var dto = UnixStartOffset.AddMilliseconds(BitConverter.ToInt64(bytes, 0));
+				var dto = DateTypeConverter.FromUnixTime(BitConverter.ToInt64(bytes, 0));
 
 				if (destinationType == typeof(DateTime))
 					return dto.LocalDateTime;
