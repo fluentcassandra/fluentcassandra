@@ -13,22 +13,25 @@ namespace FluentCassandra
 
 		public CassandraKeyspaceSchema()
 		{
-			Strategy = ReplicaPlacementStrategyNetworkTopology;
-			ReplicationFactor = 1;
+			Strategy = ReplicaPlacementStrategySimple;
+			StrategyOptions = new Dictionary<string, string>() { { "replication_factor", "1" } };
 			ColumnFamilies = new List<CassandraColumnFamilySchema>();
+			DurableWrites = true;
 		}
 
 		public CassandraKeyspaceSchema(KsDef def)
 		{
 			Name = def.Name;
 			Strategy = def.Strategy_class;
-			ReplicationFactor = def.Replication_factor;
+			StrategyOptions = def.Strategy_options ?? new Dictionary<string, string>();
 			ColumnFamilies = def.Cf_defs.Select(family => new CassandraColumnFamilySchema(family)).ToList();
+			DurableWrites = def.Durable_writes;
 		}
 
 		public string Name { get; set; }
 		public string Strategy { get; set; }
-		public int ReplicationFactor { get; set; }
+		public Dictionary<string,string> StrategyOptions { get; private set; }
+		public bool DurableWrites { get; set; }
 
 		public IList<CassandraColumnFamilySchema> ColumnFamilies { get; set; }
 
@@ -37,7 +40,8 @@ namespace FluentCassandra
 			return new KsDef {
 				Name = schema.Name,
 				Strategy_class = schema.Strategy,
-				Replication_factor = schema.ReplicationFactor,
+				Strategy_options = schema.StrategyOptions,
+				Durable_writes = schema.DurableWrites,
 				Cf_defs = new List<CfDef>(0)
 			};
 		}

@@ -58,7 +58,9 @@ namespace FluentCassandra
 				if (exists)
 					DB.DropKeyspace(keyspaceName);
 
-				var keyspace = new CassandraKeyspace(new CassandraKeyspaceSchema { Name = keyspaceName, Strategy = CassandraKeyspaceSchema.ReplicaPlacementStrategySimple, ReplicationFactor = 1 }, DB);
+				var keyspace = new CassandraKeyspace(new CassandraKeyspaceSchema { 
+					Name = keyspaceName
+				}, DB);
 				DB.Keyspace = keyspace;
 
 				keyspace.TryCreateSelf();

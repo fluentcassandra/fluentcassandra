@@ -62,8 +62,9 @@ namespace FluentCassandra
 				string result = _context.AddKeyspace(schema);
 				Debug.WriteLine(result, "keyspace setup");
 			}
-			catch
+			catch(Exception exc)
 			{
+				Debug.WriteLine(exc);
 				Debug.WriteLine(schema.Name + " already exists", "keyspace setup");
 			}
 		}
@@ -77,8 +78,9 @@ namespace FluentCassandra
 				string result = _context.AddColumnFamily(schema);
 				Debug.WriteLine(result, "column family setup");
 			}
-			catch
+			catch (Exception exc)
 			{
+				Debug.WriteLine(exc);
 				Debug.WriteLine(schema.FamilyName + " already exists", "column family setup");
 			}
 		}

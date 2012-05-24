@@ -21,8 +21,7 @@ namespace FluentCassandra.Sandbox
 
 				var keyspace = new CassandraKeyspace(new CassandraKeyspaceSchema { 
 					Name = KeyspaceName, 
-					Strategy = CassandraKeyspaceSchema.ReplicaPlacementStrategySimple, 
-					ReplicationFactor = 1 }, db);
+				}, db);
 
 				keyspace.TryCreateSelf();
 				
