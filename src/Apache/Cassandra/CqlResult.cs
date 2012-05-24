@@ -112,13 +112,13 @@ namespace Apache.Cassandra
             if (field.Type == TType.List) {
               {
                 Rows = new List<CqlRow>();
-                TList _list79 = iprot.ReadListBegin();
-                for( int _i80 = 0; _i80 < _list79.Count; ++_i80)
+                TList _list83 = iprot.ReadListBegin();
+                for( int _i84 = 0; _i84 < _list83.Count; ++_i84)
                 {
-                  CqlRow _elem81 = new CqlRow();
-                  _elem81 = new CqlRow();
-                  _elem81.Read(iprot);
-                  Rows.Add(_elem81);
+                  CqlRow _elem85 = new CqlRow();
+                  _elem85 = new CqlRow();
+                  _elem85.Read(iprot);
+                  Rows.Add(_elem85);
                 }
                 iprot.ReadListEnd();
               }
@@ -169,9 +169,9 @@ namespace Apache.Cassandra
         oprot.WriteFieldBegin(field);
         {
           oprot.WriteListBegin(new TList(TType.Struct, Rows.Count));
-          foreach (CqlRow _iter82 in Rows)
+          foreach (CqlRow _iter86 in Rows)
           {
-            _iter82.Write(oprot);
+            _iter86.Write(oprot);
           }
           oprot.WriteListEnd();
         }

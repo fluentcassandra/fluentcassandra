@@ -134,12 +134,12 @@ namespace Apache.Cassandra
             if (field.Type == TType.List) {
               {
                 Endpoints = new List<string>();
-                TList _list20 = iprot.ReadListBegin();
-                for( int _i21 = 0; _i21 < _list20.Count; ++_i21)
+                TList _list24 = iprot.ReadListBegin();
+                for( int _i25 = 0; _i25 < _list24.Count; ++_i25)
                 {
-                  string _elem22 = null;
-                  _elem22 = iprot.ReadString();
-                  Endpoints.Add(_elem22);
+                  string _elem26 = null;
+                  _elem26 = iprot.ReadString();
+                  Endpoints.Add(_elem26);
                 }
                 iprot.ReadListEnd();
               }
@@ -151,12 +151,12 @@ namespace Apache.Cassandra
             if (field.Type == TType.List) {
               {
                 Rpc_endpoints = new List<string>();
-                TList _list23 = iprot.ReadListBegin();
-                for( int _i24 = 0; _i24 < _list23.Count; ++_i24)
+                TList _list27 = iprot.ReadListBegin();
+                for( int _i28 = 0; _i28 < _list27.Count; ++_i28)
                 {
-                  string _elem25 = null;
-                  _elem25 = iprot.ReadString();
-                  Rpc_endpoints.Add(_elem25);
+                  string _elem29 = null;
+                  _elem29 = iprot.ReadString();
+                  Rpc_endpoints.Add(_elem29);
                 }
                 iprot.ReadListEnd();
               }
@@ -168,13 +168,13 @@ namespace Apache.Cassandra
             if (field.Type == TType.List) {
               {
                 Endpoint_details = new List<EndpointDetails>();
-                TList _list26 = iprot.ReadListBegin();
-                for( int _i27 = 0; _i27 < _list26.Count; ++_i27)
+                TList _list30 = iprot.ReadListBegin();
+                for( int _i31 = 0; _i31 < _list30.Count; ++_i31)
                 {
-                  EndpointDetails _elem28 = new EndpointDetails();
-                  _elem28 = new EndpointDetails();
-                  _elem28.Read(iprot);
-                  Endpoint_details.Add(_elem28);
+                  EndpointDetails _elem32 = new EndpointDetails();
+                  _elem32 = new EndpointDetails();
+                  _elem32.Read(iprot);
+                  Endpoint_details.Add(_elem32);
                 }
                 iprot.ReadListEnd();
               }
@@ -218,9 +218,9 @@ namespace Apache.Cassandra
         oprot.WriteFieldBegin(field);
         {
           oprot.WriteListBegin(new TList(TType.String, Endpoints.Count));
-          foreach (string _iter29 in Endpoints)
+          foreach (string _iter33 in Endpoints)
           {
-            oprot.WriteString(_iter29);
+            oprot.WriteString(_iter33);
           }
           oprot.WriteListEnd();
         }
@@ -233,9 +233,9 @@ namespace Apache.Cassandra
         oprot.WriteFieldBegin(field);
         {
           oprot.WriteListBegin(new TList(TType.String, Rpc_endpoints.Count));
-          foreach (string _iter30 in Rpc_endpoints)
+          foreach (string _iter34 in Rpc_endpoints)
           {
-            oprot.WriteString(_iter30);
+            oprot.WriteString(_iter34);
           }
           oprot.WriteListEnd();
         }
@@ -248,9 +248,9 @@ namespace Apache.Cassandra
         oprot.WriteFieldBegin(field);
         {
           oprot.WriteListBegin(new TList(TType.Struct, Endpoint_details.Count));
-          foreach (EndpointDetails _iter31 in Endpoint_details)
+          foreach (EndpointDetails _iter35 in Endpoint_details)
           {
-            _iter31.Write(oprot);
+            _iter35.Write(oprot);
           }
           oprot.WriteListEnd();
         }

@@ -4,7 +4,6 @@ using Xunit;
 
 namespace FluentCassandra.Bugs
 {
-	
 	public class Issue25JavaBigDecimalBinaryConversion : IUseFixture<CassandraDatabaseSetupFixture>, IDisposable
 	{
 		private CassandraContext _db;

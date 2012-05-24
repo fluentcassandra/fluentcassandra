@@ -25,8 +25,6 @@ namespace Apache.Cassandra
     private string _comparator_type;
     private string _subcomparator_type;
     private string _comment;
-    private double _row_cache_size;
-    private double _key_cache_size;
     private double _read_repair_chance;
     private List<ColumnDef> _column_metadata;
     private int _gc_grace_seconds;
@@ -34,18 +32,25 @@ namespace Apache.Cassandra
     private int _id;
     private int _min_compaction_threshold;
     private int _max_compaction_threshold;
-    private int _row_cache_save_period_in_seconds;
-    private int _key_cache_save_period_in_seconds;
     private bool _replicate_on_write;
-    private double _merge_shards_chance;
     private string _key_validation_class;
-    private string _row_cache_provider;
     private byte[] _key_alias;
     private string _compaction_strategy;
     private Dictionary<string, string> _compaction_strategy_options;
-    private int _row_cache_keys_to_save;
     private Dictionary<string, string> _compression_options;
     private double _bloom_filter_fp_chance;
+    private string _caching;
+    private double _dclocal_read_repair_chance;
+    private double _row_cache_size;
+    private double _key_cache_size;
+    private int _row_cache_save_period_in_seconds;
+    private int _key_cache_save_period_in_seconds;
+    private int _memtable_flush_after_mins;
+    private int _memtable_throughput_in_mb;
+    private double _memtable_operations_in_millions;
+    private double _merge_shards_chance;
+    private string _row_cache_provider;
+    private int _row_cache_keys_to_save;
 
     public string Keyspace
     {
@@ -122,32 +127,6 @@ namespace Apache.Cassandra
       {
         __isset.comment = true;
         this._comment = value;
-      }
-    }
-
-    public double Row_cache_size
-    {
-      get
-      {
-        return _row_cache_size;
-      }
-      set
-      {
-        __isset.row_cache_size = true;
-        this._row_cache_size = value;
-      }
-    }
-
-    public double Key_cache_size
-    {
-      get
-      {
-        return _key_cache_size;
-      }
-      set
-      {
-        __isset.key_cache_size = true;
-        this._key_cache_size = value;
       }
     }
 
@@ -242,32 +221,6 @@ namespace Apache.Cassandra
       }
     }
 
-    public int Row_cache_save_period_in_seconds
-    {
-      get
-      {
-        return _row_cache_save_period_in_seconds;
-      }
-      set
-      {
-        __isset.row_cache_save_period_in_seconds = true;
-        this._row_cache_save_period_in_seconds = value;
-      }
-    }
-
-    public int Key_cache_save_period_in_seconds
-    {
-      get
-      {
-        return _key_cache_save_period_in_seconds;
-      }
-      set
-      {
-        __isset.key_cache_save_period_in_seconds = true;
-        this._key_cache_save_period_in_seconds = value;
-      }
-    }
-
     public bool Replicate_on_write
     {
       get
@@ -281,19 +234,6 @@ namespace Apache.Cassandra
       }
     }
 
-    public double Merge_shards_chance
-    {
-      get
-      {
-        return _merge_shards_chance;
-      }
-      set
-      {
-        __isset.merge_shards_chance = true;
-        this._merge_shards_chance = value;
-      }
-    }
-
     public string Key_validation_class
     {
       get
@@ -304,19 +244,6 @@ namespace Apache.Cassandra
       {
         __isset.key_validation_class = true;
         this._key_validation_class = value;
-      }
-    }
-
-    public string Row_cache_provider
-    {
-      get
-      {
-        return _row_cache_provider;
-      }
-      set
-      {
-        __isset.row_cache_provider = true;
-        this._row_cache_provider = value;
       }
     }
 
@@ -359,19 +286,6 @@ namespace Apache.Cassandra
       }
     }
 
-    public int Row_cache_keys_to_save
-    {
-      get
-      {
-        return _row_cache_keys_to_save;
-      }
-      set
-      {
-        __isset.row_cache_keys_to_save = true;
-        this._row_cache_keys_to_save = value;
-      }
-    }
-
     public Dictionary<string, string> Compression_options
     {
       get
@@ -398,6 +312,162 @@ namespace Apache.Cassandra
       }
     }
 
+    public string Caching
+    {
+      get
+      {
+        return _caching;
+      }
+      set
+      {
+        __isset.caching = true;
+        this._caching = value;
+      }
+    }
+
+    public double Dclocal_read_repair_chance
+    {
+      get
+      {
+        return _dclocal_read_repair_chance;
+      }
+      set
+      {
+        __isset.dclocal_read_repair_chance = true;
+        this._dclocal_read_repair_chance = value;
+      }
+    }
+
+    public double Row_cache_size
+    {
+      get
+      {
+        return _row_cache_size;
+      }
+      set
+      {
+        __isset.row_cache_size = true;
+        this._row_cache_size = value;
+      }
+    }
+
+    public double Key_cache_size
+    {
+      get
+      {
+        return _key_cache_size;
+      }
+      set
+      {
+        __isset.key_cache_size = true;
+        this._key_cache_size = value;
+      }
+    }
+
+    public int Row_cache_save_period_in_seconds
+    {
+      get
+      {
+        return _row_cache_save_period_in_seconds;
+      }
+      set
+      {
+        __isset.row_cache_save_period_in_seconds = true;
+        this._row_cache_save_period_in_seconds = value;
+      }
+    }
+
+    public int Key_cache_save_period_in_seconds
+    {
+      get
+      {
+        return _key_cache_save_period_in_seconds;
+      }
+      set
+      {
+        __isset.key_cache_save_period_in_seconds = true;
+        this._key_cache_save_period_in_seconds = value;
+      }
+    }
+
+    public int Memtable_flush_after_mins
+    {
+      get
+      {
+        return _memtable_flush_after_mins;
+      }
+      set
+      {
+        __isset.memtable_flush_after_mins = true;
+        this._memtable_flush_after_mins = value;
+      }
+    }
+
+    public int Memtable_throughput_in_mb
+    {
+      get
+      {
+        return _memtable_throughput_in_mb;
+      }
+      set
+      {
+        __isset.memtable_throughput_in_mb = true;
+        this._memtable_throughput_in_mb = value;
+      }
+    }
+
+    public double Memtable_operations_in_millions
+    {
+      get
+      {
+        return _memtable_operations_in_millions;
+      }
+      set
+      {
+        __isset.memtable_operations_in_millions = true;
+        this._memtable_operations_in_millions = value;
+      }
+    }
+
+    public double Merge_shards_chance
+    {
+      get
+      {
+        return _merge_shards_chance;
+      }
+      set
+      {
+        __isset.merge_shards_chance = true;
+        this._merge_shards_chance = value;
+      }
+    }
+
+    public string Row_cache_provider
+    {
+      get
+      {
+        return _row_cache_provider;
+      }
+      set
+      {
+        __isset.row_cache_provider = true;
+        this._row_cache_provider = value;
+      }
+    }
+
+    public int Row_cache_keys_to_save
+    {
+      get
+      {
+        return _row_cache_keys_to_save;
+      }
+      set
+      {
+        __isset.row_cache_keys_to_save = true;
+        this._row_cache_keys_to_save = value;
+      }
+    }
+
 
     public Isset __isset;
     [Serializable]
@@ -408,8 +478,6 @@ namespace Apache.Cassandra
       public bool comparator_type;
       public bool subcomparator_type;
       public bool comment;
-      public bool row_cache_size;
-      public bool key_cache_size;
       public bool read_repair_chance;
       public bool column_metadata;
       public bool gc_grace_seconds;
@@ -417,26 +485,32 @@ namespace Apache.Cassandra
       public bool id;
       public bool min_compaction_threshold;
       public bool max_compaction_threshold;
-      public bool row_cache_save_period_in_seconds;
-      public bool key_cache_save_period_in_seconds;
       public bool replicate_on_write;
-      public bool merge_shards_chance;
       public bool key_validation_class;
-      public bool row_cache_provider;
       public bool key_alias;
       public bool compaction_strategy;
       public bool compaction_strategy_options;
-      public bool row_cache_keys_to_save;
       public bool compression_options;
       public bool bloom_filter_fp_chance;
+      public bool caching;
+      public bool dclocal_read_repair_chance;
+      public bool row_cache_size;
+      public bool key_cache_size;
+      public bool row_cache_save_period_in_seconds;
+      public bool key_cache_save_period_in_seconds;
+      public bool memtable_flush_after_mins;
+      public bool memtable_throughput_in_mb;
+      public bool memtable_operations_in_millions;
+      public bool merge_shards_chance;
+      public bool row_cache_provider;
+      public bool row_cache_keys_to_save;
     }
 
     public CfDef() {
       this._column_type = "Standard";
       this._comparator_type = "BytesType";
-      this._row_cache_size = 0;
-      this._key_cache_size = 200000;
-      this._read_repair_chance = 1;
+      this._caching = "keys_only";
+      this._dclocal_read_repair_chance = 0;
     }
 
     public void Read (TProtocol iprot)
@@ -493,20 +567,6 @@ namespace Apache.Cassandra
               TProtocolUtil.Skip(iprot, field.Type);
             }
             break;
-          case 9:
-            if (field.Type == TType.Double) {
-              Row_cache_size = iprot.ReadDouble();
-            } else { 
-              TProtocolUtil.Skip(iprot, field.Type);
-            }
-            break;
-          case 11:
-            if (field.Type == TType.Double) {
-              Key_cache_size = iprot.ReadDouble();
-            } else { 
-              TProtocolUtil.Skip(iprot, field.Type);
-            }
-            break;
           case 12:
             if (field.Type == TType.Double) {
               Read_repair_chance = iprot.ReadDouble();
@@ -518,13 +578,13 @@ namespace Apache.Cassandra
             if (field.Type == TType.List) {
               {
                 Column_metadata = new List<ColumnDef>();
-                TList _list42 = iprot.ReadListBegin();
-                for( int _i43 = 0; _i43 < _list42.Count; ++_i43)
+                TList _list46 = iprot.ReadListBegin();
+                for( int _i47 = 0; _i47 < _list46.Count; ++_i47)
                 {
-                  ColumnDef _elem44 = new ColumnDef();
-                  _elem44 = new ColumnDef();
-                  _elem44.Read(iprot);
-                  Column_metadata.Add(_elem44);
+                  ColumnDef _elem48 = new ColumnDef();
+                  _elem48 = new ColumnDef();
+                  _elem48.Read(iprot);
+                  Column_metadata.Add(_elem48);
                 }
                 iprot.ReadListEnd();
               }
@@ -567,20 +627,6 @@ namespace Apache.Cassandra
               TProtocolUtil.Skip(iprot, field.Type);
             }
             break;
-          case 19:
-            if (field.Type == TType.I32) {
-              Row_cache_save_period_in_seconds = iprot.ReadI32();
-            } else { 
-              TProtocolUtil.Skip(iprot, field.Type);
-            }
-            break;
-          case 20:
-            if (field.Type == TType.I32) {
-              Key_cache_save_period_in_seconds = iprot.ReadI32();
-            } else { 
-              TProtocolUtil.Skip(iprot, field.Type);
-            }
-            break;
           case 24:
             if (field.Type == TType.Bool) {
               Replicate_on_write = iprot.ReadBool();
@@ -588,23 +634,9 @@ namespace Apache.Cassandra
               TProtocolUtil.Skip(iprot, field.Type);
             }
             break;
-          case 25:
-            if (field.Type == TType.Double) {
-              Merge_shards_chance = iprot.ReadDouble();
-            } else { 
-              TProtocolUtil.Skip(iprot, field.Type);
-            }
-            break;
           case 26:
             if (field.Type == TType.String) {
               Key_validation_class = iprot.ReadString();
-            } else { 
-              TProtocolUtil.Skip(iprot, field.Type);
-            }
-            break;
-          case 27:
-            if (field.Type == TType.String) {
-              Row_cache_provider = iprot.ReadString();
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
@@ -627,24 +659,17 @@ namespace Apache.Cassandra
             if (field.Type == TType.Map) {
               {
                 Compaction_strategy_options = new Dictionary<string, string>();
-                TMap _map45 = iprot.ReadMapBegin();
-                for( int _i46 = 0; _i46 < _map45.Count; ++_i46)
+                TMap _map49 = iprot.ReadMapBegin();
+                for( int _i50 = 0; _i50 < _map49.Count; ++_i50)
                 {
-                  string _key47;
-                  string _val48;
-                  _key47 = iprot.ReadString();
-                  _val48 = iprot.ReadString();
-                  Compaction_strategy_options[_key47] = _val48;
+                  string _key51;
+                  string _val52;
+                  _key51 = iprot.ReadString();
+                  _val52 = iprot.ReadString();
+                  Compaction_strategy_options[_key51] = _val52;
                 }
                 iprot.ReadMapEnd();
               }
-            } else { 
-              TProtocolUtil.Skip(iprot, field.Type);
-            }
-            break;
-          case 31:
-            if (field.Type == TType.I32) {
-              Row_cache_keys_to_save = iprot.ReadI32();
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
@@ -653,14 +678,14 @@ namespace Apache.Cassandra
             if (field.Type == TType.Map) {
               {
                 Compression_options = new Dictionary<string, string>();
-                TMap _map49 = iprot.ReadMapBegin();
-                for( int _i50 = 0; _i50 < _map49.Count; ++_i50)
+                TMap _map53 = iprot.ReadMapBegin();
+                for( int _i54 = 0; _i54 < _map53.Count; ++_i54)
                 {
-                  string _key51;
-                  string _val52;
-                  _key51 = iprot.ReadString();
-                  _val52 = iprot.ReadString();
-                  Compression_options[_key51] = _val52;
+                  string _key55;
+                  string _val56;
+                  _key55 = iprot.ReadString();
+                  _val56 = iprot.ReadString();
+                  Compression_options[_key55] = _val56;
                 }
                 iprot.ReadMapEnd();
               }
@@ -671,6 +696,90 @@ namespace Apache.Cassandra
           case 33:
             if (field.Type == TType.Double) {
               Bloom_filter_fp_chance = iprot.ReadDouble();
+            } else { 
+              TProtocolUtil.Skip(iprot, field.Type);
+            }
+            break;
+          case 34:
+            if (field.Type == TType.String) {
+              Caching = iprot.ReadString();
+            } else { 
+              TProtocolUtil.Skip(iprot, field.Type);
+            }
+            break;
+          case 37:
+            if (field.Type == TType.Double) {
+              Dclocal_read_repair_chance = iprot.ReadDouble();
+            } else { 
+              TProtocolUtil.Skip(iprot, field.Type);
+            }
+            break;
+          case 9:
+            if (field.Type == TType.Double) {
+              Row_cache_size = iprot.ReadDouble();
+            } else { 
+              TProtocolUtil.Skip(iprot, field.Type);
+            }
+            break;
+          case 11:
+            if (field.Type == TType.Double) {
+              Key_cache_size = iprot.ReadDouble();
+            } else { 
+              TProtocolUtil.Skip(iprot, field.Type);
+            }
+            break;
+          case 19:
+            if (field.Type == TType.I32) {
+              Row_cache_save_period_in_seconds = iprot.ReadI32();
+            } else { 
+              TProtocolUtil.Skip(iprot, field.Type);
+            }
+            break;
+          case 20:
+            if (field.Type == TType.I32) {
+              Key_cache_save_period_in_seconds = iprot.ReadI32();
+            } else { 
+              TProtocolUtil.Skip(iprot, field.Type);
+            }
+            break;
+          case 21:
+            if (field.Type == TType.I32) {
+              Memtable_flush_after_mins = iprot.ReadI32();
+            } else { 
+              TProtocolUtil.Skip(iprot, field.Type);
+            }
+            break;
+          case 22:
+            if (field.Type == TType.I32) {
+              Memtable_throughput_in_mb = iprot.ReadI32();
+            } else { 
+              TProtocolUtil.Skip(iprot, field.Type);
+            }
+            break;
+          case 23:
+            if (field.Type == TType.Double) {
+              Memtable_operations_in_millions = iprot.ReadDouble();
+            } else { 
+              TProtocolUtil.Skip(iprot, field.Type);
+            }
+            break;
+          case 25:
+            if (field.Type == TType.Double) {
+              Merge_shards_chance = iprot.ReadDouble();
+            } else { 
+              TProtocolUtil.Skip(iprot, field.Type);
+            }
+            break;
+          case 27:
+            if (field.Type == TType.String) {
+              Row_cache_provider = iprot.ReadString();
+            } else { 
+              TProtocolUtil.Skip(iprot, field.Type);
+            }
+            break;
+          case 31:
+            if (field.Type == TType.I32) {
+              Row_cache_keys_to_save = iprot.ReadI32();
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
@@ -767,9 +876,9 @@ namespace Apache.Cassandra
         oprot.WriteFieldBegin(field);
         {
           oprot.WriteListBegin(new TList(TType.Struct, Column_metadata.Count));
-          foreach (ColumnDef _iter53 in Column_metadata)
+          foreach (ColumnDef _iter57 in Column_metadata)
           {
-            _iter53.Write(oprot);
+            _iter57.Write(oprot);
           }
           oprot.WriteListEnd();
         }
@@ -831,6 +940,30 @@ namespace Apache.Cassandra
         oprot.WriteI32(Key_cache_save_period_in_seconds);
         oprot.WriteFieldEnd();
       }
+      if (__isset.memtable_flush_after_mins) {
+        field.Name = "memtable_flush_after_mins";
+        field.Type = TType.I32;
+        field.ID = 21;
+        oprot.WriteFieldBegin(field);
+        oprot.WriteI32(Memtable_flush_after_mins);
+        oprot.WriteFieldEnd();
+      }
+      if (__isset.memtable_throughput_in_mb) {
+        field.Name = "memtable_throughput_in_mb";
+        field.Type = TType.I32;
+        field.ID = 22;
+        oprot.WriteFieldBegin(field);
+        oprot.WriteI32(Memtable_throughput_in_mb);
+        oprot.WriteFieldEnd();
+      }
+      if (__isset.memtable_operations_in_millions) {
+        field.Name = "memtable_operations_in_millions";
+        field.Type = TType.Double;
+        field.ID = 23;
+        oprot.WriteFieldBegin(field);
+        oprot.WriteDouble(Memtable_operations_in_millions);
+        oprot.WriteFieldEnd();
+      }
       if (__isset.replicate_on_write) {
         field.Name = "replicate_on_write";
         field.Type = TType.Bool;
@@ -886,10 +1019,10 @@ namespace Apache.Cassandra
         oprot.WriteFieldBegin(field);
         {
           oprot.WriteMapBegin(new TMap(TType.String, TType.String, Compaction_strategy_options.Count));
-          foreach (string _iter54 in Compaction_strategy_options.Keys)
+          foreach (string _iter58 in Compaction_strategy_options.Keys)
           {
-            oprot.WriteString(_iter54);
-            oprot.WriteString(Compaction_strategy_options[_iter54]);
+            oprot.WriteString(_iter58);
+            oprot.WriteString(Compaction_strategy_options[_iter58]);
           }
           oprot.WriteMapEnd();
         }
@@ -910,10 +1043,10 @@ namespace Apache.Cassandra
         oprot.WriteFieldBegin(field);
         {
           oprot.WriteMapBegin(new TMap(TType.String, TType.String, Compression_options.Count));
-          foreach (string _iter55 in Compression_options.Keys)
+          foreach (string _iter59 in Compression_options.Keys)
           {
-            oprot.WriteString(_iter55);
-            oprot.WriteString(Compression_options[_iter55]);
+            oprot.WriteString(_iter59);
+            oprot.WriteString(Compression_options[_iter59]);
           }
           oprot.WriteMapEnd();
         }
@@ -925,6 +1058,22 @@ namespace Apache.Cassandra
         field.ID = 33;
         oprot.WriteFieldBegin(field);
         oprot.WriteDouble(Bloom_filter_fp_chance);
+        oprot.WriteFieldEnd();
+      }
+      if (Caching != null && __isset.caching) {
+        field.Name = "caching";
+        field.Type = TType.String;
+        field.ID = 34;
+        oprot.WriteFieldBegin(field);
+        oprot.WriteString(Caching);
+        oprot.WriteFieldEnd();
+      }
+      if (__isset.dclocal_read_repair_chance) {
+        field.Name = "dclocal_read_repair_chance";
+        field.Type = TType.Double;
+        field.ID = 37;
+        oprot.WriteFieldBegin(field);
+        oprot.WriteDouble(Dclocal_read_repair_chance);
         oprot.WriteFieldEnd();
       }
       oprot.WriteFieldStop();
@@ -945,10 +1094,6 @@ namespace Apache.Cassandra
       sb.Append(Subcomparator_type);
       sb.Append(",Comment: ");
       sb.Append(Comment);
-      sb.Append(",Row_cache_size: ");
-      sb.Append(Row_cache_size);
-      sb.Append(",Key_cache_size: ");
-      sb.Append(Key_cache_size);
       sb.Append(",Read_repair_chance: ");
       sb.Append(Read_repair_chance);
       sb.Append(",Column_metadata: ");
@@ -963,30 +1108,44 @@ namespace Apache.Cassandra
       sb.Append(Min_compaction_threshold);
       sb.Append(",Max_compaction_threshold: ");
       sb.Append(Max_compaction_threshold);
-      sb.Append(",Row_cache_save_period_in_seconds: ");
-      sb.Append(Row_cache_save_period_in_seconds);
-      sb.Append(",Key_cache_save_period_in_seconds: ");
-      sb.Append(Key_cache_save_period_in_seconds);
       sb.Append(",Replicate_on_write: ");
       sb.Append(Replicate_on_write);
-      sb.Append(",Merge_shards_chance: ");
-      sb.Append(Merge_shards_chance);
       sb.Append(",Key_validation_class: ");
       sb.Append(Key_validation_class);
-      sb.Append(",Row_cache_provider: ");
-      sb.Append(Row_cache_provider);
       sb.Append(",Key_alias: ");
       sb.Append(Key_alias);
       sb.Append(",Compaction_strategy: ");
       sb.Append(Compaction_strategy);
       sb.Append(",Compaction_strategy_options: ");
       sb.Append(Compaction_strategy_options);
-      sb.Append(",Row_cache_keys_to_save: ");
-      sb.Append(Row_cache_keys_to_save);
       sb.Append(",Compression_options: ");
       sb.Append(Compression_options);
       sb.Append(",Bloom_filter_fp_chance: ");
       sb.Append(Bloom_filter_fp_chance);
+      sb.Append(",Caching: ");
+      sb.Append(Caching);
+      sb.Append(",Dclocal_read_repair_chance: ");
+      sb.Append(Dclocal_read_repair_chance);
+      sb.Append(",Row_cache_size: ");
+      sb.Append(Row_cache_size);
+      sb.Append(",Key_cache_size: ");
+      sb.Append(Key_cache_size);
+      sb.Append(",Row_cache_save_period_in_seconds: ");
+      sb.Append(Row_cache_save_period_in_seconds);
+      sb.Append(",Key_cache_save_period_in_seconds: ");
+      sb.Append(Key_cache_save_period_in_seconds);
+      sb.Append(",Memtable_flush_after_mins: ");
+      sb.Append(Memtable_flush_after_mins);
+      sb.Append(",Memtable_throughput_in_mb: ");
+      sb.Append(Memtable_throughput_in_mb);
+      sb.Append(",Memtable_operations_in_millions: ");
+      sb.Append(Memtable_operations_in_millions);
+      sb.Append(",Merge_shards_chance: ");
+      sb.Append(Merge_shards_chance);
+      sb.Append(",Row_cache_provider: ");
+      sb.Append(Row_cache_provider);
+      sb.Append(",Row_cache_keys_to_save: ");
+      sb.Append(Row_cache_keys_to_save);
       sb.Append(")");
       return sb.ToString();
     }

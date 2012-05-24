@@ -148,14 +148,14 @@ namespace Apache.Cassandra
             if (field.Type == TType.Map) {
               {
                 Index_options = new Dictionary<string, string>();
-                TMap _map37 = iprot.ReadMapBegin();
-                for( int _i38 = 0; _i38 < _map37.Count; ++_i38)
+                TMap _map41 = iprot.ReadMapBegin();
+                for( int _i42 = 0; _i42 < _map41.Count; ++_i42)
                 {
-                  string _key39;
-                  string _val40;
-                  _key39 = iprot.ReadString();
-                  _val40 = iprot.ReadString();
-                  Index_options[_key39] = _val40;
+                  string _key43;
+                  string _val44;
+                  _key43 = iprot.ReadString();
+                  _val44 = iprot.ReadString();
+                  Index_options[_key43] = _val44;
                 }
                 iprot.ReadMapEnd();
               }
@@ -215,10 +215,10 @@ namespace Apache.Cassandra
         oprot.WriteFieldBegin(field);
         {
           oprot.WriteMapBegin(new TMap(TType.String, TType.String, Index_options.Count));
-          foreach (string _iter41 in Index_options.Keys)
+          foreach (string _iter45 in Index_options.Keys)
           {
-            oprot.WriteString(_iter41);
-            oprot.WriteString(Index_options[_iter41]);
+            oprot.WriteString(_iter45);
+            oprot.WriteString(Index_options[_iter45]);
           }
           oprot.WriteMapEnd();
         }

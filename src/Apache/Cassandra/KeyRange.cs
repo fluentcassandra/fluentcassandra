@@ -23,6 +23,7 @@ namespace Apache.Cassandra
     private byte[] _end_key;
     private string _start_token;
     private string _end_token;
+    private List<IndexExpression> _row_filter;
     private int _count;
 
     public byte[] Start_key
@@ -77,6 +78,19 @@ namespace Apache.Cassandra
       }
     }
 
+    public List<IndexExpression> Row_filter
+    {
+      get
+      {
+        return _row_filter;
+      }
+      set
+      {
+        __isset.row_filter = true;
+        this._row_filter = value;
+      }
+    }
+
     public int Count
     {
       get
@@ -98,6 +112,7 @@ namespace Apache.Cassandra
       public bool end_key;
       public bool start_token;
       public bool end_token;
+      public bool row_filter;
       public bool count;
     }
 
@@ -141,6 +156,24 @@ namespace Apache.Cassandra
           case 4:
             if (field.Type == TType.String) {
               End_token = iprot.ReadString();
+            } else { 
+              TProtocolUtil.Skip(iprot, field.Type);
+            }
+            break;
+          case 6:
+            if (field.Type == TType.List) {
+              {
+                Row_filter = new List<IndexExpression>();
+                TList _list16 = iprot.ReadListBegin();
+                for( int _i17 = 0; _i17 < _list16.Count; ++_i17)
+                {
+                  IndexExpression _elem18 = new IndexExpression();
+                  _elem18 = new IndexExpression();
+                  _elem18.Read(iprot);
+                  Row_filter.Add(_elem18);
+                }
+                iprot.ReadListEnd();
+              }
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
@@ -205,6 +238,21 @@ namespace Apache.Cassandra
         oprot.WriteI32(Count);
         oprot.WriteFieldEnd();
       }
+      if (Row_filter != null && __isset.row_filter) {
+        field.Name = "row_filter";
+        field.Type = TType.List;
+        field.ID = 6;
+        oprot.WriteFieldBegin(field);
+        {
+          oprot.WriteListBegin(new TList(TType.Struct, Row_filter.Count));
+          foreach (IndexExpression _iter19 in Row_filter)
+          {
+            _iter19.Write(oprot);
+          }
+          oprot.WriteListEnd();
+        }
+        oprot.WriteFieldEnd();
+      }
       oprot.WriteFieldStop();
       oprot.WriteStructEnd();
     }
@@ -219,6 +267,8 @@ namespace Apache.Cassandra
       sb.Append(Start_token);
       sb.Append(",End_token: ");
       sb.Append(End_token);
+      sb.Append(",Row_filter: ");
+      sb.Append(Row_filter);
       sb.Append(",Count: ");
       sb.Append(Count);
       sb.Append(")");

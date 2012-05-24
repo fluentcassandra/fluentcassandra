@@ -5,7 +5,7 @@ using FluentCassandra.Types;
 
 namespace FluentCassandra.Operations
 {
-	public class CassandraClientWrapper
+	public class CassandraClientWrapper //: Apache.Cassandra.Cassandra.Iface
 	{
 		private readonly Apache.Cassandra.Cassandra.Iface _client;
 
@@ -13,8 +13,6 @@ namespace FluentCassandra.Operations
 		{
 			_client = client;
 		}
-
-		#region Iface Members
 
 		public void login(Apache.Cassandra.AuthenticationRequest auth_request)
 		{
@@ -213,6 +211,26 @@ namespace FluentCassandra.Operations
 			return _client.execute_cql_query(query, compression);
 		}
 
-		#endregion
+
+
+		public List<Apache.Cassandra.KeySlice> get_paged_slice(string column_family, Apache.Cassandra.KeyRange range, byte[] start_column, Apache.Cassandra.ConsistencyLevel consistency_level)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Apache.Cassandra.CqlPreparedResult prepare_cql_query(byte[] query, Apache.Cassandra.Compression compression)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Apache.Cassandra.CqlResult execute_prepared_cql_query(int itemId, List<byte[]> values)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void set_cql_version(string version)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

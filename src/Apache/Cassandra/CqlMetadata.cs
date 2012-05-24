@@ -105,14 +105,14 @@ namespace Apache.Cassandra
             if (field.Type == TType.Map) {
               {
                 Name_types = new Dictionary<byte[], string>();
-                TMap _map69 = iprot.ReadMapBegin();
-                for( int _i70 = 0; _i70 < _map69.Count; ++_i70)
+                TMap _map73 = iprot.ReadMapBegin();
+                for( int _i74 = 0; _i74 < _map73.Count; ++_i74)
                 {
-                  byte[] _key71;
-                  string _val72;
-                  _key71 = iprot.ReadBinary();
-                  _val72 = iprot.ReadString();
-                  Name_types[_key71] = _val72;
+                  byte[] _key75;
+                  string _val76;
+                  _key75 = iprot.ReadBinary();
+                  _val76 = iprot.ReadString();
+                  Name_types[_key75] = _val76;
                 }
                 iprot.ReadMapEnd();
               }
@@ -124,14 +124,14 @@ namespace Apache.Cassandra
             if (field.Type == TType.Map) {
               {
                 Value_types = new Dictionary<byte[], string>();
-                TMap _map73 = iprot.ReadMapBegin();
-                for( int _i74 = 0; _i74 < _map73.Count; ++_i74)
+                TMap _map77 = iprot.ReadMapBegin();
+                for( int _i78 = 0; _i78 < _map77.Count; ++_i78)
                 {
-                  byte[] _key75;
-                  string _val76;
-                  _key75 = iprot.ReadBinary();
-                  _val76 = iprot.ReadString();
-                  Value_types[_key75] = _val76;
+                  byte[] _key79;
+                  string _val80;
+                  _key79 = iprot.ReadBinary();
+                  _val80 = iprot.ReadString();
+                  Value_types[_key79] = _val80;
                 }
                 iprot.ReadMapEnd();
               }
@@ -173,10 +173,10 @@ namespace Apache.Cassandra
         oprot.WriteFieldBegin(field);
         {
           oprot.WriteMapBegin(new TMap(TType.String, TType.String, Name_types.Count));
-          foreach (byte[] _iter77 in Name_types.Keys)
+          foreach (byte[] _iter81 in Name_types.Keys)
           {
-            oprot.WriteBinary(_iter77);
-            oprot.WriteString(Name_types[_iter77]);
+            oprot.WriteBinary(_iter81);
+            oprot.WriteString(Name_types[_iter81]);
           }
           oprot.WriteMapEnd();
         }
@@ -189,10 +189,10 @@ namespace Apache.Cassandra
         oprot.WriteFieldBegin(field);
         {
           oprot.WriteMapBegin(new TMap(TType.String, TType.String, Value_types.Count));
-          foreach (byte[] _iter78 in Value_types.Keys)
+          foreach (byte[] _iter82 in Value_types.Keys)
           {
-            oprot.WriteBinary(_iter78);
-            oprot.WriteString(Value_types[_iter78]);
+            oprot.WriteBinary(_iter82);
+            oprot.WriteString(Value_types[_iter82]);
           }
           oprot.WriteMapEnd();
         }

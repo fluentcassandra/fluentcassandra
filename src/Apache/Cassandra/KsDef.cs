@@ -150,14 +150,14 @@ namespace Apache.Cassandra
             if (field.Type == TType.Map) {
               {
                 Strategy_options = new Dictionary<string, string>();
-                TMap _map56 = iprot.ReadMapBegin();
-                for( int _i57 = 0; _i57 < _map56.Count; ++_i57)
+                TMap _map60 = iprot.ReadMapBegin();
+                for( int _i61 = 0; _i61 < _map60.Count; ++_i61)
                 {
-                  string _key58;
-                  string _val59;
-                  _key58 = iprot.ReadString();
-                  _val59 = iprot.ReadString();
-                  Strategy_options[_key58] = _val59;
+                  string _key62;
+                  string _val63;
+                  _key62 = iprot.ReadString();
+                  _val63 = iprot.ReadString();
+                  Strategy_options[_key62] = _val63;
                 }
                 iprot.ReadMapEnd();
               }
@@ -176,13 +176,13 @@ namespace Apache.Cassandra
             if (field.Type == TType.List) {
               {
                 Cf_defs = new List<CfDef>();
-                TList _list60 = iprot.ReadListBegin();
-                for( int _i61 = 0; _i61 < _list60.Count; ++_i61)
+                TList _list64 = iprot.ReadListBegin();
+                for( int _i65 = 0; _i65 < _list64.Count; ++_i65)
                 {
-                  CfDef _elem62 = new CfDef();
-                  _elem62 = new CfDef();
-                  _elem62.Read(iprot);
-                  Cf_defs.Add(_elem62);
+                  CfDef _elem66 = new CfDef();
+                  _elem66 = new CfDef();
+                  _elem66.Read(iprot);
+                  Cf_defs.Add(_elem66);
                 }
                 iprot.ReadListEnd();
               }
@@ -233,10 +233,10 @@ namespace Apache.Cassandra
         oprot.WriteFieldBegin(field);
         {
           oprot.WriteMapBegin(new TMap(TType.String, TType.String, Strategy_options.Count));
-          foreach (string _iter63 in Strategy_options.Keys)
+          foreach (string _iter67 in Strategy_options.Keys)
           {
-            oprot.WriteString(_iter63);
-            oprot.WriteString(Strategy_options[_iter63]);
+            oprot.WriteString(_iter67);
+            oprot.WriteString(Strategy_options[_iter67]);
           }
           oprot.WriteMapEnd();
         }
@@ -257,9 +257,9 @@ namespace Apache.Cassandra
         oprot.WriteFieldBegin(field);
         {
           oprot.WriteListBegin(new TList(TType.Struct, Cf_defs.Count));
-          foreach (CfDef _iter64 in Cf_defs)
+          foreach (CfDef _iter68 in Cf_defs)
           {
-            _iter64.Write(oprot);
+            _iter68.Write(oprot);
           }
           oprot.WriteListEnd();
         }

@@ -69,6 +69,7 @@
     <Compile Include="Apache\Cassandra\CounterColumn.cs" />
     <Compile Include="Apache\Cassandra\CounterSuperColumn.cs" />
     <Compile Include="Apache\Cassandra\CqlMetadata.cs" />
+    <Compile Include="Apache\Cassandra\CqlPreparedResult.cs" />
     <Compile Include="Apache\Cassandra\CqlResult.cs" />
     <Compile Include="Apache\Cassandra\CqlResultType.cs" />
     <Compile Include="Apache\Cassandra\CqlRow.cs" />
