@@ -64,8 +64,11 @@ namespace FluentCassandra
 		/// </summary>
 		/// <param name="setKeyspace"></param>
 		/// <returns></returns>
-		internal CassandraClientWrapper GetClient(bool setKeyspace = true)
+		internal CassandraClientWrapper GetClient(bool setKeyspace = true, bool? setCqlVersion = null)
 		{
+			var builder = ConnectionProvider.Builder;
+			setCqlVersion = setCqlVersion ?? (builder.CqlVersion != null);
+
 			if (_connection == null)
 				_connection = ConnectionProvider.Open();
 
@@ -73,9 +76,11 @@ namespace FluentCassandra
 				_connection.Open();
 
 			if (setKeyspace)
-				_connection.SetKeyspace(ConnectionProvider.Builder.Keyspace);
+				_connection.SetKeyspace(builder.Keyspace);
 
-			var builder = ConnectionProvider.Builder;
+			if (setCqlVersion.Value)
+				_connection.SetCqlVersion(builder.CqlVersion);
+
 			if (!String.IsNullOrWhiteSpace(builder.Username) && !String.IsNullOrWhiteSpace(builder.Password))
 				Login(builder.Username, builder.Password);
 

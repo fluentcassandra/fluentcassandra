@@ -20,6 +20,8 @@ namespace FluentCassandra
 			_def = def;
 #endif
 
+			KeyspaceName = def.Keyspace;
+
 			var familyType = ColumnType.Standard;
 			Enum.TryParse<ColumnType>(def.Column_type, out familyType);
 
@@ -66,6 +68,8 @@ namespace FluentCassandra
 			Columns = new List<CassandraColumnSchema>();
 		}
 
+		internal string KeyspaceName { get; set; }
+
 		public ColumnType FamilyType { get; set; }
 		public string FamilyName { get; set; }
 		public string FamilyDescription { get; set; }
@@ -77,5 +81,32 @@ namespace FluentCassandra
 		public CassandraType DefaultColumnValueType { get; set; }
 
 		public IList<CassandraColumnSchema> Columns { get; set; }
+
+		public static implicit operator CfDef(CassandraColumnFamilySchema schema)
+		{
+			var def = new CfDef {
+				Keyspace = schema.KeyspaceName,
+				Name = schema.FamilyName,
+				Comment = schema.FamilyDescription,
+				Column_type = schema.FamilyType.ToString(),
+				Key_alias = schema.KeyName.ToBigEndian(),
+				Key_validation_class = schema.KeyType.DatabaseType,
+				Comparator_type = schema.ColumnNameType.DatabaseType,
+				Default_validation_class = schema.DefaultColumnValueType.DatabaseType
+			};
+
+			if (schema.FamilyType == ColumnType.Super)
+			{
+				def.Comparator_type = schema.SuperColumnNameType.DatabaseType;
+				def.Subcomparator_type = schema.ColumnNameType.DatabaseType;
+			}
+
+			return def;
+		}
+
+		public static implicit operator CassandraColumnFamilySchema(CfDef def)
+		{
+			return new CassandraColumnFamilySchema(def);
+		}
 	}
 }

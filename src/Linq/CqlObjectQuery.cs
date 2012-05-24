@@ -7,7 +7,7 @@ using FluentCassandra.ObjectSerializer;
 
 namespace FluentCassandra.Linq
 {
-	public class CqlObjectQuery<T> : IQueryable, IQueryable<T>
+	public class CqlObjectQuery<T> : IQueryable, IQueryable<T>, IOrderedQueryable, IOrderedQueryable<T>
 	{
 		private readonly Expression _expression;
 		private readonly IQueryProvider _provider;

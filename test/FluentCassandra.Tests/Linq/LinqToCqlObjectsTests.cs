@@ -147,5 +147,80 @@ namespace FluentCassandra.Linq
 				query.ToString();
 			});
 		}
+
+		[Fact]
+		public void ORDER_BY()
+		{
+			var expected = "SELECT * FROM Users ORDER BY Age ASC";
+
+			var query =
+				from f in _family.AsObjectQueryable<User>()
+				orderby f.Age
+				select f;
+
+			var actual = query.ToString();
+
+			AreEqual(expected, actual);
+		}
+
+		[Fact]
+		public void ORDER_BY_Two_Fields()
+		{
+			var expected = "SELECT * FROM Users ORDER BY Age ASC, KEY DESC";
+
+			var query =
+				from f in _family.AsObjectQueryable<User>()
+				orderby f.Age, f.Id descending
+				select f;
+
+			var actual = query.ToString();
+
+			AreEqual(expected, actual);
+		}
+
+		[Fact]
+		public void ORDER_BY_Two_Fields_2()
+		{
+			var expected = "SELECT * FROM Users ORDER BY Age DESC, KEY ASC";
+
+			var query =
+				from f in _family.AsObjectQueryable<User>()
+				orderby f.Age descending, f.Id
+				select f;
+
+			var actual = query.ToString();
+
+			AreEqual(expected, actual);
+		}
+
+		[Fact]
+		public void ORDER_BY_ASC()
+		{
+			var expected = "SELECT * FROM Users ORDER BY Age ASC";
+
+			var query =
+				from f in _family.AsObjectQueryable<User>()
+				orderby f.Age ascending
+				select f;
+
+			var actual = query.ToString();
+
+			AreEqual(expected, actual);
+		}
+
+		[Fact]
+		public void ORDER_BY_DESC()
+		{
+			var expected = "SELECT * FROM Users ORDER BY Age DESC";
+
+			var query =
+				from f in _family.AsObjectQueryable<User>()
+				orderby f.Age descending
+				select f;
+
+			var actual = query.ToString();
+
+			AreEqual(expected, actual);
+		}
 	}
 }

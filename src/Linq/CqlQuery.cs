@@ -6,7 +6,7 @@ using System.Linq.Expressions;
 
 namespace FluentCassandra.Linq
 {
-	public class CqlQuery : IQueryable, IQueryable<ICqlRow>
+	public class CqlQuery : IQueryable, IQueryable<ICqlRow>, IOrderedQueryable, IOrderedQueryable<ICqlRow>
 	{
 		private readonly Expression _expression;
 		private readonly CassandraColumnFamily _provider;

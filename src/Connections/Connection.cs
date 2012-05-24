@@ -112,9 +112,22 @@ namespace FluentCassandra.Connections
 				_transport.Close();
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="keyspace"></param>
 		public void SetKeyspace(string keyspace)
 		{
 			Client.set_keyspace(keyspace);
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="cqlVersion"></param>
+		public void SetCqlVersion(string cqlVersion)
+		{
+			Client.set_cql_version(cqlVersion);
 		}
 
 		/// <summary>

@@ -59,12 +59,7 @@ namespace FluentCassandra
 
 			try
 			{
-				string result = _context.AddKeyspace(new KsDef {
-					Name = schema.Name,
-					Strategy_class = schema.Strategy,
-					Replication_factor = schema.ReplicationFactor,
-					Cf_defs = new List<CfDef>(0)
-				});
+				string result = _context.AddKeyspace(schema);
 				Debug.WriteLine(result, "keyspace setup");
 			}
 			catch
@@ -77,24 +72,9 @@ namespace FluentCassandra
 		{
 			try
 			{
-				var def = new CfDef {
-					Keyspace = KeyspaceName,
-					Name = schema.FamilyName,
-					Comment = schema.FamilyDescription,
-					Column_type = schema.FamilyType.ToString(),
-					Key_alias = schema.KeyName.ToBigEndian(),
-					Key_validation_class = schema.KeyType.DatabaseType,
-					Comparator_type = schema.ColumnNameType.DatabaseType,
-					Default_validation_class = schema.DefaultColumnValueType.DatabaseType
-				};
+				schema.KeyspaceName = KeyspaceName;
 
-				if (schema.FamilyType == ColumnType.Super)
-				{
-					def.Comparator_type = schema.SuperColumnNameType.DatabaseType;
-					def.Subcomparator_type = schema.ColumnNameType.DatabaseType;
-				}
-			
-				string result = _context.AddColumnFamily(def);
+				string result = _context.AddColumnFamily(schema);
 				Debug.WriteLine(result, "column family setup");
 			}
 			catch

@@ -17,7 +17,8 @@ namespace FluentCassandra.Linq
 
 		internal CqlQueryEvaluator(ObjectSerializerConventions conventions = null)
 		{
-			FieldsArray = new List<string>();
+			SelectFieldsArray = new List<string>();
+			OrderByFieldsArray = new List<string>();
 
 			_conventions = conventions;
 		}
@@ -29,12 +30,16 @@ namespace FluentCassandra.Linq
 				var select = Fields;
 				var from = _columnFamily;
 				var where = WhereCriteria;
+				var orderBy = OrderBy;
 				var limit = LimitCount;
 
 				var query = String.Format("SELECT {0} \nFROM {1}", select, from);
 
 				if (!String.IsNullOrWhiteSpace(where))
 					query += " \nWHERE " + where;
+
+				if (!String.IsNullOrEmpty(orderBy))
+					query += " \nORDER BY " + orderBy;
 
 				if (limit > 0)
 					query += " \nLIMIT " + limit;
@@ -43,11 +48,21 @@ namespace FluentCassandra.Linq
 			}
 		}
 
-		private IList<string> FieldsArray { get; set; }
+		private IList<string> SelectFieldsArray { get; set; }
+
+		private IList<string> OrderByFieldsArray { get; set; }
 
 		private int FirstCount { get; set; }
 
 		private int LimitCount { get; set; }
+
+		private string OrderBy
+		{
+			get
+			{
+				return String.Join(", ", OrderByFieldsArray);
+			}
+		}
 
 		private string Fields
 		{
@@ -62,13 +77,13 @@ namespace FluentCassandra.Linq
 				if (query.Length > 0)
 					query += " ";
 
-				if (FieldsArray.Count == 0)
+				if (SelectFieldsArray.Count == 0)
 				{
 					query += "*";
 					return query;
 				}
 
-				return String.Join(", ", FieldsArray.ToArray());
+				return String.Join(", ", SelectFieldsArray);
 			}
 		}
 
@@ -79,10 +94,20 @@ namespace FluentCassandra.Linq
 			_columnFamily = provider.FamilyName;
 		}
 
-		private void AddField(Expression exp)
+		private void AddOrderByFieldDescending(Expression exp)
+		{
+			OrderByFieldsArray.Add(GetPropertyName(exp) + " DESC");
+		}
+
+		private void AddOrderByFieldAscending(Expression exp)
+		{
+			OrderByFieldsArray.Add(GetPropertyName(exp) + " ASC");
+		}
+
+		private void AddSelectField(Expression exp)
 		{
 			foreach (var f in VisitSelectExpression(exp))
-				FieldsArray.Add(f);
+				SelectFieldsArray.Add(f);
 		}
 
 		private void AddCriteria(Expression exp)
@@ -125,35 +150,38 @@ namespace FluentCassandra.Linq
 		{
 			exp = SimplifyExpression(exp);
 
-			if (exp.NodeType != ExpressionType.Call && exp.NodeType != ExpressionType.MemberAccess)
-				throw new NotSupportedException(exp.NodeType.ToString() + " is not supported.");
-
-			if (exp.NodeType == ExpressionType.MemberAccess)
+			switch (exp.NodeType)
 			{
-				var memExp = (MemberExpression)exp;
-				var name = memExp.Member.Name;
+				case ExpressionType.MemberAccess:
+					var memExp = (MemberExpression)exp;
+					var name = memExp.Member.Name;
 
-				// if object queries
-				if (GetBaseType(memExp) != typeof(ICqlRow))
-				{
-					if (_conventions.KeyPropertyNames.Contains(name, _conventions.AreKeyPropertyNamesCaseSensitive ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal))
-						name = "KEY";
+					// if object queries
+					if (GetBaseType(memExp) != typeof(ICqlRow))
+					{
+						if (_conventions.KeyPropertyNames.Contains(name, _conventions.AreKeyPropertyNamesCaseSensitive ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal))
+							name = "KEY";
 
-					return name;
-				}
+						return name;
+					}
 
-				if (name != "Key")
-					throw new NotSupportedException(name + " is not a supported property.");
+					if (name != "Key")
+						throw new NotSupportedException(name + " is not a supported property.");
 
-				return "KEY";
+					return "KEY";
+
+				case ExpressionType.Call:
+
+					var field = SimplifyExpression(((MethodCallExpression)exp).Arguments[0]);
+
+					if (field.NodeType != ExpressionType.Constant)
+						throw new NotSupportedException(exp.NodeType.ToString() + " is not supported.");
+
+					return ((ConstantExpression)field).Value.ToString();
+
+				default:
+					throw new NotSupportedException(exp.NodeType.ToString() + " is not supported.");
 			}
-
-			var field = SimplifyExpression(((MethodCallExpression)exp).Arguments[0]);
-
-			if (field.NodeType != ExpressionType.Constant)
-				throw new NotSupportedException(exp.NodeType.ToString() + " is not supported.");
-
-			return ((ConstantExpression)field).Value.ToString();
 		}
 
 		#endregion
@@ -206,9 +234,13 @@ namespace FluentCassandra.Linq
 			if (exp.Method.Name == "Where")
 				AddCriteria(exp.Arguments[1]);
 			else if (exp.Method.Name == "Select")
-				AddField(SimplifyExpression(exp.Arguments[1]));
+				AddSelectField(SimplifyExpression(exp.Arguments[1]));
 			else if (exp.Method.Name == "Take")
 				SetLimit(exp.Arguments[1]);
+			else if (exp.Method.Name == "OrderBy" || exp.Method.Name == "ThenBy")
+				AddOrderByFieldAscending(SimplifyExpression(exp.Arguments[1]));
+			else if (exp.Method.Name == "OrderByDescending" || exp.Method.Name == "ThenByDescending")
+				AddOrderByFieldDescending(SimplifyExpression(exp.Arguments[1]));
 			else
 				throw new NotSupportedException("Method call to " + exp.Method.Name + " is not supported.");
 		}

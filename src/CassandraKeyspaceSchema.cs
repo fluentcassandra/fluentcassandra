@@ -31,5 +31,20 @@ namespace FluentCassandra
 		public int ReplicationFactor { get; set; }
 
 		public IList<CassandraColumnFamilySchema> ColumnFamilies { get; set; }
+
+		public static implicit operator KsDef(CassandraKeyspaceSchema schema)
+		{
+			return new KsDef {
+				Name = schema.Name,
+				Strategy_class = schema.Strategy,
+				Replication_factor = schema.ReplicationFactor,
+				Cf_defs = new List<CfDef>(0)
+			};
+		}
+
+		public static implicit operator CassandraKeyspaceSchema(KsDef def)
+		{
+			return new CassandraKeyspaceSchema(def);
+		}
 	}
 }

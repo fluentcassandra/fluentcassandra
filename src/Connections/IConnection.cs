@@ -12,6 +12,7 @@ namespace FluentCassandra.Connections
 		Cassandra.Client Client { get; }
 
 		void SetKeyspace(string keyspace);
+		void SetCqlVersion(string cqlVersion);
 
 		void Open();
 		void Close();

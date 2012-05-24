@@ -14,7 +14,7 @@ namespace FluentCassandra.Connections
 		/// <param name="host"></param>
 		/// <param name="port"></param>
 		/// <param name="timeout"></param>
-		public ConnectionBuilder(string keyspace, string host, int port = Server.DefaultPort, int connectionTimeout = Server.DefaultTimeout, bool pooling = false, int minPoolSize = 0, int maxPoolSize = 100, int connectionLifetime = 0, ConnectionType connectionType = ConnectionType.Framed, int bufferSize = 1024, ConsistencyLevel read = ConsistencyLevel.QUORUM, ConsistencyLevel write = ConsistencyLevel.QUORUM, bool compressCqlQueries = false, string username = null, string password = null)
+		public ConnectionBuilder(string keyspace, string host, int port = Server.DefaultPort, int connectionTimeout = Server.DefaultTimeout, bool pooling = false, int minPoolSize = 0, int maxPoolSize = 100, int connectionLifetime = 0, ConnectionType connectionType = ConnectionType.Framed, int bufferSize = 1024, ConsistencyLevel read = ConsistencyLevel.QUORUM, ConsistencyLevel write = ConsistencyLevel.QUORUM, string cqlVersion = FluentCassandra.Connections.CqlVersion.ServerDefault, bool compressCqlQueries = false, string username = null, string password = null)
 		{
 			Keyspace = keyspace;
 			Servers = new List<Server>() { new Server(host, port) };
@@ -27,6 +27,7 @@ namespace FluentCassandra.Connections
 			BufferSize = bufferSize;
 			ReadConsistency = read;
 			WriteConsistency = write;
+			CqlVersion = cqlVersion;
 			CompressCqlQueries = compressCqlQueries;
 			Username = username;
 			Password = password;
@@ -34,7 +35,7 @@ namespace FluentCassandra.Connections
 			ConnectionString = GetConnectionString();
 		}
 
-		public ConnectionBuilder(string keyspace, Server server, bool pooling = false, int minPoolSize = 0, int maxPoolSize = 100, int connectionLifetime = 0, ConnectionType connectionType = ConnectionType.Framed, int bufferSize = 1024, ConsistencyLevel read = ConsistencyLevel.QUORUM, ConsistencyLevel write = ConsistencyLevel.QUORUM, bool compressCqlQueries = false, string username = null, string password = null)
+		public ConnectionBuilder(string keyspace, Server server, bool pooling = false, int minPoolSize = 0, int maxPoolSize = 100, int connectionLifetime = 0, ConnectionType connectionType = ConnectionType.Framed, int bufferSize = 1024, ConsistencyLevel read = ConsistencyLevel.QUORUM, ConsistencyLevel write = ConsistencyLevel.QUORUM, string cqlVersion = FluentCassandra.Connections.CqlVersion.ServerDefault, bool compressCqlQueries = false, string username = null, string password = null)
 		{
 			Keyspace = keyspace;
 			Servers = new List<Server>() { server };
@@ -47,6 +48,7 @@ namespace FluentCassandra.Connections
 			BufferSize = bufferSize;
 			ReadConsistency = read;
 			WriteConsistency = write;
+			CqlVersion = cqlVersion;
 			CompressCqlQueries = compressCqlQueries;
 			Username = username;
 			Password = password;
@@ -297,6 +299,19 @@ namespace FluentCassandra.Connections
 
 			#endregion
 
+			#region CqlVersion
+
+			if (!pairs.ContainsKey("CQL Version"))
+			{
+				CqlVersion = FluentCassandra.Connections.CqlVersion.ServerDefault;
+			}
+			else
+			{
+				CqlVersion = pairs["CQL Version"];
+			}
+
+			#endregion
+
 			#region CompressCqlQueries
 
 			if (!pairs.ContainsKey("Compress CQL Queries"))
@@ -351,6 +366,7 @@ namespace FluentCassandra.Connections
 			b.AppendFormat(format, "Read", ReadConsistency);
 			b.AppendFormat(format, "Write", WriteConsistency);
 
+			b.AppendFormat(format, "CQL Version", CqlVersion);
 			b.AppendFormat(format, "Compress CQL Queries", CompressCqlQueries);
 
 			b.AppendFormat(format, "Username", Username);
@@ -413,6 +429,11 @@ namespace FluentCassandra.Connections
 		/// 
 		/// </summary>
 		public IList<Server> Servers { get; private set; }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public string CqlVersion { get; private set; }
 
 		/// <summary>
 		/// 

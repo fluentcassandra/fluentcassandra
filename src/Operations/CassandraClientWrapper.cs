@@ -211,26 +211,32 @@ namespace FluentCassandra.Operations
 			return _client.execute_cql_query(query, compression);
 		}
 
+		#region version 1.1.0
 
-
-		public List<Apache.Cassandra.KeySlice> get_paged_slice(string column_family, Apache.Cassandra.KeyRange range, byte[] start_column, Apache.Cassandra.ConsistencyLevel consistency_level)
+		public List<Apache.Cassandra.KeySlice> get_paged_slice(string column_family, CassandraKeyRange range, CassandraObject start_column, Apache.Cassandra.ConsistencyLevel consistency_level)
 		{
-			throw new NotImplementedException();
+			return _client.get_paged_slice(
+				column_family,
+				Helper.CreateKeyRange(range),
+				start_column.TryToBigEndian(),
+				consistency_level);
 		}
 
 		public Apache.Cassandra.CqlPreparedResult prepare_cql_query(byte[] query, Apache.Cassandra.Compression compression)
 		{
-			throw new NotImplementedException();
+			return _client.prepare_cql_query(query, compression);
 		}
 
 		public Apache.Cassandra.CqlResult execute_prepared_cql_query(int itemId, List<byte[]> values)
 		{
-			throw new NotImplementedException();
+			return _client.execute_prepared_cql_query(itemId, values);
 		}
 
 		public void set_cql_version(string version)
 		{
-			throw new NotImplementedException();
+			_client.set_cql_version(version);
 		}
+
+		#endregion
 	}
 }

@@ -31,5 +31,18 @@ namespace FluentCassandra
 
 		public CassandraType NameType { get; set; }
 		public CassandraType ValueType { get; set; }
+
+		public static implicit operator ColumnDef(CassandraColumnSchema schema)
+		{
+			return new ColumnDef {
+				Name = schema.Name.ToBigEndian(),
+				Validation_class = schema.ValueType.DatabaseType
+			};
+		}
+
+		public static implicit operator CassandraColumnSchema(ColumnDef def)
+		{
+			return new CassandraColumnSchema(def, CassandraType.BytesType);
+		}
 	}
 }
