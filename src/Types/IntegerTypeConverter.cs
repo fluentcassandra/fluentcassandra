@@ -17,6 +17,9 @@ namespace FluentCassandra.Types
 				case TypeCode.UInt16:
 				case TypeCode.UInt32:
 				case TypeCode.UInt64:
+				case TypeCode.Single:
+				case TypeCode.Double:
+				case TypeCode.Decimal:
 					return true;
 
 				default:
@@ -36,6 +39,9 @@ namespace FluentCassandra.Types
 				case TypeCode.UInt16:
 				case TypeCode.UInt32:
 				case TypeCode.UInt64:
+				case TypeCode.Single:
+				case TypeCode.Double:
+				case TypeCode.Decimal:
 					return true;
 
 				default:
@@ -50,14 +56,17 @@ namespace FluentCassandra.Types
 
 			if (value is BigInteger) return (BigInteger)value;
 
-			if (value is byte) return (BigInteger)(byte)value;
-			if (value is short) return (BigInteger)(short)value;
-			if (value is int) return (BigInteger)(int)value;
-			if (value is long) return (BigInteger)(long)value;
-			if (value is sbyte) return (BigInteger)(sbyte)value;
-			if (value is ushort) return (BigInteger)(ushort)value;
-			if (value is uint) return (BigInteger)(uint)value;
-			if (value is ulong) return (BigInteger)(ulong)value;
+			if (value is byte) return new BigInteger((byte)value);
+			if (value is short) return new BigInteger((short)value);
+			if (value is int) return new BigInteger((int)value);
+			if (value is long) return new BigInteger((long)value);
+			if (value is sbyte) return new BigInteger((sbyte)value);
+			if (value is ushort) return new BigInteger((ushort)value);
+			if (value is uint) return new BigInteger((uint)value);
+			if (value is ulong) return new BigInteger((ulong)value);
+			if (value is float) return new BigInteger((float)value);
+			if (value is double) return new BigInteger((double)value);
+			if (value is decimal) return new BigInteger((decimal)value);
 
 			return default(BigInteger);
 		}
@@ -77,6 +86,9 @@ namespace FluentCassandra.Types
 			if (destinationType == typeof(ushort)) return (ushort)value;
 			if (destinationType == typeof(uint)) return (uint)value;
 			if (destinationType == typeof(ulong)) return (ulong)value;
+			if (destinationType == typeof(float)) return (float)value;
+			if (destinationType == typeof(double)) return (double)value;
+			if (destinationType == typeof(decimal)) return (decimal)value;
 
 			return null;
 		}

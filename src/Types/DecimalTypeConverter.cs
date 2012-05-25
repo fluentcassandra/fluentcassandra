@@ -56,18 +56,18 @@ namespace FluentCassandra.Types
 
 			if (value is BigDecimal) return (BigDecimal)value;
 
-			if (value is byte) return (BigDecimal)(byte)value;
-			if (value is short) return (BigDecimal)(short)value;
-			if (value is int) return (BigDecimal)(int)value;
-			if (value is long) return (BigDecimal)(long)value;
-			if (value is sbyte) return (BigDecimal)(sbyte)value;
-			if (value is ushort) return (BigDecimal)(ushort)value;
-			if (value is uint) return (BigDecimal)(uint)value;
-			if (value is ulong) return (BigDecimal)(ulong)value;
-			if (value is float) return (BigDecimal)(float)value;
-			if (value is double) return (BigDecimal)(double)value;
-			if (value is decimal) return (BigDecimal)(decimal)value;
-			if (value is BigInteger) return (BigDecimal)(BigInteger)value;
+			if (value is byte) return new BigDecimal((byte)value);
+			if (value is short) return new BigDecimal((short)value);
+			if (value is int) return new BigDecimal((int)value);
+			if (value is long) return new BigDecimal((long)value);
+			if (value is sbyte) return new BigDecimal((sbyte)value);
+			if (value is ushort) return new BigDecimal((ushort)value);
+			if (value is uint) return new BigDecimal((uint)value);
+			if (value is ulong) return new BigDecimal((ulong)value);
+			if (value is float) return new BigDecimal((float)value);
+			if (value is double) return new BigDecimal((double)value);
+			if (value is decimal) return new BigDecimal((decimal)value);
+			if (value is BigInteger) return new BigDecimal((BigInteger)value, 0);
 
 			return default(BigDecimal);
 		}

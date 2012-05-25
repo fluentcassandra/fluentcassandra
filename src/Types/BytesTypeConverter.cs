@@ -127,7 +127,7 @@ namespace FluentCassandra.Types
 			}
 
 			if (value is char[])
-				bytes = ((char[])value).Select(c => (byte)c).ToArray();
+				bytes = ((char[])value).Cast<byte>().ToArray();
 
 			if (bytes == null)
 			{
@@ -199,7 +199,7 @@ namespace FluentCassandra.Types
 				return new BigDecimal(bytes);
 
 			if (destinationType == typeof(char[]))
-				return value.Select(b => (char)b).ToArray();
+				return value.Cast<char>().ToArray();
 
 			switch (Type.GetTypeCode(destinationType))
 			{
@@ -210,10 +210,7 @@ namespace FluentCassandra.Types
 				case TypeCode.Boolean:
 					return BitConverter.ToBoolean(bytes, 0);
 				case TypeCode.Char:
-					if (bytes.Length == 1)
-						return (char)bytes[0];
-					else
-						return BitConverter.ToChar(bytes, 0);
+					return BitConverter.ToChar(bytes, 0);
 				case TypeCode.Double:
 					return BitConverter.ToDouble(bytes, 0);
 				case TypeCode.Int16:
