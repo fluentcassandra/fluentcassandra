@@ -46,7 +46,7 @@ namespace FluentCassandra.Linq
 		public IEnumerator<ICqlRow> GetEnumerator()
 		{
 			var result = CqlQueryEvaluator.GetCql(Expression);
-			return Provider.Cql(result).GetEnumerator();
+			return Provider.Context.ExecuteQuery(result).GetEnumerator();
 		}
 
 		#endregion

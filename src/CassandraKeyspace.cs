@@ -11,8 +11,9 @@ namespace FluentCassandra
 	public class CassandraKeyspace
 	{
 		private readonly string _keyspaceName;
+		private readonly CassandraContext _context;
+
 		private CassandraKeyspaceSchema _cachedSchema;
-		private CassandraContext _context;
 
 		public CassandraKeyspace(string keyspaceName, CassandraContext context)
 		{
@@ -64,8 +65,8 @@ namespace FluentCassandra
 			}
 			catch(Exception exc)
 			{
-				Debug.WriteLine(exc);
-				Debug.WriteLine(schema.Name + " already exists", "keyspace setup");
+				if (_context.ThrowErrors)
+					throw exc;
 			}
 		}
 
@@ -80,8 +81,8 @@ namespace FluentCassandra
 			}
 			catch (Exception exc)
 			{
-				Debug.WriteLine(exc);
-				Debug.WriteLine(schema.FamilyName + " already exists", "column family setup");
+				if (_context.ThrowErrors)
+					throw exc;
 			}
 		}
 

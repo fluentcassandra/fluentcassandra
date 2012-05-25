@@ -10,7 +10,7 @@ namespace FluentCassandra
 	/// <seealso href="http://wiki.apache.org/cassandra/API"/>
 	public abstract class BaseCassandraColumnFamily
 	{
-		private CassandraContext _context;
+		private readonly CassandraContext _context;
 
 		/// <summary>
 		/// 
@@ -21,7 +21,6 @@ namespace FluentCassandra
 		{
 			_context = context;
 			FamilyName = columnFamily;
-			ThrowErrors = context.ThrowErrors;
 		}
 
 		/// <summary>
@@ -33,16 +32,6 @@ namespace FluentCassandra
 		/// The family name for this column family.
 		/// </summary>
 		public string FamilyName { get; private set; }
-
-		/// <summary>
-		/// The last error that occured during the execution of an operation.
-		/// </summary>
-		public CassandraException LastError { get; private set; }
-
-		/// <summary>
-		/// Indicates if errors should be thrown when occuring on opperation.
-		/// </summary>
-		public bool ThrowErrors { get; set; }
 
 		/// <summary>
 		/// Verifies that the family passed in is part of this family.
@@ -109,29 +98,9 @@ namespace FluentCassandra
 		/// <returns></returns>
 		public TResult ExecuteOperation<TResult>(ColumnFamilyOperation<TResult> action, bool? throwOnError = null)
 		{
-			if (!throwOnError.HasValue)
-				throwOnError = ThrowErrors;
-
-			var localSession = CassandraSession.Current == null;
-			var session = CassandraSession.Current;
-			if (session == null)
-				session = _context.OpenSession();
-
-			action.Context = _context;
 			action.ColumnFamily = this;
 
-			try
-			{
-				var result = session.ExecuteOperation(action, throwOnError);
-				LastError = session.LastError;
-
-				return result;
-			}
-			finally
-			{
-				if (localSession && session != null)
-					session.Dispose();
-			}
+			return _context.ExecuteOperation(action, throwOnError);
 		}
 
 		public CassandraSlicePredicateQuery<TResult> CreateCassandraSlicePredicateQuery<TResult>(Expression expression) 

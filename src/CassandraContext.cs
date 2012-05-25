@@ -11,7 +11,9 @@ namespace FluentCassandra
 {
 	public class CassandraContext : IDisposable
 	{
-		private IList<IFluentMutationTracker> _trackers;
+		private readonly IList<IFluentMutationTracker> _trackers;
+		private readonly ConnectionBuilder _connectionBuilder;
+		private CassandraSession _session;
 
 		/// <summary>
 		/// 
@@ -19,8 +21,8 @@ namespace FluentCassandra
 		/// <param name="keyspace"></param>
 		/// <param name="server"></param>
 		/// <param name="timeout"></param>
-		public CassandraContext(string keyspace, Server server, string username = null, string password = null)
-			: this(keyspace, server.Host, server.Port, server.Timeout, username, password) { }
+		public CassandraContext(string keyspace, Server server)
+			: this(keyspace, server.Host, server.Port, server.Timeout) { }
 
 		/// <summary>
 		/// 
@@ -30,8 +32,8 @@ namespace FluentCassandra
 		/// <param name="port"></param>
 		/// <param name="timeout"></param>
 		/// <param name="provider"></param>
-		public CassandraContext(string keyspace, string host, int port = Server.DefaultPort, int timeout = Server.DefaultTimeout, string username = null, string password = null)
-			: this(new ConnectionBuilder(keyspace, host, port, timeout, username: username, password: password)) { }
+		public CassandraContext(string keyspace, string host, int port = Server.DefaultPort, int timeout = Server.DefaultTimeout)
+			: this(new ConnectionBuilder(keyspace, host, port, timeout)) { }
 
 		/// <summary>
 		/// 
@@ -43,15 +45,25 @@ namespace FluentCassandra
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="session"></param>
+		public CassandraContext(CassandraSession session)
+			: this(session.ConnectionBuilder)
+		{
+			_session = session;
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="connectionBuilder"></param>
 		public CassandraContext(ConnectionBuilder connectionBuilder)
 		{
 			ThrowErrors = true;
 
 			_trackers = new List<IFluentMutationTracker>();
+			_connectionBuilder = connectionBuilder;
 
-			ConnectionBuilder = connectionBuilder;
-			Keyspace = new CassandraKeyspace(connectionBuilder.Keyspace, this);
+			Keyspace = new CassandraKeyspace(_connectionBuilder.Keyspace, this);
 		}
 
 		/// <summary>
@@ -265,7 +277,7 @@ namespace FluentCassandra
 		/// <param name="cqlQuery"></param>
 		public IEnumerable<ICqlRow> ExecuteQuery(UTF8Type cqlQuery)
 		{
-			var op = new ExecuteCqlQuery(cqlQuery, ConnectionBuilder.CompressCqlQueries);
+			var op = new ExecuteCqlQuery(cqlQuery);
 			return ExecuteOperation(op);
 		}
 
@@ -275,23 +287,9 @@ namespace FluentCassandra
 		/// <param name="cqlQuery"></param>
 		public void ExecuteNonQuery(UTF8Type cqlQuery)
 		{
-			var op = new ExecuteCqlNonQuery(cqlQuery, ConnectionBuilder.CompressCqlQueries);
+			var op = new ExecuteCqlNonQuery(cqlQuery);
 			ExecuteOperation(op);
 		}
-
-		/// <summary>
-		/// Open a session against the database.
-		/// </summary>
-		/// <returns></returns>
-		public CassandraSession OpenSession()
-		{
-			return new CassandraSession(ConnectionBuilder);
-		}
-
-		/// <summary>
-		/// The connection builder that is currently in use for this context.
-		/// </summary>
-		public ConnectionBuilder ConnectionBuilder { get; private set; }
 
 		/// <summary>
 		/// The last error that occured during the execution of an operation.
@@ -315,19 +313,16 @@ namespace FluentCassandra
 			if (WasDisposed)
 				throw new ObjectDisposedException(GetType().FullName);
 
-			if (!throwOnError.HasValue)
-				throwOnError = ThrowErrors;
-
-			var localSession = CassandraSession.Current == null;
-			var session = CassandraSession.Current;
+			var localSession = _session == null;
+			var session = _session;
 			if (session == null)
-				session = OpenSession();
+				session = new CassandraSession(_connectionBuilder);
 
 			action.Context = this;
 
 			try
 			{
-				var result = session.ExecuteOperation(action, throwOnError);
+				var result = session.ExecuteOperation(action, throwOnError ?? ThrowErrors);
 				LastError = session.LastError;
 
 				return result;
@@ -367,10 +362,10 @@ namespace FluentCassandra
 		/// </param>
 		protected virtual void Dispose(bool disposing)
 		{
-			if (!WasDisposed && disposing && CassandraSession.Current != null)
+			if (!WasDisposed && disposing && _session != null)
 			{
-				CassandraSession.Current.Dispose();
-				CassandraSession.Current = null;
+				_session.Dispose();
+				_session = null;
 			}
 
 			WasDisposed = true;

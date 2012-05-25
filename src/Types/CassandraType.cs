@@ -268,7 +268,7 @@ namespace FluentCassandra.Types
 
 				case TypeCode.Byte:
 				case TypeCode.SByte:
-					destinationType = BytesType;
+					destinationType = Int32Type;
 					break;
 
 				default:

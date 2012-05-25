@@ -8,12 +8,20 @@ namespace FluentCassandra
 {
 	public class CassandraDatabaseSetup
 	{
+		public ConnectionBuilder ConnectionBuilder;
 		public CassandraContext DB;
+
 		public CassandraColumnFamily<AsciiType> Family;
 		public CassandraSuperColumnFamily<AsciiType, AsciiType> SuperFamily;
 		public CassandraColumnFamily UserFamily;
 
-		public User[] Users;
+		public User[] Users = new[] {
+					new User { Id = 1, Name = "Darren Gemmell", Email = "darren@somewhere.com", Age = 32 },
+					new User { Id = 2, Name = "Fernando Laubscher", Email = "fernando@somewhere.com", Age = 23 },
+					new User { Id = 3, Name = "Cody Millhouse", Email = "cody@somewhere.com", Age = 56 },
+					new User { Id = 4, Name = "Emilia Thibert", Email = "emilia@somewhere.com", Age = 67 },
+					new User { Id = 5, Name = "Allyson Schurr", Email = "allyson@somewhere.com", Age = 21 }
+				};
 
 		public class User
 		{
@@ -29,22 +37,15 @@ namespace FluentCassandra
 		public const string TestStandardName = "Test1";
 		public const string TestSuperName = "SubTest1";
 
+		public const string Keyspace = "Testing";
+		public static readonly Server Server = new Server("localhost");
+		
 		public CassandraDatabaseSetup(bool reset = false)
 		{
-			var keyspaceName = "Testing";
-			var server = new Server("localhost");
+			ConnectionBuilder = new ConnectionBuilder(keyspace: Keyspace, server: Server);
+			DB = new CassandraContext(ConnectionBuilder);
 
-			DB = new CassandraContext(keyspaceName, server);
-			DB.ThrowErrors = true;
-
-			var exists = DB.KeyspaceExists(keyspaceName);
-			Users = new[] {
-				new User { Id = 1, Name = "Darren Gemmell", Email = "darren@somewhere.com", Age = 32 },
-				new User { Id = 2, Name = "Fernando Laubscher", Email = "fernando@somewhere.com", Age = 23 },
-				new User { Id = 3, Name = "Cody Millhouse", Email = "cody@somewhere.com", Age = 56 },
-				new User { Id = 4, Name = "Emilia Thibert", Email = "emilia@somewhere.com", Age = 67 },
-				new User { Id = 5, Name = "Allyson Schurr", Email = "allyson@somewhere.com", Age = 21 }
-			};
+			var exists = DB.KeyspaceExists(Keyspace);
 
 			Family = DB.GetColumnFamily<AsciiType>("Standard");
 			SuperFamily = DB.GetColumnFamily<AsciiType, AsciiType>("Super");
@@ -53,15 +54,23 @@ namespace FluentCassandra
 			if (exists && !reset)
 				return;
 
-			using (var session = DB.OpenSession())
-			{
-				if (exists)
-					DB.DropKeyspace(keyspaceName);
+			ResetDatabase();
+		}
 
-				var keyspace = new CassandraKeyspace(new CassandraKeyspaceSchema { 
-					Name = keyspaceName
-				}, DB);
-				DB.Keyspace = keyspace;
+		public void ResetDatabase()
+		{
+			using (var session = new CassandraSession(ConnectionBuilder))
+			using (var db = new CassandraContext(session))
+			{
+				db.ThrowErrors = true;
+
+				try { db.DropKeyspace(Keyspace); }
+				catch (Exception exc) { Console.WriteLine(exc); }
+
+				var keyspace = new CassandraKeyspace(new CassandraKeyspaceSchema {
+					Name = Keyspace
+				}, db);
+				db.Keyspace = keyspace;
 
 				keyspace.TryCreateSelf();
 				keyspace.TryCreateColumnFamily<AsciiType>("Standard");
@@ -83,60 +92,74 @@ namespace FluentCassandra
 					ColumnNameType = CassandraType.DynamicCompositeType(new Dictionary<char, CassandraType> { { 'a', CassandraType.AsciiType }, { 'd', CassandraType.DoubleType } })
 				});
 
-				Family = DB.GetColumnFamily<AsciiType>("Standard");
-				SuperFamily = DB.GetColumnFamily<AsciiType, AsciiType>("Super");
-
-				ResetFamily();
-				ResetSuperFamily();
-
-				DB.ExecuteNonQuery(@"
+				db.ExecuteNonQuery(@"
 CREATE COLUMNFAMILY Users (
 	KEY int PRIMARY KEY,
 	Name ascii,
 	Email ascii,
 	Age int
 );");
-				DB.ExecuteNonQuery(@"CREATE INDEX User_Age ON Users (Age);");
-				DB.Keyspace.ClearCachedKeyspaceSchema();
-				UserFamily = DB.GetColumnFamily("Users");
+				db.ExecuteNonQuery(@"CREATE INDEX User_Age ON Users (Age);");
+				db.Keyspace.ClearCachedKeyspaceSchema();
 
-				foreach (var user in Users)
-				{
-					dynamic record = UserFamily.CreateRecord(user.Id);
-					record.Name = user.Name;
-					record.Email = user.Email;
-					record.Age = user.Age;
+				var family = db.GetColumnFamily<AsciiType>("Standard");
+				var superFamily = db.GetColumnFamily<AsciiType, AsciiType>("Super");
+				var userFamily = db.GetColumnFamily("Users");
 
-					DB.Attach(record);
-				}
-				DB.SaveChanges();
+				ResetFamily(family);
+				ResetSuperFamily(superFamily);
+				ResetUsersFamily(userFamily);
 			}
 		}
 
-		public void ResetFamily()
+		public void ResetUsersFamily(CassandraColumnFamily userFamily = null)
 		{
-			Family.RemoveAllRows();
+			userFamily = userFamily ?? UserFamily;
 
-			Family.InsertColumn(TestKey1, "Test1", Math.PI);
-			Family.InsertColumn(TestKey1, "Test2", Math.PI);
-			Family.InsertColumn(TestKey1, "Test3", Math.PI);
+			var db = userFamily.Context;
+			userFamily.RemoveAllRows();
 
-			Family.InsertColumn(TestKey2, "Test1", Math.PI);
-			Family.InsertColumn(TestKey2, "Test2", Math.PI);
-			Family.InsertColumn(TestKey2, "Test3", Math.PI);
+			foreach (var user in Users)
+			{
+				dynamic record = userFamily.CreateRecord(user.Id);
+				record.Name = user.Name;
+				record.Email = user.Email;
+				record.Age = user.Age;
+
+				db.Attach(record);
+			}
+
+			db.SaveChanges();
 		}
 
-		public void ResetSuperFamily()
+		public void ResetFamily(CassandraColumnFamily family = null)
 		{
-			SuperFamily.RemoveAllRows();
+			family = family ?? Family;
 
-			SuperFamily.InsertColumn(TestKey1, TestSuperName, "Test1", Math.PI);
-			SuperFamily.InsertColumn(TestKey1, TestSuperName, "Test2", Math.PI);
-			SuperFamily.InsertColumn(TestKey1, TestSuperName, "Test3", Math.PI);
+			family.RemoveAllRows();
 
-			SuperFamily.InsertColumn(TestKey2, TestSuperName, "Test1", Math.PI);
-			SuperFamily.InsertColumn(TestKey2, TestSuperName, "Test2", Math.PI);
-			SuperFamily.InsertColumn(TestKey2, TestSuperName, "Test3", Math.PI);
+			family.InsertColumn(TestKey1, "Test1", Math.PI);
+			family.InsertColumn(TestKey1, "Test2", Math.PI);
+			family.InsertColumn(TestKey1, "Test3", Math.PI);
+
+			family.InsertColumn(TestKey2, "Test1", Math.PI);
+			family.InsertColumn(TestKey2, "Test2", Math.PI);
+			family.InsertColumn(TestKey2, "Test3", Math.PI);
+		}
+
+		public void ResetSuperFamily(CassandraSuperColumnFamily superFamily = null)
+		{
+			superFamily = superFamily ?? SuperFamily;
+
+			superFamily.RemoveAllRows();
+
+			superFamily.InsertColumn(TestKey1, TestSuperName, "Test1", Math.PI);
+			superFamily.InsertColumn(TestKey1, TestSuperName, "Test2", Math.PI);
+			superFamily.InsertColumn(TestKey1, TestSuperName, "Test3", Math.PI);
+
+			superFamily.InsertColumn(TestKey2, TestSuperName, "Test1", Math.PI);
+			superFamily.InsertColumn(TestKey2, TestSuperName, "Test2", Math.PI);
+			superFamily.InsertColumn(TestKey2, TestSuperName, "Test3", Math.PI);
 		}
 	}
 }

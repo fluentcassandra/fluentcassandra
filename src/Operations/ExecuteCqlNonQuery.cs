@@ -15,7 +15,7 @@ namespace FluentCassandra.Operations
 		{
 			Debug.Write(CqlQuery.ToString(), "query");
 			byte[] query = CqlQuery;
-			bool isCqlQueryCompressed = query.Length > 200 && CompressCqlQuery;
+			bool isCqlQueryCompressed = query.Length > 200 && Session.ConnectionBuilder.CompressCqlQueries;
 
 			// it doesn't make sense to compress queryies that are really small
 			if (isCqlQueryCompressed)
@@ -29,10 +29,9 @@ namespace FluentCassandra.Operations
 			return new Void();
 		}
 
-		public ExecuteCqlNonQuery(UTF8Type cqlQuery, bool compressCqlQuery)
+		public ExecuteCqlNonQuery(UTF8Type cqlQuery)
 		{
 			CqlQuery = cqlQuery;
-			CompressCqlQuery = compressCqlQuery;
 		}
 	}
 }

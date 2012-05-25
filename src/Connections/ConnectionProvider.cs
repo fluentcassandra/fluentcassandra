@@ -10,14 +10,14 @@ namespace FluentCassandra.Connections
 		/// <param name="builder"></param>
 		protected ConnectionProvider(ConnectionBuilder builder)
 		{
-			Builder = builder;
+			ConnectionBuilder = builder;
 			Servers = new RoundRobinServerManager(builder);
 		}
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public ConnectionBuilder Builder { get; private set; }
+		public ConnectionBuilder ConnectionBuilder { get; private set; }
 
 		/// <summary>
 		/// 

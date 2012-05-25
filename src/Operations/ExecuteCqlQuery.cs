@@ -14,8 +14,6 @@ namespace FluentCassandra.Operations
 
 		public UTF8Type CqlQuery { get; private set; }
 
-		public bool CompressCqlQuery { get; private set; }
-
 		private CassandraColumnFamilySchema TryGetSchema(Apache.Cassandra.CqlResult result, string familyName)
 		{
 			//if (ColumnFamily != null && ColumnFamily.FamilyName != null)
@@ -65,8 +63,9 @@ namespace FluentCassandra.Operations
 		public override IEnumerable<ICqlRow> Execute()
 		{
 			Debug.Write(CqlQuery.ToString(), "query");
+
 			byte[] query = CqlQuery;
-			bool isCqlQueryCompressed = query.Length > 200 && CompressCqlQuery;
+			bool isCqlQueryCompressed = query.Length > 200 && Session.ConnectionBuilder.CompressCqlQueries;
 
 			// it doesn't make sense to compress queryies that are really small
 			if (isCqlQueryCompressed)
@@ -106,10 +105,9 @@ namespace FluentCassandra.Operations
 			}
 		}
 
-		public ExecuteCqlQuery(UTF8Type cqlQuery, bool compressCqlQuery)
+		public ExecuteCqlQuery(UTF8Type cqlQuery)
 		{
 			CqlQuery = cqlQuery;
-			CompressCqlQuery = compressCqlQuery;
 		}
 	}
 }

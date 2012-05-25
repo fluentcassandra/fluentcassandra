@@ -9,35 +9,65 @@ namespace FluentCassandra
 {
 	public class CassandraSession : IDisposable
 	{
-		[ThreadStatic]
-		private static CassandraSession _current;
-
-		public static CassandraSession Current
-		{
-			get { return _current; }
-			internal set { _current = value; }
-		}
-
 		private IConnection _connection;
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="keyspace"></param>
+		/// <param name="server"></param>
+		/// <param name="timeout"></param>
+		public CassandraSession(string keyspace, Server server, string username = null, string password = null)
+			: this(keyspace, server.Host, server.Port, server.Timeout, username, password) { }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="keyspace"></param>
+		/// <param name="host"></param>
+		/// <param name="port"></param>
+		/// <param name="timeout"></param>
+		/// <param name="provider"></param>
+		public CassandraSession(string keyspace, string host, int port = Server.DefaultPort, int timeout = Server.DefaultTimeout, string username = null, string password = null)
+			: this(new ConnectionBuilder(keyspace, host, port, timeout, username: username, password: password)) { }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="connectionString"></param>
+		public CassandraSession(string connectionString)
+			: this(new ConnectionBuilder(connectionString)) { }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="connectionBuilder"></param>
 		public CassandraSession(ConnectionBuilder connectionBuilder)
 			: this(ConnectionProviderFactory.Get(connectionBuilder), connectionBuilder.ReadConsistency, connectionBuilder.WriteConsistency) { }
 
-		public CassandraSession(ConnectionBuilder connectionBuilder, ConsistencyLevel read, ConsistencyLevel write)
-			: this(ConnectionProviderFactory.Get(connectionBuilder), read, write) { }
-
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="connectionProvider"></param>
+		/// <param name="read"></param>
+		/// <param name="write"></param>
 		public CassandraSession(IConnectionProvider connectionProvider, ConsistencyLevel read, ConsistencyLevel write)
 		{
-			if (Current != null)
-				throw new CassandraException("Cannot create a new session while there is one already active.");
+			if (connectionProvider == null)
+				throw new ArgumentNullException("connectionProvider");
 
+			ConnectionBuilder = connectionProvider.ConnectionBuilder;
 			ConnectionProvider = connectionProvider;
 			ReadConsistency = read;
 			WriteConsistency = write;
 
 			IsAuthenticated = false;
-			Current = this;
 		}
+
+		/// <summary>
+		/// The connection builder that is currently in use for this session.
+		/// </summary>
+		public ConnectionBuilder ConnectionBuilder { get; private set; }
 
 		/// <summary>
 		/// 
@@ -66,7 +96,7 @@ namespace FluentCassandra
 		/// <returns></returns>
 		internal CassandraClientWrapper GetClient(bool setKeyspace = true, bool? setCqlVersion = null)
 		{
-			var builder = ConnectionProvider.Builder;
+			var builder = ConnectionProvider.ConnectionBuilder;
 			setCqlVersion = setCqlVersion ?? (builder.CqlVersion != null);
 
 			if (_connection == null)
@@ -92,7 +122,7 @@ namespace FluentCassandra
 		/// </summary>
 		public void Login()
 		{
-			var builder = ConnectionProvider.Builder;
+			var builder = ConnectionProvider.ConnectionBuilder;
 
 			if (String.IsNullOrWhiteSpace(builder.Username) || String.IsNullOrWhiteSpace(builder.Password))
 				throw new CassandraException("No username and/or password was set in the connection string, please use Login(username, password) method.");
@@ -191,14 +221,8 @@ namespace FluentCassandra
 		/// </param>
 		protected virtual void Dispose(bool disposing)
 		{
-			if (!WasDisposed && disposing)
-			{
-				if (_connection != null)
-					ConnectionProvider.Close(_connection);
-
-				if (Current == this)
-					Current = null;
-			}
+			if (!WasDisposed && disposing && _connection != null) 
+				ConnectionProvider.Close(_connection);
 
 			WasDisposed = true;
 		}

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using FluentCassandra.Linq;
 using FluentCassandra.Operations;
 using FluentCassandra.Types;
 
@@ -128,11 +127,5 @@ namespace FluentCassandra
 		}
 
 		#endregion
-
-		public static IEnumerable<ICqlRow> Cql(this CassandraColumnFamily family, UTF8Type cqlQuery)
-		{
-			var op = new ExecuteCqlQuery(cqlQuery, family.Context.ConnectionBuilder.CompressCqlQueries);
-			return family.ExecuteOperation(op);
-		}
 	}
 }

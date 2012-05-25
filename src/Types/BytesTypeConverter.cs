@@ -210,6 +210,9 @@ namespace FluentCassandra.Types
 				case TypeCode.Boolean:
 					return BitConverter.ToBoolean(bytes, 0);
 				case TypeCode.Char:
+					if (bytes.Length < 2)
+						Array.Resize<byte>(ref bytes, 2);
+
 					return BitConverter.ToChar(bytes, 0);
 				case TypeCode.Double:
 					return BitConverter.ToDouble(bytes, 0);

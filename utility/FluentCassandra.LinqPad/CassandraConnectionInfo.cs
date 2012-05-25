@@ -147,13 +147,14 @@ namespace FluentCassandra.LinqPad
 
 		public FluentCassandra.CassandraContext CreateContext()
 		{
-			return new FluentCassandra.CassandraContext(
+			return new FluentCassandra.CassandraContext(new ConnectionBuilder(
 				keyspace: Keyspace,
 				host: Host,
 				port: Port,
-				timeout: Timeout,
+				connectionTimeout: Timeout,
 				username: Username,
-				password: Password);
+				password: Password
+			));
 		}
 
 		public static CassandraConnectionInfo Load(IConnectionInfo connectionInfo)

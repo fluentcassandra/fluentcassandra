@@ -57,7 +57,7 @@ namespace FluentCassandra.Linq
 		public IEnumerator<T> GetEnumerator()
 		{
 			var result = CqlQueryEvaluator.GetCql(Expression, _family.ObjectConventions);
-			var fluentObjects = _family.Cql(result);
+			var fluentObjects = _family.Context.ExecuteQuery(result);
 
 			var serializer = ObjectSerializerFactory.Get(typeof(T));
 			return serializer
