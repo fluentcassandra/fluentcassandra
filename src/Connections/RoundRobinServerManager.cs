@@ -12,7 +12,7 @@ namespace FluentCassandra.Connections
 		private Queue<Server> _serverQueue;
 		private HashSet<Server> _blackListed;
 
-		public RoundRobinServerManager(ConnectionBuilder builder)
+		public RoundRobinServerManager(IConnectionBuilder builder)
 		{
 			_servers = new List<Server>(builder.Servers);
 			_serverQueue = new Queue<Server>(_servers);

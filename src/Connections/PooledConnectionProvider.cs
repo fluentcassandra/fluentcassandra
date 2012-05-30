@@ -16,7 +16,7 @@ namespace FluentCassandra.Connections
 		/// 
 		/// </summary>
 		/// <param name="builder"></param>
-		public PooledConnectionProvider(ConnectionBuilder builder)
+		public PooledConnectionProvider(IConnectionBuilder builder)
 			: base(builder)
 		{
 			MinPoolSize = builder.MinPoolSize;

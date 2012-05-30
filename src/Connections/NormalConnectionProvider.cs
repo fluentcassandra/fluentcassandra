@@ -9,7 +9,7 @@ namespace FluentCassandra.Connections
 		/// 
 		/// </summary>
 		/// <param name="builder"></param>
-		public NormalConnectionProvider(ConnectionBuilder builder)
+		public NormalConnectionProvider(IConnectionBuilder builder)
 			: base(builder)
 		{
 			if (builder.Servers.Count > 1 && builder.ConnectionTimeout == TimeSpan.Zero)

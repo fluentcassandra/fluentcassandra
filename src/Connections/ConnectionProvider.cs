@@ -8,7 +8,7 @@ namespace FluentCassandra.Connections
 		/// 
 		/// </summary>
 		/// <param name="builder"></param>
-		protected ConnectionProvider(ConnectionBuilder builder)
+		protected ConnectionProvider(IConnectionBuilder builder)
 		{
 			ConnectionBuilder = builder;
 			Servers = new RoundRobinServerManager(builder);
@@ -17,7 +17,7 @@ namespace FluentCassandra.Connections
 		/// <summary>
 		/// 
 		/// </summary>
-		public ConnectionBuilder ConnectionBuilder { get; private set; }
+		public IConnectionBuilder ConnectionBuilder { get; private set; }
 
 		/// <summary>
 		/// 

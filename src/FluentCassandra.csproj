@@ -111,6 +111,7 @@
     <Compile Include="Connections\ConnectionProviderFactory.cs" />
     <Compile Include="Connections\ConnectionType.cs" />
     <Compile Include="Connections\CqlVersion.cs" />
+    <Compile Include="Connections\IConnectionBuilder.cs" />
     <Compile Include="Connections\NormalConnectionProvider.cs" />
     <Compile Include="Connections\IConnection.cs" />
     <Compile Include="Connections\IConnectionProvider.cs" />

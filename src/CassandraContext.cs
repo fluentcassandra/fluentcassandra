@@ -12,7 +12,7 @@ namespace FluentCassandra
 	public class CassandraContext : IDisposable
 	{
 		private readonly IList<IFluentMutationTracker> _trackers;
-		private readonly ConnectionBuilder _connectionBuilder;
+		private readonly IConnectionBuilder _connectionBuilder;
 		private CassandraSession _session;
 
 		/// <summary>
@@ -56,7 +56,7 @@ namespace FluentCassandra
 		/// 
 		/// </summary>
 		/// <param name="connectionBuilder"></param>
-		public CassandraContext(ConnectionBuilder connectionBuilder)
+		public CassandraContext(IConnectionBuilder connectionBuilder)
 		{
 			ThrowErrors = true;
 

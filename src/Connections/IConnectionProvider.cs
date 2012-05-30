@@ -4,7 +4,7 @@ namespace FluentCassandra.Connections
 {
 	public interface IConnectionProvider
 	{
-		ConnectionBuilder ConnectionBuilder { get; }
+		IConnectionBuilder ConnectionBuilder { get; }
 
 		IServerManager Servers { get; }
 

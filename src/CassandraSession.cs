@@ -42,7 +42,7 @@ namespace FluentCassandra
 		/// 
 		/// </summary>
 		/// <param name="connectionBuilder"></param>
-		public CassandraSession(ConnectionBuilder connectionBuilder)
+		public CassandraSession(IConnectionBuilder connectionBuilder)
 			: this(ConnectionProviderFactory.Get(connectionBuilder), connectionBuilder.ReadConsistency, connectionBuilder.WriteConsistency) { }
 
 		/// <summary>
@@ -67,7 +67,7 @@ namespace FluentCassandra
 		/// <summary>
 		/// The connection builder that is currently in use for this session.
 		/// </summary>
-		public ConnectionBuilder ConnectionBuilder { get; private set; }
+		public IConnectionBuilder ConnectionBuilder { get; private set; }
 
 		/// <summary>
 		/// 

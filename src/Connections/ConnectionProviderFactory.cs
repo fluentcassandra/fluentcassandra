@@ -8,23 +8,23 @@ namespace FluentCassandra.Connections
 		private static readonly object Lock = new object();
 		private static volatile IDictionary<string, IConnectionProvider> Providers = new Dictionary<string, IConnectionProvider>();
 
-		public static IConnectionProvider Get(ConnectionBuilder connectionBuilder)
+		public static IConnectionProvider Get(IConnectionBuilder connectionBuilder)
 		{
 			lock(Lock)
 			{
 				IConnectionProvider provider;
 	
-				if (!Providers.TryGetValue(connectionBuilder.ConnectionString, out provider))
+				if (!Providers.TryGetValue(connectionBuilder.Uuid, out provider))
 				{
 					provider = CreateProvider(connectionBuilder);
-					Providers.Add(connectionBuilder.ConnectionString, provider);
+					Providers.Add(connectionBuilder.Uuid, provider);
 				}
 
 				return provider;
 			}
 		}
 
-		private static IConnectionProvider CreateProvider(ConnectionBuilder builder)
+		private static IConnectionProvider CreateProvider(IConnectionBuilder builder)
 		{
 			if (builder.Pooling)
 				return new PooledConnectionProvider(builder);

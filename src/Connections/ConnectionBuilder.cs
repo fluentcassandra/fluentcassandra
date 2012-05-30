@@ -5,7 +5,7 @@ using Apache.Cassandra;
 
 namespace FluentCassandra.Connections
 {
-	public class ConnectionBuilder
+	public class ConnectionBuilder : FluentCassandra.Connections.IConnectionBuilder
 	{
 		/// <summary>
 		/// 
@@ -455,5 +455,10 @@ namespace FluentCassandra.Connections
 		/// 
 		/// </summary>
 		public string ConnectionString { get; private set; }
+
+		/// <summary>
+		/// A unique identifier for the connection builder.
+		/// </summary>
+		public string Uuid { get { return ConnectionString; } }
 	}
 }

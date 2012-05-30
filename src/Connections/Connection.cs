@@ -23,7 +23,7 @@ namespace FluentCassandra.Connections
 		/// 
 		/// </summary>
 		/// <param name="builder"></param>
-		internal Connection(Server server, ConnectionBuilder builder)
+		internal Connection(Server server, IConnectionBuilder builder)
 		{
 			_connectionType = builder.ConnectionType;
 			_bufferSize = builder.BufferSize;
