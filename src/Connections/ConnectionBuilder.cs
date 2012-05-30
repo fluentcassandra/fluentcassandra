@@ -94,37 +94,6 @@ namespace FluentCassandra.Connections
 
 			#endregion
 
-			#region Server
-
-			Servers = new List<Server>();
-
-			if (!pairs.ContainsKey("Server"))
-			{
-				Servers.Add(new Server());
-			}
-			else
-			{
-				string[] servers = pairs["Server"].Split(',');
-				foreach (var server in servers)
-				{
-					string[] serverParts = server.Split(':');
-					string host = serverParts[0];
-
-					if (serverParts.Length == 2)
-					{
-						int port;
-						if (Int32.TryParse(serverParts[1], out port))
-							Servers.Add(new Server(host: host, port: port, timeout: ConnectionTimeout.Seconds));
-						else
-							Servers.Add(new Server(host: host, timeout: ConnectionTimeout.Seconds));
-					}
-					else
-						Servers.Add(new Server(host));
-				}
-			}
-
-			#endregion
-
 			#region Pooling
 
 			if (!pairs.ContainsKey("Pooling"))
@@ -342,6 +311,38 @@ namespace FluentCassandra.Connections
 			if (pairs.ContainsKey("Password"))
 			{
 				Password = pairs["Password"];
+			}
+
+			#endregion
+
+			// This must be last because it uses fields from above
+			#region Server
+
+			Servers = new List<Server>();
+
+			if (!pairs.ContainsKey("Server"))
+			{
+				Servers.Add(new Server());
+			}
+			else
+			{
+				string[] servers = pairs["Server"].Split(',');
+				foreach (var server in servers)
+				{
+					string[] serverParts = server.Split(':');
+					string host = serverParts[0];
+
+					if (serverParts.Length == 2)
+					{
+						int port;
+						if (Int32.TryParse(serverParts[1], out port))
+							Servers.Add(new Server(host: host, port: port, timeout: ConnectionTimeout.Seconds));
+						else
+							Servers.Add(new Server(host: host, timeout: ConnectionTimeout.Seconds));
+					}
+					else
+						Servers.Add(new Server(host));
+				}
 			}
 
 			#endregion
