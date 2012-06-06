@@ -44,7 +44,7 @@ namespace FluentCassandra
 		{
 			ConnectionBuilder = new ConnectionBuilder(keyspace: Keyspace, server: Server);
 			DB = new CassandraContext(ConnectionBuilder);
-
+			
 			var exists = DB.KeyspaceExists(Keyspace);
 
 			Family = DB.GetColumnFamily<AsciiType>("Standard");

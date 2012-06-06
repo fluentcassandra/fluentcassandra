@@ -38,6 +38,7 @@ namespace Apache.Cassandra
       string describe_cluster_name();
       string describe_version();
       List<TokenRange> describe_ring(string keyspace);
+      Dictionary<string, string> describe_token_map();
       string describe_partitioner();
       string describe_snitch();
       KsDef describe_keyspace(string keyspace);
@@ -926,6 +927,41 @@ namespace Apache.Cassandra
         throw new TApplicationException(TApplicationException.ExceptionType.MissingResult, "describe_ring failed: unknown result");
       }
 
+      public Dictionary<string, string> describe_token_map()
+      {
+        send_describe_token_map();
+        return recv_describe_token_map();
+      }
+
+      public void send_describe_token_map()
+      {
+        oprot_.WriteMessageBegin(new TMessage("describe_token_map", TMessageType.Call, seqid_));
+        describe_token_map_args args = new describe_token_map_args();
+        args.Write(oprot_);
+        oprot_.WriteMessageEnd();
+        oprot_.Transport.Flush();
+      }
+
+      public Dictionary<string, string> recv_describe_token_map()
+      {
+        TMessage msg = iprot_.ReadMessageBegin();
+        if (msg.Type == TMessageType.Exception) {
+          TApplicationException x = TApplicationException.Read(iprot_);
+          iprot_.ReadMessageEnd();
+          throw x;
+        }
+        describe_token_map_result result = new describe_token_map_result();
+        result.Read(iprot_);
+        iprot_.ReadMessageEnd();
+        if (result.__isset.success) {
+          return result.Success;
+        }
+        if (result.__isset.ire) {
+          throw result.Ire;
+        }
+        throw new TApplicationException(TApplicationException.ExceptionType.MissingResult, "describe_token_map failed: unknown result");
+      }
+
       public string describe_partitioner()
       {
         send_describe_partitioner();
@@ -1490,6 +1526,7 @@ namespace Apache.Cassandra
         processMap_["describe_cluster_name"] = describe_cluster_name_Process;
         processMap_["describe_version"] = describe_version_Process;
         processMap_["describe_ring"] = describe_ring_Process;
+        processMap_["describe_token_map"] = describe_token_map_Process;
         processMap_["describe_partitioner"] = describe_partitioner_Process;
         processMap_["describe_snitch"] = describe_snitch_Process;
         processMap_["describe_keyspace"] = describe_keyspace_Process;
@@ -1940,6 +1977,23 @@ namespace Apache.Cassandra
           result.Ire = ire;
         }
         oprot.WriteMessageBegin(new TMessage("describe_ring", TMessageType.Reply, seqid)); 
+        result.Write(oprot);
+        oprot.WriteMessageEnd();
+        oprot.Transport.Flush();
+      }
+
+      public void describe_token_map_Process(int seqid, TProtocol iprot, TProtocol oprot)
+      {
+        describe_token_map_args args = new describe_token_map_args();
+        args.Read(iprot);
+        iprot.ReadMessageEnd();
+        describe_token_map_result result = new describe_token_map_result();
+        try {
+          result.Success = iface_.describe_token_map();
+        } catch (InvalidRequestException ire) {
+          result.Ire = ire;
+        }
+        oprot.WriteMessageBegin(new TMessage("describe_token_map", TMessageType.Reply, seqid)); 
         result.Write(oprot);
         oprot.WriteMessageEnd();
         oprot.Transport.Flush();
@@ -3222,13 +3276,13 @@ namespace Apache.Cassandra
               if (field.Type == TType.List) {
                 {
                   Success = new List<ColumnOrSuperColumn>();
-                  TList _list91 = iprot.ReadListBegin();
-                  for( int _i92 = 0; _i92 < _list91.Count; ++_i92)
+                  TList _list95 = iprot.ReadListBegin();
+                  for( int _i96 = 0; _i96 < _list95.Count; ++_i96)
                   {
-                    ColumnOrSuperColumn _elem93 = new ColumnOrSuperColumn();
-                    _elem93 = new ColumnOrSuperColumn();
-                    _elem93.Read(iprot);
-                    Success.Add(_elem93);
+                    ColumnOrSuperColumn _elem97 = new ColumnOrSuperColumn();
+                    _elem97 = new ColumnOrSuperColumn();
+                    _elem97.Read(iprot);
+                    Success.Add(_elem97);
                   }
                   iprot.ReadListEnd();
                 }
@@ -3282,9 +3336,9 @@ namespace Apache.Cassandra
             oprot.WriteFieldBegin(field);
             {
               oprot.WriteListBegin(new TList(TType.Struct, Success.Count));
-              foreach (ColumnOrSuperColumn _iter94 in Success)
+              foreach (ColumnOrSuperColumn _iter98 in Success)
               {
-                _iter94.Write(oprot);
+                _iter98.Write(oprot);
               }
               oprot.WriteListEnd();
             }
@@ -3797,12 +3851,12 @@ namespace Apache.Cassandra
               if (field.Type == TType.List) {
                 {
                   Keys = new List<byte[]>();
-                  TList _list95 = iprot.ReadListBegin();
-                  for( int _i96 = 0; _i96 < _list95.Count; ++_i96)
+                  TList _list99 = iprot.ReadListBegin();
+                  for( int _i100 = 0; _i100 < _list99.Count; ++_i100)
                   {
-                    byte[] _elem97 = null;
-                    _elem97 = iprot.ReadBinary();
-                    Keys.Add(_elem97);
+                    byte[] _elem101 = null;
+                    _elem101 = iprot.ReadBinary();
+                    Keys.Add(_elem101);
                   }
                   iprot.ReadListEnd();
                 }
@@ -3853,9 +3907,9 @@ namespace Apache.Cassandra
           oprot.WriteFieldBegin(field);
           {
             oprot.WriteListBegin(new TList(TType.String, Keys.Count));
-            foreach (byte[] _iter98 in Keys)
+            foreach (byte[] _iter102 in Keys)
             {
-              oprot.WriteBinary(_iter98);
+              oprot.WriteBinary(_iter102);
             }
             oprot.WriteListEnd();
           }
@@ -3995,25 +4049,25 @@ namespace Apache.Cassandra
               if (field.Type == TType.Map) {
                 {
                   Success = new Dictionary<byte[], List<ColumnOrSuperColumn>>();
-                  TMap _map99 = iprot.ReadMapBegin();
-                  for( int _i100 = 0; _i100 < _map99.Count; ++_i100)
+                  TMap _map103 = iprot.ReadMapBegin();
+                  for( int _i104 = 0; _i104 < _map103.Count; ++_i104)
                   {
-                    byte[] _key101;
-                    List<ColumnOrSuperColumn> _val102;
-                    _key101 = iprot.ReadBinary();
+                    byte[] _key105;
+                    List<ColumnOrSuperColumn> _val106;
+                    _key105 = iprot.ReadBinary();
                     {
-                      _val102 = new List<ColumnOrSuperColumn>();
-                      TList _list103 = iprot.ReadListBegin();
-                      for( int _i104 = 0; _i104 < _list103.Count; ++_i104)
+                      _val106 = new List<ColumnOrSuperColumn>();
+                      TList _list107 = iprot.ReadListBegin();
+                      for( int _i108 = 0; _i108 < _list107.Count; ++_i108)
                       {
-                        ColumnOrSuperColumn _elem105 = new ColumnOrSuperColumn();
-                        _elem105 = new ColumnOrSuperColumn();
-                        _elem105.Read(iprot);
-                        _val102.Add(_elem105);
+                        ColumnOrSuperColumn _elem109 = new ColumnOrSuperColumn();
+                        _elem109 = new ColumnOrSuperColumn();
+                        _elem109.Read(iprot);
+                        _val106.Add(_elem109);
                       }
                       iprot.ReadListEnd();
                     }
-                    Success[_key101] = _val102;
+                    Success[_key105] = _val106;
                   }
                   iprot.ReadMapEnd();
                 }
@@ -4067,14 +4121,14 @@ namespace Apache.Cassandra
             oprot.WriteFieldBegin(field);
             {
               oprot.WriteMapBegin(new TMap(TType.String, TType.List, Success.Count));
-              foreach (byte[] _iter106 in Success.Keys)
+              foreach (byte[] _iter110 in Success.Keys)
               {
-                oprot.WriteBinary(_iter106);
+                oprot.WriteBinary(_iter110);
                 {
-                  oprot.WriteListBegin(new TList(TType.Struct, Success[_iter106].Count));
-                  foreach (ColumnOrSuperColumn _iter107 in Success[_iter106])
+                  oprot.WriteListBegin(new TList(TType.Struct, Success[_iter110].Count));
+                  foreach (ColumnOrSuperColumn _iter111 in Success[_iter110])
                   {
-                    _iter107.Write(oprot);
+                    _iter111.Write(oprot);
                   }
                   oprot.WriteListEnd();
                 }
@@ -4222,12 +4276,12 @@ namespace Apache.Cassandra
               if (field.Type == TType.List) {
                 {
                   Keys = new List<byte[]>();
-                  TList _list108 = iprot.ReadListBegin();
-                  for( int _i109 = 0; _i109 < _list108.Count; ++_i109)
+                  TList _list112 = iprot.ReadListBegin();
+                  for( int _i113 = 0; _i113 < _list112.Count; ++_i113)
                   {
-                    byte[] _elem110 = null;
-                    _elem110 = iprot.ReadBinary();
-                    Keys.Add(_elem110);
+                    byte[] _elem114 = null;
+                    _elem114 = iprot.ReadBinary();
+                    Keys.Add(_elem114);
                   }
                   iprot.ReadListEnd();
                 }
@@ -4278,9 +4332,9 @@ namespace Apache.Cassandra
           oprot.WriteFieldBegin(field);
           {
             oprot.WriteListBegin(new TList(TType.String, Keys.Count));
-            foreach (byte[] _iter111 in Keys)
+            foreach (byte[] _iter115 in Keys)
             {
-              oprot.WriteBinary(_iter111);
+              oprot.WriteBinary(_iter115);
             }
             oprot.WriteListEnd();
           }
@@ -4420,14 +4474,14 @@ namespace Apache.Cassandra
               if (field.Type == TType.Map) {
                 {
                   Success = new Dictionary<byte[], int>();
-                  TMap _map112 = iprot.ReadMapBegin();
-                  for( int _i113 = 0; _i113 < _map112.Count; ++_i113)
+                  TMap _map116 = iprot.ReadMapBegin();
+                  for( int _i117 = 0; _i117 < _map116.Count; ++_i117)
                   {
-                    byte[] _key114;
-                    int _val115;
-                    _key114 = iprot.ReadBinary();
-                    _val115 = iprot.ReadI32();
-                    Success[_key114] = _val115;
+                    byte[] _key118;
+                    int _val119;
+                    _key118 = iprot.ReadBinary();
+                    _val119 = iprot.ReadI32();
+                    Success[_key118] = _val119;
                   }
                   iprot.ReadMapEnd();
                 }
@@ -4481,10 +4535,10 @@ namespace Apache.Cassandra
             oprot.WriteFieldBegin(field);
             {
               oprot.WriteMapBegin(new TMap(TType.String, TType.I32, Success.Count));
-              foreach (byte[] _iter116 in Success.Keys)
+              foreach (byte[] _iter120 in Success.Keys)
               {
-                oprot.WriteBinary(_iter116);
-                oprot.WriteI32(Success[_iter116]);
+                oprot.WriteBinary(_iter120);
+                oprot.WriteI32(Success[_iter120]);
               }
               oprot.WriteMapEnd();
             }
@@ -4811,13 +4865,13 @@ namespace Apache.Cassandra
               if (field.Type == TType.List) {
                 {
                   Success = new List<KeySlice>();
-                  TList _list117 = iprot.ReadListBegin();
-                  for( int _i118 = 0; _i118 < _list117.Count; ++_i118)
+                  TList _list121 = iprot.ReadListBegin();
+                  for( int _i122 = 0; _i122 < _list121.Count; ++_i122)
                   {
-                    KeySlice _elem119 = new KeySlice();
-                    _elem119 = new KeySlice();
-                    _elem119.Read(iprot);
-                    Success.Add(_elem119);
+                    KeySlice _elem123 = new KeySlice();
+                    _elem123 = new KeySlice();
+                    _elem123.Read(iprot);
+                    Success.Add(_elem123);
                   }
                   iprot.ReadListEnd();
                 }
@@ -4871,9 +4925,9 @@ namespace Apache.Cassandra
             oprot.WriteFieldBegin(field);
             {
               oprot.WriteListBegin(new TList(TType.Struct, Success.Count));
-              foreach (KeySlice _iter120 in Success)
+              foreach (KeySlice _iter124 in Success)
               {
-                _iter120.Write(oprot);
+                _iter124.Write(oprot);
               }
               oprot.WriteListEnd();
             }
@@ -5198,13 +5252,13 @@ namespace Apache.Cassandra
               if (field.Type == TType.List) {
                 {
                   Success = new List<KeySlice>();
-                  TList _list121 = iprot.ReadListBegin();
-                  for( int _i122 = 0; _i122 < _list121.Count; ++_i122)
+                  TList _list125 = iprot.ReadListBegin();
+                  for( int _i126 = 0; _i126 < _list125.Count; ++_i126)
                   {
-                    KeySlice _elem123 = new KeySlice();
-                    _elem123 = new KeySlice();
-                    _elem123.Read(iprot);
-                    Success.Add(_elem123);
+                    KeySlice _elem127 = new KeySlice();
+                    _elem127 = new KeySlice();
+                    _elem127.Read(iprot);
+                    Success.Add(_elem127);
                   }
                   iprot.ReadListEnd();
                 }
@@ -5258,9 +5312,9 @@ namespace Apache.Cassandra
             oprot.WriteFieldBegin(field);
             {
               oprot.WriteListBegin(new TList(TType.Struct, Success.Count));
-              foreach (KeySlice _iter124 in Success)
+              foreach (KeySlice _iter128 in Success)
               {
-                _iter124.Write(oprot);
+                _iter128.Write(oprot);
               }
               oprot.WriteListEnd();
             }
@@ -5587,13 +5641,13 @@ namespace Apache.Cassandra
               if (field.Type == TType.List) {
                 {
                   Success = new List<KeySlice>();
-                  TList _list125 = iprot.ReadListBegin();
-                  for( int _i126 = 0; _i126 < _list125.Count; ++_i126)
+                  TList _list129 = iprot.ReadListBegin();
+                  for( int _i130 = 0; _i130 < _list129.Count; ++_i130)
                   {
-                    KeySlice _elem127 = new KeySlice();
-                    _elem127 = new KeySlice();
-                    _elem127.Read(iprot);
-                    Success.Add(_elem127);
+                    KeySlice _elem131 = new KeySlice();
+                    _elem131 = new KeySlice();
+                    _elem131.Read(iprot);
+                    Success.Add(_elem131);
                   }
                   iprot.ReadListEnd();
                 }
@@ -5647,9 +5701,9 @@ namespace Apache.Cassandra
             oprot.WriteFieldBegin(field);
             {
               oprot.WriteListBegin(new TList(TType.Struct, Success.Count));
-              foreach (KeySlice _iter128 in Success)
+              foreach (KeySlice _iter132 in Success)
               {
-                _iter128.Write(oprot);
+                _iter132.Write(oprot);
               }
               oprot.WriteListEnd();
             }
@@ -7078,37 +7132,37 @@ namespace Apache.Cassandra
               if (field.Type == TType.Map) {
                 {
                   Mutation_map = new Dictionary<byte[], Dictionary<string, List<Mutation>>>();
-                  TMap _map129 = iprot.ReadMapBegin();
-                  for( int _i130 = 0; _i130 < _map129.Count; ++_i130)
+                  TMap _map133 = iprot.ReadMapBegin();
+                  for( int _i134 = 0; _i134 < _map133.Count; ++_i134)
                   {
-                    byte[] _key131;
-                    Dictionary<string, List<Mutation>> _val132;
-                    _key131 = iprot.ReadBinary();
+                    byte[] _key135;
+                    Dictionary<string, List<Mutation>> _val136;
+                    _key135 = iprot.ReadBinary();
                     {
-                      _val132 = new Dictionary<string, List<Mutation>>();
-                      TMap _map133 = iprot.ReadMapBegin();
-                      for( int _i134 = 0; _i134 < _map133.Count; ++_i134)
+                      _val136 = new Dictionary<string, List<Mutation>>();
+                      TMap _map137 = iprot.ReadMapBegin();
+                      for( int _i138 = 0; _i138 < _map137.Count; ++_i138)
                       {
-                        string _key135;
-                        List<Mutation> _val136;
-                        _key135 = iprot.ReadString();
+                        string _key139;
+                        List<Mutation> _val140;
+                        _key139 = iprot.ReadString();
                         {
-                          _val136 = new List<Mutation>();
-                          TList _list137 = iprot.ReadListBegin();
-                          for( int _i138 = 0; _i138 < _list137.Count; ++_i138)
+                          _val140 = new List<Mutation>();
+                          TList _list141 = iprot.ReadListBegin();
+                          for( int _i142 = 0; _i142 < _list141.Count; ++_i142)
                           {
-                            Mutation _elem139 = new Mutation();
-                            _elem139 = new Mutation();
-                            _elem139.Read(iprot);
-                            _val136.Add(_elem139);
+                            Mutation _elem143 = new Mutation();
+                            _elem143 = new Mutation();
+                            _elem143.Read(iprot);
+                            _val140.Add(_elem143);
                           }
                           iprot.ReadListEnd();
                         }
-                        _val132[_key135] = _val136;
+                        _val136[_key139] = _val140;
                       }
                       iprot.ReadMapEnd();
                     }
-                    Mutation_map[_key131] = _val132;
+                    Mutation_map[_key135] = _val136;
                   }
                   iprot.ReadMapEnd();
                 }
@@ -7143,19 +7197,19 @@ namespace Apache.Cassandra
           oprot.WriteFieldBegin(field);
           {
             oprot.WriteMapBegin(new TMap(TType.String, TType.Map, Mutation_map.Count));
-            foreach (byte[] _iter140 in Mutation_map.Keys)
+            foreach (byte[] _iter144 in Mutation_map.Keys)
             {
-              oprot.WriteBinary(_iter140);
+              oprot.WriteBinary(_iter144);
               {
-                oprot.WriteMapBegin(new TMap(TType.String, TType.List, Mutation_map[_iter140].Count));
-                foreach (string _iter141 in Mutation_map[_iter140].Keys)
+                oprot.WriteMapBegin(new TMap(TType.String, TType.List, Mutation_map[_iter144].Count));
+                foreach (string _iter145 in Mutation_map[_iter144].Keys)
                 {
-                  oprot.WriteString(_iter141);
+                  oprot.WriteString(_iter145);
                   {
-                    oprot.WriteListBegin(new TList(TType.Struct, Mutation_map[_iter140][_iter141].Count));
-                    foreach (Mutation _iter142 in Mutation_map[_iter140][_iter141])
+                    oprot.WriteListBegin(new TList(TType.Struct, Mutation_map[_iter144][_iter145].Count));
+                    foreach (Mutation _iter146 in Mutation_map[_iter144][_iter145])
                     {
-                      _iter142.Write(oprot);
+                      _iter146.Write(oprot);
                     }
                     oprot.WriteListEnd();
                   }
@@ -7688,24 +7742,24 @@ namespace Apache.Cassandra
               if (field.Type == TType.Map) {
                 {
                   Success = new Dictionary<string, List<string>>();
-                  TMap _map143 = iprot.ReadMapBegin();
-                  for( int _i144 = 0; _i144 < _map143.Count; ++_i144)
+                  TMap _map147 = iprot.ReadMapBegin();
+                  for( int _i148 = 0; _i148 < _map147.Count; ++_i148)
                   {
-                    string _key145;
-                    List<string> _val146;
-                    _key145 = iprot.ReadString();
+                    string _key149;
+                    List<string> _val150;
+                    _key149 = iprot.ReadString();
                     {
-                      _val146 = new List<string>();
-                      TList _list147 = iprot.ReadListBegin();
-                      for( int _i148 = 0; _i148 < _list147.Count; ++_i148)
+                      _val150 = new List<string>();
+                      TList _list151 = iprot.ReadListBegin();
+                      for( int _i152 = 0; _i152 < _list151.Count; ++_i152)
                       {
-                        string _elem149 = null;
-                        _elem149 = iprot.ReadString();
-                        _val146.Add(_elem149);
+                        string _elem153 = null;
+                        _elem153 = iprot.ReadString();
+                        _val150.Add(_elem153);
                       }
                       iprot.ReadListEnd();
                     }
-                    Success[_key145] = _val146;
+                    Success[_key149] = _val150;
                   }
                   iprot.ReadMapEnd();
                 }
@@ -7743,14 +7797,14 @@ namespace Apache.Cassandra
             oprot.WriteFieldBegin(field);
             {
               oprot.WriteMapBegin(new TMap(TType.String, TType.List, Success.Count));
-              foreach (string _iter150 in Success.Keys)
+              foreach (string _iter154 in Success.Keys)
               {
-                oprot.WriteString(_iter150);
+                oprot.WriteString(_iter154);
                 {
-                  oprot.WriteListBegin(new TList(TType.String, Success[_iter150].Count));
-                  foreach (string _iter151 in Success[_iter150])
+                  oprot.WriteListBegin(new TList(TType.String, Success[_iter154].Count));
+                  foreach (string _iter155 in Success[_iter154])
                   {
-                    oprot.WriteString(_iter151);
+                    oprot.WriteString(_iter155);
                   }
                   oprot.WriteListEnd();
                 }
@@ -7889,13 +7943,13 @@ namespace Apache.Cassandra
               if (field.Type == TType.List) {
                 {
                   Success = new List<KsDef>();
-                  TList _list152 = iprot.ReadListBegin();
-                  for( int _i153 = 0; _i153 < _list152.Count; ++_i153)
+                  TList _list156 = iprot.ReadListBegin();
+                  for( int _i157 = 0; _i157 < _list156.Count; ++_i157)
                   {
-                    KsDef _elem154 = new KsDef();
-                    _elem154 = new KsDef();
-                    _elem154.Read(iprot);
-                    Success.Add(_elem154);
+                    KsDef _elem158 = new KsDef();
+                    _elem158 = new KsDef();
+                    _elem158.Read(iprot);
+                    Success.Add(_elem158);
                   }
                   iprot.ReadListEnd();
                 }
@@ -7933,9 +7987,9 @@ namespace Apache.Cassandra
             oprot.WriteFieldBegin(field);
             {
               oprot.WriteListBegin(new TList(TType.Struct, Success.Count));
-              foreach (KsDef _iter155 in Success)
+              foreach (KsDef _iter159 in Success)
               {
-                _iter155.Write(oprot);
+                _iter159.Write(oprot);
               }
               oprot.WriteListEnd();
             }
@@ -8370,13 +8424,13 @@ namespace Apache.Cassandra
               if (field.Type == TType.List) {
                 {
                   Success = new List<TokenRange>();
-                  TList _list156 = iprot.ReadListBegin();
-                  for( int _i157 = 0; _i157 < _list156.Count; ++_i157)
+                  TList _list160 = iprot.ReadListBegin();
+                  for( int _i161 = 0; _i161 < _list160.Count; ++_i161)
                   {
-                    TokenRange _elem158 = new TokenRange();
-                    _elem158 = new TokenRange();
-                    _elem158.Read(iprot);
-                    Success.Add(_elem158);
+                    TokenRange _elem162 = new TokenRange();
+                    _elem162 = new TokenRange();
+                    _elem162.Read(iprot);
+                    Success.Add(_elem162);
                   }
                   iprot.ReadListEnd();
                 }
@@ -8414,9 +8468,9 @@ namespace Apache.Cassandra
             oprot.WriteFieldBegin(field);
             {
               oprot.WriteListBegin(new TList(TType.Struct, Success.Count));
-              foreach (TokenRange _iter159 in Success)
+              foreach (TokenRange _iter163 in Success)
               {
-                _iter159.Write(oprot);
+                _iter163.Write(oprot);
               }
               oprot.WriteListEnd();
             }
@@ -8438,6 +8492,190 @@ namespace Apache.Cassandra
 
       public override string ToString() {
         StringBuilder sb = new StringBuilder("describe_ring_result(");
+        sb.Append("Success: ");
+        sb.Append(Success);
+        sb.Append(",Ire: ");
+        sb.Append(Ire== null ? "<null>" : Ire.ToString());
+        sb.Append(")");
+        return sb.ToString();
+      }
+
+    }
+
+
+    [Serializable]
+    public partial class describe_token_map_args : TBase
+    {
+
+      public describe_token_map_args() {
+      }
+
+      public void Read (TProtocol iprot)
+      {
+        TField field;
+        iprot.ReadStructBegin();
+        while (true)
+        {
+          field = iprot.ReadFieldBegin();
+          if (field.Type == TType.Stop) { 
+            break;
+          }
+          switch (field.ID)
+          {
+            default: 
+              TProtocolUtil.Skip(iprot, field.Type);
+              break;
+          }
+          iprot.ReadFieldEnd();
+        }
+        iprot.ReadStructEnd();
+      }
+
+      public void Write(TProtocol oprot) {
+        TStruct struc = new TStruct("describe_token_map_args");
+        oprot.WriteStructBegin(struc);
+        oprot.WriteFieldStop();
+        oprot.WriteStructEnd();
+      }
+
+      public override string ToString() {
+        StringBuilder sb = new StringBuilder("describe_token_map_args(");
+        sb.Append(")");
+        return sb.ToString();
+      }
+
+    }
+
+
+    [Serializable]
+    public partial class describe_token_map_result : TBase
+    {
+      private Dictionary<string, string> _success;
+      private InvalidRequestException _ire;
+
+      public Dictionary<string, string> Success
+      {
+        get
+        {
+          return _success;
+        }
+        set
+        {
+          __isset.success = true;
+          this._success = value;
+        }
+      }
+
+      public InvalidRequestException Ire
+      {
+        get
+        {
+          return _ire;
+        }
+        set
+        {
+          __isset.ire = true;
+          this._ire = value;
+        }
+      }
+
+
+      public Isset __isset;
+      [Serializable]
+      public struct Isset {
+        public bool success;
+        public bool ire;
+      }
+
+      public describe_token_map_result() {
+      }
+
+      public void Read (TProtocol iprot)
+      {
+        TField field;
+        iprot.ReadStructBegin();
+        while (true)
+        {
+          field = iprot.ReadFieldBegin();
+          if (field.Type == TType.Stop) { 
+            break;
+          }
+          switch (field.ID)
+          {
+            case 0:
+              if (field.Type == TType.Map) {
+                {
+                  Success = new Dictionary<string, string>();
+                  TMap _map164 = iprot.ReadMapBegin();
+                  for( int _i165 = 0; _i165 < _map164.Count; ++_i165)
+                  {
+                    string _key166;
+                    string _val167;
+                    _key166 = iprot.ReadString();
+                    _val167 = iprot.ReadString();
+                    Success[_key166] = _val167;
+                  }
+                  iprot.ReadMapEnd();
+                }
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            case 1:
+              if (field.Type == TType.Struct) {
+                Ire = new InvalidRequestException();
+                Ire.Read(iprot);
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            default: 
+              TProtocolUtil.Skip(iprot, field.Type);
+              break;
+          }
+          iprot.ReadFieldEnd();
+        }
+        iprot.ReadStructEnd();
+      }
+
+      public void Write(TProtocol oprot) {
+        TStruct struc = new TStruct("describe_token_map_result");
+        oprot.WriteStructBegin(struc);
+        TField field = new TField();
+
+        if (this.__isset.success) {
+          if (Success != null) {
+            field.Name = "Success";
+            field.Type = TType.Map;
+            field.ID = 0;
+            oprot.WriteFieldBegin(field);
+            {
+              oprot.WriteMapBegin(new TMap(TType.String, TType.String, Success.Count));
+              foreach (string _iter168 in Success.Keys)
+              {
+                oprot.WriteString(_iter168);
+                oprot.WriteString(Success[_iter168]);
+              }
+              oprot.WriteMapEnd();
+            }
+            oprot.WriteFieldEnd();
+          }
+        } else if (this.__isset.ire) {
+          if (Ire != null) {
+            field.Name = "Ire";
+            field.Type = TType.Struct;
+            field.ID = 1;
+            oprot.WriteFieldBegin(field);
+            Ire.Write(oprot);
+            oprot.WriteFieldEnd();
+          }
+        }
+        oprot.WriteFieldStop();
+        oprot.WriteStructEnd();
+      }
+
+      public override string ToString() {
+        StringBuilder sb = new StringBuilder("describe_token_map_result(");
         sb.Append("Success: ");
         sb.Append(Success);
         sb.Append(",Ire: ");
@@ -9185,12 +9423,12 @@ namespace Apache.Cassandra
               if (field.Type == TType.List) {
                 {
                   Success = new List<string>();
-                  TList _list160 = iprot.ReadListBegin();
-                  for( int _i161 = 0; _i161 < _list160.Count; ++_i161)
+                  TList _list169 = iprot.ReadListBegin();
+                  for( int _i170 = 0; _i170 < _list169.Count; ++_i170)
                   {
-                    string _elem162 = null;
-                    _elem162 = iprot.ReadString();
-                    Success.Add(_elem162);
+                    string _elem171 = null;
+                    _elem171 = iprot.ReadString();
+                    Success.Add(_elem171);
                   }
                   iprot.ReadListEnd();
                 }
@@ -9228,9 +9466,9 @@ namespace Apache.Cassandra
             oprot.WriteFieldBegin(field);
             {
               oprot.WriteListBegin(new TList(TType.String, Success.Count));
-              foreach (string _iter163 in Success)
+              foreach (string _iter172 in Success)
               {
-                oprot.WriteString(_iter163);
+                oprot.WriteString(_iter172);
               }
               oprot.WriteListEnd();
             }
@@ -11329,12 +11567,12 @@ namespace Apache.Cassandra
               if (field.Type == TType.List) {
                 {
                   Values = new List<byte[]>();
-                  TList _list164 = iprot.ReadListBegin();
-                  for( int _i165 = 0; _i165 < _list164.Count; ++_i165)
+                  TList _list173 = iprot.ReadListBegin();
+                  for( int _i174 = 0; _i174 < _list173.Count; ++_i174)
                   {
-                    byte[] _elem166 = null;
-                    _elem166 = iprot.ReadBinary();
-                    Values.Add(_elem166);
+                    byte[] _elem175 = null;
+                    _elem175 = iprot.ReadBinary();
+                    Values.Add(_elem175);
                   }
                   iprot.ReadListEnd();
                 }
@@ -11370,9 +11608,9 @@ namespace Apache.Cassandra
           oprot.WriteFieldBegin(field);
           {
             oprot.WriteListBegin(new TList(TType.String, Values.Count));
-            foreach (byte[] _iter167 in Values)
+            foreach (byte[] _iter176 in Values)
             {
-              oprot.WriteBinary(_iter167);
+              oprot.WriteBinary(_iter176);
             }
             oprot.WriteListEnd();
           }

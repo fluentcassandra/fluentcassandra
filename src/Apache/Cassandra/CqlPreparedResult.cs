@@ -22,6 +22,7 @@ namespace Apache.Cassandra
     private int _itemId;
     private int _count;
     private List<string> _variable_types;
+    private List<string> _variable_names;
 
     public int ItemId
     {
@@ -62,6 +63,19 @@ namespace Apache.Cassandra
       }
     }
 
+    public List<string> Variable_names
+    {
+      get
+      {
+        return _variable_names;
+      }
+      set
+      {
+        __isset.variable_names = true;
+        this._variable_names = value;
+      }
+    }
+
 
     public Isset __isset;
     [Serializable]
@@ -69,6 +83,7 @@ namespace Apache.Cassandra
       public bool itemId;
       public bool count;
       public bool variable_types;
+      public bool variable_names;
     }
 
     public CqlPreparedResult() {
@@ -117,6 +132,23 @@ namespace Apache.Cassandra
               TProtocolUtil.Skip(iprot, field.Type);
             }
             break;
+          case 4:
+            if (field.Type == TType.List) {
+              {
+                Variable_names = new List<string>();
+                TList _list90 = iprot.ReadListBegin();
+                for( int _i91 = 0; _i91 < _list90.Count; ++_i91)
+                {
+                  string _elem92 = null;
+                  _elem92 = iprot.ReadString();
+                  Variable_names.Add(_elem92);
+                }
+                iprot.ReadListEnd();
+              }
+            } else { 
+              TProtocolUtil.Skip(iprot, field.Type);
+            }
+            break;
           default: 
             TProtocolUtil.Skip(iprot, field.Type);
             break;
@@ -153,9 +185,24 @@ namespace Apache.Cassandra
         oprot.WriteFieldBegin(field);
         {
           oprot.WriteListBegin(new TList(TType.String, Variable_types.Count));
-          foreach (string _iter90 in Variable_types)
+          foreach (string _iter93 in Variable_types)
           {
-            oprot.WriteString(_iter90);
+            oprot.WriteString(_iter93);
+          }
+          oprot.WriteListEnd();
+        }
+        oprot.WriteFieldEnd();
+      }
+      if (Variable_names != null && __isset.variable_names) {
+        field.Name = "variable_names";
+        field.Type = TType.List;
+        field.ID = 4;
+        oprot.WriteFieldBegin(field);
+        {
+          oprot.WriteListBegin(new TList(TType.String, Variable_names.Count));
+          foreach (string _iter94 in Variable_names)
+          {
+            oprot.WriteString(_iter94);
           }
           oprot.WriteListEnd();
         }
@@ -173,6 +220,8 @@ namespace Apache.Cassandra
       sb.Append(Count);
       sb.Append(",Variable_types: ");
       sb.Append(Variable_types);
+      sb.Append(",Variable_names: ");
+      sb.Append(Variable_names);
       sb.Append(")");
       return sb.ToString();
     }
