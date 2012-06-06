@@ -238,5 +238,14 @@ namespace FluentCassandra.Operations
 		}
 
 		#endregion
+
+		#region version 1.1.1
+
+		public Dictionary<string, string> describe_token_map()
+		{
+			return _client.describe_token_map();
+		}
+
+		#endregion
 	}
 }
