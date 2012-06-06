@@ -13,7 +13,7 @@ namespace FluentCassandra
 		public FluentSuperColumnFamily(CassandraObject key, string columnFamily)
 			: base(key, columnFamily, new CassandraColumnFamilySchema {
 				FamilyName = columnFamily,
-				KeyType = typeof(BytesType),
+				DefaultKeyValueType = typeof(BytesType),
 				SuperColumnNameType = typeof(CompareWith),
 				ColumnNameType = typeof(CompareSubcolumnWith)
 			}) { }
@@ -63,7 +63,7 @@ namespace FluentCassandra
 		public CassandraObject Key
 		{
 			get { return _key; }
-			set { _key = value.GetValue(GetSchema().KeyType); }
+			set { _key = value.GetValue(GetSchema().DefaultKeyValueType); }
 		}
 
 		/// <summary>

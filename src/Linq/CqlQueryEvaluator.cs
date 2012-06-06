@@ -158,12 +158,7 @@ namespace FluentCassandra.Linq
 
 					// if object queries
 					if (GetBaseType(memExp) != typeof(ICqlRow))
-					{
-						if (_conventions.KeyPropertyNames.Contains(name, _conventions.AreKeyPropertyNamesCaseSensitive ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal))
-							name = "KEY";
-
 						return name;
-					}
 
 					if (name != "Key")
 						throw new NotSupportedException(name + " is not a supported property.");

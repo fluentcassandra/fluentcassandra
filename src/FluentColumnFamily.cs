@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using FluentCassandra.Types;
-using FluentCassandra.Linq;
 
 namespace FluentCassandra
 {
@@ -13,12 +12,12 @@ namespace FluentCassandra
 		public FluentColumnFamily(CassandraObject key, string columnFamily)
 			: base(key, columnFamily, new CassandraColumnFamilySchema {
 				FamilyName = columnFamily,
-				KeyType = typeof(BytesType),
+				DefaultKeyValueType = typeof(BytesType),
 				ColumnNameType = typeof(CompareWith)
 			}) { }
 	}
 
-	public class FluentColumnFamily : FluentRecord<FluentColumn>, IFluentBaseColumnFamily, IFluentRecordExpression, ICqlRow
+	public class FluentColumnFamily : FluentRecord<FluentColumn>, IFluentBaseColumnFamily, IFluentRecordExpression
 	{
 		private CassandraObject _key;
 		private FluentColumnList<FluentColumn> _columns;
@@ -61,7 +60,7 @@ namespace FluentCassandra
 		public CassandraObject Key
 		{
 			get { return _key; }
-			set { _key = value.GetValue(GetSchema().KeyType); }
+			set { _key = value.GetValue(GetSchema().DefaultKeyValueType); }
 		}
 
 		/// <summary>

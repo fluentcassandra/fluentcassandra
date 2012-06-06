@@ -38,7 +38,7 @@ CREATE COLUMNFAMILY Posts (
 				// create column family using API
 				keyspace.TryCreateColumnFamily(new CassandraColumnFamilySchema {
 					FamilyName = "Tags",
-					KeyType = CassandraType.AsciiType,
+					DefaultKeyValueType = CassandraType.AsciiType,
 					ColumnNameType = CassandraType.Int32Type,
 					DefaultColumnValueType = CassandraType.UTF8Type
 				});
@@ -47,7 +47,7 @@ CREATE COLUMNFAMILY Posts (
 				keyspace.TryCreateColumnFamily(new CassandraColumnFamilySchema {
 					FamilyName = "Comments",
 					FamilyType = ColumnType.Super,
-					KeyType = CassandraType.AsciiType,
+					DefaultKeyValueType = CassandraType.AsciiType,
 					SuperColumnNameType = CassandraType.DateType,
 					ColumnNameType = CassandraType.UTF8Type,
 					DefaultColumnValueType = CassandraType.UTF8Type

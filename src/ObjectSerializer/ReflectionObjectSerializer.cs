@@ -31,11 +31,6 @@ namespace FluentCassandra.ObjectSerializer
 			foreach (var prop in props)
 			{
 				var name = prop.Name;
-				if (conventions.KeyPropertyNames.Contains(name, conventions.AreKeyPropertyNamesCaseSensitive ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal))
-				{
-					args.Add(Convert.ChangeType(row.Key, prop.PropertyType));
-					continue;
-				}
 
 				if (row.Columns.Any(x => x.ColumnName == name))
 					args.Add(Convert.ChangeType(row[name], prop.PropertyType));
@@ -57,11 +52,6 @@ namespace FluentCassandra.ObjectSerializer
 			foreach (var prop in _type.GetProperties(BindingFlags.Public | BindingFlags.Instance))
 			{
 				var name = prop.Name;
-				if (conventions.KeyPropertyNames.Contains(name, conventions.AreKeyPropertyNamesCaseSensitive ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal))
-				{
-					prop.SetValue(obj, Convert.ChangeType(row.Key, prop.PropertyType), null);
-					continue;
-				}
 
 				if (row.Columns.Any(x => x.ColumnName == name))
 					prop.SetValue(obj, Convert.ChangeType(row[name], prop.PropertyType), null);

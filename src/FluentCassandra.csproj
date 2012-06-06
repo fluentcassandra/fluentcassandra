@@ -122,6 +122,9 @@
     <Compile Include="Connections\TimedLock.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="CassandraCqlRowSchema.cs" />
+    <Compile Include="FluentCqlRow.cs" />
+    <Compile Include="ObjectSerializer\ObjectSerializerConventions.cs" />
     <Compile Include="System\DateTimePrecise.cs" />
     <Compile Include="FluentCassandraException.cs" />
     <Compile Include="FluentColumn.cs">
@@ -157,7 +160,6 @@
     <Compile Include="Linq\CqlObjectQuery.cs" />
     <Compile Include="Linq\ICassandraColumnFamilyInfo.cs" />
     <Compile Include="ObjectSerializer\IObjectSerializer.cs" />
-    <Compile Include="ObjectSerializer\ObjectSerializerConventions.cs" />
     <Compile Include="Linq\CqlObjectQueryProvider.cs" />
     <Compile Include="Linq\CqlQuery.cs" />
     <Compile Include="Linq\CqlQueryEvaluator.cs" />

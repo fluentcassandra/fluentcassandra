@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Apache.Cassandra;
 using FluentCassandra.Connections;
@@ -12,7 +13,6 @@ namespace FluentCassandra
 	public class CassandraContext : IDisposable
 	{
 		private readonly IList<IFluentMutationTracker> _trackers;
-		private readonly IConnectionBuilder _connectionBuilder;
 		private CassandraSession _session;
 
 		/// <summary>
@@ -61,9 +61,9 @@ namespace FluentCassandra
 			ThrowErrors = true;
 
 			_trackers = new List<IFluentMutationTracker>();
-			_connectionBuilder = connectionBuilder;
+			ConnectionBuilder = connectionBuilder;
 
-			Keyspace = new CassandraKeyspace(_connectionBuilder.Keyspace, this);
+			Keyspace = new CassandraKeyspace(ConnectionBuilder.Keyspace, this);
 		}
 
 		/// <summary>
@@ -119,6 +119,11 @@ namespace FluentCassandra
 		/// 
 		/// </summary>
 		public CassandraKeyspace Keyspace { get; set; }
+
+		/// <summary>
+		/// The connection builder that is currently in use for this context.
+		/// </summary>
+		public IConnectionBuilder ConnectionBuilder { get; private set; }
 
 		#region Cassandra System For Server
 
@@ -176,7 +181,12 @@ namespace FluentCassandra
 
 		public bool KeyspaceExists(string keyspaceName)
 		{
-			return DescribeKeyspaces().Any(keyspace => keyspace.KeyspaceName == keyspaceName);
+			return DescribeKeyspaces().Any(keyspace => String.Equals(keyspace.KeyspaceName, keyspaceName, StringComparison.OrdinalIgnoreCase));
+		}
+
+		public bool ColumnFamilyExists(string columnFamily)
+		{
+			return Keyspace.ColumnFamilyExists(columnFamily);
 		}
 
 		public IEnumerable<CassandraKeyspace> DescribeKeyspaces()
@@ -285,6 +295,21 @@ namespace FluentCassandra
 		/// 
 		/// </summary>
 		/// <param name="cqlQuery"></param>
+		public void TryExecuteNonQuery(UTF8Type cqlQuery) {
+			try
+			{
+				ExecuteNonQuery(cqlQuery);
+			}
+			catch (Exception exc)
+			{
+				Debug.WriteLine(exc);
+			}
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="cqlQuery"></param>
 		public void ExecuteNonQuery(UTF8Type cqlQuery)
 		{
 			var op = new ExecuteCqlNonQuery(cqlQuery);
@@ -316,7 +341,7 @@ namespace FluentCassandra
 			var localSession = _session == null;
 			var session = _session;
 			if (session == null)
-				session = new CassandraSession(_connectionBuilder);
+				session = new CassandraSession(ConnectionBuilder);
 
 			action.Context = this;
 

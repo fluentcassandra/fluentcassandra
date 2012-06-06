@@ -19,6 +19,8 @@ namespace FluentCassandra
 			ValueType = CassandraType.GetCassandraType(def.Validation_class);
 		}
 
+		public bool IsKey { get; set; }
+
 		private CassandraObject _name;
 		public CassandraObject Name
 		{

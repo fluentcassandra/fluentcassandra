@@ -228,6 +228,13 @@ namespace FluentCassandra.Operations
 				}
 			}
 
+			return ConvertColumnToFluentColumn(col, colSchema);
+		}
+
+		public static FluentColumn ConvertColumnToFluentColumn(Column col, CassandraColumnSchema colSchema) 
+		{
+			colSchema = colSchema ?? new CassandraColumnSchema();
+
 			var fcol = new FluentColumn(colSchema) {
 				ColumnName = CassandraObject.GetCassandraObjectFromDatabaseByteArray(col.Name, colSchema.NameType),
 				ColumnValue = CassandraObject.GetCassandraObjectFromDatabaseByteArray(col.Value, colSchema.ValueType),

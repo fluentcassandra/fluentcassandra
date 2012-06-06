@@ -11,6 +11,10 @@ namespace FluentCassandra
 		public const string ReplicaPlacementStrategyLocal = "org.apache.cassandra.locator.LocalStrategy";
 		public const string ReplicaPlacementStrategyNetworkTopology = "org.apache.cassandra.locator.NetworkTopologyStrategy";
 
+#if DEBUG
+		private KsDef _def;
+#endif
+
 		public CassandraKeyspaceSchema()
 		{
 			Strategy = ReplicaPlacementStrategySimple;
@@ -21,6 +25,10 @@ namespace FluentCassandra
 
 		public CassandraKeyspaceSchema(KsDef def)
 		{
+#if DEBUG
+			_def = def;
+#endif
+
 			Name = def.Name;
 			Strategy = def.Strategy_class;
 			StrategyOptions = def.Strategy_options ?? new Dictionary<string, string>();

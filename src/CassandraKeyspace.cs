@@ -122,7 +122,7 @@ namespace FluentCassandra
 
 		public bool ColumnFamilyExists(string columnFamilyName)
 		{
-			return GetSchema().ColumnFamilies.Any(cf => cf.FamilyName == columnFamilyName);
+			return GetSchema().ColumnFamilies.Any(cf => String.Equals(cf.FamilyName, columnFamilyName, StringComparison.OrdinalIgnoreCase));
 		}
 
 		public void ClearCachedKeyspaceSchema()
@@ -141,8 +141,9 @@ namespace FluentCassandra
 						return ctx.Session.GetClient().describe_keyspace(KeyspaceName);
 					})));
 				}
-				catch (CassandraOperationException)
+				catch (CassandraOperationException exc)
 				{
+					Debug.WriteLine(exc);
 					_cachedSchema = new CassandraKeyspaceSchema {
 						Name = KeyspaceName
 					};

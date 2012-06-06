@@ -52,6 +52,7 @@
     <Compile Include="BigDecimalTest.cs" />
     <Compile Include="Bugs\Issue28GuidGeneratorInParallelContext.cs" />
     <Compile Include="Bugs\Issue25JavaBigDecimalBinaryConversion.cs" />
+    <Compile Include="Bugs\Issue36KeyAliasSupport.cs" />
     <Compile Include="CassandraDatabaseSetupFixture.cs" />
     <Compile Include="CassandraQueryTest.cs" />
     <Compile Include="Connections\ConnectionProviderTests.cs" />
@@ -108,7 +109,9 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Cql\" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
