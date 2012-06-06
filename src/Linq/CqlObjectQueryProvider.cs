@@ -20,6 +20,11 @@ namespace FluentCassandra.Linq
 			get { return _family.FamilyName; }
 		}
 
+		public CassandraColumnFamilySchema GetSchema()
+		{
+			return _family.GetSchema();
+		}
+
 		public CqlObjectQuery<T> ToQuery()
 		{
 			var queryable = (IQueryable)this;

@@ -6,5 +6,6 @@ namespace FluentCassandra.Linq
 	public interface ICassandraColumnFamilyInfo
 	{
 		string FamilyName { get; }
+		CassandraColumnFamilySchema GetSchema();
 	}
 }

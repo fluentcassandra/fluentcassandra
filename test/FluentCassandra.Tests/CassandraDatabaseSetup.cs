@@ -94,7 +94,7 @@ namespace FluentCassandra
 
 				db.ExecuteNonQuery(@"
 CREATE COLUMNFAMILY Users (
-	KEY int PRIMARY KEY,
+	Id int PRIMARY KEY,
 	Name ascii,
 	Email ascii,
 	Age int

@@ -56,7 +56,7 @@ namespace FluentCassandra.Linq
 		/// <returns></returns>
 		public IEnumerator<T> GetEnumerator()
 		{
-			var result = CqlQueryEvaluator.GetCql(Expression, _family.ObjectConventions);
+			var result = CqlQueryEvaluator.GetCql(Expression);
 			var fluentObjects = _family.Context.ExecuteQuery(result);
 
 			var serializer = ObjectSerializerFactory.Get(typeof(T));
@@ -114,7 +114,7 @@ namespace FluentCassandra.Linq
 		/// <returns></returns>
 		public override string ToString()
 		{
-			return CqlQueryEvaluator.GetCql(Expression, _family.ObjectConventions);
+			return CqlQueryEvaluator.GetCql(Expression);
 		}
 	}
 }

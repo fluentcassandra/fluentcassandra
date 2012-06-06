@@ -50,6 +50,9 @@ APPLY BATCH;
 			// assert
 			var results = actual.ToList();
 			Assert.Equal(4, results.Count);
+
+			var row = results.FirstOrDefault();
+			Assert.Equal(2, row.Columns.Count);
 		}
 
 		[Fact]
@@ -88,6 +91,9 @@ APPLY BATCH;
 			// assert
 			var results = actual.ToList();
 			Assert.Equal(7, results.Count);
+
+			var row = results.FirstOrDefault();
+			Assert.Equal(4, row.Columns.Count);
 		}
 	}
 }

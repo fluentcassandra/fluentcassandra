@@ -24,7 +24,7 @@ namespace FluentCassandra.Operations
 		public void With_Compression()
 		{
 			// arrange
-			var insertQuery = @"INSERT INTO Users (KEY, Name, Email, Age) VALUES (23, '" + new String('X', 200) + "', 'test@test.com', 43)";
+			var insertQuery = @"INSERT INTO Users (Id, Name, Email, Age) VALUES (23, '" + new String('X', 200) + "', 'test@test.com', 43)";
 
 			// act
 			_db.ExecuteNonQuery(insertQuery);

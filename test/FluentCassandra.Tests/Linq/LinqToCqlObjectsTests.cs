@@ -108,7 +108,7 @@ namespace FluentCassandra.Linq
 		[Fact]
 		public void WHERE_Using_KEY()
 		{
-			var expected = "SELECT * FROM Users WHERE KEY = 1234";
+			var expected = "SELECT * FROM Users WHERE Id = 1234";
 
 			var query =
 				from f in _family.AsObjectQueryable<User>()
@@ -123,7 +123,7 @@ namespace FluentCassandra.Linq
 		[Fact]
 		public void WHERE_Using_KEY_And_One_Parameter()
 		{
-			var expected = "SELECT * FROM Users WHERE KEY = 1234 AND Age = 10";
+			var expected = "SELECT * FROM Users WHERE Id = 1234 AND Age = 10";
 
 			var query =
 				from f in _family.AsObjectQueryable<User>()
@@ -166,7 +166,7 @@ namespace FluentCassandra.Linq
 		[Fact]
 		public void ORDER_BY_Two_Fields()
 		{
-			var expected = "SELECT * FROM Users ORDER BY Age ASC, KEY DESC";
+			var expected = "SELECT * FROM Users ORDER BY Age ASC, Id DESC";
 
 			var query =
 				from f in _family.AsObjectQueryable<User>()
@@ -181,7 +181,7 @@ namespace FluentCassandra.Linq
 		[Fact]
 		public void ORDER_BY_Two_Fields_2()
 		{
-			var expected = "SELECT * FROM Users ORDER BY Age DESC, KEY ASC";
+			var expected = "SELECT * FROM Users ORDER BY Age DESC, Id ASC";
 
 			var query =
 				from f in _family.AsObjectQueryable<User>()

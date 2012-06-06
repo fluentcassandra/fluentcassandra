@@ -13,14 +13,12 @@ namespace FluentCassandra.Linq
 	internal class CqlQueryEvaluator
 	{
 		private string _columnFamily;
-		private readonly ObjectSerializerConventions _conventions;
+		private CassandraColumnFamilySchema _schema;
 
-		internal CqlQueryEvaluator(ObjectSerializerConventions conventions = null)
+		internal CqlQueryEvaluator()
 		{
 			SelectFieldsArray = new List<string>();
 			OrderByFieldsArray = new List<string>();
-
-			_conventions = conventions;
 		}
 
 		public string Query
@@ -92,6 +90,7 @@ namespace FluentCassandra.Linq
 		private void AddTable(ICassandraColumnFamilyInfo provider)
 		{
 			_columnFamily = provider.FamilyName;
+			_schema = provider.GetSchema();
 		}
 
 		private void AddOrderByFieldDescending(Expression exp)
@@ -163,7 +162,7 @@ namespace FluentCassandra.Linq
 					if (name != "Key")
 						throw new NotSupportedException(name + " is not a supported property.");
 
-					return "KEY";
+					return _schema.KeyName.GetValue<string>();
 
 				case ExpressionType.Call:
 
@@ -183,9 +182,9 @@ namespace FluentCassandra.Linq
 
 		#region Expression Parsing
 
-		public static string GetCql(Expression expression, ObjectSerializerConventions conventions = null)
+		public static string GetCql(Expression expression)
 		{
-			var eval = new CqlQueryEvaluator(conventions);
+			var eval = new CqlQueryEvaluator();
 			eval.Evaluate(expression);
 
 			return eval.Query;
