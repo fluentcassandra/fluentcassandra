@@ -153,10 +153,10 @@ namespace FluentCassandra.Types
 		public static implicit operator DateTimeOffset?(CassandraObject o) { return ConvertTo<DateTimeOffset?>(o); }
 		public static implicit operator BigInteger?(CassandraObject o) { return ConvertTo<BigInteger?>(o); }
 
-		public static implicit operator object[](CassandraObject o) { return ConvertTo<object[]>(o); }
-		public static implicit operator List<object>(CassandraObject o) { return ConvertTo<List<object>>(o); }
-		public static implicit operator CassandraObject[](CassandraObject o) { return ConvertTo<CassandraObject[]>(o); }
-		public static implicit operator List<CassandraObject>(CassandraObject o) { return ConvertTo<List<CassandraObject>>(o); }
+		public static explicit operator object[](CassandraObject o) { return ConvertTo<object[]>(o); }
+		public static explicit operator List<object>(CassandraObject o) { return ConvertTo<List<object>>(o); }
+		public static explicit operator CassandraObject[](CassandraObject o) { return ConvertTo<CassandraObject[]>(o); } 
+		public static explicit operator List<CassandraObject>(CassandraObject o) { return ConvertTo<List<CassandraObject>>(o); }
 
 		#endregion
 
