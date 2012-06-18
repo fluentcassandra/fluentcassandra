@@ -187,6 +187,11 @@ namespace FluentCassandra.Types
 			return _dbType;
 		}
 
+		public static CassandraType CompositeType(params CassandraType[] hints)
+		{
+			return CompositeType((IEnumerable<CassandraType>)hints);
+		}
+
 		public static CassandraType CompositeType(IEnumerable<CassandraType> hints)
 		{
 			var sb = new StringBuilder();

@@ -141,6 +141,12 @@ namespace FluentCassandra
 			}));
 		}
 
+		public void TryDropKeyspace(string keyspace)
+		{
+			try { DropKeyspace(keyspace); }
+			catch (Exception exc) { Debug.WriteLine(exc); }
+		}
+
 		public string DropKeyspace(string keyspace)
 		{
 			return ExecuteOperation(new SimpleOperation<string>(ctx => {
@@ -164,6 +170,12 @@ namespace FluentCassandra
 			return ExecuteOperation(new SimpleOperation<string>(ctx => {
 				return ctx.Session.GetClient().system_update_column_family(definition);
 			}));
+		}
+
+		public void TryDropColumnFamily(string columnFamily)
+		{
+			try { DropColumnFamily(columnFamily); }
+			catch (Exception exc) { Debug.WriteLine(exc); }
 		}
 
 		public string DropColumnFamily(string columnFamily)

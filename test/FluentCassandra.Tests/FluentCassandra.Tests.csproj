@@ -53,6 +53,7 @@
     <Compile Include="Bugs\Issue28GuidGeneratorInParallelContext.cs" />
     <Compile Include="Bugs\Issue25JavaBigDecimalBinaryConversion.cs" />
     <Compile Include="Bugs\Issue36KeyAliasSupport.cs" />
+    <Compile Include="Bugs\IssueXXCompositeTypeAsKey.cs" />
     <Compile Include="CassandraDatabaseSetupFixture.cs" />
     <Compile Include="CassandraQueryTest.cs" />
     <Compile Include="Connections\ConnectionProviderTests.cs" />

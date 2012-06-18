@@ -63,9 +63,7 @@ namespace FluentCassandra
 			using (var db = new CassandraContext(session))
 			{
 				db.ThrowErrors = true;
-
-				try { db.DropKeyspace(Keyspace); }
-				catch (Exception exc) { Console.WriteLine(exc); }
+				db.TryDropKeyspace(Keyspace);
 
 				var keyspace = new CassandraKeyspace(new CassandraKeyspaceSchema {
 					Name = Keyspace

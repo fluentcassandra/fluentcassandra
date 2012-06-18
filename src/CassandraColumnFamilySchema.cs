@@ -11,15 +11,11 @@ namespace FluentCassandra
 		public static readonly AsciiType DefaultKeyName = "KEY";
 		public static readonly CassandraType DefaultKeyNameType = CassandraType.AsciiType;
 
-#if DEBUG
-		private CfDef _def;
-#endif
+		private readonly CfDef _def;
 
 		public CassandraColumnFamilySchema(CfDef def)
 		{
-#if DEBUG
 			_def = def;
-#endif
 
 			KeyspaceName = def.Keyspace;
 
@@ -47,7 +43,7 @@ namespace FluentCassandra
 			FamilyDescription = def.Comment;
 
 			KeyName = CassandraObject.GetCassandraObjectFromDatabaseByteArray(def.Key_alias, DefaultKeyNameType);
-			DefaultKeyValueType = defaultKeyValueType;
+			KeyValueType = defaultKeyValueType;
 
 			SuperColumnNameType = superColumnNameType;
 			ColumnNameType = columnNameType;
@@ -63,7 +59,7 @@ namespace FluentCassandra
 			FamilyDescription = null;
 
 			KeyName = DefaultKeyName;
-			DefaultKeyValueType = CassandraType.BytesType;
+			KeyValueType = CassandraType.BytesType;
 
 			SuperColumnNameType = type == ColumnType.Super ? CassandraType.BytesType : null;
 			ColumnNameType = CassandraType.BytesType;
@@ -79,7 +75,7 @@ namespace FluentCassandra
 		public string FamilyDescription { get; set; }
 
 		public CassandraObject KeyName { get; set; }
-		public CassandraType DefaultKeyValueType { get; set; }
+		public CassandraType KeyValueType { get; set; }
 
 		public CassandraType SuperColumnNameType { get; set; }
 		public CassandraType ColumnNameType { get; set; }
@@ -95,7 +91,7 @@ namespace FluentCassandra
 				Comment = schema.FamilyDescription,
 				Column_type = schema.FamilyType.ToString(),
 				Key_alias = schema.KeyName.ToBigEndian(),
-				Key_validation_class = schema.DefaultKeyValueType.DatabaseType,
+				Key_validation_class = schema.KeyValueType.DatabaseType,
 				Comparator_type = schema.ColumnNameType.DatabaseType,
 				Default_validation_class = schema.DefaultColumnValueType.DatabaseType
 			};
