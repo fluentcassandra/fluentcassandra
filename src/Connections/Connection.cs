@@ -96,6 +96,8 @@ namespace FluentCassandra.Connections
 		/// </summary>
 		public void Open()
 		{
+			CheckWasDisposed();
+
 			if (IsOpen)
 				return;
 
@@ -108,6 +110,8 @@ namespace FluentCassandra.Connections
 		/// </summary>
 		public void Close()
 		{
+			CheckWasDisposed();
+
 			if (!IsOpen)
 				return;
 
@@ -138,7 +142,11 @@ namespace FluentCassandra.Connections
 		/// </summary>
 		public Cassandra.Client Client
 		{
-			get { return _client; }
+			get 
+			{ 
+				CheckWasDisposed();
+				return _client; 
+			}
 		}
 
 		/// <summary>
@@ -150,6 +158,15 @@ namespace FluentCassandra.Connections
 		}
 
 		#region IDisposable Members
+
+		/// <summary>
+		/// 
+		/// </summary>
+		private void CheckWasDisposed()
+		{
+			if (WasDisposed)
+				throw new ObjectDisposedException("connection has been disposed of");
+		}
 
 		/// <summary>
 		/// 
