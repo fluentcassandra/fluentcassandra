@@ -50,7 +50,7 @@ namespace FluentCassandra.Connections
 		public virtual bool Close(IConnection connection)
 		{
 			if (connection.IsOpen)
-				connection.Dispose();
+				connection.Close();
 
 			return true;
 		}
