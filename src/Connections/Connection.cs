@@ -12,35 +12,49 @@ namespace FluentCassandra.Connections
 	/// <see href="http://github.com/robconery/NoRM/tree/master/NoRM/Connections/"/>
 	public class Connection : IConnection, IDisposable
 	{
-		private readonly ConnectionType _connectionType;
-		private readonly int _bufferSize;
-
-		private readonly TTransport _transport;
-		private readonly TProtocol _protocol;
-		private readonly Cassandra.Client _client;
+		private TTransport _transport;
+		private Cassandra.Client _client;
+		private readonly object _lock = new object();
 
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="server"></param>
 		/// <param name="builder"></param>
-		internal Connection(Server server, IConnectionBuilder builder)
-		{
-			_connectionType = builder.ConnectionType;
-			_bufferSize = builder.BufferSize;
+		public Connection(Server server, IConnectionBuilder builder)
+			: this(server, builder.ConnectionType, builder.BufferSize) { }
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="server"></param>
+		/// <param name="connectionType"></param>
+		/// <param name="bufferSize"></param>
+		public Connection(Server server, ConnectionType connectionType, int bufferSize)
+		{
 			Created = DateTime.UtcNow;
 			Server = server;
+			ConnectionType = connectionType;
+			BufferSize = bufferSize;
 
-			var socket = new TSocket(server.Host, server.Port, server.Timeout * 1000);
+			InitTransportAndClient();
+		}
 
-			switch (_connectionType)
+		/// <summary>
+		/// 
+		/// </summary>
+		private void InitTransportAndClient()
+		{
+			var socket = new TSocket(Server.Host, Server.Port, Server.Timeout * 1000);
+
+			switch (ConnectionType)
 			{
 				case ConnectionType.Simple:
 					_transport = socket;
 					break;
 
 				case ConnectionType.Buffered:
-					_transport = new TBufferedTransport(socket, _bufferSize);
+					_transport = new TBufferedTransport(socket, BufferSize);
 					break;
 
 				case ConnectionType.Framed:
@@ -51,8 +65,8 @@ namespace FluentCassandra.Connections
 					goto case ConnectionType.Framed;
 			}
 
-			_protocol = new TBinaryProtocol(_transport);
-			_client = new Cassandra.Client(_protocol);
+			var protocol = new TBinaryProtocol(_transport);
+			_client = new Cassandra.Client(protocol);
 		}
 
 		/// <summary>
@@ -76,6 +90,24 @@ namespace FluentCassandra.Connections
 		/// <summary>
 		/// 
 		/// </summary>
+		public ConnectionType ConnectionType
+		{
+			get;
+			private set;
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public int BufferSize
+		{
+			get;
+			private set;
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
 		public bool IsOpen
 		{
 			get
@@ -83,11 +115,8 @@ namespace FluentCassandra.Connections
 				if (_transport == null)
 					return false;
 
-				lock (_transport)
-				{
-					try { return _transport.IsOpen; }
-					catch { return false; }
-				}
+				lock (_lock)
+					return _transport.IsOpen;
 			}
 		}
 
@@ -101,7 +130,10 @@ namespace FluentCassandra.Connections
 			if (IsOpen)
 				return;
 
-			lock (_transport)
+			if (_transport == null)
+				InitTransportAndClient();
+
+			lock (_lock)
 				_transport.Open();
 		}
 
@@ -115,8 +147,12 @@ namespace FluentCassandra.Connections
 			if (!IsOpen)
 				return;
 
-			lock (_transport)
+			lock (_lock)
+			{
 				_transport.Close();
+				_transport = null;
+				_client = null;
+			}
 		}
 
 		/// <summary>
@@ -125,6 +161,11 @@ namespace FluentCassandra.Connections
 		/// <param name="keyspace"></param>
 		public void SetKeyspace(string keyspace)
 		{
+			CheckWasDisposed();
+
+			if (!IsOpen)
+				throw new CassandraConnectionException("A connection to Cassandra has not been opened.");
+
 			Client.set_keyspace(keyspace);
 		}
 
@@ -134,6 +175,11 @@ namespace FluentCassandra.Connections
 		/// <param name="cqlVersion"></param>
 		public void SetCqlVersion(string cqlVersion)
 		{
+			CheckWasDisposed();
+
+			if (!IsOpen)
+				throw new CassandraConnectionException("A connection to Cassandra has not been opened.");
+
 			Client.set_cql_version(cqlVersion);
 		}
 
@@ -142,10 +188,10 @@ namespace FluentCassandra.Connections
 		/// </summary>
 		public Cassandra.Client Client
 		{
-			get 
-			{ 
-				CheckWasDisposed();
-				return _client; 
+			get
+			{
+				lock(_lock)
+					return _client;
 			}
 		}
 
@@ -195,10 +241,6 @@ namespace FluentCassandra.Connections
 			if (!WasDisposed && disposing && _transport != null)
 			{
 				Close();
-
-				_client = null;
-				_protocol = null;
-				_transport = null;
 			}
 
 			WasDisposed = true;
