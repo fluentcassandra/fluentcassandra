@@ -175,10 +175,15 @@ namespace FluentCassandra.Connections
 		/// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
 		protected virtual void Dispose(bool disposing)
 		{
-			if (WasDisposed)
-				return;
+			if (!WasDisposed && disposing && _transport != null)
+			{
+				Close();
 
-			Close();
+				_client = null;
+				_protocol = null;
+				_transport = null;
+			}
+
 			WasDisposed = true;
 		}
 
