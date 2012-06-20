@@ -46,6 +46,9 @@ namespace FluentCassandra.Connections
 				case ConnectionType.Framed:
 					_transport = new TFramedTransport(socket);
 					break;
+
+				default:
+					goto case ConnectionType.Framed;
 			}
 
 			_protocol = new TBinaryProtocol(_transport);
@@ -77,11 +80,11 @@ namespace FluentCassandra.Connections
 		{
 			get
 			{
+				if (_transport == null)
+					return false;
+
 				lock (_transport)
 				{
-					if (_transport == null)
-						return false;
-
 					try { return _transport.IsOpen; }
 					catch { return false; }
 				}
