@@ -3,6 +3,10 @@ using System.Diagnostics;
 
 namespace FluentCassandra
 {
+	/// <summary>
+	/// Used for generating UUID based on RFC 4122.
+	/// </summary>
+	/// <seealso href="http://www.ietf.org/rfc/rfc4122.txt">RFC 4122 - A Universally Unique IDentifier (UUID) URN Namespace</seealso>
 	public static partial class GuidGenerator
 	{
 		// number of bytes in guid
@@ -26,15 +30,18 @@ namespace FluentCassandra
 		// offset to move from 1/1/0001, which is 0-time for .NET, to gregorian 0-time of 10/15/1582
 		private static readonly DateTimeOffset GregorianCalendarStart = new DateTimeOffset(1582, 10, 15, 0, 0, 0, TimeSpan.Zero);
 
-		// random node that is 16 bytes
-		private static readonly byte[] RandomNode;
+		// random clock sequence and node
+		public static byte[] DefaultClockSequence { get; set; }
+		public static byte[] DefaultNode { get; set; }
 
 		static GuidGenerator()
 		{
-			RandomNode = new byte[6];
+			DefaultClockSequence = new byte[2];
+			DefaultNode = new byte[6];
 
 			var random = new Random();
-			random.NextBytes(RandomNode);
+			random.NextBytes(DefaultClockSequence);
+			random.NextBytes(DefaultNode);
 		}
 
 		public static GuidVersion GetVersion(this Guid guid)
@@ -77,36 +84,47 @@ namespace FluentCassandra
 
 		public static Guid GenerateTimeBasedGuid()
 		{
-			return GenerateTimeBasedGuid(DateTimePrecise.UtcNowOffset, RandomNode);
+			return GenerateTimeBasedGuid(DateTimePrecise.UtcNowOffset, DefaultClockSequence, DefaultNode);
 		}
 
 		public static Guid GenerateTimeBasedGuid(DateTime dateTime)
 		{
-			return GenerateTimeBasedGuid(dateTime, RandomNode);
+			return GenerateTimeBasedGuid(dateTime, DefaultClockSequence, DefaultNode);
 		}
 
 		public static Guid GenerateTimeBasedGuid(DateTimeOffset dateTime)
 		{
-			return GenerateTimeBasedGuid(dateTime, RandomNode);
+			return GenerateTimeBasedGuid(dateTime, DefaultClockSequence, DefaultNode);
 		}
 
-		public static Guid GenerateTimeBasedGuid(DateTime dateTime, byte[] node)
+		public static Guid GenerateTimeBasedGuid(DateTime dateTime, byte[] clockSequence, byte[] node)
 		{
-			return GenerateTimeBasedGuid(new DateTimeOffset(dateTime), node);
+			return GenerateTimeBasedGuid(new DateTimeOffset(dateTime), clockSequence, node);
 		}
 
-		public static Guid GenerateTimeBasedGuid(DateTimeOffset dateTime, byte[] node)
+		public static Guid GenerateTimeBasedGuid(DateTimeOffset dateTime, byte[] clockSequence, byte[] node)
 		{
+			if (clockSequence == null)
+				throw new ArgumentNullException("clockSequence");
+
+			if (node == null)
+				throw new ArgumentNullException("node");
+
+			if (clockSequence.Length != 2)
+				throw new ArgumentOutOfRangeException("clockSequence", "The clockSequence must be 2 bytes.");
+
+			if (node.Length != 6)
+				throw new ArgumentOutOfRangeException("node", "The node must be 6 bytes.");
+
 			long ticks = (dateTime - GregorianCalendarStart).Ticks;
 			byte[] guid = new byte[ByteArraySize];
-			byte[] clockSequenceBytes = BitConverter.GetBytes(Convert.ToInt16(Environment.TickCount % Int16.MaxValue));
 			byte[] timestamp = BitConverter.GetBytes(ticks);
 
 			// copy node
 			Array.Copy(node, 0, guid, NodeByte, Math.Min(6, node.Length));
 
 			// copy clock sequence
-			Array.Copy(clockSequenceBytes, 0, guid, GuidClockSequenceByte, Math.Min(2, clockSequenceBytes.Length));
+			Array.Copy(clockSequence, 0, guid, GuidClockSequenceByte, Math.Min(2, clockSequence.Length));
 
 			// copy timestamp
 			Array.Copy(timestamp, 0, guid, TimestampByte, Math.Min(8, timestamp.Length));
