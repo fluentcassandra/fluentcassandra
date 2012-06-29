@@ -3,6 +3,12 @@ FluentCassandra
 
 FluentCassandra is a .NET library for accessing Apache Cassandra.  It fully impliments all commands that can be issued against the Apache Cassandra interface and supports .NET 4.0 dynamic keyword as well as a LINQ like expressions for querying the database.  The goal of this project is to keep the interface in sync with the latest version of Cassandra and make it as easy as possible for .NET developers to start, adopt and program against the Cassandra database.
 
+Getting Help
+------------
+
+You can get help with FluentCassandra by asking questions or starting a discussion on our group.  https://groups.google.com/d/forum/fluentcassandra
+
+
 Installing Cassandra
 --------------------
 
