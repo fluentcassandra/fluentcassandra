@@ -19,7 +19,6 @@ namespace FluentCassandra
 #endif
 
 			var def = result.Schema;
-			var sampleRow = result.Rows.FirstOrDefault();
 			var colNameType = CassandraType.GetCassandraType(def.Default_name_type);
 			var colValueType = CassandraType.GetCassandraType(def.Default_value_type);
 
@@ -29,7 +28,6 @@ namespace FluentCassandra
 			Columns = new List<CassandraColumnSchema>();
 
 			var colNameTypes = new Dictionary<CassandraObject, CassandraType>();
-			var keyColNames = new List<CassandraObject>();
 
 			foreach (var c in def.Name_types)
 			{
@@ -39,17 +37,12 @@ namespace FluentCassandra
 				colNameTypes.Add(name, type);
 			}
 
-			// sample row to find key names
-			if (sampleRow != null)
-				keyColNames = sampleRow.Columns.Where(x => x.Ttl == -1).Select(x => CassandraObject.GetCassandraObjectFromDatabaseByteArray(x.Name, CassandraType.BytesType)).ToList();
-
 			// columns returned
 			foreach (var c in def.Value_types)
 			{
 				var type = CassandraType.GetCassandraType(c.Value);
 				var nameType = colNameType;
 				var name = CassandraObject.GetCassandraObjectFromDatabaseByteArray(c.Key, CassandraType.BytesType);
-				var isKey = keyColNames.Contains(name);
 
 				if (colNameTypes.ContainsKey(name))
 					nameType = colNameTypes[name];
@@ -57,8 +50,7 @@ namespace FluentCassandra
 				var colSchema = new CassandraColumnSchema {
 					NameType = nameType,
 					Name = name,
-					ValueType = type,
-					IsKey = isKey
+					ValueType = type
 				};
 
 				Columns.Add(colSchema);
