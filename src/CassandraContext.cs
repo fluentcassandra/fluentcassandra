@@ -14,6 +14,7 @@ namespace FluentCassandra
 	{
 		private readonly IList<IFluentMutationTracker> _trackers;
 		private CassandraSession _session;
+		private readonly bool _isOutsideSession = false;
 
 		/// <summary>
 		/// 
@@ -50,6 +51,7 @@ namespace FluentCassandra
 			: this(session.ConnectionBuilder)
 		{
 			_session = session;
+			_isOutsideSession = true;
 		}
 
 		/// <summary>
@@ -399,7 +401,7 @@ namespace FluentCassandra
 		/// </param>
 		protected virtual void Dispose(bool disposing)
 		{
-			if (!WasDisposed && disposing && _session != null)
+			if (!WasDisposed && !_isOutsideSession && disposing && _session != null)
 			{
 				_session.Dispose();
 				_session = null;
