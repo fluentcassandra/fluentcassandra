@@ -267,8 +267,8 @@ CREATE COLUMNFAMILY Posts (
 				var commentsFamily = db.GetSuperColumnFamily("Comments");
 
 				ConsoleHeader("create comments");
-				dynamic postComments = commentsFamily.CreateRecord(key: key);
-
+				var postComments = commentsFamily.CreateRecord(key: key);
+				
 				// lets attach it to the database before we add the comments
 				db.Attach(postComments);
 
@@ -277,11 +277,14 @@ CREATE COLUMNFAMILY Posts (
 				// add 5 comments
 				for (int i = 0; i < 5; i++)
 				{
-					dynamic comment = postComments.CreateSuperColumn();
-					comment.Name = "Nick Berardi";
-					comment.Email = "nick@coderjournal.com";
-					comment.Website = "www.coderjournal.com";
-					comment.Comment = "Wow fluent cassandra is really great and easy to use.";
+					var comment = postComments.CreateSuperColumn();
+					comment["Name"] = "Nick Berardi";
+					comment["Email"] = "nick@coderjournal.com";
+
+					// you can also use it as a dynamic object
+					dynamic dcomment = comment;
+					dcomment.Website = "www.coderjournal.com";
+					dcomment.Comment = "Wow fluent cassandra is really great and easy to use.";
 
 					var commentPostedOn = dt;
 					postComments[commentPostedOn] = comment;

@@ -115,12 +115,15 @@ namespace FluentCassandra
 		{
 			get
 			{
-				var value = GetColumnValue(columnName);
-
-				if (value is NullType)
+				object value;
+				if (!TryGetColumn(columnName, out value))
 					throw new CassandraException(String.Format("Column, {0}, could not be found.", columnName));
 
-				return value;
+				return (CassandraObject)value;
+			}
+			set
+			{
+				TrySetColumn(columnName, value);
 			}
 		}
 
@@ -209,7 +212,7 @@ namespace FluentCassandra
 		{
 			result = GetColumnValue(name);
 
-			return true;
+			return !(result is NullType);
 		}
 
 		/// <summary>

@@ -79,6 +79,27 @@ namespace FluentCassandra
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="columnName"></param>
+		/// <returns></returns>
+		public FluentSuperColumn this[CassandraObject columnName]
+		{
+			get
+			{
+				object value;
+				if (!TryGetColumn(columnName, out value))
+					throw new CassandraException(String.Format("Super Column, {0}, could not be found.", columnName));
+
+				return (FluentSuperColumn)value;
+			}
+			set
+			{
+				TrySetColumn(columnName, value);
+			}
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <returns></returns>
 		public FluentSuperColumn CreateSuperColumn()
 		{
