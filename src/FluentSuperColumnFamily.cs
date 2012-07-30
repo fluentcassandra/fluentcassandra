@@ -74,7 +74,7 @@ namespace FluentCassandra
 		/// <summary>
 		/// 
 		/// </summary>
-		public ColumnType ColumnType { get { return ColumnType.Standard; } }
+		public ColumnType ColumnType { get { return ColumnType.Super; } }
 
 		/// <summary>
 		/// 
