@@ -3,6 +3,7 @@ using System.Linq;
 using FluentCassandra.Connections;
 using FluentCassandra.Types;
 using System.Collections.Generic;
+using System.Configuration;
 
 namespace FluentCassandra
 {
@@ -37,8 +38,8 @@ namespace FluentCassandra
 		public const string TestStandardName = "Test1";
 		public const string TestSuperName = "SubTest1";
 
-		public const string Keyspace = "Testing";
-		public static readonly Server Server = new Server("localhost");
+		public static readonly string Keyspace = ConfigurationManager.AppSettings["TestKeySpace"];
+        public static readonly Server Server = new Server(ConfigurationManager.AppSettings["TestServer"]);
 		
 		public CassandraDatabaseSetup(bool reset = false)
 		{

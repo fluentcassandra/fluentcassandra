@@ -4,15 +4,16 @@ using FluentCassandra.Connections;
 using FluentCassandra.Types;
 using FluentCassandra.Linq;
 using System.Collections.Generic;
+using System.Configuration;
 
 
 namespace FluentCassandra.Sandbox
 {
     internal class Program
     {
-        private const string KeyspaceName = "LHSandbox";
-        private static readonly Server Server = new Server("dev-cass1-1");
-
+        public static readonly string KeyspaceName = ConfigurationManager.AppSettings["TestKeySpace"];
+        public static readonly Server Server = new Server(ConfigurationManager.AppSettings["TestServer"]);
+		
 
         #region Setup
 
@@ -403,7 +404,59 @@ namespace FluentCassandra.Sandbox
             }
         }
         #endregion
+        #region TombstoneTest
+        private static void TombstoneTest()
+        {
+            using (var db = new CassandraContext(keyspace: KeyspaceName, server: Server))
+            {
 
+
+                db.ExecuteNonQuery("CREATE TABLE OfferReservation (KEY int PRIMARY KEY) WITH comparator = text AND default_validation = float");
+                db.ExecuteNonQuery("INSERT INTO OfferReservation (KEY, '25:100') VALUES (5, 0.25)");
+                db.ExecuteNonQuery("INSERT INTO OfferReservation (KEY, '25:101') VALUES (5, 0.25)");
+                db.ExecuteNonQuery("DELETE '25:100' FROM OfferReservation WHERE KEY = 5");
+
+                List<ICqlRow> rows = db.ExecuteQuery("SELECT '25:100' FROM OfferReservation WHERE KEY = 5").ToList();
+
+            }
+        }
+        #endregion
+
+        #region BigDecimalTest
+        private static void BigDecimalTest()
+        {
+            using (var db = new CassandraContext(keyspace: KeyspaceName, server: Server))
+            {
+
+                // arrange
+                db.ExecuteNonQuery("CREATE TABLE OfferReservation2 (KEY text PRIMARY KEY) WITH comparator = text AND default_validation = decimal");
+                db.ExecuteNonQuery("INSERT INTO OfferReservation2 (KEY, 'MyColumn') VALUES ('Key0', 1000000000000000000)");
+                db.ExecuteNonQuery("INSERT INTO OfferReservation2 (KEY, 'MyColumn') VALUES ('Key1', 0.25)");
+                db.ExecuteNonQuery("INSERT INTO OfferReservation2 (KEY, 'MyColumn') VALUES ('Key2', 2000000000000.1234)");
+                db.ExecuteNonQuery("INSERT INTO OfferReservation2 (KEY, 'MyColumn') VALUES ('Key3', -0.25)");
+                db.ExecuteNonQuery("INSERT INTO OfferReservation2 (KEY, 'MyColumn') VALUES ('Key4', -0.25122333)");
+
+                var actual = db.ExecuteQuery("SELECT * FROM OfferReservation2");
+
+                var results = actual.ToList();
+
+
+                var firstValue = (decimal)results.First(x => x.Key == "Key0")["MyColumn"];
+                var secondValue = (decimal)results.First(x => x.Key == "Key1")["MyColumn"];
+                var thirdValue = (decimal)results.First(x => x.Key == "Key2")["MyColumn"];
+                var fourthValue = (decimal)results.First(x => x.Key == "Key3")["MyColumn"];
+                var fifthValue = (decimal)results.First(x => x.Key == "Key4")["MyColumn"];
+
+                ConsoleHeader("Returned data from Big Decimal Test");
+                ConsoleHeader(firstValue.ToString());
+                ConsoleHeader(secondValue.ToString());
+                ConsoleHeader(thirdValue.ToString());
+                ConsoleHeader(fourthValue.ToString());
+                ConsoleHeader(fifthValue.ToString());
+            }
+        }
+        #endregion
+        
         private static void Main(string[] args)
         {
             SetupKeyspace();
@@ -427,6 +480,10 @@ namespace FluentCassandra.Sandbox
             CreateColumnFamilyWithTimestampOperator();
 
             ReadComments();
+
+            TombstoneTest();
+
+            BigDecimalTest();
 
             Console.Read();
         }

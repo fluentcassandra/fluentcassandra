@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Xunit;
+using System.Configuration;
 
 namespace FluentCassandra.Connections
 {
@@ -12,7 +13,7 @@ namespace FluentCassandra.Connections
 		{
 			// arrange
 			var expected = typeof(NormalConnectionProvider);
-			var connectionString = "Keyspace=Testing";
+            var connectionString = "Keyspace=" + ConfigurationManager.AppSettings["TestKeySpace"];
 
 			// act
 			var result = new ConnectionBuilder(connectionString);
@@ -27,7 +28,7 @@ namespace FluentCassandra.Connections
 		{
 			// arrange
 			var expected = typeof(PooledConnectionProvider);
-			var connectionString = "Keyspace=Testing;Pooling=True";
+			var connectionString = "Keyspace=" + ConfigurationManager.AppSettings["TestKeySpace"] + ";Pooling=True";
 
 			// act
 			var result = new ConnectionBuilder(connectionString);
