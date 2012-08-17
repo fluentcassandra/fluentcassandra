@@ -50,7 +50,7 @@ using FluentCassandra.Types;");
 				throw new ArgumentNullException(""context"", ""context is null."");
 
 			Context = context;
-			Session = new CassandraSession(FluentCassandra.CassandraContext.CurrentConnectionBuilder);
+			Session = new CassandraSession(Context.ConnectionBuilder);
 		}
 
 		public void Dispose()
