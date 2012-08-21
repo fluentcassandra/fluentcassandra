@@ -3,6 +3,7 @@ using FluentCassandra.Connections;
 using Xunit;
 using FluentCassandra.Types;
 using System;
+using System.Configuration;
 
 namespace FluentCassandra.Linq
 {
@@ -14,8 +15,8 @@ namespace FluentCassandra.Linq
 
 		public LinqToCqlTests()
 		{
-			var keyspaceName = "Testing";
-			var server = new Server("localhost");
+			var keyspaceName = ConfigurationManager.AppSettings["TestKeySpace"];
+            var server = new Server(ConfigurationManager.AppSettings["TestServer"]);
 
 			_db = new CassandraContext(keyspace: keyspaceName, server: server);
 			_family = _db.GetColumnFamily<AsciiType>("Users");
