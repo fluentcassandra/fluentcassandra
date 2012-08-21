@@ -258,5 +258,18 @@ namespace FluentCassandra.Linq
 
 			AreEqual(expected, actual);
 		}
+
+		[Fact]
+		public void CHAINING_WHERE_CLAUSE()
+		{
+			var expected = "SELECT * FROM Users WHERE Id = 1234 AND Age = 10";
+
+			IQueryable<ICqlRow> query = _family;
+			query = query.Where(q => q["Id"] == 1234).Where(q => q["Age"] == 10);
+
+			var actual = query.ToString();
+			AreEqual(expected, actual);
+		}
+
 	}
 }
