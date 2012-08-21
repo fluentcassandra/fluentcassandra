@@ -251,6 +251,7 @@
     <Compile Include="Thrift\Transport\TTransport.cs" />
     <Compile Include="Thrift\Transport\TTransportException.cs" />
     <Compile Include="Thrift\Transport\TTransportFactory.cs" />
+    <Compile Include="TimestampHelper.cs" />
     <Compile Include="Types\AsciiType.cs" />
     <Compile Include="Types\AsciiTypeConverter.cs" />
     <Compile Include="System\Numerics\BigDecimal.cs" />

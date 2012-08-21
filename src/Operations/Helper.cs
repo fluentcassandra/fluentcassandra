@@ -11,19 +11,6 @@ namespace FluentCassandra.Operations
 {
 	internal static class Helper
 	{
-		private static readonly DateTimeOffset UnixStart;
-		private static readonly long MaxUnixSeconds;
-		private static readonly long MaxUnixMilliseconds;
-		private static readonly long MaxUnixMicroseconds;
-
-		static Helper()
-		{
-			UnixStart = new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero);
-			MaxUnixSeconds = Convert.ToInt64((DateTimeOffset.MaxValue - UnixStart).TotalSeconds);
-			MaxUnixMilliseconds = Convert.ToInt64((DateTimeOffset.MaxValue - UnixStart).TotalMilliseconds);
-			MaxUnixMicroseconds = Convert.ToInt64((DateTimeOffset.MaxValue - UnixStart).Ticks / 10L);
-		}
-
 		public static List<byte[]> ToByteArrayList(List<CassandraObject> list)
 		{
 			return list.Select(x => x.TryToBigEndian()).ToList();
@@ -125,7 +112,7 @@ namespace FluentCassandra.Operations
 			var ccol = new Column {
 				Name = column.Name.TryToBigEndian(),
 				Value = column.Value.TryToBigEndian(),
-				Timestamp = column.Timestamp.ToTimestamp()
+				Timestamp = column.Timestamp.ToCassandraTimestamp()
 			};
 
 			if (column.Ttl.HasValue && column.Ttl.Value > 0)
@@ -148,26 +135,6 @@ namespace FluentCassandra.Operations
 				return null;
 
 			return value.ToBigEndian();
-		}
-
-		public static long ToTimestamp(this DateTimeOffset dt)
-		{
-			// we are using the microsecond format from 1/1/1970 00:00:00 UTC same as the Cassandra server
-			return (dt - UnixStart).Ticks / 10L;
-		}
-
-		public static DateTimeOffset FromTimestamp(long ts)
-		{
-			if (ts <= MaxUnixSeconds)
-				ts *= 1000L;
-
-			if (ts <= MaxUnixMilliseconds)
-				ts *= 1000L;
-
-			if (ts <= MaxUnixMicroseconds)
-				ts *= 10L;
-
-			return UnixStart.AddTicks(ts);
 		}
 
 		public static IFluentBaseColumn ConvertToFluentBaseColumn(ColumnOrSuperColumn col, CassandraColumnFamilySchema schema = null)
@@ -238,7 +205,7 @@ namespace FluentCassandra.Operations
 			var fcol = new FluentColumn(colSchema) {
 				ColumnName = CassandraObject.GetCassandraObjectFromDatabaseByteArray(col.Name, colSchema.NameType),
 				ColumnValue = CassandraObject.GetCassandraObjectFromDatabaseByteArray(col.Value, colSchema.ValueType),
-				ColumnTimestamp = FromTimestamp(col.Timestamp),
+				ColumnTimestamp = TimestampHelper.FromCassandraTimestamp(col.Timestamp),
 			};
 
 			if (col.__isset.ttl)
@@ -298,7 +265,7 @@ namespace FluentCassandra.Operations
 			foreach (var col in mutation)
 			{
 				var deletion = new Deletion {
-					Timestamp = col.ColumnTimestamp.ToTimestamp(),
+					Timestamp = col.ColumnTimestamp.ToCassandraTimestamp(),
 					Predicate = CreateSlicePredicate(new[] { col.Column.ColumnName })
 				};
 
@@ -315,7 +282,7 @@ namespace FluentCassandra.Operations
 				var superColumn = col.Column.GetPath().SuperColumn.ColumnName.TryToBigEndian();
 
 				var deletion = new Deletion {
-					Timestamp = col.ColumnTimestamp.ToTimestamp(),
+					Timestamp = col.ColumnTimestamp.ToCassandraTimestamp(),
 					Super_column = superColumn,
 					Predicate = CreateSlicePredicate(new[] { col.Column.ColumnName })
 				};
@@ -346,7 +313,7 @@ namespace FluentCassandra.Operations
 			var col = new Column {
 				Name = column.ColumnName.TryToBigEndian(),
 				Value = column.ColumnValue.TryToBigEndian(),
-				Timestamp = column.ColumnTimestamp.ToTimestamp()
+				Timestamp = column.ColumnTimestamp.ToCassandraTimestamp()
 			};
 
 			if (column.ColumnSecondsUntilDeleted.HasValue)
