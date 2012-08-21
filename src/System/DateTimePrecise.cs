@@ -72,24 +72,19 @@ namespace System
 			if (stopWatchTicks < immutable.ObservedTicks + _synchronizePeriodStopwatchTicks)
 			{
 				return immutable.BaseTime.AddTicks(((
-					stopWatchTicks - immutable.ObservedTicks) * ClockTickFrequency) / (
-						immutable.StopWatchFrequency));
+					stopWatchTicks - immutable.ObservedTicks) * ClockTickFrequency) / (immutable.StopWatchFrequency));
 			}
 			else
 			{
 				var utc = DateTime.UtcNow;
 
-				DateTime tBaseNew = immutable.BaseTime.AddTicks(((
-					stopWatchTicks - immutable.ObservedTicks) * ClockTickFrequency) / (
-						immutable.StopWatchFrequency));
+				DateTime tBaseNew = immutable.BaseTime.AddTicks(((stopWatchTicks - immutable.ObservedTicks) * ClockTickFrequency) / (immutable.StopWatchFrequency));
 
 				_immutable = new DateTimePreciseSafeImmutable(
 					utc,
 					tBaseNew,
 					stopWatchTicks,
-					  ((stopWatchTicks - immutable.ObservedTicks) * ClockTickFrequency * 2) /
-					  (utc.Ticks - immutable.ObservedTime.Ticks + utc.Ticks +
-					   utc.Ticks - tBaseNew.Ticks - immutable.ObservedTime.Ticks));
+					((stopWatchTicks - immutable.ObservedTicks) * ClockTickFrequency * 2) / (3 * utc.Ticks - 2 * immutable.ObservedTime.Ticks - tBaseNew.Ticks));
 
 				return tBaseNew;
 			}
@@ -113,14 +108,14 @@ namespace System
 			return new DateTimeOffset(GetNow());
 		}
 
-		private sealed class DateTimePreciseSafeImmutable
+		private sealed struct DateTimePreciseSafeImmutable
 		{
 			public DateTimePreciseSafeImmutable(DateTime observedTime, DateTime baseTime, long observedTicks, long stopWatchFrequency)
 			{
 				ObservedTime = observedTime;
 				BaseTime = baseTime;
 				ObservedTicks = observedTicks;
-				StopWatchFrequency = stopWatchFrequency;
+				StopWatchFrequency = Math.Max(1, stopWatchFrequency);
 			}
 
 			public readonly DateTime ObservedTime;
