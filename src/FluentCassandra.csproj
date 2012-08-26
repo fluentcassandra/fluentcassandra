@@ -126,6 +126,7 @@
     </Compile>
     <Compile Include="CassandraCqlRowSchema.cs" />
     <Compile Include="FluentCqlRow.cs" />
+    <Compile Include="ILoadable.cs" />
     <Compile Include="ObjectSerializer\ObjectSerializerConventions.cs" />
     <Compile Include="System\DateTimePrecise.cs" />
     <Compile Include="FluentCassandraException.cs" />

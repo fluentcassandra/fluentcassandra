@@ -407,6 +407,7 @@ namespace FluentCassandra.Sandbox
             }
         }
         #endregion
+
         #region TombstoneTest
         private static void TombstoneTest()
         {

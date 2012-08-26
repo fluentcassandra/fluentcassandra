@@ -29,11 +29,19 @@ namespace FluentCassandra
 			Parent = parent;
 			Columns = new List<T>();
 
+			SupressChangeNotification = true;
+
 			// make sure all columns have the same parent
 			foreach (var col in columns)
 			{
+				if (col is ILoadable)
+					((ILoadable)col).BeginLoad();
+
 				col.SetParent(parent);
 				Columns.Add(col);
+				
+				if (col is ILoadable)
+					((ILoadable)col).EndLoad();
 			}
 
 			SupressChangeNotification = false;

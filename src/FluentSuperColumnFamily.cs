@@ -38,7 +38,6 @@ namespace FluentCassandra
 			FamilyName = columnFamily;
 
 			_columns = new FluentColumnList<FluentSuperColumn>(GetSelf());
-
 		}
 
 		/// <summary>
@@ -250,6 +249,11 @@ namespace FluentCassandra
 			OnColumnMutated(mutationType, col);
 
 			return true;
+		}
+
+		public override string ToString()
+		{
+			return String.Format("{0} - {1}", FamilyName, Key);
 		}
 	}
 }

@@ -108,7 +108,7 @@ namespace System
 			return new DateTimeOffset(GetNow());
 		}
 
-		private sealed struct DateTimePreciseSafeImmutable
+		private struct DateTimePreciseSafeImmutable
 		{
 			public DateTimePreciseSafeImmutable(DateTime observedTime, DateTime baseTime, long observedTicks, long stopWatchFrequency)
 			{

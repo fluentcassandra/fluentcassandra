@@ -10,7 +10,7 @@ namespace FluentCassandra
 	/// 
 	/// </summary>
 	/// <typeparam name="T">A type that impliments <see cref="IFluentColumn"/>.</typeparam>
-	public abstract class FluentRecord<T> : DynamicObject, IFluentRecord, INotifyPropertyChanged, IEnumerable<IFluentBaseColumn>
+	public abstract class FluentRecord<T> : DynamicObject, IFluentRecord, INotifyPropertyChanged, IEnumerable<IFluentBaseColumn>, ILoadable
 		where T : IFluentBaseColumn
 	{
 		/// <summary>
@@ -19,6 +19,7 @@ namespace FluentCassandra
 		public FluentRecord()
 		{
 			MutationTracker = new FluentMutationTracker(this);
+			SuppressMutationTracking = false;
 		}
 
 		/// <summary>
@@ -106,6 +107,24 @@ namespace FluentCassandra
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public abstract bool TrySetColumn(object name, object value);
 
+		private bool SuppressMutationTracking { get; set; }
+
+		void ILoadable.BeginLoad()
+		{
+			SuppressMutationTracking = true;
+
+			if (Columns is FluentColumnList<T>)
+				((FluentColumnList<T>)Columns).SupressChangeNotification = true;
+		}
+
+		void ILoadable.EndLoad()
+		{
+			SuppressMutationTracking = false;
+
+			if (Columns is FluentColumnList<T>)
+				((FluentColumnList<T>)Columns).SupressChangeNotification = false;
+		}
+
 		#region IEnumerable<IFluentBaseColumn> Members
 
 		public IEnumerator<IFluentBaseColumn> GetEnumerator()
@@ -166,6 +185,9 @@ namespace FluentCassandra
 
 		protected void ResetMutationAndAddAllColumns()
 		{
+			if (SuppressMutationTracking)
+				return;
+
 			ResetMutation();
 			foreach (var col in Columns)
 				MutationTracker.ColumnMutated(MutationType.Added, col);

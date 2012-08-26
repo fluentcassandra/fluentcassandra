@@ -231,8 +231,10 @@ namespace FluentCassandra.Operations
 				ColumnName = CassandraObject.GetCassandraObjectFromDatabaseByteArray(col.Name, superColSchema.NameType)
 			};
 
+			((ILoadable)superCol).BeginLoad();
 			foreach (var xcol in col.Columns)
 				superCol.Columns.Add(ConvertColumnToFluentCounterColumn(xcol, schema));
+			((ILoadable)superCol).EndLoad();
 
 			return superCol;
 		}
@@ -254,8 +256,10 @@ namespace FluentCassandra.Operations
 				ColumnName = CassandraObject.GetCassandraObjectFromDatabaseByteArray(col.Name, superColSchema.NameType)
 			};
 
+			((ILoadable)superCol).BeginLoad();
 			foreach (var xcol in col.Columns)
 				superCol.Columns.Add(ConvertColumnToFluentColumn(xcol, schema));
+			((ILoadable)superCol).EndLoad();
 
 			return superCol;
 		}
@@ -299,13 +303,37 @@ namespace FluentCassandra.Operations
 			{
 				case MutationType.Added:
 				case MutationType.Changed:
-					return new Mutation {
-						Column_or_supercolumn = CreateColumnOrSuperColumn(mutation.Column)
-					};
+					var column = mutation.Column;
 
-				default:
-					return null;
+					if (column is FluentColumn)
+					{
+						return new Mutation {
+							Column_or_supercolumn = new ColumnOrSuperColumn {
+								Column = CreateColumn((FluentColumn)column)
+							}
+						};
+					}
+					else if (column is FluentSuperColumn)
+					{
+						var colY = (FluentSuperColumn)column;
+						var superColumn = new SuperColumn {
+							Name = colY.ColumnName.TryToBigEndian(),
+							Columns = new List<Column>()
+						};
+
+						foreach (var col in colY.MutationTracker.GetMutations().Select(x => x.Column).OfType<FluentColumn>())
+							superColumn.Columns.Add(CreateColumn(col));
+
+						return new Mutation {
+							Column_or_supercolumn = new ColumnOrSuperColumn {
+								Super_column = superColumn
+							}
+						};
+					}
+					break;
 			}
+
+			return null;
 		}
 
 		public static Column CreateColumn(FluentColumn column)

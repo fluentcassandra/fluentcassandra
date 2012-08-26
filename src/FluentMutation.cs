@@ -26,5 +26,10 @@ namespace FluentCassandra
 		/// 
 		/// </summary>
 		public DateTimeOffset ColumnTimestamp { get; private set; }
+
+		public override string ToString()
+		{
+			return String.Format("{0} - {1}", Type, Column);
+		}
 	}
 }

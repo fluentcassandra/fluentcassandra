@@ -47,25 +47,17 @@ namespace FluentCassandra.Operations
 
 					var superCol = new FluentSuperColumn(superColSchema, result.Value.Select(col => Helper.ConvertColumnToFluentColumn(col.Column, schema)));
 					ColumnFamily.Context.Attach(superCol);
-					superCol.MutationTracker.Clear();
 
 					superColumns = new[] { superCol };
 				}
 				else
 				{
-					superColumns = result.Value.Select(col => {
-						var superCol = Helper.ConvertSuperColumnToFluentSuperColumn(col.Super_column, schema);
-						ColumnFamily.Context.Attach(superCol);
-						superCol.MutationTracker.Clear();
-
-						return superCol;
-					});
+					superColumns = result.Value.Select(col => Helper.ConvertSuperColumnToFluentSuperColumn(col.Super_column, schema));
 				}
 
 				var familyName = ColumnFamily.FamilyName;
 				var r = new FluentSuperColumnFamily(key, familyName, schema, superColumns);
 				ColumnFamily.Context.Attach(r);
-				r.MutationTracker.Clear();
 
 				yield return r;
 			}
