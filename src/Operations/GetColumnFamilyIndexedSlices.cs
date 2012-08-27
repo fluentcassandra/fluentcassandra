@@ -37,7 +37,7 @@ namespace FluentCassandra.Operations
 			foreach (var result in output)
 			{
 				var r = new FluentColumnFamily(result.Key, columnFamily.FamilyName, columnFamily.GetSchema(), result.Columns.Select(col => {
-					return Helper.ConvertColumnToFluentColumn(col.Column);
+					return Helper.ConvertColumnToFluentColumn(col.Column, schema);
 				}));
 				columnFamily.Context.Attach(r);
 				r.MutationTracker.Clear();

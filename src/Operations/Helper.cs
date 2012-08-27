@@ -137,7 +137,7 @@ namespace FluentCassandra.Operations
 			return value.ToBigEndian();
 		}
 
-		public static IFluentBaseColumn ConvertToFluentBaseColumn(ColumnOrSuperColumn col, CassandraColumnFamilySchema schema = null)
+		public static IFluentBaseColumn ConvertToFluentBaseColumn(ColumnOrSuperColumn col, CassandraColumnFamilySchema schema)
 		{
 			if (col.Super_column != null)
 				return ConvertSuperColumnToFluentSuperColumn(col.Super_column, schema);
@@ -151,7 +151,7 @@ namespace FluentCassandra.Operations
 				return null;
 		}
 
-		public static FluentCounterColumn ConvertColumnToFluentCounterColumn(CounterColumn col, CassandraColumnFamilySchema schema = null)
+		public static FluentCounterColumn ConvertColumnToFluentCounterColumn(CounterColumn col, CassandraColumnFamilySchema schema)
 		{
 			var colSchema = new CassandraColumnSchema();
 
@@ -177,7 +177,7 @@ namespace FluentCassandra.Operations
 			return fcol;
 		}
 
-		public static FluentColumn ConvertColumnToFluentColumn(Column col, CassandraColumnFamilySchema schema = null)
+		public static FluentColumn ConvertColumnToFluentColumn(Column col, CassandraColumnFamilySchema schema)
 		{
 			var colSchema = new CassandraColumnSchema();
 
@@ -214,7 +214,7 @@ namespace FluentCassandra.Operations
 			return fcol;
 		}
 
-		public static FluentSuperColumn ConvertSuperColumnToFluentCounterSuperColumn(CounterSuperColumn col, CassandraColumnFamilySchema schema = null)
+		public static FluentSuperColumn ConvertSuperColumnToFluentCounterSuperColumn(CounterSuperColumn col, CassandraColumnFamilySchema schema)
 		{
 			var superColSchema = new CassandraColumnSchema {
 				Name = col.Name
@@ -239,7 +239,7 @@ namespace FluentCassandra.Operations
 			return superCol;
 		}
 
-		public static FluentSuperColumn ConvertSuperColumnToFluentSuperColumn(SuperColumn col, CassandraColumnFamilySchema schema = null)
+		public static FluentSuperColumn ConvertSuperColumnToFluentSuperColumn(SuperColumn col, CassandraColumnFamilySchema schema)
 		{
 			var superColSchema = new CassandraColumnSchema {
 				Name = col.Name

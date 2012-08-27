@@ -42,7 +42,7 @@ namespace FluentCassandra.Operations
 
 			foreach (var result in output)
 			{
-				var r = Helper.ConvertColumnToFluentColumn(result.Column);
+				var r = Helper.ConvertColumnToFluentColumn(result.Column, schema);
 				yield return r;
 			}
 		}

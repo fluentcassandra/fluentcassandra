@@ -42,7 +42,7 @@ namespace FluentCassandra.Operations
 
 			foreach (var result in output)
 			{
-				var r = Helper.ConvertSuperColumnToFluentSuperColumn(result.Super_column);
+				var r = Helper.ConvertSuperColumnToFluentSuperColumn(result.Super_column, schema);
 				columnFamily.Context.Attach(r);
 				r.MutationTracker.Clear();
 

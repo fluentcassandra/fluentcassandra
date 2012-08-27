@@ -16,6 +16,8 @@ namespace FluentCassandra.Operations
 
 		public override FluentSuperColumn Execute()
 		{
+			var schema = ColumnFamily.GetSchema();
+
 			var path = new CassandraColumnPath {
 				ColumnFamily = ColumnFamily.FamilyName
 			};
@@ -29,7 +31,7 @@ namespace FluentCassandra.Operations
 				Session.ReadConsistency
 			);
 
-			return (FluentSuperColumn)Helper.ConvertToFluentBaseColumn(output);
+			return (FluentSuperColumn)Helper.ConvertToFluentBaseColumn(output, schema);
 		}
 
 		public GetSuperColumn(CassandraObject key, CassandraObject superColumnName)
