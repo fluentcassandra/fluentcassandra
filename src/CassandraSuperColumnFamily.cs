@@ -27,6 +27,12 @@ namespace FluentCassandra
 		public CassandraSuperColumnFamily(CassandraContext context, string columnFamily)
 			: base(context, columnFamily) { }
 
+		public CassandraSuperColumnFamily(CassandraContext context, CassandraColumnFamilySchema schema)
+            : base(context, schema.FamilyName)
+        {
+            _cachedSchema = schema;
+        }
+
 		public FluentSuperColumnFamily CreateRecord(CassandraObject key)
 		{
 			if (key.GetValue<byte[]>().Length == 0)
@@ -49,9 +55,6 @@ namespace FluentCassandra
 
 		public override void SetSchema(CassandraColumnFamilySchema schema)
 		{
-			if (schema == null)
-				schema = new CassandraColumnFamilySchema { FamilyName = FamilyName };
-
 			_cachedSchema = schema;
 		}
 

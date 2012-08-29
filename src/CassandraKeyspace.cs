@@ -115,18 +115,13 @@ namespace FluentCassandra
 			}));
 		}
 
-		public CassandraColumnFamilySchema GetColumnFamilySchema(string columnFamily)
+		public CassandraColumnFamilySchema GetColumnFamilySchema(string columnFamily, bool onlyCheckCache = false)
 		{
+			if (onlyCheckCache && _cachedSchema == null)
+				return null;
+
 			return GetSchema().ColumnFamilies.FirstOrDefault(cf => cf.FamilyName == columnFamily);
 		}
-
-        internal CassandraColumnFamilySchema GetColumnFamilySchemaFromCacheOnly(string columnFamily)
-        {
-            if (_cachedSchema == null)
-                return null;
-
-            return GetColumnFamilySchema(columnFamily);
-        }
 
 		public bool ColumnFamilyExists(string columnFamilyName)
 		{

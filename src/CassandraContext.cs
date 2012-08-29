@@ -75,13 +75,13 @@ namespace FluentCassandra
 		/// <returns></returns>
 		public CassandraColumnFamily GetColumnFamily(string columnFamily)
 		{		    
-            if(Keyspace != null)
-            {
-                CassandraColumnFamilySchema schema = Keyspace.GetColumnFamilySchemaFromCacheOnly(columnFamily);
+			if(Keyspace != null)
+			{
+				var schema = Keyspace.GetColumnFamilySchema(columnFamily);
 
-                if(schema != null)
-                    return new CassandraColumnFamily(this, schema);
-            }   
+				if(schema != null)
+					return new CassandraColumnFamily(this, schema);
+			}
          
 			return new CassandraColumnFamily(this, columnFamily);
 		}
@@ -93,6 +93,14 @@ namespace FluentCassandra
 		/// <returns></returns>
 		public CassandraSuperColumnFamily GetSuperColumnFamily(string columnFamily)
 		{
+			if (Keyspace != null)
+			{
+				var schema = Keyspace.GetColumnFamilySchema(columnFamily);
+
+				if (schema != null)
+					return new CassandraSuperColumnFamily(this, schema);
+			}
+
 			return new CassandraSuperColumnFamily(this, columnFamily);
 		}
 

@@ -7,9 +7,9 @@ namespace FluentCassandra.ObjectSerializer
 {
 	public interface IObjectSerializer
 	{
-		Func<ICqlRow, ObjectSerializerConventions, object> GenerateRowDeserializer();
+		Func<ICqlRow, object> GenerateRowDeserializer();
 
-		object Deserialize(ICqlRow row, ObjectSerializerConventions conventions = null);
-		IEnumerable<object> Deserialize(IEnumerable<ICqlRow> rows, ObjectSerializerConventions conventions = null);
+		object Deserialize(ICqlRow row);
+		IEnumerable<object> Deserialize(IEnumerable<ICqlRow> rows);
 	}
 }

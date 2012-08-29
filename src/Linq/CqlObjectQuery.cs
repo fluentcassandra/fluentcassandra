@@ -61,7 +61,7 @@ namespace FluentCassandra.Linq
 
 			var serializer = ObjectSerializerFactory.Get(typeof(T));
 			return serializer
-				.Deserialize(fluentObjects, _family.ObjectConventions)
+				.Deserialize(fluentObjects)
 				.OfType<T>()
 				.GetEnumerator();
 		}

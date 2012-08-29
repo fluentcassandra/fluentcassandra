@@ -15,7 +15,7 @@ namespace FluentCassandra.ObjectSerializer
 			_type = type;
 		}
 
-		private object FrameworkTypeRowDeserializer(ICqlRow row, ObjectSerializerConventions conventions)
+		private object FrameworkTypeRowDeserializer(ICqlRow row)
 		{
 			if (row.Columns.Count > 0)
 				return Convert.ChangeType(row.Columns[0].ColumnValue, _type);
@@ -23,7 +23,7 @@ namespace FluentCassandra.ObjectSerializer
 			return Convert.ChangeType(row.Key, _type);
 		}
 
-		private object AnonymousRowDeserializer(ICqlRow row, ObjectSerializerConventions conventions)
+		private object AnonymousRowDeserializer(ICqlRow row)
 		{
 			var props = _type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
 			var args = new List<object>();
@@ -39,13 +39,13 @@ namespace FluentCassandra.ObjectSerializer
 			return Activator.CreateInstance(_type, args.ToArray());
 		}
 
-		private object RowDeserializer(ICqlRow row, ObjectSerializerConventions conventions)
+		private object RowDeserializer(ICqlRow row)
 		{
 			if (Type.GetTypeCode(_type) != TypeCode.Object)
-				return FrameworkTypeRowDeserializer(row, conventions);
+				return FrameworkTypeRowDeserializer(row);
 
 			if (_type.Name.Contains("AnonymousType"))
-				return AnonymousRowDeserializer(row, conventions);
+				return AnonymousRowDeserializer(row);
 
 			var obj = Activator.CreateInstance(_type);
 
@@ -60,27 +60,23 @@ namespace FluentCassandra.ObjectSerializer
 			return obj;
 		}
 
-		public Func<ICqlRow, ObjectSerializerConventions, object> GenerateRowDeserializer()
+		public Func<ICqlRow, object> GenerateRowDeserializer()
 		{
 			return RowDeserializer;
 		}
 
-		public object Deserialize(ICqlRow row, ObjectSerializerConventions conventions = null)
+		public object Deserialize(ICqlRow row)
 		{
-			conventions = conventions ?? new ObjectSerializerConventions();
-
 			var func = GenerateRowDeserializer();
-			return func(row, conventions);
+			return func(row);
 		}
 
-		public IEnumerable<object> Deserialize(IEnumerable<ICqlRow> rows, ObjectSerializerConventions conventions = null)
+		public IEnumerable<object> Deserialize(IEnumerable<ICqlRow> rows)
 		{
-			conventions = conventions ?? new ObjectSerializerConventions();
-
 			var func = GenerateRowDeserializer();
 
 			foreach (var row in rows)
-				yield return func(row, conventions);
+				yield return func(row);
 		}
 	}
 }

@@ -22,19 +22,14 @@ namespace FluentCassandra
 	public partial class CassandraColumnFamily : BaseCassandraColumnFamily
 	{
 		private CassandraColumnFamilySchema _cachedSchema;
-		private ObjectSerializerConventions _conventions;
 
 		public CassandraColumnFamily(CassandraContext context, string columnFamily)
-			: base(context, columnFamily)
-		{         		     
-			_conventions = new ObjectSerializerConventions();
-		}
+			: base(context, columnFamily) { }
 
         public CassandraColumnFamily(CassandraContext context, CassandraColumnFamilySchema schema)
             : base(context, schema.FamilyName)
         {
             _cachedSchema = schema;
-            _conventions = new ObjectSerializerConventions();
         }
 
 		public FluentColumnFamily CreateRecord(CassandraObject key)
@@ -43,18 +38,6 @@ namespace FluentCassandra
 				throw new ArgumentException("'key' is not allowed to be zero length.", "key");
 
 			return new FluentColumnFamily(key, FamilyName, GetSchema());
-		}
-
-		public ObjectSerializerConventions ObjectConventions
-		{
-			get { return _conventions; }
-			set
-			{
-				if (value == null)
-					throw new ArgumentNullException("value");
-				
-				_conventions = value;
-			}
 		}
 
 		public override CassandraColumnFamilySchema GetSchema()
