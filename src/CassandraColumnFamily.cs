@@ -26,9 +26,16 @@ namespace FluentCassandra
 
 		public CassandraColumnFamily(CassandraContext context, string columnFamily)
 			: base(context, columnFamily)
-		{
+		{         		     
 			_conventions = new ObjectSerializerConventions();
 		}
+
+        public CassandraColumnFamily(CassandraContext context, CassandraColumnFamilySchema schema)
+            : base(context, schema.FamilyName)
+        {
+            _cachedSchema = schema;
+            _conventions = new ObjectSerializerConventions();
+        }
 
 		public FluentColumnFamily CreateRecord(CassandraObject key)
 		{
