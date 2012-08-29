@@ -74,7 +74,15 @@ namespace FluentCassandra
 		/// <typeparam name="CompareWith"></typeparam>
 		/// <returns></returns>
 		public CassandraColumnFamily GetColumnFamily(string columnFamily)
-		{
+		{		    
+            if(Keyspace != null)
+            {
+                CassandraColumnFamilySchema schema = Keyspace.GetColumnFamilySchemaFromCacheOnly(columnFamily);
+
+                if(schema != null)
+                    return new CassandraColumnFamily(this, schema);
+            }   
+         
 			return new CassandraColumnFamily(this, columnFamily);
 		}
 
