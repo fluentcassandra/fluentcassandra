@@ -59,6 +59,7 @@
     <Compile Include="CassandraQueryTest.cs" />
     <Compile Include="Connections\ConnectionProviderTests.cs" />
     <Compile Include="Connections\NormalConnectionProviderTests.cs" />
+    <Compile Include="CqlHelperTest.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="Linq\LinqToCqlObjectsCassandraTests.cs" />
     <Compile Include="Linq\LinqToCqlObjectsTests.cs" />

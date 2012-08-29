@@ -125,6 +125,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="CassandraCqlRowSchema.cs" />
+    <Compile Include="CqlHelper.cs" />
     <Compile Include="FluentCqlRow.cs" />
     <Compile Include="ILoadable.cs" />
     <Compile Include="System\DateTimePrecise.cs" />
