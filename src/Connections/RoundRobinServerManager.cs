@@ -28,7 +28,7 @@ namespace FluentCassandra.Connections
 
 		public bool HasNext
 		{
-			get { lock (_lock) { return _serverQueue.Count > 0; } }
+            get { lock (_lock) { return (_serverQueue.Count - _blackListed.Count) > 0; } }
 		}
 
 		public Server Next()
