@@ -56,7 +56,7 @@ namespace FluentCassandra
 		public const string TestStandardName = "Test1";
 		public const string TestSuperName = "SubTest1";
 
-		public static readonly string Keyspace = ConfigurationManager.AppSettings["TestKeySpace"];
+        public static readonly string Keyspace = ConfigurationManager.AppSettings["TestKeySpaceCql3"];
         public static readonly Server Server = new Server(ConfigurationManager.AppSettings["TestServer"]);
 
         bool toLower;

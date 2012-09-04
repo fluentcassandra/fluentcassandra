@@ -46,7 +46,7 @@ namespace FluentCassandra
             public int Age { get; set; }
         }
 
-        public static readonly string Keyspace = ConfigurationManager.AppSettings["TestKeySpace"];
+        public static readonly string Keyspace = ConfigurationManager.AppSettings["TestKeySpaceCql3"];
         public static readonly Server Server = new Server(ConfigurationManager.AppSettings["TestServer"]);
 
         public CassandraCql3DatabaseSetup(bool reset = false)

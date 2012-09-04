@@ -30,7 +30,7 @@ namespace FluentCassandra
         public ConnectionBuilder ConnectionBuilder;
         public CassandraContext DB;
 
-        public static readonly string Keyspace = ConfigurationManager.AppSettings["TestKeySpace"];
+        public static readonly string Keyspace = ConfigurationManager.AppSettings["TestKeySpaceCql3"];
         public static readonly Server Server = new Server(ConfigurationManager.AppSettings["TestServer"]);
 
         public GenericDatabaseSetup(bool reset = false)

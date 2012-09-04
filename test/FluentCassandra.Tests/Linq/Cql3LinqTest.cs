@@ -63,7 +63,6 @@ namespace FluentCassandra.Operations
         /// 3) count() - not supported
         /// 4) token(),Skip() - not supported - no pageing
         /// 5) cassandra boolena true, false => 'true', 'false'
-        /// 
         /// </summary>
 
         [Fact]
@@ -93,7 +92,7 @@ namespace FluentCassandra.Operations
             foreach (var u in Users)
                 _db.ExecuteNonQuery(Tools.GetInsertCQL(u));
             
-            var cnt = (from u in _db.GetColumnFamily(typeof(Row1).Name) where u["idx"] == 3 select u).Count();
+            var cnt = (from u in _db.GetColumnFamily(typeof(Row1).Name) select u).Count();
 
             Assert.Equal(Users.Count(), cnt);
         }

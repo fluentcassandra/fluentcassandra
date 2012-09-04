@@ -5,13 +5,15 @@ using System.Text;
 using FluentCassandra.Connections;
 using System.Threading;
 using System.Globalization;
+using Xunit;
+using System.Diagnostics;
 
-namespace FluentCassandra.UltraStressTest
+namespace FluentCassandra.StressTest
 {
     /// <summary>
     /// The performance test on rapid insert/select/delete operations from mutlithreaded environment
     /// </summary>
-    class Program
+    class StressTest2
     {
         public class CassandraJob
         {
@@ -49,10 +51,11 @@ namespace FluentCassandra.UltraStressTest
                 return ackId;
             }
         }
-        private static string KeyspaceName = "ultratest";
+        private static string KeyspaceName = "stresstest2";
         private static readonly Server Server = new Server("localhost");
 
-        static void Main(string[] args)
+        [Fact]
+        public static void Test()
         {
             int TestTimeInMinutes = 10;
 
@@ -89,6 +92,7 @@ namespace FluentCassandra.UltraStressTest
                 int thrNo = tI;
                 var thr = new Thread(() =>
                 {
+                    
                     Console.Write("(*" + thrNo + ")");
                     try
                     {
@@ -197,9 +201,7 @@ namespace FluentCassandra.UltraStressTest
             if (j.Count() > 0 || c.Count() > 0)
                 Console.WriteLine("Error");
 
-            Console.WriteLine();
-            Console.Write("Finished. ([ESC] to exit)");
-            Console.ReadKey();
+            Console.WriteLine("Finished");
         }
 
            static ThreadLocal<Random> rnd = new ThreadLocal<Random>((() => new Random(Guid.NewGuid().GetHashCode())));
