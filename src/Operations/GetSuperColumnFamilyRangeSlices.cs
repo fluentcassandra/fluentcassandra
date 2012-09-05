@@ -30,7 +30,9 @@ namespace FluentCassandra.Operations
 
 			foreach (var result in output)
 			{
-				var r = new FluentSuperColumnFamily(result.Key, ColumnFamily.FamilyName, schema, result.Columns.Select(col => {
+            var key = CassandraObject.GetCassandraObjectFromDatabaseByteArray(result.Key, schema.KeyValueType);
+
+				var r = new FluentSuperColumnFamily(key, ColumnFamily.FamilyName, schema, result.Columns.Select(col => {
 					var superCol = Helper.ConvertSuperColumnToFluentSuperColumn(col.Super_column, schema);
 					ColumnFamily.Context.Attach(superCol);
 					superCol.MutationTracker.Clear();
