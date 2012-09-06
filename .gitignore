@@ -1,3 +1,6 @@
+# ignore msbuild.log
+msbuild.log
+
 # nuget package files
 *.nupkg
 
