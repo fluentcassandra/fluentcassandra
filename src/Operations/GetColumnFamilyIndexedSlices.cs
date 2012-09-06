@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using FluentCassandra.Types;
 
 namespace FluentCassandra.Operations
 {
@@ -36,7 +37,9 @@ namespace FluentCassandra.Operations
 
 			foreach (var result in output)
 			{
-				var r = new FluentColumnFamily(result.Key, columnFamily.FamilyName, columnFamily.GetSchema(), result.Columns.Select(col => {
+				var key = CassandraObject.GetCassandraObjectFromDatabaseByteArray(result.Key, schema.KeyValueType);
+
+				var r = new FluentColumnFamily(key, columnFamily.FamilyName, columnFamily.GetSchema(), result.Columns.Select(col => {
 					return Helper.ConvertColumnToFluentColumn(col.Column, schema);
 				}));
 				columnFamily.Context.Attach(r);
