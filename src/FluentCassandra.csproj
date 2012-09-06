@@ -128,7 +128,6 @@
     <Compile Include="CqlHelper.cs" />
     <Compile Include="FluentCqlRow.cs" />
     <Compile Include="ILoadable.cs" />
-    <Compile Include="System\DateTimePrecise.cs" />
     <Compile Include="FluentCassandraException.cs" />
     <Compile Include="FluentColumn.cs">
       <SubType>Code</SubType>
