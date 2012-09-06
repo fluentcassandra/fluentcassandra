@@ -9,11 +9,11 @@ namespace FluentCassandra.Operations
     /// Basic fluent-cassandra support for CQL3
     /// Composite keys/Count
     /// </summary>
-    public class Cql3Test : IUseFixture<CassandraCql3DatabaseSetupFixture>, IDisposable
+    public class Cql3Test : IUseFixture<CassandraDatabaseSetupFixture>, IDisposable
     {
         private CassandraContext _db;
 
-        public void SetFixture(CassandraCql3DatabaseSetupFixture data)
+		public void SetFixture(CassandraDatabaseSetupFixture data)
         {
             var setup = data.DatabaseSetup();
             _db = setup.DB;
