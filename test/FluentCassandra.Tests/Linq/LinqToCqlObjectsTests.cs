@@ -225,20 +225,16 @@ namespace FluentCassandra.Linq
 		}
 
 		[Fact]
-		public void OTHER_LINQ_SYNTAX() {
+		public void Alternate_LINQ_Syntax() {
 			var expected = "SELECT * FROM Users WHERE Id = 1234";
-
 			var columnName = "Id";
 
 			IQueryable<ICqlRow> query = _family;
-
 			query = query.Where(q => q[columnName] == 1234);
 
 			var actual = query.ToString();
 
 			AreEqual(expected, actual);
-
-
 		}
 	}
 }

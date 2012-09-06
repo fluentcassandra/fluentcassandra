@@ -260,7 +260,7 @@ namespace FluentCassandra.Linq
 		}
 
 		[Fact]
-		public void CHAINING_WHERE_CLAUSE()
+		public void Changed_Where_Expressions_Should_Translate_To_AND()
 		{
 			var expected = "SELECT * FROM Users WHERE Id = 1234 AND Age = 10";
 
