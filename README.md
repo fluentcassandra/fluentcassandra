@@ -8,7 +8,6 @@ Getting Help
 
 You can get help with FluentCassandra by asking questions or starting a discussion on our group.  https://groups.google.com/d/forum/fluentcassandra
 
-
 Installing Cassandra
 --------------------
 
@@ -20,6 +19,8 @@ Taken from the "[Cassandra Jump Start For Windows](http://www.coderjournal.com/2
 
         JAVA_HOME (To the directory where you install the JRE, this should not be the bin directory)
         CASSANDRA_HOME (To the directory you extracted the files to in step 1)
+
+    *Please note that you are going to want to be running Java JRE 6 for running Cassandra.*
 
  4. Modify your Cassandra config file as you like and don't forget to update the directory locations from a UNIX like path to something on your windows directory (in my example the config file is located at c:\development\cassandra\conf\storage-conf.xml)
  5. Open cmd and run the cassandra.bat file (in my example the batch file is located at c:\development\cassandra\bin\cassandra.bat) 
