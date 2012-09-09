@@ -251,13 +251,25 @@ namespace FluentCassandra
 
         public void DeleteColumn(object name)
         {
-            var schema = GetSchema().Columns.First(c => c.Name == name);
+            var cfSchema = GetSchema();
+            var schema = cfSchema.Columns.FirstOrDefault(c => c.Name == name);
 
-            FluentColumn col = new FluentColumn(schema);
-            col.ColumnName = CassandraObject.GetCassandraObjectFromObject(name, schema.NameType);
-            col.SetParent(GetSelf());
+            if(schema != null)
+            {
+                FluentColumn col = new FluentColumn(schema);
+                col.ColumnName = CassandraObject.GetCassandraObjectFromObject(name, schema.NameType);
+                col.SetParent(GetSelf());
 
-            MutationTracker.ColumnMutated(MutationType.Removed, col);
+                MutationTracker.ColumnMutated(MutationType.Removed, col);
+            }
+            else
+            {
+                FluentColumn col = new FluentColumn();
+                col.ColumnName = CassandraObject.GetCassandraObjectFromObject(name);
+                col.SetParent(GetSelf());
+
+                MutationTracker.ColumnMutated(MutationType.Removed, col);
+            }
         }
 
 		public override string ToString()
