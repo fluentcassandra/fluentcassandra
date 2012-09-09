@@ -249,6 +249,17 @@ namespace FluentCassandra
 			return true;
 		}
 
+        public void DeleteColumn(object name)
+        {
+            var schema = GetSchema().Columns.First(c => c.Name == name);
+
+            FluentColumn col = new FluentColumn(schema);
+            col.ColumnName = CassandraObject.GetCassandraObjectFromObject(name, schema.NameType);
+            col.SetParent(GetSelf());
+
+            MutationTracker.ColumnMutated(MutationType.Removed, col);
+        }
+
 		public override string ToString()
 		{
 			return String.Format("{0} - {1}", FamilyName, Key);
