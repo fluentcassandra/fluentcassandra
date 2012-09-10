@@ -227,7 +227,7 @@ namespace FluentCassandra
 			var col = Columns.FirstOrDefault(c => c.ColumnName == name);
 			var mutationType = MutationType.Changed;
 
-			// if column doesn't exisit create it and add it to the columns
+			// if column doesn't exist create it and add it to the columns
 			if (col == null)
 			{
 				mutationType = MutationType.Added;

@@ -267,7 +267,12 @@ namespace FluentCassandra
 			foreach (var col in Columns)
 				col.SetParent(columnParent);
 
-			ResetMutationAndAddAllColumns();
+			if (!SuppressMutationTracking) {
+				MutationTracker.Clear();
+
+				foreach (var col in Columns)
+					MutationTracker.ColumnMutated(MutationType.Added, col);
+			}
 		}
 
 		#region IFluentBaseColumn Members

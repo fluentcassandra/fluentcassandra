@@ -107,7 +107,7 @@ namespace FluentCassandra
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public abstract bool TrySetColumn(object name, object value);
 
-		private bool SuppressMutationTracking { get; set; }
+		protected bool SuppressMutationTracking { get; private set; }
 
 		void ILoadable.BeginLoad()
 		{
@@ -176,21 +176,6 @@ namespace FluentCassandra
 
 			if (col != null)
 				Columns.Remove(col);
-		}
-
-		protected void ResetMutation()
-		{
-			MutationTracker.Clear();
-		}
-
-		protected void ResetMutationAndAddAllColumns()
-		{
-			if (SuppressMutationTracking)
-				return;
-
-			ResetMutation();
-			foreach (var col in Columns)
-				MutationTracker.ColumnMutated(MutationType.Added, col);
 		}
 
 		#endregion

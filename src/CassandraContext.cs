@@ -306,9 +306,12 @@ namespace FluentCassandra
 		/// <param name="record"></param>
 		public void SaveChanges(IFluentRecord record)
 		{
-			var mutations = record.MutationTracker.GetMutations();
+			var tracker = record.MutationTracker;
+			var mutations = tracker.GetMutations();
 			var op = new BatchMutate(mutations);
 			ExecuteOperation(op);
+
+			tracker.Clear();
 		}
 
 		/// <summary>
