@@ -170,12 +170,19 @@ namespace FluentCassandra
 			private set;
 		}
 
-		public void RemoveColumn(object name)
+	    public abstract void RemoveColumn(object name);
+
+		public bool TryRemoveColumn(object name)
 		{
 			var col = Columns.FirstOrDefault(c => c.ColumnName == name);
 
 			if (col != null)
-				Columns.Remove(col);
+			{
+			    Columns.Remove(col);
+			    return true;
+			}
+
+		    return false;
 		}
 
 		protected void ResetMutation()

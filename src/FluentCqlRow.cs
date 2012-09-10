@@ -112,7 +112,12 @@ namespace FluentCassandra
 			get { return _columns; }
 		}
 
-		public CassandraObject this[CassandraObject columnName]
+	    public override void RemoveColumn(object name)
+	    {
+            throw new NotSupportedException();
+	    }
+
+	    public CassandraObject this[CassandraObject columnName]
 		{
 			get
 			{
