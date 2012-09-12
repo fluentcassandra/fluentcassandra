@@ -355,7 +355,7 @@ namespace FluentCassandra
 		public CassandraException LastError { get; private set; }
 
 		/// <summary>
-		/// Indicates if errors should be thrown when occuring on opperation.
+		/// Indicates if errors should be thrown when occuring on operation.
 		/// </summary>
 		public bool ThrowErrors { get; set; }
 
