@@ -341,7 +341,7 @@ namespace FluentCassandra.Connections
 							Servers.Add(new Server(host: host, timeout: ConnectionTimeout.Seconds));
 					}
 					else
-						Servers.Add(new Server(host));
+                        Servers.Add(new Server(host: host, timeout: ConnectionTimeout.Seconds));
 				}
 			}
 
