@@ -56,6 +56,7 @@
     <Compile Include="Bugs\Issue25JavaBigDecimalBinaryConversion.cs" />
     <Compile Include="Bugs\Issue36KeyAliasSupport.cs" />
     <Compile Include="Bugs\Issue39CompositeTypeAsKey.cs" />
+    <Compile Include="Bugs\Issue65ServerTimeoutLost.cs" />
     <Compile Include="CassandraDatabaseSetupFixture.cs" />
     <Compile Include="CassandraQueryTest.cs" />
     <Compile Include="Connections\ConnectionProviderTests.cs" />
