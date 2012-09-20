@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using FluentCassandra.Connections;
 using FluentCassandra.Types;
 using FluentCassandra.Linq;
@@ -13,7 +15,9 @@ namespace FluentCassandra.Sandbox
     {
         public static readonly string KeyspaceName = ConfigurationManager.AppSettings["TestKeySpace"];
         public static readonly Server Server = new Server(ConfigurationManager.AppSettings["TestServer"]);
-		
+
+        private static HashSet<Guid> uuids = new HashSet<Guid>();
+        
 
         #region Setup
 
@@ -460,36 +464,75 @@ namespace FluentCassandra.Sandbox
             }
         }
         #endregion
-        
+
+        #region TimeBasedUUIDGenerationTest
+
+        private static void TimeBasedUUIDGenerationTest()
+        {
+            TaskFactory factory = new TaskFactory();
+            Task[] tasks = new Task[45];
+
+            for (int i = 0; i < tasks.Length; i++)
+            {
+                Task t = factory.StartNew(TestCollidingTimeUUID);
+                tasks[i] = t;
+            }
+
+            Task.WaitAll(tasks);
+
+            Console.WriteLine("TimeBasedUUIDGenerationTest Complete");
+        }
+
+        private static void TestCollidingTimeUUID()
+        {
+            for (int i = 0; i < 100000; i++)
+            {
+                Guid timeUUID = GuidGenerator.GenerateTimeBasedGuid();
+
+                if (!uuids.Add(timeUUID))
+                {
+                    Console.WriteLine("duplicate found at iteration:" + i);
+                    break;
+                }
+            }
+
+        }
+
+        #endregion
+
         private static void Main(string[] args)
         {
-            SetupKeyspace();
+            //TimeBasedUUIDGenerationTest();
+            
+            //SetupKeyspace();
 
-            CreateFirstPost();
+            //CreateFirstPost();
 
-            CreateSecondPost();
+            //CreateSecondPost();
 
-            ReadFirstPost();
+            //ReadFirstPost();
 
-            ReadAllPosts();
+            //ReadAllPosts();
 
-            UpdateFirstPost();
+            //UpdateFirstPost();
 
-            ReadFirstPost();
+            //ReadFirstPost();
 
-            CreateComments();
+            //CreateComments();
 
-            CreateColumnFamilyWithUUIDOperator();
+            //CreateColumnFamilyWithUUIDOperator();
 
-            CreateColumnFamilyWithTimestampOperator();
+            //CreateColumnFamilyWithTimestampOperator();
 
-            ReadComments();
+            //ReadComments();
 
-            TombstoneTest();
+            //TombstoneTest();
 
-            BigDecimalTest();
+            //BigDecimalTest();
 
             Console.Read();
         }
+
+
     }
 }

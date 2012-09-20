@@ -90,5 +90,22 @@ namespace FluentCassandra
 			// assert
 			Assert.Equal(expected, actual);
 		}
+
+        [Fact]
+        public void TimeBasedGuidDoesNotDuplicateGuidForSameTime()
+        {
+            // arrange
+            DateTimeOffset currentTime = DateTimeOffset.UtcNow;
+
+            TimeUUIDHelper.UtcNow = () => currentTime;  //make sure all calls will return the same time
+            Guid firstGuid = GuidGenerator.GenerateTimeBasedGuid();
+
+            // act
+            Guid secondGuid = GuidGenerator.GenerateTimeBasedGuid();
+
+            // assert
+            Assert.NotEqual(firstGuid, secondGuid);
+            Assert.Equal(GuidGenerator.GetDateTime(firstGuid).Ticks + 1, GuidGenerator.GetDateTime(secondGuid).Ticks);  //next tick was used
+        }
 	}
 }

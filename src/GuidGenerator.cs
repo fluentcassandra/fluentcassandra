@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 
 namespace FluentCassandra
 {
@@ -28,7 +27,10 @@ namespace FluentCassandra
 		private const byte NodeByte = 10;
 
 		// offset to move from 1/1/0001, which is 0-time for .NET, to gregorian 0-time of 10/15/1582
-		private static readonly DateTimeOffset GregorianCalendarStart = new DateTimeOffset(1582, 10, 15, 0, 0, 0, TimeSpan.Zero);
+		private static  DateTimeOffset GregorianCalendarStart = new DateTimeOffset(1582, 10, 15, 0, 0, 0, TimeSpan.Zero);
+
+	    private static long LastTick;
+	    private static object Semaphore = new object();
 
 		// random clock sequence and node
 		public static byte[] DefaultClockSequence { get; set; }
@@ -84,7 +86,29 @@ namespace FluentCassandra
 
 		public static Guid GenerateTimeBasedGuid()
 		{
-			return GenerateTimeBasedGuid(DateTimeOffset.UtcNow, DefaultClockSequence, DefaultNode);
+            long ticks;
+		    DateTimeOffset dateTime = TimeUUIDHelper.UtcNow();
+
+            lock (Semaphore)
+            {
+                ticks = dateTime.Ticks;
+
+                if (LastTick == 0)
+                {
+                    LastTick = ticks;
+                }
+                else
+                {
+                    if (ticks <= LastTick)
+                    {
+                        ticks = LastTick + 1;
+                    }
+
+                    LastTick = ticks;
+                }
+            }
+
+            return GenerateTimeBasedGuid(new DateTime(ticks), DefaultClockSequence, DefaultNode);
 		}
 
 		public static Guid GenerateTimeBasedGuid(DateTime dateTime)
@@ -104,40 +128,43 @@ namespace FluentCassandra
 
 		public static Guid GenerateTimeBasedGuid(DateTimeOffset dateTime, byte[] clockSequence, byte[] node)
 		{
-			if (clockSequence == null)
-				throw new ArgumentNullException("clockSequence");
 
-			if (node == null)
-				throw new ArgumentNullException("node");
+            if (clockSequence == null)
+            throw new ArgumentNullException("clockSequence");
 
-			if (clockSequence.Length != 2)
-				throw new ArgumentOutOfRangeException("clockSequence", "The clockSequence must be 2 bytes.");
+            if (node == null)
+                throw new ArgumentNullException("node");
 
-			if (node.Length != 6)
-				throw new ArgumentOutOfRangeException("node", "The node must be 6 bytes.");
+            if (clockSequence.Length != 2)
+                throw new ArgumentOutOfRangeException("clockSequence", "The clockSequence must be 2 bytes.");
+            if (node.Length != 6)
+                throw new ArgumentOutOfRangeException("node", "The node must be 6 bytes.");
 
-			long ticks = (dateTime - GregorianCalendarStart).Ticks;
-			byte[] guid = new byte[ByteArraySize];
-			byte[] timestamp = BitConverter.GetBytes(ticks);
+            long ticks = (dateTime - GregorianCalendarStart).Ticks;
+            
+		    byte[] guid = new byte[ByteArraySize];
+            byte[] timestamp = BitConverter.GetBytes(ticks);
 
-			// copy node
-			Array.Copy(node, 0, guid, NodeByte, Math.Min(6, node.Length));
+            // copy node
+            Array.Copy(node, 0, guid, NodeByte, Math.Min(6, node.Length));
 
-			// copy clock sequence
-			Array.Copy(clockSequence, 0, guid, GuidClockSequenceByte, Math.Min(2, clockSequence.Length));
+            // copy clock sequence
+            Array.Copy(clockSequence, 0, guid, GuidClockSequenceByte, Math.Min(2, clockSequence.Length));
 
-			// copy timestamp
-			Array.Copy(timestamp, 0, guid, TimestampByte, Math.Min(8, timestamp.Length));
+            // copy timestamp
+            Array.Copy(timestamp, 0, guid, TimestampByte, Math.Min(8, timestamp.Length));
 
-			// set the variant
-			guid[VariantByte] &= (byte)VariantByteMask;
-			guid[VariantByte] |= (byte)VariantByteShift;
+            // set the variant
+            guid[VariantByte] &= (byte) VariantByteMask;
+            guid[VariantByte] |= (byte) VariantByteShift;
 
-			// set the version
-			guid[VersionByte] &= (byte)VersionByteMask;
-			guid[VersionByte] |= (byte)((byte)GuidVersion.TimeBased << VersionByteShift);
+            // set the version
+            guid[VersionByte] &= (byte) VersionByteMask;
+            guid[VersionByte] |= (byte) ((byte) GuidVersion.TimeBased << VersionByteShift);
 
-			return new Guid(guid);
+
+            return new Guid(guid);
+
 		}
 	}
 }
