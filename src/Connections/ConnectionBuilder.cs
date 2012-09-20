@@ -82,7 +82,7 @@ namespace FluentCassandra.Connections
 				if (nameValue.Length != 2)
 					continue;
 
-				pairs.Add(nameValue[0], nameValue[1]);
+                pairs.Add(nameValue[0].Trim(), nameValue[1].Trim());
 			}
 
 			#region Keyspace
@@ -330,12 +330,12 @@ namespace FluentCassandra.Connections
 				foreach (var server in servers)
 				{
 					string[] serverParts = server.Split(':');
-					string host = serverParts[0];
+                    string host = serverParts[0].Trim();
 
 					if (serverParts.Length == 2)
 					{
 						int port;
-						if (Int32.TryParse(serverParts[1], out port))
+                        if (Int32.TryParse(serverParts[1].Trim(), out port))
 							Servers.Add(new Server(host: host, port: port, timeout: ConnectionTimeout.Seconds));
 						else
 							Servers.Add(new Server(host: host, timeout: ConnectionTimeout.Seconds));
