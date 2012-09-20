@@ -59,6 +59,7 @@
     <Compile Include="Bugs\Issue65ServerTimeoutLost.cs" />
     <Compile Include="CassandraDatabaseSetupFixture.cs" />
     <Compile Include="CassandraQueryTest.cs" />
+    <Compile Include="Connections\ConnectionBuilderTests.cs" />
     <Compile Include="Connections\ConnectionProviderTests.cs" />
     <Compile Include="Connections\NormalConnectionProviderTests.cs" />
     <Compile Include="CqlHelperTest.cs" />
