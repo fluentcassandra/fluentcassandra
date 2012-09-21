@@ -28,6 +28,8 @@ namespace System
 			get { return Instance.GetUtcNow(); }
 		}
 
+		private const int TicksInOneSecond = 10000000;
+
 		private readonly double _syncSeconds;
 		private readonly Stopwatch _stopwatch;
 		private DateTimeOffset _baseTime;
@@ -57,7 +59,8 @@ namespace System
 				return _baseTime;
 			}
 
-			return _baseTime.AddSeconds(elapsedSeconds);
+			var elapsedTicks = Convert.ToInt64(elapsedSeconds * TicksInOneSecond);
+			return _baseTime.AddTicks(elapsedTicks);
 		}
 	}
 }
