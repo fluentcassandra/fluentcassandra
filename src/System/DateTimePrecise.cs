@@ -56,7 +56,9 @@ namespace System
 			
 			if (elapsedSeconds > _syncSeconds) {
 				Syncronize();
-				return _baseTime;
+
+				// account for any time that has passed since the stopwatch was syncronized
+				elapsedSeconds = _stopwatch.ElapsedTicks / (double)Stopwatch.Frequency;
 			}
 
 			var elapsedTicks = Convert.ToInt64(elapsedSeconds * TicksInOneSecond);
