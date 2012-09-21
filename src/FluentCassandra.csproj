@@ -217,6 +217,7 @@
     <Compile Include="Operations\Void.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="System\DateTimePrecise.cs" />
     <Compile Include="Thrift\Collections\THashSet.cs" />
     <Compile Include="Thrift\Protocol\TBase.cs" />
     <Compile Include="Thrift\Protocol\TBase64Utils.cs" />
