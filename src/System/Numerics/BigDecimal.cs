@@ -3,9 +3,6 @@ using System.Linq;
 
 namespace System.Numerics
 {
-	/// <summary>
-	/// A crude implimentation of the essentials needed from Java's BigDecimal
-	/// </summary>
 	public struct BigDecimal : IConvertible, IFormattable, IComparable, IComparable<BigDecimal>, IEquatable<BigDecimal>
 	{
 		public static readonly BigDecimal MinusOne = new BigDecimal(BigInteger.MinusOne, 0);
