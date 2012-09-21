@@ -62,6 +62,9 @@ namespace System
 				elapsed = _stopwatch.Elapsed;
 			}
 
+			if (elapsed < TimeSpan.Zero)
+				elapsed = TimeSpan.Zero;
+
 			return _baseTime + elapsed;
 		}
 	}
