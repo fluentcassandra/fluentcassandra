@@ -1,15 +1,10 @@
 ﻿using System;
-using Apache.Cassandra;
 using FluentCassandra.Types;
 
 namespace FluentCassandra.Operations
 {
 	public class Remove : ColumnFamilyOperation<Void>
 	{
-		/*
-		 * remove(keyspace, key, column_path, timestamp, consistency_level)
-		 */
-
 		public CassandraObject Key { get; private set; }
 
 		public CassandraObject SuperColumnName { get; private set; }
@@ -31,7 +26,7 @@ namespace FluentCassandra.Operations
 			Session.GetClient().remove(
 				Key,
 				path,
-				DateTimeOffset.UtcNow.ToCassandraTimestamp(),
+				DateTimePrecise.UtcNowOffset.ToCassandraTimestamp(),
 				Session.WriteConsistency
 			);
 

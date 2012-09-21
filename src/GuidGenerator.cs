@@ -84,7 +84,7 @@ namespace FluentCassandra
 
 		public static Guid GenerateTimeBasedGuid()
 		{
-			return GenerateTimeBasedGuid(DateTimeOffset.UtcNow, DefaultClockSequence, DefaultNode);
+			return GenerateTimeBasedGuid(DateTimePrecise.UtcNowOffset, DefaultClockSequence, DefaultNode);
 		}
 
 		public static Guid GenerateTimeBasedGuid(DateTime dateTime)
