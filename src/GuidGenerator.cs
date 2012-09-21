@@ -49,7 +49,14 @@ namespace FluentCassandra
 
 		private static byte[] ClockSequence
 		{
-			get { return BitConverter.GetBytes(Convert.ToInt16(Environment.TickCount % Int16.MaxValue)); }
+			get
+			{
+				var ts = Stopwatch.GetTimestamp();
+				return new byte[] {
+					(byte)(ts),
+					(byte)(ts >> 0x8)
+				};
+			}
 		}
 
 		public static DateTimeOffset GetDateTimeOffset(Guid guid)

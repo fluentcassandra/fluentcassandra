@@ -103,20 +103,20 @@ namespace System.Numerics
 			int hi = bits[2];
 			int flags = bits[3];
 
-			bytes[0] = (byte)lo;
-			bytes[1] = (byte)(lo >> 8);
+			bytes[0] = (byte)(lo);
+			bytes[1] = (byte)(lo >> 0x8);
 			bytes[2] = (byte)(lo >> 0x10);
 			bytes[3] = (byte)(lo >> 0x18);
-			bytes[4] = (byte)mid;
-			bytes[5] = (byte)(mid >> 8);
+			bytes[4] = (byte)(mid);
+			bytes[5] = (byte)(mid >> 0x8);
 			bytes[6] = (byte)(mid >> 0x10);
 			bytes[7] = (byte)(mid >> 0x18);
-			bytes[8] = (byte)hi;
-			bytes[9] = (byte)(hi >> 8);
+			bytes[8] =  (byte)(hi);
+			bytes[9] =  (byte)(hi >> 0x8);
 			bytes[10] = (byte)(hi >> 0x10);
 			bytes[11] = (byte)(hi >> 0x18);
-			bytes[12] = (byte)flags;
-			bytes[13] = (byte)(flags >> 8);
+			bytes[12] = (byte)(flags);
+			bytes[13] = (byte)(flags >> 0x8);
 			bytes[14] = (byte)(flags >> 0x10);
 			bytes[15] = (byte)(flags >> 0x18);
 
