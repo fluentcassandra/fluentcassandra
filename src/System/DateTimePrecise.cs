@@ -52,17 +52,17 @@ namespace System
 
 		public DateTimeOffset GetUtcNow()
 		{
-			var elapsedSeconds = _stopwatch.ElapsedTicks / (double)Stopwatch.Frequency;
-			
-			if (elapsedSeconds > _syncSeconds) {
+			var elapsed = _stopwatch.Elapsed;
+
+			if (elapsed.TotalSeconds > _syncSeconds)
+			{
 				Syncronize();
 
 				// account for any time that has passed since the stopwatch was syncronized
-				elapsedSeconds = _stopwatch.ElapsedTicks / (double)Stopwatch.Frequency;
+				elapsed = _stopwatch.Elapsed;
 			}
 
-			var elapsedTicks = Convert.ToInt64(elapsedSeconds * TicksInOneSecond);
-			return _baseTime.AddTicks(elapsedTicks);
+			return _baseTime + elapsed;
 		}
 	}
 }
