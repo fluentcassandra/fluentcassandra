@@ -469,8 +469,13 @@ namespace FluentCassandra.Sandbox
 
         private static void TimeBasedUUIDGenerationTest()
         {
+            DateTimeOffset now = DateTimeOffset.UtcNow;
+            //TimeUUIDHelper.UtcNow = () => now;S
+
+            //TimeUUIDHelper.UtcNow = () => DateTimePrecise.
+
             TaskFactory factory = new TaskFactory();
-            Task[] tasks = new Task[45];
+            Task[] tasks = new Task[1];
 
             for (int i = 0; i < tasks.Length; i++)
             {
@@ -485,15 +490,14 @@ namespace FluentCassandra.Sandbox
 
         private static void TestCollidingTimeUUID()
         {
-            for (int i = 0; i < 100000; i++)
+            for (int i = 0; i < 1000; i++)
             {
                 Guid timeUUID = GuidGenerator.GenerateTimeBasedGuid();
 
-                if (!uuids.Add(timeUUID))
-                {
-                    Console.WriteLine("duplicate found at iteration:" + i);
-                    break;
-                }
+                if (uuids.Add(timeUUID)) continue;
+
+                Console.WriteLine("duplicate found at iteration:" + i);
+                break;
             }
 
         }
@@ -502,7 +506,7 @@ namespace FluentCassandra.Sandbox
 
         private static void Main(string[] args)
         {
-            //TimeBasedUUIDGenerationTest();
+            TimeBasedUUIDGenerationTest();
             
             //SetupKeyspace();
 
