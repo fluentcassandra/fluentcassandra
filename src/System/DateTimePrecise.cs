@@ -28,7 +28,7 @@ namespace System
 			get { return Instance.GetUtcNow(); }
 		}
 
-		private const int TicksInOneSecond = 10000000;
+		private const long TicksInOneSecond = 10000000L;
 
 		private readonly double _syncSeconds;
 		private readonly Stopwatch _stopwatch;
