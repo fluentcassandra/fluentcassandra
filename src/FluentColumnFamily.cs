@@ -145,8 +145,37 @@ namespace FluentCassandra
 		{
 			get { return _columns; }
 		}
+	    
+        public override void RemoveColumn(object name)
+        {
+            FluentColumn col = Columns.FirstOrDefault(c => c.ColumnName == name);
 
-		/// <summary>
+            if (col != null)
+            {
+                Columns.Remove(col);
+            }
+            else
+            {
+                var cfSchema = GetSchema();
+                var schema = cfSchema.Columns.FirstOrDefault(c => c.Name == name);
+
+                if (schema != null)
+                {
+                    col = new FluentColumn(schema);
+                    col.ColumnName = CassandraObject.GetCassandraObjectFromObject(name, schema.NameType);
+                }
+                else
+                {
+                    col = new FluentColumn();
+                    col.ColumnName = CassandraObject.GetCassandraObjectFromObject(name);
+                }
+
+                col.SetParent(GetSelf());
+                MutationTracker.ColumnMutated(MutationType.Removed, col);
+            }
+        }
+
+	    /// <summary>
 		/// Gets the path.
 		/// </summary>
 		/// <returns></returns>
