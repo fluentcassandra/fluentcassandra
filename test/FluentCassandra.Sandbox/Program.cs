@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using FluentCassandra.Connections;
 using FluentCassandra.Types;
@@ -17,6 +16,7 @@ namespace FluentCassandra.Sandbox
         public static readonly Server Server = new Server(ConfigurationManager.AppSettings["TestServer"]);
 
         private static HashSet<Guid> uuids = new HashSet<Guid>();
+        private static HashSet<byte[]> clockSequences = new HashSet<byte[]>();
         
 
         #region Setup
@@ -469,13 +469,20 @@ namespace FluentCassandra.Sandbox
 
         private static void TimeBasedUUIDGenerationTest()
         {
-            DateTimeOffset now = DateTimeOffset.UtcNow;
-            //TimeUUIDHelper.UtcNow = () => now;S
+            //make it look like the clock reverted once in a while
+            TimeUUIDHelper.UtcNow = () =>
+                                        {
+                                            DateTimeOffset time = DateTimePrecise.UtcNowOffset;
+                                            if (time.Ticks % 100 == 0)
+                                            {
+                                                return time.AddTicks(-10);
+                                            }
 
-            //TimeUUIDHelper.UtcNow = () => DateTimePrecise.
+                                            return time;
+                                        };
 
             TaskFactory factory = new TaskFactory();
-            Task[] tasks = new Task[1];
+            Task[] tasks = new Task[50];
 
             for (int i = 0; i < tasks.Length; i++)
             {
@@ -488,6 +495,7 @@ namespace FluentCassandra.Sandbox
             Console.WriteLine("TimeBasedUUIDGenerationTest Complete");
         }
 
+
         private static void TestCollidingTimeUUID()
         {
             for (int i = 0; i < 1000; i++)
@@ -499,7 +507,6 @@ namespace FluentCassandra.Sandbox
                 Console.WriteLine("duplicate found at iteration:" + i);
                 break;
             }
-
         }
 
         #endregion

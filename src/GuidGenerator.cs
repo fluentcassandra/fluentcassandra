@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Threading;
+using System.Diagnostics;
 
 namespace FluentCassandra
 {
@@ -7,7 +7,7 @@ namespace FluentCassandra
 	/// Used for generating UUID based on RFC 4122.
 	/// </summary>
 	/// <seealso href="http://www.ietf.org/rfc/rfc4122.txt">RFC 4122 - A Universally Unique IDentifier (UUID) URN Namespace</seealso>
-	public static partial class GuidGenerator
+	public static class GuidGenerator
 	{
 		// number of bytes in guid
 		public const int ByteArraySize = 16;
@@ -30,23 +30,22 @@ namespace FluentCassandra
 		// offset to move from 1/1/0001, which is 0-time for .NET, to gregorian 0-time of 10/15/1582
 		private static  DateTimeOffset GregorianCalendarStart = new DateTimeOffset(1582, 10, 15, 0, 0, 0, TimeSpan.Zero);
 
-	    private static long ticksFromLastGuid = TimeUUIDHelper.UtcNow().Ticks;
-	    private static long clockSequenceForLastGuid;
-	    private static object Semaphore = new object();
-        private static Random random = new Random();
-	    private static short nextSequence;
+	    private static long TicksFromLastGuid = TimeUUIDHelper.UtcNow().Ticks;
+        private static object Semaphore = new object();
 
-		// random clock sequence and node
-		public static byte[] ClockSequence { get; set; }
+	    public static byte[] CurrentSequence = new byte[2];
+
+	    private static readonly Random random = new Random();
+
+
 		public static byte[] DefaultNode { get; set; }
 
 		static GuidGenerator()
 		{
-			ClockSequence = new byte[2];
 			DefaultNode = new byte[6];
 
-			random.NextBytes(ClockSequence);
-			random.NextBytes(DefaultNode);
+            random.NextBytes(DefaultNode);
+            random.NextBytes(CurrentSequence);
 		}
 
 		public static GuidVersion GetVersion(this Guid guid)
@@ -54,6 +53,11 @@ namespace FluentCassandra
 			byte[] bytes = guid.ToByteArray();
 			return (GuidVersion)((bytes[VersionByte] & 0xFF) >> VersionByteShift);
 		}
+
+        public static void GenerateNewClockSequence()
+        {
+            random.NextBytes(CurrentSequence);
+        }
 
 		public static DateTimeOffset GetDateTimeOffset(Guid guid)
 		{
@@ -97,35 +101,32 @@ namespace FluentCassandra
         }
 
 		public static Guid GenerateTimeBasedGuid()
-		{
+        {
             lock (Semaphore)
             {
-                DateTimeOffset dateTime = TimeUUIDHelper.UtcNow();
-                long ticksForThisGuid = dateTime.Ticks;
+                DateTimeOffset offset = TimeUUIDHelper.UtcNow();
 
-                if (ticksForThisGuid <= ticksFromLastGuid) //time has stopped or moved backward since last generation
+                long ticksForThisGuid = offset.Ticks;
+
+                if (ticksForThisGuid <= TicksFromLastGuid) //time has stopped or moved backward since last generation
                 {
-                    nextSequence = (short)(BitConverter.ToInt16(ClockSequence, 0) + 1);
-
-                    ClockSequence = BitConverter.GetBytes(nextSequence);
-
-                    random.NextBytes(ClockSequence); //regenerate the Clock Sequence
+                    GenerateNewClockSequence();
                 }
 
-                ticksFromLastGuid = ticksForThisGuid;
+                TicksFromLastGuid = ticksForThisGuid;
 
-                return GenerateTimeBasedGuid(new DateTime(ticksForThisGuid), ClockSequence, DefaultNode);
+                return GenerateTimeBasedGuid(offset, CurrentSequence, DefaultNode);
             }
 		}
 
-		public static Guid GenerateTimeBasedGuid(DateTime dateTime)
+	    public static Guid GenerateTimeBasedGuid(DateTime dateTime)
 		{
-			return GenerateTimeBasedGuid(dateTime, ClockSequence, DefaultNode);
+            return GenerateTimeBasedGuid(dateTime, CurrentSequence, DefaultNode);
 		}
 
 		public static Guid GenerateTimeBasedGuid(DateTimeOffset dateTime)
 		{
-			return GenerateTimeBasedGuid(dateTime, ClockSequence, DefaultNode);
+            return GenerateTimeBasedGuid(dateTime, CurrentSequence, DefaultNode);
 		}
 
 		public static Guid GenerateTimeBasedGuid(DateTime dateTime, byte[] clockSequence, byte[] node)

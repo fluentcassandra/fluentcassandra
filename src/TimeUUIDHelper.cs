@@ -7,7 +7,7 @@ namespace FluentCassandra
         /// <summary>
         /// Allows for substitution for Unit Tests
         /// </summary>
-        public static Func<DateTimeOffset> UtcNow = () => DateTimeOffset.UtcNow;
+        public static Func<DateTimeOffset> UtcNow = () => DateTimePrecise.UtcNowOffset ;
 
     }
 }
