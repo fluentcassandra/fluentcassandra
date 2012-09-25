@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Net;
+using System.Net.NetworkInformation;
 
 namespace FluentCassandra
 {
@@ -9,18 +11,20 @@ namespace FluentCassandra
 	/// <seealso href="http://www.ietf.org/rfc/rfc4122.txt">RFC 4122 - A Universally Unique IDentifier (UUID) URN Namespace</seealso>
 	public static partial class GuidGenerator
 	{
+		private static readonly Random Random;
+
 		// number of bytes in guid
-		public const int ByteArraySize = 16;
+		private const int ByteArraySize = 16;
 
 		// multiplex variant info
-		public const int VariantByte = 8;
-		public const int VariantByteMask = 0x3f;
-		public const int VariantByteShift = 0x80;
+		private const int VariantByte = 8;
+		private const int VariantByteMask = 0x3f;
+		private const int VariantByteShift = 0x80;
 
 		// multiplex version info
-		public const int VersionByte = 7;
-		public const int VersionByteMask = 0x0f;
-		public const int VersionByteShift = 4;
+		private const int VersionByte = 7;
+		private const int VersionByteMask = 0x0f;
+		private const int VersionByteShift = 4;
 
 		// indexes within the uuid array for certain boundaries
 		private const byte TimestampByte = 0;
@@ -30,15 +34,59 @@ namespace FluentCassandra
 		// offset to move from 1/1/0001, which is 0-time for .NET, to gregorian 0-time of 10/15/1582
 		private static readonly DateTimeOffset GregorianCalendarStart = new DateTimeOffset(1582, 10, 15, 0, 0, 0, TimeSpan.Zero);
 
-		// random clock sequence and node
 		public static byte[] DefaultNode { get; set; }
 
 		static GuidGenerator()
 		{
-			DefaultNode = new byte[6];
+			Random = new Random();
+			DefaultNode = GetNodeBytes();
+		}
 
-			var random = new Random();
-			random.NextBytes(DefaultNode);
+		/// <summary>
+		/// Generates a random value for the node.
+		/// </summary>
+		/// <returns></returns>
+		public static byte[] GetNodeBytes()
+		{
+			var node = new byte[6];
+
+			Random.NextBytes(node);
+			return node;
+		}
+
+		/// <summary>
+		/// Generates a node based on the first 6 bytes of an IP address.
+		/// </summary>
+		/// <param name="ip"></param>
+		public static byte[] GetNodeBytes(IPAddress ip)
+		{
+			if (ip == null)
+				throw new ArgumentNullException("ip");
+
+			var bytes = ip.GetAddressBytes();
+
+			if (bytes.Length < 6)
+				throw new ArgumentOutOfRangeException("ip", "The passed in IP address must contain at least 6 bytes.");
+
+			var node = new byte[6];
+			Array.Copy(bytes, node, 6);
+
+			return node;
+		}
+
+		/// <summary>
+		/// Generates a node based on the bytes of the MAC address.
+		/// </summary>
+		/// <param name="mac"></param>
+		/// <remarks>The machines MAC address can be retrieved from <see cref="NetworkInterface.GetPhysicalAddress"/>.</remarks>
+		public static byte[] GetNodeBytes(PhysicalAddress mac)
+		{
+			if (mac == null)
+				throw new ArgumentNullException("mac");
+
+			var node = mac.GetAddressBytes();
+			
+			return node;
 		}
 
 		public static GuidVersion GetVersion(this Guid guid)
