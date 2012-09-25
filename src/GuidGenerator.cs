@@ -13,7 +13,7 @@ namespace FluentCassandra
 		private static readonly Random Random;
 		private static readonly object Lock = new object();
 
-		private static DateTimeOffset _lastTimestampGenerated = TimestampHelper.UtcNow();
+		private static DateTimeOffset _lastTimestampForNoDuplicatesGeneration = TimestampHelper.UtcNow();
 
 		// number of bytes in uuid
 		private const int ByteArraySize = 16;
@@ -144,21 +144,21 @@ namespace FluentCassandra
 
 		public static Guid GenerateTimeBasedGuid()
 		{
-			var ts = TimestampHelper.UtcNow();
-
 			switch(GuidGeneration)
 			{
 				case GuidGeneration.Fast:
-					return GenerateTimeBasedGuid(ts, ClockSequenceBytes, NodeBytes);
+					return GenerateTimeBasedGuid(TimestampHelper.UtcNow(), ClockSequenceBytes, NodeBytes);
 
 				case GuidGeneration.NoDuplicates:
 				default:
 					lock (Lock)
 					{
-						if (ts <= _lastTimestampGenerated)
+						var ts = TimestampHelper.UtcNow();
+
+						if (ts <= _lastTimestampForNoDuplicatesGeneration)
 							ClockSequenceBytes = GenerateClockSequenceBytes();
 
-						_lastTimestampGenerated = ts;
+						_lastTimestampForNoDuplicatesGeneration = ts;
 
 						return GenerateTimeBasedGuid(ts, ClockSequenceBytes, NodeBytes);
 					}
