@@ -43,7 +43,7 @@ namespace FluentCassandra
 
 		public static void InsertColumn(this CassandraColumnFamily family, CassandraObject key, CassandraObject columnName, BytesType columnValue)
 		{
-			InsertColumn(family, key, columnName, columnValue, DateTimePrecise.UtcNowOffset, null);
+			InsertColumn(family, key, columnName, columnValue, TimestampHelper.UtcNow(), null);
 		}
 
 		public static void InsertColumn(this CassandraColumnFamily family, CassandraObject key, CassandraObject columnName, BytesType columnValue, DateTimeOffset timestamp, int? timeToLive)

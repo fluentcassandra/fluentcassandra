@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Net;
 using System.Net.NetworkInformation;
 
@@ -12,6 +11,9 @@ namespace FluentCassandra
 	public static class GuidGenerator
 	{
 		private static readonly Random Random;
+		private static readonly object Lock = new object();
+
+		private static DateTimeOffset _lastTimestampGenerated = TimestampHelper.UtcNow();
 
 		// number of bytes in uuid
 		private const int ByteArraySize = 16;
@@ -34,19 +36,25 @@ namespace FluentCassandra
 		// offset to move from 1/1/0001, which is 0-time for .NET, to gregorian 0-time of 10/15/1582
 		private static readonly DateTimeOffset GregorianCalendarStart = new DateTimeOffset(1582, 10, 15, 0, 0, 0, TimeSpan.Zero);
 
-		public static byte[] DefaultNode { get; set; }
+		public static GuidGeneration GuidGeneration { get; set; }
+
+		public static byte[] NodeBytes { get; set; }
+		public static byte[] ClockSequenceBytes { get; set; }
 
 		static GuidGenerator()
 		{
 			Random = new Random();
-			DefaultNode = GetNodeBytes();
+
+			GuidGeneration = GuidGeneration.NoDuplicates;
+			NodeBytes = GenerateNodeBytes();
+			ClockSequenceBytes = GenerateClockSequenceBytes();
 		}
 
 		/// <summary>
 		/// Generates a random value for the node.
 		/// </summary>
 		/// <returns></returns>
-		public static byte[] GetNodeBytes()
+		public static byte[] GenerateNodeBytes()
 		{
 			var node = new byte[6];
 
@@ -58,7 +66,7 @@ namespace FluentCassandra
 		/// Generates a node based on the first 6 bytes of an IP address.
 		/// </summary>
 		/// <param name="ip"></param>
-		public static byte[] GetNodeBytes(IPAddress ip)
+		public static byte[] GenerateNodeBytes(IPAddress ip)
 		{
 			if (ip == null)
 				throw new ArgumentNullException("ip");
@@ -79,7 +87,7 @@ namespace FluentCassandra
 		/// </summary>
 		/// <param name="mac"></param>
 		/// <remarks>The machines MAC address can be retrieved from <see cref="NetworkInterface.GetPhysicalAddress"/>.</remarks>
-		public static byte[] GetNodeBytes(PhysicalAddress mac)
+		public static byte[] GenerateNodeBytes(PhysicalAddress mac)
 		{
 			if (mac == null)
 				throw new ArgumentNullException("mac");
@@ -89,17 +97,17 @@ namespace FluentCassandra
 			return node;
 		}
 
-		public static GuidVersion GetVersion(this Guid guid)
-		{
-			byte[] bytes = guid.ToByteArray();
-			return (GuidVersion)((bytes[VersionByte] & 0xFF) >> VersionByteShift);
-		}
-
-		public static byte[] GetClockSequenceBytes()
+		public static byte[] GenerateClockSequenceBytes()
 		{
 			var bytes = new byte[2];
 			Random.NextBytes(bytes);
 			return bytes;
+		}
+
+		public static GuidVersion GetUuidVersion(this Guid guid)
+		{
+			byte[] bytes = guid.ToByteArray();
+			return (GuidVersion)((bytes[VersionByte] & 0xFF) >> VersionByteShift);
 		}
 
 		public static DateTimeOffset GetDateTimeOffset(Guid guid)
@@ -136,37 +144,55 @@ namespace FluentCassandra
 
 		public static Guid GenerateTimeBasedGuid()
 		{
-			return GenerateTimeBasedGuid(DateTimePrecise.UtcNowOffset, GetClockSequenceBytes(), DefaultNode);
+			var ts = TimestampHelper.UtcNow();
+
+			switch(GuidGeneration)
+			{
+				case GuidGeneration.Fast:
+					return GenerateTimeBasedGuid(ts, ClockSequenceBytes, NodeBytes);
+
+				case GuidGeneration.NoDuplicates:
+				default:
+					lock (Lock)
+					{
+						if (ts <= _lastTimestampGenerated)
+							ClockSequenceBytes = GenerateClockSequenceBytes();
+
+						_lastTimestampGenerated = ts;
+
+						return GenerateTimeBasedGuid(ts, ClockSequenceBytes, NodeBytes);
+					}
+			}
 		}
 
 		public static Guid GenerateTimeBasedGuid(DateTime dateTime)
 		{
-			return GenerateTimeBasedGuid(dateTime, GetClockSequenceBytes(), DefaultNode);
+			return GenerateTimeBasedGuid(dateTime, GenerateClockSequenceBytes(), NodeBytes);
 		}
 
 		public static Guid GenerateTimeBasedGuid(DateTimeOffset dateTime)
 		{
-			return GenerateTimeBasedGuid(dateTime, GetClockSequenceBytes(), DefaultNode);
+			return GenerateTimeBasedGuid(dateTime, GenerateClockSequenceBytes(), NodeBytes);
 		}
 
 		public static Guid GenerateTimeBasedGuid(DateTime dateTime, PhysicalAddress mac)
 		{
-			return GenerateTimeBasedGuid(dateTime, GetClockSequenceBytes(), GetNodeBytes(mac));
+			return GenerateTimeBasedGuid(dateTime, GenerateClockSequenceBytes(), GenerateNodeBytes(mac));
 		}
 
 		public static Guid GenerateTimeBasedGuid(DateTimeOffset dateTime, PhysicalAddress mac)
 		{
-			return GenerateTimeBasedGuid(dateTime, GetClockSequenceBytes(), GetNodeBytes(mac));
+			return GenerateTimeBasedGuid(dateTime, GenerateClockSequenceBytes(), GenerateNodeBytes(mac));
 		}
 
 		public static Guid GenerateTimeBasedGuid(DateTime dateTime, IPAddress ip)
 		{
-			return GenerateTimeBasedGuid(dateTime, GetClockSequenceBytes(), GetNodeBytes(ip));
+			return GenerateTimeBasedGuid(dateTime, GenerateClockSequenceBytes(), GenerateNodeBytes(ip));
 		}
 
 		public static Guid GenerateTimeBasedGuid(DateTimeOffset dateTime, IPAddress ip)
 		{
-			return GenerateTimeBasedGuid(dateTime, GetClockSequenceBytes(), GetNodeBytes(ip));
+			return GenerateTimeBasedGuid(dateTime, GenerateClockSequenceBytes(), GenerateNodeBytes(ip));
 		}
 
 		public static Guid GenerateTimeBasedGuid(DateTime dateTime, byte[] clockSequence, byte[] node)

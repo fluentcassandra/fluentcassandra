@@ -127,6 +127,7 @@
     <Compile Include="CassandraCqlRowSchema.cs" />
     <Compile Include="CqlHelper.cs" />
     <Compile Include="FluentCqlRow.cs" />
+    <Compile Include="GuidGeneration.cs" />
     <Compile Include="ILoadable.cs" />
     <Compile Include="FluentCassandraException.cs" />
     <Compile Include="FluentColumn.cs">

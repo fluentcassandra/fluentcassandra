@@ -22,6 +22,11 @@ namespace FluentCassandra
 			MaxUnixMicroseconds = Convert.ToInt64((DateTimeOffset.MaxValue - UnixStart).Ticks / TicksInOneMicrosecond);
 		}
 
+		/// <summary>
+		/// Allows for the use of alternative timestamp providers.
+		/// </summary>
+		public static Func<DateTimeOffset> UtcNow = () => DateTimePrecise.UtcNowOffset;
+
 		public static long ToCassandraTimestamp(this DateTimeOffset dt)
 		{
 			// we are using the microsecond format from 1/1/1970 00:00:00 UTC same as the Cassandra server
