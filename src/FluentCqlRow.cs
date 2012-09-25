@@ -95,6 +95,11 @@ namespace FluentCassandra
 			throw new NotSupportedException();
 		}
 
+		public override bool TryRemoveColumn(object name)
+	    {
+            throw new NotSupportedException();
+	    }
+
 		public string FamilyName
 		{
 			get;
@@ -111,11 +116,6 @@ namespace FluentCassandra
 		{
 			get { return _columns; }
 		}
-
-	    public override void RemoveColumn(object name)
-	    {
-            throw new NotSupportedException();
-	    }
 
 	    public CassandraObject this[CassandraObject columnName]
 		{

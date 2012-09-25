@@ -80,18 +80,8 @@ namespace FluentCassandra
 		/// <returns></returns>
 		public CassandraObject this[CassandraObject columnName]
 		{
-			get
-			{
-				object value;
-				if (!TryGetColumn(columnName, out value))
-					throw new CassandraException(String.Format("Column, {0}, could not be found.", columnName));
-
-				return (CassandraObject)value;
-			}
-			set
-			{
-				TrySetColumn(columnName, value);
-			}
+			get { return GetColumnValue(columnName); }
+			set { SetColumn(columnName, value); }
 		}
 
 		/// <summary>
@@ -145,35 +135,6 @@ namespace FluentCassandra
 		{
 			get { return _columns; }
 		}
-	    
-        public override void RemoveColumn(object name)
-        {
-            FluentColumn col = Columns.FirstOrDefault(c => c.ColumnName == name);
-
-            if (col != null)
-            {
-                Columns.Remove(col);
-            }
-            else
-            {
-                var cfSchema = GetSchema();
-                var schema = cfSchema.Columns.FirstOrDefault(c => c.Name == name);
-
-                if (schema != null)
-                {
-                    col = new FluentColumn(schema);
-                    col.ColumnName = CassandraObject.GetCassandraObjectFromObject(name, schema.NameType);
-                }
-                else
-                {
-                    col = new FluentColumn();
-                    col.ColumnName = CassandraObject.GetCassandraObjectFromObject(name);
-                }
-
-                col.SetParent(GetSelf());
-                MutationTracker.ColumnMutated(MutationType.Removed, col);
-            }
-        }
 
 	    /// <summary>
 		/// Gets the path.
@@ -271,6 +232,28 @@ namespace FluentCassandra
 
 			// set the column value
 			col.ColumnValue = CassandraObject.GetCassandraObjectFromObject(value, schema.ValueType);
+
+			// notify the tracker that the column has changed
+			OnColumnMutated(mutationType, col);
+
+			return true;
+		}
+
+		public override bool TryRemoveColumn(object name)
+		{
+			var col = Columns.FirstOrDefault(c => c.ColumnName == name);
+
+			if (col != null) {
+				Columns.Remove(col);
+				return true;
+			}
+
+			var schema = GetColumnSchema(name);
+			var mutationType = MutationType.Removed;
+
+			col = new FluentColumn(schema);
+			col.ColumnName = CassandraObject.GetCassandraObjectFromObject(name, schema.NameType);
+			col.SetParent(GetSelf());
 
 			// notify the tracker that the column has changed
 			OnColumnMutated(mutationType, col);

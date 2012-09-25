@@ -130,35 +130,6 @@ namespace FluentCassandra
 			get { return _columns; }
 		}
 
-        public override void RemoveColumn(object name)
-        {
-            var col = Columns.FirstOrDefault(c => c.ColumnName == name);
-
-            if (col != null)
-            {
-                Columns.Remove(col);
-            }
-            else
-            {
-                var cfSchema = GetSchema();
-                var schema = cfSchema.Columns.FirstOrDefault(c => c.Name == name);
-
-                if (schema != null)
-                {
-                    col = new FluentSuperColumn(schema);
-                    col.ColumnName = CassandraObject.GetCassandraObjectFromObject(name, schema.NameType);
-                }
-                else
-                {
-                    col = new FluentSuperColumn();
-                    col.ColumnName = CassandraObject.GetCassandraObjectFromObject(name);
-                }
-
-                col.SetParent(GetSelf());
-                MutationTracker.ColumnMutated(MutationType.Removed, col);
-            }
-        }
-
 	    /// <summary>
 		/// 
 		/// </summary>
@@ -273,6 +244,29 @@ namespace FluentCassandra
 			else
 				Columns.Insert(index, col);
 			_columns.SupressChangeNotification = false;
+
+			// notify the tracker that the column has changed
+			OnColumnMutated(mutationType, col);
+
+			return true;
+		}
+
+		public override bool TryRemoveColumn(object name)
+		{
+			var col = Columns.FirstOrDefault(c => c.ColumnName == name);
+
+			if (col != null)
+			{
+				Columns.Remove(col);
+				return true;
+			}
+
+			var schema = GetColumnSchema(name);
+			var mutationType = MutationType.Removed;
+
+			col = new FluentSuperColumn(schema);
+			col.ColumnName = CassandraObject.GetCassandraObjectFromObject(name, schema.NameType);
+			col.SetParent(GetSelf());
 
 			// notify the tracker that the column has changed
 			OnColumnMutated(mutationType, col);

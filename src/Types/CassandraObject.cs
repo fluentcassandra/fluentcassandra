@@ -207,16 +207,13 @@ namespace FluentCassandra.Types
 			return GetCassandraObjectFromDatabaseByteArray(value, cassandraType);
 		}
 
-		public static CassandraObject GetCassandraObjectFromObject(object obj)
+		public static CassandraObject GetCassandraObjectFromObject(object obj, CassandraType cassandraType = null)
 		{
-			var sourceType = obj.GetType();
-			var cassandraType = CassandraType.GetCassandraType(sourceType);
+			if (cassandraType == null) {
+				var sourceType = obj.GetType();
+				cassandraType = CassandraType.GetCassandraType(sourceType);
+			}
 
-			return GetCassandraObjectFromObject(obj, cassandraType);
-		}
-
-		public static CassandraObject GetCassandraObjectFromObject(object obj, CassandraType cassandraType)
-		{
 			if (obj == null)
 				return null;
 

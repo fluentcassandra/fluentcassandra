@@ -87,34 +87,6 @@ namespace FluentCassandra
 			get { return _columns; }
 		}
 
-        public override void RemoveColumn(object name)
-        {
-            FluentColumn col = Columns.FirstOrDefault(c => c.ColumnName == name);
-
-            if (col != null)
-            {
-                Columns.Remove(col);
-            }
-            else
-            {                
-                var schema = GetColumnSchema(name);
-
-                if (schema != null)
-                {
-                    col = new FluentColumn(schema);
-                    col.ColumnName = CassandraObject.GetCassandraObjectFromObject(name, schema.NameType);
-                }
-                else
-                {
-                    col = new FluentColumn();
-                    col.ColumnName = CassandraObject.GetCassandraObjectFromObject(name);
-                }
-
-                col.SetParent(GetPath());
-                MutationTracker.ColumnMutated(MutationType.Removed, col);
-            }
-        }
-
 	    /// <summary>
 		/// 
 		/// </summary>
@@ -254,7 +226,7 @@ namespace FluentCassandra
 			var col = Columns.FirstOrDefault(c => c.ColumnName == name);
 			var mutationType = MutationType.Changed;
 
-			// if column doesn't exisit create it and add it to the columns
+			// if column doesn't exist create it and add it to the columns
 			if (col == null)
 			{
 				var schema = GetColumnSchema(name);
@@ -270,6 +242,29 @@ namespace FluentCassandra
 
 			// set the column value
 			col.ColumnValue = CassandraObject.GetCassandraObjectFromObject(value);
+
+			// notify the tracker that the column has changed
+			OnColumnMutated(mutationType, col);
+
+			return true;
+		}
+
+		public override bool TryRemoveColumn(object name)
+		{
+			var col = Columns.FirstOrDefault(c => c.ColumnName == name);
+
+			if (col != null)
+			{
+				Columns.Remove(col);
+				return true;
+			}
+
+			var schema = GetColumnSchema(name);
+			var mutationType = MutationType.Removed;
+
+			col = new FluentColumn(schema);
+			col.ColumnName = CassandraObject.GetCassandraObjectFromObject(name, schema.NameType);
+			col.SetParent(GetPath());
 
 			// notify the tracker that the column has changed
 			OnColumnMutated(mutationType, col);
