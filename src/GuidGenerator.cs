@@ -9,7 +9,7 @@ namespace FluentCassandra
 	/// Used for generating UUID based on RFC 4122.
 	/// </summary>
 	/// <seealso href="http://www.ietf.org/rfc/rfc4122.txt">RFC 4122 - A Universally Unique IDentifier (UUID) URN Namespace</seealso>
-	public static partial class GuidGenerator
+	public static class GuidGenerator
 	{
 		private static readonly Random Random;
 
@@ -97,11 +97,9 @@ namespace FluentCassandra
 
 		public static byte[] GetClockSequenceBytes()
 		{
-			var ts = Stopwatch.GetTimestamp();
-			return new byte[] {
-				(byte)(ts),
-				(byte)(ts >> 0x8)
-			};
+			var bytes = new byte[2];
+			Random.NextBytes(bytes);
+			return bytes;
 		}
 
 		public static DateTimeOffset GetDateTimeOffset(Guid guid)
