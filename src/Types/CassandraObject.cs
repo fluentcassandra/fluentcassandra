@@ -11,29 +11,38 @@ namespace FluentCassandra.Types
 			return (T)GetValue(typeof(T));
 		}
 
-		public abstract void SetValue(object obj);
-
 		public CassandraObject GetValue(CassandraType type)
 		{
 			if (type.FluentType == GetType())
 				return this;
 
 			if (GetType() == typeof(BytesType))
-				return GetCassandraObjectFromDatabaseByteArray((byte[])GetRawValue(), type);
+				return GetCassandraObjectFromDatabaseByteArray((byte[])GetValue(), type);
 
-			return GetCassandraObjectFromObject(GetRawValue(), type);
+			return GetCassandraObjectFromObject(GetValue(), type);
 		}
 
 		public object GetValue(Type type)
 		{
+			if (type == typeof(object))
+				return GetValue();
+
 			if (type.BaseType == typeof(CassandraObject))
 				return GetValue(CassandraType.GetCassandraType(type));
 
 			return GetValueInternal(type);
 		}
 
+		public abstract object GetValue();
+
+		public abstract void SetValue(object obj);
+
+		public CassandraType GetCassandraType()
+		{
+			return CassandraType.GetCassandraType(this);
+		}
+
 		protected abstract object GetValueInternal(Type type);
-		protected abstract object GetRawValue();
 		protected abstract TypeCode TypeCode { get; }
 
 		public abstract byte[] ToBigEndian();

@@ -51,7 +51,7 @@ namespace FluentCassandra.Types
 
 		#endregion
 
-		protected override object GetRawValue() { return _bigEndianValue; }
+		public override object GetValue() { return _bigEndianValue; }
 
 		private Type _sourceType;
 		private byte[] _bigEndianValue;

@@ -217,7 +217,7 @@ namespace FluentCassandra
 			long ticks = (dateTime - GregorianCalendarStart).Ticks;
 			byte[] guid = new byte[ByteArraySize];
 			byte[] timestamp = BitConverter.GetBytes(ticks);
-
+			
 			// copy node
 			Array.Copy(node, 0, guid, NodeByte, Math.Min(6, node.Length));
 

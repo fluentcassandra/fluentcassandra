@@ -41,7 +41,7 @@ namespace FluentCassandra.Types
 
 		#endregion
 
-		protected override object GetRawValue() { return _value; }
+		public override object GetValue() { return _value; }
 
 		private BigDecimal _value;
 

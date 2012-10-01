@@ -15,7 +15,7 @@ namespace FluentCassandra.Types
 			throw new NotImplementedException();
 		}
 
-		protected override object GetRawValue()
+		public override object GetValue()
 		{
 			throw new NotImplementedException();
 		}

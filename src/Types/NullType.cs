@@ -68,7 +68,7 @@ namespace FluentCassandra.Types
 		{
 		}
 
-		protected override object GetRawValue() { return null; }
+		public override object GetValue() { return null; }
 
 		public static implicit operator byte?(NullType o) { return null; }
 		public static implicit operator sbyte?(NullType o) { return null; }

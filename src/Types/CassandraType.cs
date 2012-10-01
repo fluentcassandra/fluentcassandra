@@ -225,6 +225,39 @@ namespace FluentCassandra.Types
 			return new CassandraType(sb.ToString());
 		}
 
+		public static CassandraType GetCassandraType(CassandraObject obj)
+		{
+			var typeName = obj.GetType().Name;
+			var cassandraType = (CassandraType)null;
+
+			switch (typeName.ToLower())
+			{
+				case "asciitype": cassandraType = AsciiType; break;
+				case "booleantype": cassandraType = BooleanType; break;
+				case "bytestype": cassandraType = BytesType; break;
+				case "datetype": cassandraType = DateType; break;
+				case "decimaltype": cassandraType = DecimalType; break;
+				case "doubletype": cassandraType = DoubleType; break;
+				case "floattype": cassandraType = FloatType; break;
+				case "int32type": cassandraType = Int32Type; break;
+				case "integertype": cassandraType = IntegerType; break;
+				case "lexicaluuidtype": cassandraType = LexicalUUIDType; break;
+				case "longtype": cassandraType = LongType; break;
+				case "timeuuidtype": cassandraType = TimeUUIDType; break;
+				case "utf8type": cassandraType = UTF8Type; break;
+				case "uuidtype": cassandraType = UUIDType; break;
+
+				// these need work
+				//case "compositetype": cassandraType = CompositeType; break;
+				//case "dynamiccompositetype": cassandraType = DynamicCompositeType; break;
+				//case "countercolumntype": cassandraType = CounterColumnType; break;
+				//case "reversedtype": cassandraType = ReversedType; break;
+				default: throw new CassandraException("Type '" + typeName + "' not found.");
+			}
+
+			return cassandraType;
+		}
+
 		public static CassandraType GetCassandraType(Type sourceType)
 		{
 			if (sourceType.BaseType == typeof(CassandraObject))
