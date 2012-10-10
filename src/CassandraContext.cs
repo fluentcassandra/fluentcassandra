@@ -47,11 +47,11 @@ namespace FluentCassandra
 		/// 
 		/// </summary>
 		/// <param name="session"></param>
-        public CassandraContext(CassandraSession session) 
-            : this(session.ConnectionBuilder)
-        {
-		    _session = session;
-		    _isOutsideSession = true;
+		public CassandraContext(CassandraSession session)
+			: this(session.ConnectionBuilder)
+		{
+			_session = session;
+			_isOutsideSession = true;
 		}
 
 		/// <summary>
@@ -63,7 +63,7 @@ namespace FluentCassandra
 			ThrowErrors = true;
 
 			_trackers = new List<IFluentMutationTracker>();
-            ConnectionBuilder = connectionBuilder;
+			ConnectionBuilder = connectionBuilder;
 
 			Keyspace = new CassandraKeyspace(ConnectionBuilder.Keyspace, this);
 		}
