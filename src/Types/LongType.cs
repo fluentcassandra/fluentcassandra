@@ -25,6 +25,11 @@ namespace FluentCassandra.Types
 
 		public override void SetValueFromBigEndian(byte[] value)
 		{
+            if (value == null)
+            {
+                _value = 0;
+                return;
+            }
 			_value = Converter.FromBigEndian(value);
 		}
 
