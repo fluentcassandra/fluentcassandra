@@ -52,6 +52,10 @@ namespace FluentCassandra.Types
 
 		public virtual T FromBigEndian(byte[] value)
 		{
+			if (value == null)
+			{
+				return default(T);
+			}
 			var bytes = ConvertEndian(value);
 			var obj = ConvertFromInternal(bytes);
 			return obj;
