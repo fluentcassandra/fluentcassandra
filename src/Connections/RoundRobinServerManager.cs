@@ -28,25 +28,20 @@ namespace FluentCassandra.Connections
 
 		public bool HasNext
 		{
-            get { lock (_lock) { return (_serverQueue.Count - _blackListed.Count) > 0; } }
+            get { lock (_lock) { return _serverQueue.Count > 0; } }
 		}
 
 		public Server Next()
 		{
-			Server server;
+			Server server = null;
 
 			lock (_lock)
 			{
-				do
-				{
-					server = _serverQueue.Dequeue();
-
-					if (IsBlackListed(server))
-						server = null;
-					else
-						_serverQueue.Enqueue(server);
-				}
-				while (_serverQueue.Count > 0 && server == null);	
+                if (_serverQueue.Count > 0)
+                {
+                    server = _serverQueue.Dequeue();
+                    _serverQueue.Enqueue(server);
+                }
 			}
 
 			return server;
@@ -72,7 +67,17 @@ namespace FluentCassandra.Connections
 			Debug.WriteLine(server + " has been blacklisted", "connection");
 			lock (_lock)
 			{
-				_blackListed.Add(server);
+                if (_blackListed.Add(server))
+                {
+                    _serverQueue.Clear();
+                    foreach (Server srv in _servers)
+                    {
+                        if(!IsBlackListed(srv))
+                        {
+                            _serverQueue.Enqueue(srv);
+                        }
+                    }
+                }
 			}
 		}
 
