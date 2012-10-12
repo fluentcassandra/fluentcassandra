@@ -168,9 +168,10 @@ namespace FluentCassandra.Connections
 				throw new CassandraConnectionException("A connection to Cassandra has not been opened.");
 
 			if (_activeKeyspace == null || !_activeKeyspace.Equals(keyspace))
+			{
 				Client.set_keyspace(keyspace);
-
-			_activeKeyspace = keyspace;
+				_activeKeyspace = keyspace;
+			}
 		}
 
 		/// <summary>
