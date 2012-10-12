@@ -14,6 +14,7 @@ namespace FluentCassandra.Connections
 	{
 		private TTransport _transport;
 		private Cassandra.Client _client;
+		private string _activeKeyspace;
 		private readonly object _lock = new object();
 
 		/// <summary>
@@ -166,7 +167,11 @@ namespace FluentCassandra.Connections
 			if (!IsOpen)
 				throw new CassandraConnectionException("A connection to Cassandra has not been opened.");
 
-			Client.set_keyspace(keyspace);
+			if (_activeKeyspace == null || !_activeKeyspace.Equals(keyspace))
+			{
+				Client.set_keyspace(keyspace);
+				_activeKeyspace = keyspace;
+			}
 		}
 
 		/// <summary>
