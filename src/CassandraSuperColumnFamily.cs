@@ -28,10 +28,10 @@ namespace FluentCassandra
 			: base(context, columnFamily) { }
 
 		public CassandraSuperColumnFamily(CassandraContext context, CassandraColumnFamilySchema schema)
-            : base(context, schema.FamilyName)
-        {
-            _cachedSchema = schema;
-        }
+			: base(context, schema.FamilyName)
+		{
+			_cachedSchema = schema;
+		}
 
 		public FluentSuperColumnFamily CreateRecord(CassandraObject key)
 		{
