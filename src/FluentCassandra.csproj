@@ -223,6 +223,7 @@
     <Compile Include="Thrift\Protocol\TBase.cs" />
     <Compile Include="Thrift\Protocol\TBase64Utils.cs" />
     <Compile Include="Thrift\Protocol\TBinaryProtocol.cs" />
+    <Compile Include="Thrift\Protocol\TCompactProtocol.cs" />
     <Compile Include="Thrift\Protocol\TField.cs" />
     <Compile Include="Thrift\Protocol\TJSONProtocol.cs" />
     <Compile Include="Thrift\Protocol\TList.cs" />
