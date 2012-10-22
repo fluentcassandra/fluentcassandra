@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using FluentCassandra.ObjectSerializer;
 using FluentCassandra.Types;
 
 namespace FluentCassandra
