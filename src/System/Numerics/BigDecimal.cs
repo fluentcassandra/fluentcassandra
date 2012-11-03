@@ -58,8 +58,8 @@ namespace System.Numerics
 			byte[] number = new byte[value.Length - 4];
 			byte[] flags = new byte[4];
 
-			Array.Copy(value, 0, number, 0, number.Length);
-			Array.Copy(value, value.Length - 4, flags, 0, 4);
+            Array.Copy(value, 0, flags, 0, 4);
+            Array.Copy(value, 0, number, flags.Length, number.Length);
 
 			_unscaledValue = new BigInteger(number);
 			_scale = BitConverter.ToInt32(flags, 0);
@@ -87,8 +87,8 @@ namespace System.Numerics
 			var scale = BitConverter.GetBytes(_scale);
 
 			var bytes = new byte[unscaledValue.Length + scale.Length];
-			Array.Copy(unscaledValue, 0, bytes, 0, unscaledValue.Length);
-			Array.Copy(scale, 0, bytes, unscaledValue.Length, scale.Length);
+            Array.Copy(scale, 0, bytes, 0, scale.Length);
+            Array.Copy(unscaledValue, 0, bytes, scale.Length, unscaledValue.Length);
 
 			return bytes;
 		}
