@@ -71,9 +71,10 @@ namespace FluentCassandra.Types
             return new BigDecimal(unscaledValue, scale);
 		}
 
-        internal static byte[] ToBytes(BigDecimal value)
+        internal static byte[] ToBigEndianBytes(BigDecimal value)
         {
             byte[] nativeBytes = (byte[])value.ToByteArray().Clone();
+            Array.Reverse(nativeBytes);
             byte[] bytes = new byte[nativeBytes.Length];
 
             // first copy the scale bytes
