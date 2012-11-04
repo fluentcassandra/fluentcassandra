@@ -60,7 +60,28 @@ namespace FluentCassandra.Types
 			var buffer = (byte[])value.Clone();
 			Array.Reverse(buffer);
 
-			return new BigDecimal(buffer);
+            byte[] number = new byte[value.Length - 4];
+            byte[] flags = new byte[4];
+            Array.Copy(buffer, 0, flags, 0, 4);
+            Array.Copy(buffer, 0, number, flags.Length, number.Length);
+
+            BigInteger unscaledValue = new BigInteger(number);
+            int scale = System.BitConverter.ToInt32(flags, 0);
+
+            return new BigDecimal(unscaledValue, scale);
 		}
+
+        internal static byte[] ToBigEndianBytes(BigDecimal value)
+        {
+            byte[] nativeBytes = (byte[])value.ToByteArray().Clone();
+            Array.Reverse(nativeBytes);
+            byte[] bytes = new byte[nativeBytes.Length];
+
+            // first copy the scale bytes
+            Array.Copy(nativeBytes, nativeBytes.Length - 4, bytes, 0, 4);
+            // second copy the unscaled bytes
+            Array.Copy(nativeBytes, 0, bytes, 4, nativeBytes.Length - 4);
+            return bytes;
+        }
 	}
 }
