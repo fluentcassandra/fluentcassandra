@@ -83,6 +83,10 @@ namespace FluentCassandra
 				keyspace.TryCreateColumnFamily<UTF8Type>("StandardUTF8Type");
 				keyspace.TryCreateColumnFamily<UUIDType>("StandardUUIDType");
 				keyspace.TryCreateColumnFamily(new CassandraColumnFamilySchema {
+					FamilyName = "StandardDecimalType",
+					ColumnNameType = CassandraType.DecimalType
+				});
+				keyspace.TryCreateColumnFamily(new CassandraColumnFamilySchema {
 					FamilyName = "StandardCompositeType",
 					ColumnNameType = CassandraType.CompositeType(new[] { CassandraType.AsciiType, CassandraType.DoubleType })
 				});

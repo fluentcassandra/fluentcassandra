@@ -54,13 +54,5 @@ namespace FluentCassandra.Types
 			ReverseHighFieldTimestamp(buffer);
 			return new Guid(buffer);
 		}
-
-		internal static BigDecimal ToBigDecimalFromBigEndianBytes(this byte[] value)
-		{
-			var buffer = (byte[])value.Clone();
-			Array.Reverse(buffer);
-
-			return new BigDecimal(buffer);
-		}
 	}
 }
