@@ -15,6 +15,7 @@ namespace FluentCassandra.Connections
 		private TTransport _transport;
 		private Cassandra.Client _client;
 		private string _activeKeyspace;
+		private string _activeCqlVersion;
 		private readonly object _lock = new object();
 
 		/// <summary>
@@ -185,7 +186,11 @@ namespace FluentCassandra.Connections
 			if (!IsOpen)
 				throw new CassandraConnectionException("A connection to Cassandra has not been opened.");
 
-			Client.set_cql_version(cqlVersion);
+			if (_activeCqlVersion == null || !_activeCqlVersion.Equals(cqlVersion))
+			{
+				Client.set_cql_version(cqlVersion);
+				_activeCqlVersion = cqlVersion;
+			}
 		}
 
 		/// <summary>
