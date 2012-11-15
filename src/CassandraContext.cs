@@ -371,24 +371,22 @@ namespace FluentCassandra
 			if (WasDisposed)
 				throw new ObjectDisposedException(GetType().FullName);
 
-			var localSession = _session == null;
-			var session = _session;
-			if (session == null)
-				session = new CassandraSession(ConnectionBuilder);
+			if (_session == null)
+                _session = new CassandraSession(ConnectionBuilder);
 
 			action.Context = this;
 
 			try
 			{
-				var result = session.ExecuteOperation(action, throwOnError ?? ThrowErrors);
-				LastError = session.LastError;
+                var result = _session.ExecuteOperation(action, throwOnError ?? ThrowErrors);
+                LastError = _session.LastError;
 
 				return result;
 			}
 			finally
 			{
-				if (localSession && session != null)
-					session.Dispose();
+                if (_session != null)
+                    _session.CloseClient();
 			}
 		}
 
