@@ -182,13 +182,46 @@ namespace FluentCassandra
 			action.Session = this;
 
 			TResult result;
-			bool success = action.TryExecute(out result);
 
-			if (!success)
-				LastError = action.Error;
+			int counter = 0;
+			bool noException = false;
 
-			if (!success && (throwOnError ?? ThrowErrors))
-				throw action.Error;
+			do
+			{
+				noException = false;
+				bool success = action.TryExecute(out result);
+
+				if (success)
+				{
+					noException = true;
+					LastError = null;
+				}
+				else
+				{
+					LastError = action.Error;
+
+					if (!LastError.IsClientHealthy && _connection != null)
+					{
+						_connection.IsHealthy = false;
+						ConnectionProvider.Servers.BlackList(_connection.Server);
+						ConnectionProvider.Close(_connection);
+						_connection = null;
+					}
+
+					if (!LastError.ShouldRetry)
+					{
+						break;
+					}
+				}
+
+				counter++;
+			}
+			while (counter < ConnectionProvider.ConnectionBuilder.MaxRetries && !noException);
+
+			if (!noException && (throwOnError ?? ThrowErrors))
+			{
+				throw LastError;
+			}
 
 			return result;
 		}

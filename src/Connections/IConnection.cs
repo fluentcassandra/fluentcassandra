@@ -7,6 +7,7 @@ namespace FluentCassandra.Connections
 	{
 		DateTime Created { get; }
 		bool IsOpen { get; }
+		bool IsHealthy { get; set; }
 
 		Server Server { get; }
 		Cassandra.Client Client { get; }

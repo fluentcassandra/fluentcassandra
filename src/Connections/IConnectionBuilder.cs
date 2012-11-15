@@ -12,6 +12,7 @@ namespace FluentCassandra.Connections
 		bool Pooling { get; }
 		int MinPoolSize { get; }
 		int MaxPoolSize { get; }
+        int MaxRetries { get; }
 		TimeSpan ConnectionTimeout { get; }
 		TimeSpan ConnectionLifetime { get; }
 		ConnectionType ConnectionType { get; }

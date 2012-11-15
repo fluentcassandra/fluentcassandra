@@ -41,6 +41,7 @@ namespace FluentCassandra.Connections
 				}
 				catch (SocketException exc)
 				{
+                    conn.IsHealthy = false;
 					Servers.ErrorOccurred(conn.Server, exc);
 					Close(conn);
 					conn = null;
@@ -48,7 +49,7 @@ namespace FluentCassandra.Connections
 			}
 
 			if (conn == null)
-				throw new CassandraException("No connection could be made because all servers have failed.");
+				throw new CassandraException("No connection could be made because all servers have failed.", false, false);
 
 			return conn;
 		}

@@ -59,7 +59,7 @@ namespace FluentCassandra.Connections
 				else if (_freeConnections.Count + _usedConnections.Count >= MaxPoolSize)
 				{
 					if (!Monitor.Wait(_lock, TimeSpan.FromSeconds(30)))
-						throw new CassandraException("No connection could be made, timed out trying to aquire a connection from the connection pool.");
+						throw new CassandraException("No connection could be made, timed out trying to aquire a connection from the connection pool.", false, false);
 
 					return CreateConnection();
 				}
@@ -106,7 +106,7 @@ namespace FluentCassandra.Connections
 		/// <returns>True if alive; otherwise false.</returns>
 		private bool IsAlive(IConnection connection)
 		{
-			if (ConnectionLifetime > TimeSpan.Zero && connection.Created.Add(ConnectionLifetime) < DateTime.UtcNow)
+			if (!connection.IsHealthy || (ConnectionLifetime > TimeSpan.Zero && connection.Created.Add(ConnectionLifetime) < DateTime.UtcNow))
 				return false;
 
 			return connection.IsOpen;

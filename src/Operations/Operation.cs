@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using Apache.Cassandra;
+using Thrift.Transport;
 
 namespace FluentCassandra.Operations
 {
@@ -19,40 +20,45 @@ namespace FluentCassandra.Operations
 
 		public virtual bool TryExecute(out TResult result)
 		{
-			try
-			{
-				result = Execute();
-			}
-			catch (AuthenticationException exc)
-			{
-				ExceptionOccurred(new CassandraOperationException(exc));
-				result = default(TResult);
-			}
-			catch (AuthorizationException exc)
-			{
-				ExceptionOccurred(new CassandraOperationException(exc));
-				result = default(TResult);
-			}
-			catch (InvalidRequestException exc)
-			{
-				ExceptionOccurred(new CassandraOperationException(exc));
-				result = default(TResult);
-			}
-			catch (UnavailableException exc)
-			{
-				ExceptionOccurred(new CassandraOperationException(exc));
-				result = default(TResult);
-			}
-			catch (TimedOutException exc)
-			{
-				ExceptionOccurred(new CassandraOperationException(exc));
-				result = default(TResult);
-			}
-			catch (Exception exc)
-			{
-				ExceptionOccurred(new CassandraException(exc.Message, exc));
-				result = default(TResult);
-			}
+            try
+            {
+                result = Execute();
+            }
+            catch (AuthenticationException exc)
+            {
+                ExceptionOccurred(new CassandraOperationException(exc));
+                result = default(TResult);
+            }
+            catch (AuthorizationException exc)
+            {
+                ExceptionOccurred(new CassandraOperationException(exc));
+                result = default(TResult);
+            }
+            catch (InvalidRequestException exc)
+            {
+                ExceptionOccurred(new CassandraOperationException(exc));
+                result = default(TResult);
+            }
+            catch (UnavailableException exc)
+            {
+                ExceptionOccurred(new CassandraOperationException(exc));
+                result = default(TResult);
+            }
+            catch (TimedOutException exc)
+            {
+                ExceptionOccurred(new CassandraOperationException(exc));
+                result = default(TResult);
+            }
+            catch (TTransportException exc)
+            {
+                ExceptionOccurred(new CassandraOperationException(exc));
+                result = default(TResult);
+            }
+            catch (Exception exc)
+            {
+                ExceptionOccurred(new CassandraException(exc.Message, exc));
+                result = default(TResult);
+            }
 
 			return !HasError;
 		}
