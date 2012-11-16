@@ -11,9 +11,10 @@ namespace FluentCassandra.Operations
 
 		public CassandraObject SuperColumnName { get; private set; }
 
-		public override IEnumerable<FluentSuperColumnFamily> Execute()
+		public override IList<FluentSuperColumnFamily> Execute()
 		{
 			var schema = ColumnFamily.GetSchema();
+            var list = new List<FluentSuperColumnFamily>();
 
 			var parent = new CassandraColumnParent {
 				ColumnFamily = ColumnFamily.FamilyName
@@ -59,8 +60,10 @@ namespace FluentCassandra.Operations
 				var r = new FluentSuperColumnFamily(key, familyName, schema, superColumns);
 				ColumnFamily.Context.Attach(r);
 
-				yield return r;
+                list.Add(r);
 			}
+
+            return list;
 		}
 
 		public MultiGetSuperColumnFamilySlice(IEnumerable<CassandraObject> keys, CassandraObject superColumnName, CassandraSlicePredicate columnSlicePredicate)

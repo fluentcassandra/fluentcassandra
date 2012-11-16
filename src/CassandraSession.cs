@@ -123,6 +123,7 @@ namespace FluentCassandra
             if (_connection != null)
             {
                 ConnectionProvider.Close(_connection);
+                
             }
         }
 

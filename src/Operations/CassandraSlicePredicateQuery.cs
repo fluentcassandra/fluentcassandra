@@ -2,11 +2,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Linq;
 
 namespace FluentCassandra.Operations
 {
 	public class CassandraSlicePredicateQuery<TResult> : IEnumerable<TResult>
 	{
+        private IEnumerator<TResult> _internalList;
+
 		internal CassandraSlicePredicateQuery(BaseCassandraColumnFamily family, Expression expression)
 		{
 			Family = family;
@@ -16,12 +19,16 @@ namespace FluentCassandra.Operations
 				Expression = Expression.Constant(this);
 		}
 
+
 		#region IEnumerable<TResult> Members
 
 		public IEnumerator<TResult> GetEnumerator()
 		{
-			return Family.ExecuteCassandraSlicePredicateQuery(this).GetEnumerator();
-		}
+             if (_internalList == null)
+                _internalList = Family.ExecuteCassandraSlicePredicateQuery(this).GetEnumerator();
+
+             return _internalList;
+        }
 
 		#endregion
 

@@ -13,9 +13,10 @@ namespace FluentCassandra.Operations
 
 		public List<CassandraObject> Keys { get; private set; }
 
-		public override IEnumerable<FluentColumnFamily> Execute()
+		public override IList<FluentColumnFamily> Execute()
 		{
 			var schema = ColumnFamily.GetSchema();
+            var list = new List<FluentColumnFamily>();
 
 			var parent = new CassandraColumnParent {
 				ColumnFamily = ColumnFamily.FamilyName
@@ -40,8 +41,10 @@ namespace FluentCassandra.Operations
 				ColumnFamily.Context.Attach(r);
 				r.MutationTracker.Clear();
 
-				yield return r;
+                list.Add(r);
 			}
+
+            return list;
 		}
 
 		public MultiGetColumnFamilySlice(IEnumerable<CassandraObject> keys, CassandraSlicePredicate columnSlicePredicate)

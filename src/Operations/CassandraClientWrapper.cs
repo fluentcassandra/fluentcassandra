@@ -70,7 +70,7 @@ namespace FluentCassandra.Operations
 
 		public List<Apache.Cassandra.KeySlice> get_range_slices(CassandraColumnParent column_parent, CassandraSlicePredicate predicate, CassandraKeyRange range, Apache.Cassandra.ConsistencyLevel consistency_level)
 		{
-			return _client.get_range_slices(
+        	return _client.get_range_slices(
 				Helper.CreateColumnParent(column_parent),
 				Helper.CreateSlicePredicate(predicate),
 				Helper.CreateKeyRange(range),
