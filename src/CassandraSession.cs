@@ -117,16 +117,6 @@ namespace FluentCassandra
 			return new CassandraClientWrapper(_connection.Client);
 		}
 
-
-        internal void CloseClient()
-        {
-            if (_connection != null)
-            {
-                ConnectionProvider.Close(_connection);
-                
-            }
-        }
-
 		/// <summary>
 		/// 
 		/// </summary>
