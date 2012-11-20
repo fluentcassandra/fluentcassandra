@@ -21,7 +21,7 @@ namespace FluentCassandra.Operations
 			: base("Cassandra server is unavailable.", exc, false, true) { }
 
 		public CassandraOperationException(TimedOutException exc)
-			: base("Connection to Cassandra has timed out.", exc, false, true) { }
+			: base("Connection to Cassandra has timed out.", exc, true, true) { }
 	
         public CassandraOperationException(IOException exc)
             : base(exc.Message, exc, false, true) {}

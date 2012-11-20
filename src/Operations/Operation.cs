@@ -5,21 +5,21 @@ using Thrift.Transport;
 
 namespace FluentCassandra.Operations
 {
-	public abstract class Operation<TResult>
-	{
-		public Operation()
-		{
-			HasError = false;
-		}
+    public abstract class Operation<TResult>
+    {
+        public Operation()
+        {
+            HasError = false;
+        }
 
-		public CassandraContext Context { get; set; }
-		public CassandraSession Session { get; set; }
+        public CassandraContext Context { get; set; }
+        public CassandraSession Session { get; set; }
 
-		public bool HasError { get; protected set; }
-		public CassandraException Error { get; protected set; }
+        public bool HasError { get; protected set; }
+        public CassandraException Error { get; protected set; }
 
-		public virtual bool TryExecute(out TResult result)
-		{
+        public virtual bool TryExecute(out TResult result)
+        {
             try
             {
                 result = Execute();
@@ -60,17 +60,17 @@ namespace FluentCassandra.Operations
                 result = default(TResult);
             }
 
-			return !HasError;
-		}
+            return !HasError;
+        }
 
-		private void ExceptionOccurred(CassandraException exc)
-		{
-			Debug.WriteLine(exc);
+        private void ExceptionOccurred(CassandraException exc)
+        {
+            Debug.WriteLine(exc);
 
-			HasError = true;
-			Error = exc;
-		}
+            HasError = true;
+            Error = exc;
+        }
 
-		public abstract TResult Execute();
-	}
+        public abstract TResult Execute();
+    }
 }
