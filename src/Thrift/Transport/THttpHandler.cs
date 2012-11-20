@@ -12,9 +12,9 @@ using System.Web;
 using System.Net;
 using System.IO;
 
-using Thrift.Protocol;
+using FluentCassandra.Thrift.Protocol;
 
-namespace Thrift.Transport
+namespace FluentCassandra.Thrift.Transport
 {
     public class THttpHandler : IHttpHandler
     {

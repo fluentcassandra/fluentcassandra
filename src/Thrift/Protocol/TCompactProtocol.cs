@@ -23,12 +23,12 @@
 
 using System;
 using System.Text;
-using Thrift.Transport;
+using FluentCassandra.Thrift.Transport;
 using System.Collections;
 using System.IO;
 using System.Collections.Generic;
 
-namespace Thrift.Protocol
+namespace FluentCassandra.Thrift.Protocol
 {
     public class TCompactProtocol : TProtocol
     {

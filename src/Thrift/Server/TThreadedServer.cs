@@ -20,11 +20,11 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using Thrift.Collections;
-using Thrift.Protocol;
-using Thrift.Transport;
+using FluentCassandra.Thrift.Collections;
+using FluentCassandra.Thrift.Protocol;
+using FluentCassandra.Thrift.Transport;
 
-namespace Thrift.Server
+namespace FluentCassandra.Thrift.Server
 {
 	/// <summary>
 	/// Server that uses C# threads (as opposed to the ThreadPool) when handling requests

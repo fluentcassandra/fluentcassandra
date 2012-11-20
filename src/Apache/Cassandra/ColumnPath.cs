@@ -9,11 +9,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
-using Thrift;
-using Thrift.Collections;
+using FluentCassandra.Thrift;
+using FluentCassandra.Thrift.Collections;
 using System.Runtime.Serialization;
-using Thrift.Protocol;
-using Thrift.Transport;
+using FluentCassandra.Thrift.Protocol;
+using FluentCassandra.Thrift.Transport;
 
 namespace Apache.Cassandra
 {

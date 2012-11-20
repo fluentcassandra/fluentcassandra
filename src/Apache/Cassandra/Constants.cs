@@ -9,8 +9,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
-using Thrift;
-using Thrift.Collections;
+using FluentCassandra.Thrift;
+using FluentCassandra.Thrift.Collections;
 using System.Runtime.Serialization;
 
 namespace Apache.Cassandra

@@ -25,7 +25,7 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 #endif
 
-namespace Thrift.Collections
+namespace FluentCassandra.Thrift.Collections
 {
 #if SILVERLIGHT
     [DataContract]

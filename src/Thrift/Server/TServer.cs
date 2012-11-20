@@ -22,11 +22,11 @@
  */
 
 using System;
-using Thrift.Protocol;
-using Thrift.Transport;
+using FluentCassandra.Thrift.Protocol;
+using FluentCassandra.Thrift.Transport;
 using System.IO;
 
-namespace Thrift.Server
+namespace FluentCassandra.Thrift.Server
 {
 	public abstract class TServer
 	{

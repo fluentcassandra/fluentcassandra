@@ -22,10 +22,10 @@ using System.IO;
 using System.Text;
 using System.Collections.Generic;
 
-using Thrift.Transport;
+using FluentCassandra.Thrift.Transport;
 using System.Globalization;
 
-namespace Thrift.Protocol
+namespace FluentCassandra.Thrift.Protocol
 {
 	/// <summary>
 	/// JSON protocol implementation for thrift.

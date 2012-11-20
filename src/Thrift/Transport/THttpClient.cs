@@ -25,7 +25,7 @@ using System.IO;
 using System.Net;
 using System.Threading;
 
-namespace Thrift.Transport
+namespace FluentCassandra.Thrift.Transport
 {
 	public class THttpClient : TTransport, IDisposable
 	{

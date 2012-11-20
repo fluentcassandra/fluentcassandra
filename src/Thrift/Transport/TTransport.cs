@@ -23,7 +23,7 @@
 
 using System;
 
-namespace Thrift.Transport
+namespace FluentCassandra.Thrift.Transport
 {
 	public abstract class TTransport : IDisposable
 	{
