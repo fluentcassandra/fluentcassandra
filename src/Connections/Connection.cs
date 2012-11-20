@@ -16,6 +16,7 @@ namespace FluentCassandra.Connections
 		private Cassandra.Client _client;
 		private string _activeKeyspace;
 		private string _activeCqlVersion;
+		private bool _healthy;
 		private readonly object _lock = new object();
 
 		/// <summary>
@@ -38,7 +39,7 @@ namespace FluentCassandra.Connections
 			Server = server;
 			ConnectionType = connectionType;
 			BufferSize = bufferSize;
-
+			_healthy = true;
 			InitTransportAndClient();
 		}
 

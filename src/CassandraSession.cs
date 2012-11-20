@@ -117,6 +117,12 @@ namespace FluentCassandra
 			return new CassandraClientWrapper(_connection.Client);
 		}
 
+		internal void MarkCurrentConnectionAsUnhealthy(Exception exc)
+		{
+			ConnectionProvider.ErrorOccurred(_connection, exc);
+			_connection = null;
+		}
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -154,12 +160,12 @@ namespace FluentCassandra
 		}
 
 		/// <summary>
-		/// The last error that occured during the execution of an operation.
+		/// The last error that occurred during the execution of an operation.
 		/// </summary>
 		public CassandraException LastError { get; private set; }
 
 		/// <summary>
-		/// Indicates if errors should be thrown when occuring on opperation.
+		/// Indicates if errors should be thrown when occurring on operation.
 		/// </summary>
 		public bool ThrowErrors { get; set; }
 
@@ -221,7 +227,7 @@ namespace FluentCassandra
 		/// </param>
 		protected virtual void Dispose(bool disposing)
 		{
-			if (!WasDisposed && disposing && _connection != null) 
+			if (!WasDisposed && disposing && _connection != null)
 				ConnectionProvider.Close(_connection);
 
 			WasDisposed = true;

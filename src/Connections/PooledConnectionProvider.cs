@@ -9,7 +9,7 @@ namespace FluentCassandra.Connections
 		private readonly object _lock = new object();
 
 		private readonly Queue<IConnection> _freeConnections = new Queue<IConnection>();
-		private readonly List<IConnection> _usedConnections = new List<IConnection>();
+		private readonly HashSet<IConnection> _usedConnections = new HashSet<IConnection>();
 		private readonly Timer _maintenanceTimer;
 
 		/// <summary>
@@ -59,7 +59,7 @@ namespace FluentCassandra.Connections
 				else if (_freeConnections.Count + _usedConnections.Count >= MaxPoolSize)
 				{
 					if (!Monitor.Wait(_lock, TimeSpan.FromSeconds(30)))
-						throw new CassandraException("No connection could be made, timed out trying to aquire a connection from the connection pool.");
+						throw new TimeoutException("No connection could be made, timed out trying to acquirer a connection from the connection pool.");
 
 					return CreateConnection();
 				}
@@ -71,6 +71,22 @@ namespace FluentCassandra.Connections
 			}
 
 			return conn;
+		}
+
+		public override void ErrorOccurred(IConnection connection, Exception exc = null)
+		{
+			lock (_lock)
+			{
+				_usedConnections.RemoveWhere(x => x.Server == connection.Server);
+				Servers.ErrorOccurred(connection.Server, exc);
+	
+				var currentFreeConnections = _freeConnections.ToArray();
+				_freeConnections.Clear();
+
+				foreach (var conn in currentFreeConnections)
+					if (conn.Server != connection.Server)
+						_freeConnections.Enqueue(conn);
+			}
 		}
 
 		/// <summary>
