@@ -5,7 +5,7 @@
  *  @generated
  */
 
-namespace Apache.Cassandra
+namespace FluentCassandra.Apache.Cassandra
 {
   /// <summary>
   /// CQL query compression

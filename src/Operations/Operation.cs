@@ -1,13 +1,18 @@
 ﻿using System;
 using System.Diagnostics;
-using Apache.Cassandra;
+using FluentCassandra.Apache.Cassandra;
+using FluentCassandra.Thrift.Transport;
 
 namespace FluentCassandra.Operations
 {
 	public abstract class Operation<TResult>
 	{
+		private int _executionCount;
+
 		public Operation()
 		{
+			_executionCount = 0;
+
 			HasError = false;
 		}
 
@@ -15,10 +20,18 @@ namespace FluentCassandra.Operations
 		public CassandraSession Session { get; set; }
 
 		public bool HasError { get; protected set; }
-		public CassandraException Error { get; protected set; }
+		public CassandraOperationException Error { get; protected set; }
 
 		public virtual bool TryExecute(out TResult result)
 		{
+			if (_executionCount > Session.ConnectionBuilder.MaxRetries)
+			{
+				result = default(TResult);
+				return !HasError;
+			}
+
+			_executionCount++;
+
 			try
 			{
 				result = Execute();
@@ -40,24 +53,38 @@ namespace FluentCassandra.Operations
 			}
 			catch (UnavailableException exc)
 			{
-				ExceptionOccurred(new CassandraOperationException(exc));
-				result = default(TResult);
+				ExceptionOccuredRetryExecution(new CassandraOperationException(exc), out result);
+			}
+			catch (TimeoutException exc)
+			{
+				ExceptionOccuredRetryExecution(new CassandraOperationException(exc), out result);
 			}
 			catch (TimedOutException exc)
 			{
-				ExceptionOccurred(new CassandraOperationException(exc));
-				result = default(TResult);
+				ExceptionOccuredRetryExecution(new CassandraOperationException(exc), out result);
+			}
+			catch (TTransportException exc)
+			{
+				ExceptionOccuredRetryExecution(new CassandraOperationException(exc), out result);
 			}
 			catch (Exception exc)
 			{
-				ExceptionOccurred(new CassandraException(exc.Message, exc));
+				ExceptionOccurred(new CassandraOperationException(exc));
 				result = default(TResult);
 			}
 
 			return !HasError;
 		}
 
-		private void ExceptionOccurred(CassandraException exc)
+		private void ExceptionOccuredRetryExecution(CassandraOperationException exc, out TResult result)
+		{
+			ExceptionOccurred(exc);
+			Session.MarkCurrentConnectionAsUnhealthy(exc);
+
+			TryExecute(out result);
+		}
+
+		private void ExceptionOccurred(CassandraOperationException exc)
 		{
 			Debug.WriteLine(exc);
 

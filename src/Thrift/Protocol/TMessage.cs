@@ -25,7 +25,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Thrift.Protocol
+namespace FluentCassandra.Thrift.Protocol
 {
 	public struct TMessage
 	{

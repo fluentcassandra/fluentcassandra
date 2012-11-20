@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
-using Apache.Cassandra;
+using FluentCassandra.Apache.Cassandra;
+using FluentCassandra.Thrift.Transport;
 
 namespace FluentCassandra.Operations
 {
@@ -20,5 +21,14 @@ namespace FluentCassandra.Operations
 
 		public CassandraOperationException(TimedOutException exc)
 			: base("Connection to Cassandra has timed out.", exc) { }
+
+		public CassandraOperationException(TimeoutException exc)
+			: base("Connection to Cassandra has timed out.", exc) { }
+
+		public CassandraOperationException(TTransportException exc)
+			: base(exc.Message, exc) { }
+
+		public CassandraOperationException(Exception exc)
+			: base(exc.Message, exc) { }
 	}
 }

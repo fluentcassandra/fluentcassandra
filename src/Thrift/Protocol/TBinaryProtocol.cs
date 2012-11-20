@@ -23,9 +23,9 @@
 
 using System;
 using System.Text;
-using Thrift.Transport;
+using FluentCassandra.Thrift.Transport;
 
-namespace Thrift.Protocol
+namespace FluentCassandra.Thrift.Protocol
 {
 	public class TBinaryProtocol : TProtocol
 	{

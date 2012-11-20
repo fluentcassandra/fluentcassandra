@@ -1,7 +1,7 @@
 ﻿using System;
-using Thrift.Transport;
-using Thrift.Protocol;
-using Apache.Cassandra;
+using FluentCassandra.Thrift.Transport;
+using FluentCassandra.Thrift.Protocol;
+using FluentCassandra.Apache.Cassandra;
 
 namespace FluentCassandra.Connections
 {
@@ -16,6 +16,7 @@ namespace FluentCassandra.Connections
 		private Cassandra.Client _client;
 		private string _activeKeyspace;
 		private string _activeCqlVersion;
+		private bool _healthy;
 		private readonly object _lock = new object();
 
 		/// <summary>
@@ -38,7 +39,7 @@ namespace FluentCassandra.Connections
 			Server = server;
 			ConnectionType = connectionType;
 			BufferSize = bufferSize;
-
+			_healthy = true;
 			InitTransportAndClient();
 		}
 

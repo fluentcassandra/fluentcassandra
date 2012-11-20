@@ -53,6 +53,12 @@ namespace FluentCassandra.Connections
 			return conn;
 		}
 
+		public override void ErrorOccurred(IConnection connection, Exception exc = null)
+		{
+			try { Close(connection); } catch { }
+			Servers.ErrorOccurred(connection.Server, exc);
+		}
+
 		/// <summary>
 		/// 
 		/// </summary>

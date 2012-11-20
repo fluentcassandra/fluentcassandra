@@ -22,10 +22,10 @@
  */
 
 using System;
-using Thrift.Transport;
-using Thrift.Protocol;
+using FluentCassandra.Thrift.Transport;
+using FluentCassandra.Thrift.Protocol;
 
-namespace Thrift.Server
+namespace FluentCassandra.Thrift.Server
 {
 	/// <summary>
 	/// Simple single-threaded server for testing

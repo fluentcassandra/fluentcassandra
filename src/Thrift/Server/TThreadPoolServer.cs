@@ -23,10 +23,10 @@
 
 using System;
 using System.Threading;
-using Thrift.Protocol;
-using Thrift.Transport;
+using FluentCassandra.Thrift.Protocol;
+using FluentCassandra.Thrift.Transport;
 
-namespace Thrift.Server
+namespace FluentCassandra.Thrift.Server
 {
 	/// <summary>
 	/// Server that uses C# built-in ThreadPool to spawn threads when handling requests

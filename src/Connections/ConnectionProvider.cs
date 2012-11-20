@@ -42,6 +42,8 @@ namespace FluentCassandra.Connections
 			return conn;
 		}
 
+		public abstract void ErrorOccurred(IConnection connection, Exception exc = null);
+
 		/// <summary>
 		/// 
 		/// </summary>

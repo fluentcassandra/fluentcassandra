@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using Apache.Cassandra;
+using FluentCassandra.Apache.Cassandra;
 using FluentCassandra.Types;
 using System.IO;
 using System.IO.Compression;

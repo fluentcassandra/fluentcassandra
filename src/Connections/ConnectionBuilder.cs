@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Apache.Cassandra;
+using FluentCassandra.Apache.Cassandra;
 
 namespace FluentCassandra.Connections
 {
@@ -14,7 +14,7 @@ namespace FluentCassandra.Connections
 		/// <param name="host"></param>
 		/// <param name="port"></param>
 		/// <param name="timeout"></param>
-		public ConnectionBuilder(string keyspace, string host, int port = Server.DefaultPort, int connectionTimeout = Server.DefaultTimeout, bool pooling = false, int minPoolSize = 0, int maxPoolSize = 100, int connectionLifetime = 0, ConnectionType connectionType = ConnectionType.Framed, int bufferSize = 1024, ConsistencyLevel read = ConsistencyLevel.QUORUM, ConsistencyLevel write = ConsistencyLevel.QUORUM, string cqlVersion = FluentCassandra.Connections.CqlVersion.ServerDefault, bool compressCqlQueries = true, string username = null, string password = null)
+		public ConnectionBuilder(string keyspace, string host, int port = Server.DefaultPort, int connectionTimeout = Server.DefaultTimeout, bool pooling = false, int minPoolSize = 0, int maxPoolSize = 100, int connectionLifetime = 0, ConnectionType connectionType = ConnectionType.Framed, int bufferSize = 1024, ConsistencyLevel read = ConsistencyLevel.QUORUM, ConsistencyLevel write = ConsistencyLevel.QUORUM, string cqlVersion = FluentCassandra.Connections.CqlVersion.ServerDefault, bool compressCqlQueries = true, string username = null, string password = null, int maxRetries = 0)
 		{
 			Keyspace = keyspace;
 			Servers = new List<Server>() { new Server(host, port) };
@@ -22,6 +22,7 @@ namespace FluentCassandra.Connections
 			Pooling = pooling;
 			MinPoolSize = minPoolSize;
 			MaxPoolSize = maxPoolSize;
+			MaxRetries = maxRetries;
 			ConnectionLifetime = TimeSpan.FromSeconds(connectionLifetime);
 			ConnectionType = connectionType;
 			BufferSize = bufferSize;
@@ -35,7 +36,7 @@ namespace FluentCassandra.Connections
 			ConnectionString = GetConnectionString();
 		}
 
-		public ConnectionBuilder(string keyspace, Server server, bool pooling = false, int minPoolSize = 0, int maxPoolSize = 100, int connectionLifetime = 0, ConnectionType connectionType = ConnectionType.Framed, int bufferSize = 1024, ConsistencyLevel read = ConsistencyLevel.QUORUM, ConsistencyLevel write = ConsistencyLevel.QUORUM, string cqlVersion = FluentCassandra.Connections.CqlVersion.ServerDefault, bool compressCqlQueries = true, string username = null, string password = null)
+		public ConnectionBuilder(string keyspace, Server server, bool pooling = false, int minPoolSize = 0, int maxPoolSize = 100, int connectionLifetime = 0, ConnectionType connectionType = ConnectionType.Framed, int bufferSize = 1024, ConsistencyLevel read = ConsistencyLevel.QUORUM, ConsistencyLevel write = ConsistencyLevel.QUORUM, string cqlVersion = FluentCassandra.Connections.CqlVersion.ServerDefault, bool compressCqlQueries = true, string username = null, string password = null, int maxRetries = 0)
 		{
 			Keyspace = keyspace;
 			Servers = new List<Server>() { server };
@@ -43,6 +44,7 @@ namespace FluentCassandra.Connections
 			Pooling = pooling;
 			MinPoolSize = minPoolSize;
 			MaxPoolSize = maxPoolSize;
+			MaxRetries = maxRetries;
 			ConnectionLifetime = TimeSpan.FromSeconds(connectionLifetime);
 			ConnectionType = connectionType;
 			BufferSize = bufferSize;
@@ -82,7 +84,7 @@ namespace FluentCassandra.Connections
 				if (nameValue.Length != 2)
 					continue;
 
-                pairs.Add(nameValue[0].Trim(), nameValue[1].Trim());
+				pairs.Add(nameValue[0].Trim(), nameValue[1].Trim());
 			}
 
 			#region Keyspace
@@ -152,6 +154,23 @@ namespace FluentCassandra.Connections
 				MaxPoolSize = maxPoolSize;
 			}
 
+			#endregion
+
+			#region MaxRetries
+
+			if (pairs.ContainsKey("Max Retries"))
+			{
+				int maxRetries;
+
+				if (!Int32.TryParse(pairs["Max Retries"], out maxRetries))
+					maxRetries = 0;
+
+				if (maxRetries < 0)
+					maxRetries = 0;
+
+				MaxRetries = maxRetries;
+			}
+		   
 			#endregion
 
 			#region ConnectionTimeout
@@ -330,18 +349,18 @@ namespace FluentCassandra.Connections
 				foreach (var server in servers)
 				{
 					string[] serverParts = server.Split(':');
-                    string host = serverParts[0].Trim();
+					string host = serverParts[0].Trim();
 
 					if (serverParts.Length == 2)
 					{
 						int port;
-                        if (Int32.TryParse(serverParts[1].Trim(), out port))
+						if (Int32.TryParse(serverParts[1].Trim(), out port))
 							Servers.Add(new Server(host: host, port: port, timeout: ConnectionTimeout.Seconds));
 						else
 							Servers.Add(new Server(host: host, timeout: ConnectionTimeout.Seconds));
 					}
 					else
-                        Servers.Add(new Server(host: host, timeout: ConnectionTimeout.Seconds));
+						Servers.Add(new Server(host: host, timeout: ConnectionTimeout.Seconds));
 				}
 			}
 
@@ -400,6 +419,11 @@ namespace FluentCassandra.Connections
 		/// The maximum number of connections allowed in the pool.
 		/// </summary>
 		public int MaxPoolSize { get; private set; }
+
+		/// <summary>
+		/// The maximum number of execution retry attempts if there is an error during the execution of an operation and the exception is a type that can be retried.
+		/// </summary>
+		public int MaxRetries { get; private set; }
 
 		/// <summary>
 		/// When a connection is returned to the pool, its creation time is compared with the current time, and the connection is destroyed if that time span (in seconds) exceeds the value specified by Connection Lifetime. This is useful in clustered configurations to force load balancing between a running server and a server just brought online. A value of zero (0) causes pooled connections to have the maximum connection timeout.

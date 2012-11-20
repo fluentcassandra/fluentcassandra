@@ -5,7 +5,7 @@
  *  @generated
  */
 
-namespace Apache.Cassandra
+namespace FluentCassandra.Apache.Cassandra
 {
   public enum IndexType
   {

@@ -24,7 +24,7 @@
 using System;
 using System.IO;
 
-namespace Thrift.Transport
+namespace FluentCassandra.Thrift.Transport
 {
 	public class TStreamTransport : TTransport
 	{

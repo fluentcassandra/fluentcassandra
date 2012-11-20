@@ -22,9 +22,9 @@
  */
 
 using System;
-using Thrift.Protocol;
+using FluentCassandra.Thrift.Protocol;
 
-namespace Thrift
+namespace FluentCassandra.Thrift
 {
 	public interface TProcessor
 	{
