@@ -13,7 +13,7 @@ using FluentCassandra.Thrift;
 using FluentCassandra.Thrift.Collections;
 using System.Runtime.Serialization;
 
-namespace Apache.Cassandra
+namespace FluentCassandra.Apache.Cassandra
 {
   public class Constants
   {

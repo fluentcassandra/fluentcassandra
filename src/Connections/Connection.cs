@@ -1,7 +1,7 @@
 ﻿using System;
 using FluentCassandra.Thrift.Transport;
 using FluentCassandra.Thrift.Protocol;
-using Apache.Cassandra;
+using FluentCassandra.Apache.Cassandra;
 
 namespace FluentCassandra.Connections
 {

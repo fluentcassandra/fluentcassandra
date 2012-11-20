@@ -1,5 +1,5 @@
 using System;
-using Apache.Cassandra;
+using FluentCassandra.Apache.Cassandra;
 using FluentCassandra.Types;
 
 namespace FluentCassandra

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Apache.Cassandra;
+using FluentCassandra.Apache.Cassandra;
 
 namespace FluentCassandra.Connections
 {

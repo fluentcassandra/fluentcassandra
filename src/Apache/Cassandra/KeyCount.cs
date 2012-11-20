@@ -15,7 +15,7 @@ using System.Runtime.Serialization;
 using FluentCassandra.Thrift.Protocol;
 using FluentCassandra.Thrift.Transport;
 
-namespace Apache.Cassandra
+namespace FluentCassandra.Apache.Cassandra
 {
 
   #if !SILVERLIGHT

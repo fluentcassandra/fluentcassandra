@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
-using Apache.Cassandra;
+using FluentCassandra.Apache.Cassandra;
 
 namespace FluentCassandra.Operations
 {

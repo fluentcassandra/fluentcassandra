@@ -5,7 +5,7 @@
  *  @generated
  */
 
-namespace Apache.Cassandra
+namespace FluentCassandra.Apache.Cassandra
 {
   /// <summary>
   /// The ConsistencyLevel is an enum that controls both read and write
