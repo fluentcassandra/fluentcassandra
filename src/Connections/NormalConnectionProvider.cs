@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net.Sockets;
+using FluentCassandra.Operations;
 
 namespace FluentCassandra.Connections
 {
@@ -49,7 +50,7 @@ namespace FluentCassandra.Connections
 			}
 
 			if (conn == null)
-				throw new CassandraException("No connection could be made because all servers have failed.", false, false);
+				throw new CassandraOperationException("No connection could be made because all servers have failed.", false, false);
 
 			return conn;
 		}

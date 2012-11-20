@@ -156,7 +156,7 @@ namespace FluentCassandra
 		/// <summary>
 		/// The last error that occured during the execution of an operation.
 		/// </summary>
-		public CassandraException LastError { get; private set; }
+		public CassandraOperationException LastError { get; private set; }
 
 		/// <summary>
 		/// Indicates if errors should be thrown when occuring on opperation.

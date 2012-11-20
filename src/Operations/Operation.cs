@@ -16,7 +16,7 @@ namespace FluentCassandra.Operations
         public CassandraSession Session { get; set; }
 
         public bool HasError { get; protected set; }
-        public CassandraException Error { get; protected set; }
+        public CassandraOperationException Error { get; protected set; }
 
         public virtual bool TryExecute(out TResult result)
         {
@@ -56,14 +56,14 @@ namespace FluentCassandra.Operations
             }
             catch (Exception exc)
             {
-                ExceptionOccurred(new CassandraException(exc.Message, exc));
+                ExceptionOccurred(new CassandraOperationException(exc));
                 result = default(TResult);
             }
 
             return !HasError;
         }
 
-        private void ExceptionOccurred(CassandraException exc)
+        private void ExceptionOccurred(CassandraOperationException exc)
         {
             Debug.WriteLine(exc);
 

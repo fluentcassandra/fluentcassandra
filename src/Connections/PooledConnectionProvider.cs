@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using FluentCassandra.Operations;
 
 namespace FluentCassandra.Connections
 {
@@ -59,7 +60,7 @@ namespace FluentCassandra.Connections
 				else if (_freeConnections.Count + _usedConnections.Count >= MaxPoolSize)
 				{
 					if (!Monitor.Wait(_lock, TimeSpan.FromSeconds(30)))
-						throw new CassandraException("No connection could be made, timed out trying to aquire a connection from the connection pool.", false, false);
+						throw new CassandraOperationException("No connection could be made, timed out trying to aquire a connection from the connection pool.", false, false);
 
 					return CreateConnection();
 				}
