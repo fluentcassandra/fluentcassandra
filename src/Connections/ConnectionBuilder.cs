@@ -195,21 +195,21 @@ namespace FluentCassandra.Connections
 
 			#region ServerRecoveryInterval
 
-			if (!pairs.ContainsKey("Server Recovery Interval")) 
+			if (!pairs.ContainsKey("Server Polling Interval")) 
 			{
 				ServerPollingInterval = TimeSpan.FromSeconds(30);
 			} 
 			else 
 			{
-				int serverRecoveryInterval;
+				int serverPollingInterval;
 
-				if (!Int32.TryParse(pairs["Server Recovery Interval"], out serverRecoveryInterval))
-					serverRecoveryInterval = 0;
+				if (!Int32.TryParse(pairs["Server Polling Interval"], out serverPollingInterval))
+					serverPollingInterval = 0;
 
-				if (serverRecoveryInterval < 0)
-					serverRecoveryInterval = 0;
+				if (serverPollingInterval < 0)
+					serverPollingInterval = 0;
 
-				ServerPollingInterval = TimeSpan.FromSeconds(serverRecoveryInterval);
+				ServerPollingInterval = TimeSpan.FromSeconds(serverPollingInterval);
 			}
 
 			#endregion
