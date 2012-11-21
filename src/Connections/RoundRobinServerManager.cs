@@ -7,62 +7,61 @@ namespace FluentCassandra.Connections
 {
 	public class RoundRobinServerManager : IServerManager
 	{
-        public const int DefaultServerRecoveryInterval = 30;
-        private readonly object _lock = new object();
+		private readonly object _lock = new object();
 		private List<Server> _servers;
 		private Queue<Server> _serverQueue;
 		private HashSet<Server> _blackListed;
 		private Timer _recoveryTimer;
-        private long _recoveryTimerInterval;
+		private long _recoveryTimerInterval;
 
 		public RoundRobinServerManager(IConnectionBuilder builder)
 		{
 			_servers = new List<Server>(builder.Servers);
 			_serverQueue = new Queue<Server>(_servers);
 			_blackListed = new HashSet<Server>();
-            _recoveryTimerInterval = (long)builder.ServerRecoveryInterval.TotalMilliseconds;
-            _recoveryTimer = new Timer(o => ServerRecover(), null, _recoveryTimerInterval, Timeout.Infinite);
+			_recoveryTimerInterval = (long)builder.ServerPollingInterval.TotalMilliseconds;
+			_recoveryTimer = new Timer(o => ServerRecover(), null, _recoveryTimerInterval, Timeout.Infinite);
 		}
 
 		private void ServerRecover()
 		{
-            try
-            {
-                if (_blackListed.Count > 0)
-                {
-                    var clonedBlackList = (HashSet<Server>)null;
+			try
+			{
+				if (_blackListed.Count > 0)
+				{
+					var clonedBlackList = (HashSet<Server>)null;
 
-                    lock (_lock)
-                        clonedBlackList = new HashSet<Server>(_blackListed);
+					lock (_lock)
+						clonedBlackList = new HashSet<Server>(_blackListed);
 
-                    foreach (var server in clonedBlackList)
-                    {
-                        var connection = new Connection(server, ConnectionType.Simple, 1024);
+					foreach (var server in clonedBlackList)
+					{
+						var connection = new Connection(server, ConnectionType.Simple, 1024);
 
-                        try
-                        {
-                            connection.Open();
-                            lock(_lock)
-                            {
-                               _blackListed.Remove(server);
-                               _serverQueue.Enqueue(server);
-                            }
-                        }
-                        catch { }
-                        finally
-                        {
-                            connection.Close();
-                        }
-                    }
-                    clonedBlackList.Clear();
-                }
-            }
-            finally
-            {
-                _recoveryTimer.Change(_recoveryTimerInterval, Timeout.Infinite);
-            }
-        }
-           
+						try
+						{
+							connection.Open();
+							lock(_lock)
+							{
+							   _blackListed.Remove(server);
+							   _serverQueue.Enqueue(server);
+							}
+						}
+						catch { }
+						finally
+						{
+							connection.Close();
+						}
+					}
+					clonedBlackList.Clear();
+				}
+			}
+			finally
+			{
+				_recoveryTimer.Change(_recoveryTimerInterval, Timeout.Infinite);
+			}
+		}
+		   
 
 		#region IServerManager Members
 

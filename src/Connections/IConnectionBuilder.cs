@@ -13,10 +13,11 @@ namespace FluentCassandra.Connections
 		int MinPoolSize { get; }
 		int MaxPoolSize { get; }
 		int MaxRetries { get; }
+		TimeSpan ServerPollingInterval { get; }
+
 		TimeSpan ConnectionTimeout { get; }
-		TimeSpan ConnectionLifetime { get; }
-        TimeSpan ServerRecoveryInterval { get; }
 		ConnectionType ConnectionType { get; }
+		TimeSpan ConnectionLifetime { get; }
         int BufferSize { get; }
 		ConsistencyLevel ReadConsistency { get; }
 		ConsistencyLevel WriteConsistency { get; }

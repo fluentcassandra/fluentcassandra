@@ -14,7 +14,7 @@ namespace FluentCassandra.Connections
 		/// <param name="host"></param>
 		/// <param name="port"></param>
 		/// <param name="timeout"></param>
-		public ConnectionBuilder(string keyspace, string host, int port = Server.DefaultPort, int connectionTimeout = Server.DefaultTimeout, bool pooling = false, int minPoolSize = 0, int maxPoolSize = 100, int connectionLifetime = 0, ConnectionType connectionType = ConnectionType.Framed, int bufferSize = 1024, ConsistencyLevel read = ConsistencyLevel.QUORUM, ConsistencyLevel write = ConsistencyLevel.QUORUM, string cqlVersion = FluentCassandra.Connections.CqlVersion.ServerDefault, bool compressCqlQueries = true, string username = null, string password = null, int maxRetries = 0, int serverRecoveryInterval = RoundRobinServerManager.DefaultServerRecoveryInterval)
+		public ConnectionBuilder(string keyspace, string host, int port = Server.DefaultPort, int connectionTimeout = Server.DefaultTimeout, bool pooling = false, int minPoolSize = 0, int maxPoolSize = 100, int maxRetries = 0, int serverPollingInterval = 30, int connectionLifetime = 0, ConnectionType connectionType = ConnectionType.Framed, int bufferSize = 1024, ConsistencyLevel read = ConsistencyLevel.QUORUM, ConsistencyLevel write = ConsistencyLevel.QUORUM, string cqlVersion = FluentCassandra.Connections.CqlVersion.ServerDefault, bool compressCqlQueries = true, string username = null, string password = null)
 		{
 			Keyspace = keyspace;
 			Servers = new List<Server>() { new Server(host, port) };
@@ -23,7 +23,7 @@ namespace FluentCassandra.Connections
 			MinPoolSize = minPoolSize;
 			MaxPoolSize = maxPoolSize;
 			MaxRetries = maxRetries;
-            ServerRecoveryInterval = TimeSpan.FromSeconds(serverRecoveryInterval);
+			ServerPollingInterval = TimeSpan.FromSeconds(serverPollingInterval);
 			ConnectionLifetime = TimeSpan.FromSeconds(connectionLifetime);
 			ConnectionType = connectionType;
 			BufferSize = bufferSize;
@@ -37,7 +37,7 @@ namespace FluentCassandra.Connections
 			ConnectionString = GetConnectionString();
 		}
 
-        public ConnectionBuilder(string keyspace, Server server, bool pooling = false, int minPoolSize = 0, int maxPoolSize = 100, int connectionLifetime = 0, ConnectionType connectionType = ConnectionType.Framed, int bufferSize = 1024, ConsistencyLevel read = ConsistencyLevel.QUORUM, ConsistencyLevel write = ConsistencyLevel.QUORUM, string cqlVersion = FluentCassandra.Connections.CqlVersion.ServerDefault, bool compressCqlQueries = true, string username = null, string password = null, int maxRetries = 0, int serverRecoveryInterval = RoundRobinServerManager.DefaultServerRecoveryInterval)
+		public ConnectionBuilder(string keyspace, Server server, bool pooling = false, int minPoolSize = 0, int maxPoolSize = 100, int maxRetries = 0, int serverPollingInterval = 30, int connectionLifetime = 0, ConnectionType connectionType = ConnectionType.Framed, int bufferSize = 1024, ConsistencyLevel read = ConsistencyLevel.QUORUM, ConsistencyLevel write = ConsistencyLevel.QUORUM, string cqlVersion = FluentCassandra.Connections.CqlVersion.ServerDefault, bool compressCqlQueries = true, string username = null, string password = null)
 		{
 			Keyspace = keyspace;
 			Servers = new List<Server>() { server };
@@ -46,8 +46,8 @@ namespace FluentCassandra.Connections
 			MinPoolSize = minPoolSize;
 			MaxPoolSize = maxPoolSize;
 			MaxRetries = maxRetries;
+			ServerPollingInterval = TimeSpan.FromSeconds(serverPollingInterval);
 			ConnectionLifetime = TimeSpan.FromSeconds(connectionLifetime);
-            ServerRecoveryInterval = TimeSpan.FromSeconds(serverRecoveryInterval);
 			ConnectionType = connectionType;
 			BufferSize = bufferSize;
 			ReadConsistency = read;
@@ -94,6 +94,24 @@ namespace FluentCassandra.Connections
 			if (pairs.ContainsKey("Keyspace"))
 			{
 				Keyspace = pairs["Keyspace"];
+			}
+
+			#endregion
+
+			#region ConnectionTimeout
+
+			if (!pairs.ContainsKey("Connection Timeout")) {
+				ConnectionTimeout = TimeSpan.Zero;
+			} else {
+				int connectionTimeout;
+
+				if (!Int32.TryParse(pairs["Connection Timeout"], out connectionTimeout))
+					throw new CassandraException("Connection Timeout is not valid.");
+
+				if (connectionTimeout < 0)
+					connectionTimeout = 0;
+
+				ConnectionTimeout = TimeSpan.FromSeconds(connectionTimeout);
 			}
 
 			#endregion
@@ -175,23 +193,23 @@ namespace FluentCassandra.Connections
 		   
 			#endregion
 
-			#region ConnectionTimeout
+			#region ServerRecoveryInterval
 
-			if (!pairs.ContainsKey("Connection Timeout"))
+			if (!pairs.ContainsKey("Server Recovery Interval")) 
 			{
-				ConnectionTimeout = TimeSpan.Zero;
-			}
-			else
+				ServerPollingInterval = TimeSpan.FromSeconds(30);
+			} 
+			else 
 			{
-				int connectionTimeout;
+				int serverRecoveryInterval;
 
-				if (!Int32.TryParse(pairs["Connection Timeout"], out connectionTimeout))
-					throw new CassandraException("Connection Timeout is not valid.");
+				if (!Int32.TryParse(pairs["Server Recovery Interval"], out serverRecoveryInterval))
+					serverRecoveryInterval = 0;
 
-				if (connectionTimeout < 0)
-					connectionTimeout = 0;
+				if (serverRecoveryInterval < 0)
+					serverRecoveryInterval = 0;
 
-				ConnectionTimeout = TimeSpan.FromSeconds(connectionTimeout);
+				ServerPollingInterval = TimeSpan.FromSeconds(serverRecoveryInterval);
 			}
 
 			#endregion
@@ -209,6 +227,9 @@ namespace FluentCassandra.Connections
 				if (!Int32.TryParse(pairs["Connection Lifetime"], out lifetime))
 					lifetime = 0;
 
+				if (lifetime < 0)
+					lifetime = 0;
+
 				ConnectionLifetime = TimeSpan.FromSeconds(lifetime);
 			}
 
@@ -216,12 +237,9 @@ namespace FluentCassandra.Connections
 
 			#region ConnectionType
 
-			if (!pairs.ContainsKey("Connection Type"))
-			{
+			if (!pairs.ContainsKey("Connection Type")) {
 				ConnectionType = ConnectionType.Framed;
-			}
-			else
-			{
+			} else {
 				ConnectionType type;
 
 				if (!Enum.TryParse(pairs["Connection Type"], out type))
@@ -232,25 +250,9 @@ namespace FluentCassandra.Connections
 
 			#endregion
 
-            #region ServerRecoveryInterval
-            if (!pairs.ContainsKey("Server Recovery Interval"))
-            {
-                ServerRecoveryInterval = TimeSpan.FromSeconds(RoundRobinServerManager.DefaultServerRecoveryInterval);
-            }
-            else
-            {
-                int serverRecoveryInterval;
+			#region BufferSize
 
-                if (!Int32.TryParse(pairs["Server Recovery Interval"], out serverRecoveryInterval))
-                    serverRecoveryInterval = 0;
-
-                ServerRecoveryInterval = TimeSpan.FromSeconds(serverRecoveryInterval);
-            }
-            #endregion
-
-            #region BufferSize
-
-            if (!pairs.ContainsKey("Buffer Size"))
+			if (!pairs.ContainsKey("Buffer Size"))
 			{
 				BufferSize = 1024;
 			}
@@ -396,10 +398,10 @@ namespace FluentCassandra.Connections
 			b.AppendFormat(format, "Pooling", Pooling);
 			b.AppendFormat(format, "Min Pool Size", MinPoolSize);
 			b.AppendFormat(format, "Max Pool Size", MaxPoolSize);
-            b.AppendFormat(format, "Max Retries", MaxRetries);
+			b.AppendFormat(format, "Max Retries", MaxRetries);
 			b.AppendFormat(format, "Connection Timeout", Convert.ToInt32(ConnectionTimeout.TotalSeconds));
 			b.AppendFormat(format, "Connection Lifetime", Convert.ToInt32(ConnectionLifetime.TotalSeconds));
-            b.AppendFormat(format, "Server Recovery Interval", Convert.ToInt32(ServerRecoveryInterval.TotalSeconds));
+			b.AppendFormat(format, "Server Recovery Interval", Convert.ToInt32(ServerPollingInterval.TotalSeconds));
 			b.AppendFormat(format, "Connection Type", ConnectionType);
 
 			b.AppendFormat(format, "Buffer Size", BufferSize);
@@ -455,10 +457,10 @@ namespace FluentCassandra.Connections
 		/// </summary>
 		public ConnectionType ConnectionType { get; private set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public TimeSpan ServerRecoveryInterval { get; private set; }
+		/// <summary>
+		/// 
+		/// </summary>
+		public TimeSpan ServerPollingInterval { get; private set; }
 		/// <summary>
 		/// 
 		/// </summary>
