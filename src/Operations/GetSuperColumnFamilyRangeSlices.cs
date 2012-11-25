@@ -11,7 +11,7 @@ namespace FluentCassandra.Operations
 
 		public CassandraObject SuperColumnName { get; private set; }
 
-		public override IList<FluentSuperColumnFamily> Execute()
+		public override IEnumerable<FluentSuperColumnFamily> Execute()
 		{
 			var schema = ColumnFamily.GetSchema();
             var list = new List<FluentSuperColumnFamily>();

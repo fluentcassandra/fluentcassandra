@@ -8,9 +8,7 @@ namespace FluentCassandra.Operations
 {
 	public class CassandraSlicePredicateQuery<TResult> : IEnumerable<TResult>
 	{
-        private IEnumerator<TResult> _internalList;
-
-		internal CassandraSlicePredicateQuery(BaseCassandraColumnFamily family, Expression expression)
+    	internal CassandraSlicePredicateQuery(BaseCassandraColumnFamily family, Expression expression)
 		{
 			Family = family;
 			Expression = expression;
@@ -24,10 +22,7 @@ namespace FluentCassandra.Operations
 
 		public IEnumerator<TResult> GetEnumerator()
 		{
-             if (_internalList == null)
-                _internalList = Family.ExecuteCassandraSlicePredicateQuery(this).GetEnumerator();
-
-             return _internalList;
+            return Family.ExecuteCassandraSlicePredicateQuery(this).GetEnumerator();
         }
 
 		#endregion

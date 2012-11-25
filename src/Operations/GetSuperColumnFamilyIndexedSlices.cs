@@ -13,7 +13,7 @@ namespace FluentCassandra.Operations
 
 		public CassandraIndexClause IndexClause { get; private set; }
 
-		public override IList<FluentSuperColumnFamily> Execute()
+		public override IEnumerable<FluentSuperColumnFamily> Execute()
 		{
 			var schema = ColumnFamily.GetSchema();
             var list = new List<FluentSuperColumnFamily>();
@@ -35,7 +35,7 @@ namespace FluentCassandra.Operations
 			{
 				var key = CassandraObject.GetCassandraObjectFromDatabaseByteArray(result.Key, schema.KeyValueType);
 
-				var r = new FluentSuperColumnFamily(key, ColumnFamily.FamilyName, ColumnFamily.GetSchema(), result.Columns.Select(col => {
+				var r = new FluentSuperColumnFamily(key, ColumnFamily.FamilyName, schema, result.Columns.Select(col => {
 					var superCol = Helper.ConvertSuperColumnToFluentSuperColumn(col.Super_column, schema);
 					ColumnFamily.Context.Attach(superCol);
 					superCol.MutationTracker.Clear();

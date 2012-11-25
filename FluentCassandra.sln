@@ -20,6 +20,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{1A88B962
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentCassandra.Tests", "test\FluentCassandra.Tests\FluentCassandra.Tests.csproj", "{9DAF7022-5820-4214-B13E-AC0A1B37691F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestPoolExhaustion", "..\..\dev\BTCassandra.Interop\ConsoleApplication2\TestPoolExhaustion.csproj", "{63108852-4D94-4726-8EE3-5DE5D50963E8}"
+EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = FluentCassandra.vsmdi
@@ -63,6 +65,16 @@ Global
 		{9DAF7022-5820-4214-B13E-AC0A1B37691F}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{9DAF7022-5820-4214-B13E-AC0A1B37691F}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{9DAF7022-5820-4214-B13E-AC0A1B37691F}.Release|x86.ActiveCfg = Release|Any CPU
+		{63108852-4D94-4726-8EE3-5DE5D50963E8}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{63108852-4D94-4726-8EE3-5DE5D50963E8}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{63108852-4D94-4726-8EE3-5DE5D50963E8}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{63108852-4D94-4726-8EE3-5DE5D50963E8}.Debug|x86.ActiveCfg = Debug|x86
+		{63108852-4D94-4726-8EE3-5DE5D50963E8}.Debug|x86.Build.0 = Debug|x86
+		{63108852-4D94-4726-8EE3-5DE5D50963E8}.Release|Any CPU.ActiveCfg = Release|x86
+		{63108852-4D94-4726-8EE3-5DE5D50963E8}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{63108852-4D94-4726-8EE3-5DE5D50963E8}.Release|Mixed Platforms.Build.0 = Release|x86
+		{63108852-4D94-4726-8EE3-5DE5D50963E8}.Release|x86.ActiveCfg = Release|x86
+		{63108852-4D94-4726-8EE3-5DE5D50963E8}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

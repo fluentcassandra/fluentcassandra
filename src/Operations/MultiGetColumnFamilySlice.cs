@@ -13,7 +13,7 @@ namespace FluentCassandra.Operations
 
 		public List<CassandraObject> Keys { get; private set; }
 
-		public override IList<FluentColumnFamily> Execute()
+		public override IEnumerable<FluentColumnFamily> Execute()
 		{
 			var schema = ColumnFamily.GetSchema();
             var list = new List<FluentColumnFamily>();
