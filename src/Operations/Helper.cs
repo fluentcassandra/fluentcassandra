@@ -266,6 +266,8 @@ namespace FluentCassandra.Operations
 
 		public static IEnumerable<Mutation> CreateDeletedColumnMutation(IEnumerable<FluentMutation> mutation)
 		{
+			var list = new List<Mutation>();
+
 			foreach (var col in mutation)
 			{
 				var deletion = new Deletion {
@@ -273,14 +275,18 @@ namespace FluentCassandra.Operations
 					Predicate = CreateSlicePredicate(new[] { col.Column.ColumnName })
 				};
 
-				yield return new Mutation {
+				list.Add(new Mutation {
 					Deletion = deletion
-				};
+				});
 			}
+
+			return list;
 		}
 
 		public static IEnumerable<Mutation> CreateDeletedSuperColumnMutation(IEnumerable<FluentMutation> mutation)
 		{
+			var list = new List<Mutation>();
+
 			foreach (var col in mutation)
 			{
 				var superColumn = col.Column.GetPath().SuperColumn.ColumnName.TryToBigEndian();
@@ -291,10 +297,12 @@ namespace FluentCassandra.Operations
 					Predicate = CreateSlicePredicate(new[] { col.Column.ColumnName })
 				};
 
-				yield return new Mutation {
+				list.Add(new Mutation {
 					Deletion = deletion
-				};
+				});
 			}
+
+			return list;
 		}
 
 		public static Mutation CreateInsertedOrChangedMutation(FluentMutation mutation)

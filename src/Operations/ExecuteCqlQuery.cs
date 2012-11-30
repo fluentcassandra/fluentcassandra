@@ -50,25 +50,32 @@ namespace FluentCassandra.Operations
 		{
 			var familyName = TryGetFamilyName();
 			var schema = new CassandraCqlRowSchema(result, familyName);
+			var list = new List<ICqlRow>();
 
 			foreach (var row in result.Rows)
-				yield return new FluentCqlRow(
+				list.Add(new FluentCqlRow(
 					CassandraObject.GetCassandraObjectFromDatabaseByteArray(row.Key, CassandraType.BytesType),
-					familyName, 
+					familyName,
 					schema,
-					GetColumns(row, schema));
+					GetColumns(row, schema)));
+
+			return list;
 		}
 
 		private IEnumerable<FluentColumn> GetColumns(Apache.Cassandra.CqlRow row, CassandraCqlRowSchema schema)
 		{
+			var list = new List<FluentColumn>();
+
 			foreach (var col in row.Columns)
 			{
 				var name = CassandraObject.GetCassandraObjectFromDatabaseByteArray(col.Name, CassandraType.BytesType);
 				var colSchema = schema.Columns.Where(x => x.Name == name).FirstOrDefault();
 
 				var fcol = Helper.ConvertColumnToFluentColumn(col, colSchema);
-				yield return fcol;
+				list.Add(fcol);
 			}
+
+			return list;
 		}
 
 		public ExecuteCqlQuery(UTF8Type cqlQuery)

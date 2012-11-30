@@ -82,7 +82,7 @@ namespace FluentCassandra
 				if(schema != null)
 					return new CassandraColumnFamily(this, schema);
 			}
-         
+		 
 			return new CassandraColumnFamily(this, columnFamily);
 		}
 
@@ -328,13 +328,11 @@ namespace FluentCassandra
 		/// 
 		/// </summary>
 		/// <param name="cqlQuery"></param>
-		public void TryExecuteNonQuery(UTF8Type cqlQuery) {
-			try
-			{
+		public void TryExecuteNonQuery(UTF8Type cqlQuery)
+		{
+			try {
 				ExecuteNonQuery(cqlQuery);
-			}
-			catch (Exception exc)
-			{
+			} catch (Exception exc) {
 				Debug.WriteLine(exc);
 			}
 		}
@@ -371,26 +369,26 @@ namespace FluentCassandra
 			if (WasDisposed)
 				throw new ObjectDisposedException(GetType().FullName);
 
-            var localSession = _session == null;
-            var session = _session;
-            if (session == null)
-                session = new CassandraSession(ConnectionBuilder);
+			var localSession = _session == null;
+			var session = _session;
+			if (session == null)
+				session = new CassandraSession(ConnectionBuilder);
 
 			action.Context = this;
 
 			try
 			{
-                var result = session.ExecuteOperation(action, throwOnError ?? ThrowErrors);
-                LastError = session.LastError;
+				var result = session.ExecuteOperation(action, throwOnError ?? ThrowErrors);
+				LastError = session.LastError;
 
 				return result;
 			}
 			finally
 			{
-                if (localSession && session != null)
-                {
-                    session.Dispose();
-                }
+				if (localSession && session != null)
+				{
+					session.Dispose();
+				}
 			}
 		}
 

@@ -74,9 +74,12 @@ namespace FluentCassandra.ObjectSerializer
 		public IEnumerable<object> Deserialize(IEnumerable<ICqlRow> rows)
 		{
 			var func = GenerateRowDeserializer();
+			var list = new List<object>();
 
 			foreach (var row in rows)
-				yield return func(row);
+				list.Add(func(row));
+
+			return list;
 		}
 	}
 }

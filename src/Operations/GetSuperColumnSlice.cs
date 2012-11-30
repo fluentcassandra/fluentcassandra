@@ -38,6 +38,7 @@ namespace FluentCassandra.Operations
 		private IEnumerable<FluentColumn> GetColumns(BaseCassandraColumnFamily columnFamily)
 		{
 			var schema = ColumnFamily.GetSchema();
+			var list = new List<FluentColumn>();
 
 			var parent = new CassandraColumnParent {
 				ColumnFamily = columnFamily.FamilyName,
@@ -56,8 +57,10 @@ namespace FluentCassandra.Operations
 			foreach (var result in output)
 			{
 				var r = Helper.ConvertColumnToFluentColumn(result.Column, schema);
-				yield return r;
+				list.Add(r);
 			}
+
+			return list;
 		}
 
 		public GetSuperColumnSlice(CassandraObject key, CassandraObject superColumnName, CassandraSlicePredicate columnSlicePredicate)

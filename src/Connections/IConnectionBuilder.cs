@@ -18,7 +18,7 @@ namespace FluentCassandra.Connections
 		TimeSpan ConnectionTimeout { get; }
 		ConnectionType ConnectionType { get; }
 		TimeSpan ConnectionLifetime { get; }
-        int BufferSize { get; }
+		int BufferSize { get; }
 		ConsistencyLevel ReadConsistency { get; }
 		ConsistencyLevel WriteConsistency { get; }
 

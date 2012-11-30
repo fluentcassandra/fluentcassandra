@@ -26,6 +26,7 @@ namespace FluentCassandra.Operations
 		private IEnumerable<FluentSuperColumn> GetColumns(BaseCassandraColumnFamily columnFamily)
 		{
 			var schema = ColumnFamily.GetSchema();
+			var list = new List<FluentSuperColumn>();
 
 			var parent = new CassandraColumnParent {
 				ColumnFamily = columnFamily.FamilyName
@@ -46,8 +47,10 @@ namespace FluentCassandra.Operations
 				columnFamily.Context.Attach(r);
 				r.MutationTracker.Clear();
 
-				yield return r;
+				list.Add(r);
 			}
+
+			return list;
 		}
 
 		public GetSuperColumnFamilySlice(CassandraObject key, CassandraSlicePredicate columnSlicePredicate)
