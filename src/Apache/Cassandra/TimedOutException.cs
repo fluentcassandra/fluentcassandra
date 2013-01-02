@@ -26,6 +26,53 @@ namespace FluentCassandra.Apache.Cassandra
   #endif
   public partial class TimedOutException : Exception, TBase
   {
+    private int _acknowledged_by;
+    private bool _acknowledged_by_batchlog;
+
+    /// <summary>
+    /// if a write operation was acknowledged by some replicas but not by enough to
+    /// satisfy the required ConsistencyLevel, the number of successful
+    /// replies will be given here. In case of atomic_batch_mutate method this field
+    /// will be set to -1 if the batch was written to the batchlog and to 0 if it wasn't.
+    /// </summary>
+    public int Acknowledged_by
+    {
+      get
+      {
+        return _acknowledged_by;
+      }
+      set
+      {
+        __isset.acknowledged_by = true;
+        this._acknowledged_by = value;
+      }
+    }
+
+    /// <summary>
+    /// in case of atomic_batch_mutate method this field tells if the batch was written to the batchlog.
+    /// </summary>
+    public bool Acknowledged_by_batchlog
+    {
+      get
+      {
+        return _acknowledged_by_batchlog;
+      }
+      set
+      {
+        __isset.acknowledged_by_batchlog = true;
+        this._acknowledged_by_batchlog = value;
+      }
+    }
+
+
+    public Isset __isset;
+    #if !SILVERLIGHT
+    [Serializable]
+    #endif
+    public struct Isset {
+      public bool acknowledged_by;
+      public bool acknowledged_by_batchlog;
+    }
 
     public TimedOutException() {
     }
@@ -42,6 +89,20 @@ namespace FluentCassandra.Apache.Cassandra
         }
         switch (field.ID)
         {
+          case 1:
+            if (field.Type == TType.I32) {
+              Acknowledged_by = iprot.ReadI32();
+            } else { 
+              TProtocolUtil.Skip(iprot, field.Type);
+            }
+            break;
+          case 2:
+            if (field.Type == TType.Bool) {
+              Acknowledged_by_batchlog = iprot.ReadBool();
+            } else { 
+              TProtocolUtil.Skip(iprot, field.Type);
+            }
+            break;
           default: 
             TProtocolUtil.Skip(iprot, field.Type);
             break;
@@ -54,12 +115,33 @@ namespace FluentCassandra.Apache.Cassandra
     public void Write(TProtocol oprot) {
       TStruct struc = new TStruct("TimedOutException");
       oprot.WriteStructBegin(struc);
+      TField field = new TField();
+      if (__isset.acknowledged_by) {
+        field.Name = "acknowledged_by";
+        field.Type = TType.I32;
+        field.ID = 1;
+        oprot.WriteFieldBegin(field);
+        oprot.WriteI32(Acknowledged_by);
+        oprot.WriteFieldEnd();
+      }
+      if (__isset.acknowledged_by_batchlog) {
+        field.Name = "acknowledged_by_batchlog";
+        field.Type = TType.Bool;
+        field.ID = 2;
+        oprot.WriteFieldBegin(field);
+        oprot.WriteBool(Acknowledged_by_batchlog);
+        oprot.WriteFieldEnd();
+      }
       oprot.WriteFieldStop();
       oprot.WriteStructEnd();
     }
 
     public override string ToString() {
       StringBuilder sb = new StringBuilder("TimedOutException(");
+      sb.Append("Acknowledged_by: ");
+      sb.Append(Acknowledged_by);
+      sb.Append(",Acknowledged_by_batchlog: ");
+      sb.Append(Acknowledged_by_batchlog);
       sb.Append(")");
       return sb.ToString();
     }

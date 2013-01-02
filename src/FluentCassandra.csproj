@@ -59,6 +59,7 @@
     <Compile Include="Apache\Cassandra\AuthorizationException.cs" />
     <Compile Include="Apache\Cassandra\Cassandra.cs" />
     <Compile Include="Apache\Cassandra\CfDef.cs" />
+    <Compile Include="Apache\Cassandra\CfSplit.cs" />
     <Compile Include="Apache\Cassandra\Column.cs" />
     <Compile Include="Apache\Cassandra\ColumnDef.cs" />
     <Compile Include="Apache\Cassandra\ColumnOrSuperColumn.cs" />

@@ -19,11 +19,15 @@ namespace FluentCassandra.Apache.Cassandra
 {
 
   /// <summary>
+  /// NOTE: This up outdated exception left for backward compatibility reasons,
+  /// no actual schema agreement validation is done starting from Cassandra 1.2
+  /// 
   /// schemas are not in agreement across all nodes
   /// </summary>
   #if !SILVERLIGHT
   [Serializable]
   #endif
+  [Obsolete("This up outdated exception left for backward compatibility reasons, no actual schema agreement validation is done starting from Cassandra 1.2", error: false)]
   public partial class SchemaDisagreementException : Exception, TBase
   {
 

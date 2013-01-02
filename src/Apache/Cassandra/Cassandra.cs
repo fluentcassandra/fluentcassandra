@@ -117,12 +117,13 @@ namespace FluentCassandra.Apache.Cassandra
       #endif
       /// <summary>
       /// Returns the subset of columns specified in SlicePredicate for the rows matching the IndexClause
-      /// @Deprecated; use get_range_slices instead with range.row_filter specified
+      /// @deprecated use get_range_slices instead with range.row_filter specified
       /// </summary>
       /// <param name="column_parent"></param>
       /// <param name="index_clause"></param>
       /// <param name="column_predicate"></param>
       /// <param name="consistency_level"></param>
+	  [Obsolete("use get_range_slices instead with range.row_filter specified", error:true)]
       List<KeySlice> get_indexed_slices(ColumnParent column_parent, IndexClause index_clause, SlicePredicate column_predicate, ConsistencyLevel consistency_level);
       #if SILVERLIGHT
       IAsyncResult Begin_get_indexed_slices(AsyncCallback callback, object state, ColumnParent column_parent, IndexClause index_clause, SlicePredicate column_predicate, ConsistencyLevel consistency_level);
@@ -191,6 +192,19 @@ namespace FluentCassandra.Apache.Cassandra
       #if SILVERLIGHT
       IAsyncResult Begin_batch_mutate(AsyncCallback callback, object state, Dictionary<byte[], Dictionary<string, List<Mutation>>> mutation_map, ConsistencyLevel consistency_level);
       void End_batch_mutate(IAsyncResult asyncResult);
+      #endif
+      /// <summary>
+      ///   Atomically mutate many columns or super columns for many row keys. See also: Mutation.
+      /// 
+      ///   mutation_map maps key to column family to a list of Mutation objects to take place at that scope.
+      /// *
+      /// </summary>
+      /// <param name="mutation_map"></param>
+      /// <param name="consistency_level"></param>
+      void atomic_batch_mutate(Dictionary<byte[], Dictionary<string, List<Mutation>>> mutation_map, ConsistencyLevel consistency_level);
+      #if SILVERLIGHT
+      IAsyncResult Begin_atomic_batch_mutate(AsyncCallback callback, object state, Dictionary<byte[], Dictionary<string, List<Mutation>>> mutation_map, ConsistencyLevel consistency_level);
+      void End_atomic_batch_mutate(IAsyncResult asyncResult);
       #endif
       /// <summary>
       /// Truncate will mark and entire column family as deleted.
@@ -308,6 +322,20 @@ namespace FluentCassandra.Apache.Cassandra
       List<string> End_describe_splits(IAsyncResult asyncResult);
       #endif
       /// <summary>
+      /// Enables tracing for the next query in this connection and returns the UUID for that trace session
+      /// The next query will be traced idependently of trace probability and the returned UUID can be used to query the trace keyspace
+      /// </summary>
+      byte[] trace_next_query();
+      #if SILVERLIGHT
+      IAsyncResult Begin_trace_next_query(AsyncCallback callback, object state, );
+      byte[] End_trace_next_query(IAsyncResult asyncResult);
+      #endif
+      List<CfSplit> describe_splits_ex(string cfName, string start_token, string end_token, int keys_per_split);
+      #if SILVERLIGHT
+      IAsyncResult Begin_describe_splits_ex(AsyncCallback callback, object state, string cfName, string start_token, string end_token, int keys_per_split);
+      List<CfSplit> End_describe_splits_ex(IAsyncResult asyncResult);
+      #endif
+      /// <summary>
       /// adds a column family. returns the new schema id.
       /// </summary>
       /// <param name="cf_def"></param>
@@ -372,6 +400,11 @@ namespace FluentCassandra.Apache.Cassandra
       IAsyncResult Begin_execute_cql_query(AsyncCallback callback, object state, byte[] query, Compression compression);
       CqlResult End_execute_cql_query(IAsyncResult asyncResult);
       #endif
+      CqlResult execute_cql3_query(byte[] query, Compression compression, ConsistencyLevel consistency);
+      #if SILVERLIGHT
+      IAsyncResult Begin_execute_cql3_query(AsyncCallback callback, object state, byte[] query, Compression compression, ConsistencyLevel consistency);
+      CqlResult End_execute_cql3_query(IAsyncResult asyncResult);
+      #endif
       /// <summary>
       /// Prepare a CQL (Cassandra Query Language) statement by compiling and returning
       /// - the type of CQL statement
@@ -385,6 +418,11 @@ namespace FluentCassandra.Apache.Cassandra
       IAsyncResult Begin_prepare_cql_query(AsyncCallback callback, object state, byte[] query, Compression compression);
       CqlPreparedResult End_prepare_cql_query(IAsyncResult asyncResult);
       #endif
+      CqlPreparedResult prepare_cql3_query(byte[] query, Compression compression);
+      #if SILVERLIGHT
+      IAsyncResult Begin_prepare_cql3_query(AsyncCallback callback, object state, byte[] query, Compression compression);
+      CqlPreparedResult End_prepare_cql3_query(IAsyncResult asyncResult);
+      #endif
       /// <summary>
       /// Executes a prepared CQL (Cassandra Query Language) statement by passing an id token and  a list of variables
       /// to bind and returns a CqlResult containing the results.
@@ -396,6 +434,15 @@ namespace FluentCassandra.Apache.Cassandra
       IAsyncResult Begin_execute_prepared_cql_query(AsyncCallback callback, object state, int itemId, List<byte[]> values);
       CqlResult End_execute_prepared_cql_query(IAsyncResult asyncResult);
       #endif
+      CqlResult execute_prepared_cql3_query(int itemId, List<byte[]> values, ConsistencyLevel consistency);
+      #if SILVERLIGHT
+      IAsyncResult Begin_execute_prepared_cql3_query(AsyncCallback callback, object state, int itemId, List<byte[]> values, ConsistencyLevel consistency);
+      CqlResult End_execute_prepared_cql3_query(IAsyncResult asyncResult);
+      #endif
+      /// <summary>
+      /// @deprecated This is now a no-op. Please use the CQL3 specific methods instead.
+      /// </summary>
+      /// <param name="version"></param>
       void set_cql_version(string version);
       #if SILVERLIGHT
       IAsyncResult Begin_set_cql_version(AsyncCallback callback, object state, string version);
@@ -1143,7 +1190,7 @@ namespace FluentCassandra.Apache.Cassandra
 
       /// <summary>
       /// Returns the subset of columns specified in SlicePredicate for the rows matching the IndexClause
-      /// @Deprecated; use get_range_slices instead with range.row_filter specified
+      /// @deprecated use get_range_slices instead with range.row_filter specified
       /// </summary>
       /// <param name="column_parent"></param>
       /// <param name="index_clause"></param>
@@ -1585,6 +1632,83 @@ namespace FluentCassandra.Apache.Cassandra
           throw x;
         }
         batch_mutate_result result = new batch_mutate_result();
+        result.Read(iprot_);
+        iprot_.ReadMessageEnd();
+        if (result.__isset.ire) {
+          throw result.Ire;
+        }
+        if (result.__isset.ue) {
+          throw result.Ue;
+        }
+        if (result.__isset.te) {
+          throw result.Te;
+        }
+        return;
+      }
+
+      
+      #if SILVERLIGHT
+      public IAsyncResult Begin_atomic_batch_mutate(AsyncCallback callback, object state, Dictionary<byte[], Dictionary<string, List<Mutation>>> mutation_map, ConsistencyLevel consistency_level)
+      {
+        return send_atomic_batch_mutate(callback, state, mutation_map, consistency_level);
+      }
+
+      public void End_atomic_batch_mutate(IAsyncResult asyncResult)
+      {
+        oprot_.Transport.EndFlush(asyncResult);
+        recv_atomic_batch_mutate();
+      }
+
+      #endif
+
+      /// <summary>
+      ///   Atomically mutate many columns or super columns for many row keys. See also: Mutation.
+      /// 
+      ///   mutation_map maps key to column family to a list of Mutation objects to take place at that scope.
+      /// *
+      /// </summary>
+      /// <param name="mutation_map"></param>
+      /// <param name="consistency_level"></param>
+      public void atomic_batch_mutate(Dictionary<byte[], Dictionary<string, List<Mutation>>> mutation_map, ConsistencyLevel consistency_level)
+      {
+        #if !SILVERLIGHT
+        send_atomic_batch_mutate(mutation_map, consistency_level);
+        recv_atomic_batch_mutate();
+
+        #else
+        var asyncResult = Begin_atomic_batch_mutate(null, null, mutation_map, consistency_level);
+        End_atomic_batch_mutate(asyncResult);
+
+        #endif
+      }
+      #if SILVERLIGHT
+      public IAsyncResult send_atomic_batch_mutate(AsyncCallback callback, object state, Dictionary<byte[], Dictionary<string, List<Mutation>>> mutation_map, ConsistencyLevel consistency_level)
+      #else
+      public void send_atomic_batch_mutate(Dictionary<byte[], Dictionary<string, List<Mutation>>> mutation_map, ConsistencyLevel consistency_level)
+      #endif
+      {
+        oprot_.WriteMessageBegin(new TMessage("atomic_batch_mutate", TMessageType.Call, seqid_));
+        atomic_batch_mutate_args args = new atomic_batch_mutate_args();
+        args.Mutation_map = mutation_map;
+        args.Consistency_level = consistency_level;
+        args.Write(oprot_);
+        oprot_.WriteMessageEnd();
+        #if SILVERLIGHT
+        return oprot_.Transport.BeginFlush(callback, state);
+        #else
+        oprot_.Transport.Flush();
+        #endif
+      }
+
+      public void recv_atomic_batch_mutate()
+      {
+        TMessage msg = iprot_.ReadMessageBegin();
+        if (msg.Type == TMessageType.Exception) {
+          TApplicationException x = TApplicationException.Read(iprot_);
+          iprot_.ReadMessageEnd();
+          throw x;
+        }
+        atomic_batch_mutate_result result = new atomic_batch_mutate_result();
         result.Read(iprot_);
         iprot_.ReadMessageEnd();
         if (result.__isset.ire) {
@@ -2366,6 +2490,139 @@ namespace FluentCassandra.Apache.Cassandra
 
       
       #if SILVERLIGHT
+      public IAsyncResult Begin_trace_next_query(AsyncCallback callback, object state, )
+      {
+        return send_trace_next_query(callback, state);
+      }
+
+      public byte[] End_trace_next_query(IAsyncResult asyncResult)
+      {
+        oprot_.Transport.EndFlush(asyncResult);
+        return recv_trace_next_query();
+      }
+
+      #endif
+
+      /// <summary>
+      /// Enables tracing for the next query in this connection and returns the UUID for that trace session
+      /// The next query will be traced idependently of trace probability and the returned UUID can be used to query the trace keyspace
+      /// </summary>
+      public byte[] trace_next_query()
+      {
+        #if !SILVERLIGHT
+        send_trace_next_query();
+        return recv_trace_next_query();
+
+        #else
+        var asyncResult = Begin_trace_next_query(null, null, );
+        return End_trace_next_query(asyncResult);
+
+        #endif
+      }
+      #if SILVERLIGHT
+      public IAsyncResult send_trace_next_query(AsyncCallback callback, object state, )
+      #else
+      public void send_trace_next_query()
+      #endif
+      {
+        oprot_.WriteMessageBegin(new TMessage("trace_next_query", TMessageType.Call, seqid_));
+        trace_next_query_args args = new trace_next_query_args();
+        args.Write(oprot_);
+        oprot_.WriteMessageEnd();
+        #if SILVERLIGHT
+        return oprot_.Transport.BeginFlush(callback, state);
+        #else
+        oprot_.Transport.Flush();
+        #endif
+      }
+
+      public byte[] recv_trace_next_query()
+      {
+        TMessage msg = iprot_.ReadMessageBegin();
+        if (msg.Type == TMessageType.Exception) {
+          TApplicationException x = TApplicationException.Read(iprot_);
+          iprot_.ReadMessageEnd();
+          throw x;
+        }
+        trace_next_query_result result = new trace_next_query_result();
+        result.Read(iprot_);
+        iprot_.ReadMessageEnd();
+        if (result.__isset.success) {
+          return result.Success;
+        }
+        throw new TApplicationException(TApplicationException.ExceptionType.MissingResult, "trace_next_query failed: unknown result");
+      }
+
+      
+      #if SILVERLIGHT
+      public IAsyncResult Begin_describe_splits_ex(AsyncCallback callback, object state, string cfName, string start_token, string end_token, int keys_per_split)
+      {
+        return send_describe_splits_ex(callback, state, cfName, start_token, end_token, keys_per_split);
+      }
+
+      public List<CfSplit> End_describe_splits_ex(IAsyncResult asyncResult)
+      {
+        oprot_.Transport.EndFlush(asyncResult);
+        return recv_describe_splits_ex();
+      }
+
+      #endif
+
+      public List<CfSplit> describe_splits_ex(string cfName, string start_token, string end_token, int keys_per_split)
+      {
+        #if !SILVERLIGHT
+        send_describe_splits_ex(cfName, start_token, end_token, keys_per_split);
+        return recv_describe_splits_ex();
+
+        #else
+        var asyncResult = Begin_describe_splits_ex(null, null, cfName, start_token, end_token, keys_per_split);
+        return End_describe_splits_ex(asyncResult);
+
+        #endif
+      }
+      #if SILVERLIGHT
+      public IAsyncResult send_describe_splits_ex(AsyncCallback callback, object state, string cfName, string start_token, string end_token, int keys_per_split)
+      #else
+      public void send_describe_splits_ex(string cfName, string start_token, string end_token, int keys_per_split)
+      #endif
+      {
+        oprot_.WriteMessageBegin(new TMessage("describe_splits_ex", TMessageType.Call, seqid_));
+        describe_splits_ex_args args = new describe_splits_ex_args();
+        args.CfName = cfName;
+        args.Start_token = start_token;
+        args.End_token = end_token;
+        args.Keys_per_split = keys_per_split;
+        args.Write(oprot_);
+        oprot_.WriteMessageEnd();
+        #if SILVERLIGHT
+        return oprot_.Transport.BeginFlush(callback, state);
+        #else
+        oprot_.Transport.Flush();
+        #endif
+      }
+
+      public List<CfSplit> recv_describe_splits_ex()
+      {
+        TMessage msg = iprot_.ReadMessageBegin();
+        if (msg.Type == TMessageType.Exception) {
+          TApplicationException x = TApplicationException.Read(iprot_);
+          iprot_.ReadMessageEnd();
+          throw x;
+        }
+        describe_splits_ex_result result = new describe_splits_ex_result();
+        result.Read(iprot_);
+        iprot_.ReadMessageEnd();
+        if (result.__isset.success) {
+          return result.Success;
+        }
+        if (result.__isset.ire) {
+          throw result.Ire;
+        }
+        throw new TApplicationException(TApplicationException.ExceptionType.MissingResult, "describe_splits_ex failed: unknown result");
+      }
+
+      
+      #if SILVERLIGHT
       public IAsyncResult Begin_system_add_column_family(AsyncCallback callback, object state, CfDef cf_def)
       {
         return send_system_add_column_family(callback, state, cf_def);
@@ -2879,6 +3136,82 @@ namespace FluentCassandra.Apache.Cassandra
 
       
       #if SILVERLIGHT
+      public IAsyncResult Begin_execute_cql3_query(AsyncCallback callback, object state, byte[] query, Compression compression, ConsistencyLevel consistency)
+      {
+        return send_execute_cql3_query(callback, state, query, compression, consistency);
+      }
+
+      public CqlResult End_execute_cql3_query(IAsyncResult asyncResult)
+      {
+        oprot_.Transport.EndFlush(asyncResult);
+        return recv_execute_cql3_query();
+      }
+
+      #endif
+
+      public CqlResult execute_cql3_query(byte[] query, Compression compression, ConsistencyLevel consistency)
+      {
+        #if !SILVERLIGHT
+        send_execute_cql3_query(query, compression, consistency);
+        return recv_execute_cql3_query();
+
+        #else
+        var asyncResult = Begin_execute_cql3_query(null, null, query, compression, consistency);
+        return End_execute_cql3_query(asyncResult);
+
+        #endif
+      }
+      #if SILVERLIGHT
+      public IAsyncResult send_execute_cql3_query(AsyncCallback callback, object state, byte[] query, Compression compression, ConsistencyLevel consistency)
+      #else
+      public void send_execute_cql3_query(byte[] query, Compression compression, ConsistencyLevel consistency)
+      #endif
+      {
+        oprot_.WriteMessageBegin(new TMessage("execute_cql3_query", TMessageType.Call, seqid_));
+        execute_cql3_query_args args = new execute_cql3_query_args();
+        args.Query = query;
+        args.Compression = compression;
+        args.Consistency = consistency;
+        args.Write(oprot_);
+        oprot_.WriteMessageEnd();
+        #if SILVERLIGHT
+        return oprot_.Transport.BeginFlush(callback, state);
+        #else
+        oprot_.Transport.Flush();
+        #endif
+      }
+
+      public CqlResult recv_execute_cql3_query()
+      {
+        TMessage msg = iprot_.ReadMessageBegin();
+        if (msg.Type == TMessageType.Exception) {
+          TApplicationException x = TApplicationException.Read(iprot_);
+          iprot_.ReadMessageEnd();
+          throw x;
+        }
+        execute_cql3_query_result result = new execute_cql3_query_result();
+        result.Read(iprot_);
+        iprot_.ReadMessageEnd();
+        if (result.__isset.success) {
+          return result.Success;
+        }
+        if (result.__isset.ire) {
+          throw result.Ire;
+        }
+        if (result.__isset.ue) {
+          throw result.Ue;
+        }
+        if (result.__isset.te) {
+          throw result.Te;
+        }
+        if (result.__isset.sde) {
+          throw result.Sde;
+        }
+        throw new TApplicationException(TApplicationException.ExceptionType.MissingResult, "execute_cql3_query failed: unknown result");
+      }
+
+      
+      #if SILVERLIGHT
       public IAsyncResult Begin_prepare_cql_query(AsyncCallback callback, object state, byte[] query, Compression compression)
       {
         return send_prepare_cql_query(callback, state, query, compression);
@@ -2949,6 +3282,72 @@ namespace FluentCassandra.Apache.Cassandra
           throw result.Ire;
         }
         throw new TApplicationException(TApplicationException.ExceptionType.MissingResult, "prepare_cql_query failed: unknown result");
+      }
+
+      
+      #if SILVERLIGHT
+      public IAsyncResult Begin_prepare_cql3_query(AsyncCallback callback, object state, byte[] query, Compression compression)
+      {
+        return send_prepare_cql3_query(callback, state, query, compression);
+      }
+
+      public CqlPreparedResult End_prepare_cql3_query(IAsyncResult asyncResult)
+      {
+        oprot_.Transport.EndFlush(asyncResult);
+        return recv_prepare_cql3_query();
+      }
+
+      #endif
+
+      public CqlPreparedResult prepare_cql3_query(byte[] query, Compression compression)
+      {
+        #if !SILVERLIGHT
+        send_prepare_cql3_query(query, compression);
+        return recv_prepare_cql3_query();
+
+        #else
+        var asyncResult = Begin_prepare_cql3_query(null, null, query, compression);
+        return End_prepare_cql3_query(asyncResult);
+
+        #endif
+      }
+      #if SILVERLIGHT
+      public IAsyncResult send_prepare_cql3_query(AsyncCallback callback, object state, byte[] query, Compression compression)
+      #else
+      public void send_prepare_cql3_query(byte[] query, Compression compression)
+      #endif
+      {
+        oprot_.WriteMessageBegin(new TMessage("prepare_cql3_query", TMessageType.Call, seqid_));
+        prepare_cql3_query_args args = new prepare_cql3_query_args();
+        args.Query = query;
+        args.Compression = compression;
+        args.Write(oprot_);
+        oprot_.WriteMessageEnd();
+        #if SILVERLIGHT
+        return oprot_.Transport.BeginFlush(callback, state);
+        #else
+        oprot_.Transport.Flush();
+        #endif
+      }
+
+      public CqlPreparedResult recv_prepare_cql3_query()
+      {
+        TMessage msg = iprot_.ReadMessageBegin();
+        if (msg.Type == TMessageType.Exception) {
+          TApplicationException x = TApplicationException.Read(iprot_);
+          iprot_.ReadMessageEnd();
+          throw x;
+        }
+        prepare_cql3_query_result result = new prepare_cql3_query_result();
+        result.Read(iprot_);
+        iprot_.ReadMessageEnd();
+        if (result.__isset.success) {
+          return result.Success;
+        }
+        if (result.__isset.ire) {
+          throw result.Ire;
+        }
+        throw new TApplicationException(TApplicationException.ExceptionType.MissingResult, "prepare_cql3_query failed: unknown result");
       }
 
       
@@ -3034,6 +3433,82 @@ namespace FluentCassandra.Apache.Cassandra
 
       
       #if SILVERLIGHT
+      public IAsyncResult Begin_execute_prepared_cql3_query(AsyncCallback callback, object state, int itemId, List<byte[]> values, ConsistencyLevel consistency)
+      {
+        return send_execute_prepared_cql3_query(callback, state, itemId, values, consistency);
+      }
+
+      public CqlResult End_execute_prepared_cql3_query(IAsyncResult asyncResult)
+      {
+        oprot_.Transport.EndFlush(asyncResult);
+        return recv_execute_prepared_cql3_query();
+      }
+
+      #endif
+
+      public CqlResult execute_prepared_cql3_query(int itemId, List<byte[]> values, ConsistencyLevel consistency)
+      {
+        #if !SILVERLIGHT
+        send_execute_prepared_cql3_query(itemId, values, consistency);
+        return recv_execute_prepared_cql3_query();
+
+        #else
+        var asyncResult = Begin_execute_prepared_cql3_query(null, null, itemId, values, consistency);
+        return End_execute_prepared_cql3_query(asyncResult);
+
+        #endif
+      }
+      #if SILVERLIGHT
+      public IAsyncResult send_execute_prepared_cql3_query(AsyncCallback callback, object state, int itemId, List<byte[]> values, ConsistencyLevel consistency)
+      #else
+      public void send_execute_prepared_cql3_query(int itemId, List<byte[]> values, ConsistencyLevel consistency)
+      #endif
+      {
+        oprot_.WriteMessageBegin(new TMessage("execute_prepared_cql3_query", TMessageType.Call, seqid_));
+        execute_prepared_cql3_query_args args = new execute_prepared_cql3_query_args();
+        args.ItemId = itemId;
+        args.Values = values;
+        args.Consistency = consistency;
+        args.Write(oprot_);
+        oprot_.WriteMessageEnd();
+        #if SILVERLIGHT
+        return oprot_.Transport.BeginFlush(callback, state);
+        #else
+        oprot_.Transport.Flush();
+        #endif
+      }
+
+      public CqlResult recv_execute_prepared_cql3_query()
+      {
+        TMessage msg = iprot_.ReadMessageBegin();
+        if (msg.Type == TMessageType.Exception) {
+          TApplicationException x = TApplicationException.Read(iprot_);
+          iprot_.ReadMessageEnd();
+          throw x;
+        }
+        execute_prepared_cql3_query_result result = new execute_prepared_cql3_query_result();
+        result.Read(iprot_);
+        iprot_.ReadMessageEnd();
+        if (result.__isset.success) {
+          return result.Success;
+        }
+        if (result.__isset.ire) {
+          throw result.Ire;
+        }
+        if (result.__isset.ue) {
+          throw result.Ue;
+        }
+        if (result.__isset.te) {
+          throw result.Te;
+        }
+        if (result.__isset.sde) {
+          throw result.Sde;
+        }
+        throw new TApplicationException(TApplicationException.ExceptionType.MissingResult, "execute_prepared_cql3_query failed: unknown result");
+      }
+
+      
+      #if SILVERLIGHT
       public IAsyncResult Begin_set_cql_version(AsyncCallback callback, object state, string version)
       {
         return send_set_cql_version(callback, state, version);
@@ -3047,6 +3522,10 @@ namespace FluentCassandra.Apache.Cassandra
 
       #endif
 
+      /// <summary>
+      /// @deprecated This is now a no-op. Please use the CQL3 specific methods instead.
+      /// </summary>
+      /// <param name="version"></param>
       public void set_cql_version(string version)
       {
         #if !SILVERLIGHT
@@ -3114,6 +3593,7 @@ namespace FluentCassandra.Apache.Cassandra
         processMap_["remove"] = remove_Process;
         processMap_["remove_counter"] = remove_counter_Process;
         processMap_["batch_mutate"] = batch_mutate_Process;
+        processMap_["atomic_batch_mutate"] = atomic_batch_mutate_Process;
         processMap_["truncate"] = truncate_Process;
         processMap_["describe_schema_versions"] = describe_schema_versions_Process;
         processMap_["describe_keyspaces"] = describe_keyspaces_Process;
@@ -3125,6 +3605,8 @@ namespace FluentCassandra.Apache.Cassandra
         processMap_["describe_snitch"] = describe_snitch_Process;
         processMap_["describe_keyspace"] = describe_keyspace_Process;
         processMap_["describe_splits"] = describe_splits_Process;
+        processMap_["trace_next_query"] = trace_next_query_Process;
+        processMap_["describe_splits_ex"] = describe_splits_ex_Process;
         processMap_["system_add_column_family"] = system_add_column_family_Process;
         processMap_["system_drop_column_family"] = system_drop_column_family_Process;
         processMap_["system_add_keyspace"] = system_add_keyspace_Process;
@@ -3132,8 +3614,11 @@ namespace FluentCassandra.Apache.Cassandra
         processMap_["system_update_keyspace"] = system_update_keyspace_Process;
         processMap_["system_update_column_family"] = system_update_column_family_Process;
         processMap_["execute_cql_query"] = execute_cql_query_Process;
+        processMap_["execute_cql3_query"] = execute_cql3_query_Process;
         processMap_["prepare_cql_query"] = prepare_cql_query_Process;
+        processMap_["prepare_cql3_query"] = prepare_cql3_query_Process;
         processMap_["execute_prepared_cql_query"] = execute_prepared_cql_query_Process;
+        processMap_["execute_prepared_cql3_query"] = execute_prepared_cql3_query_Process;
         processMap_["set_cql_version"] = set_cql_version_Process;
       }
 
@@ -3478,6 +3963,27 @@ namespace FluentCassandra.Apache.Cassandra
         oprot.Transport.Flush();
       }
 
+      public void atomic_batch_mutate_Process(int seqid, TProtocol iprot, TProtocol oprot)
+      {
+        atomic_batch_mutate_args args = new atomic_batch_mutate_args();
+        args.Read(iprot);
+        iprot.ReadMessageEnd();
+        atomic_batch_mutate_result result = new atomic_batch_mutate_result();
+        try {
+          iface_.atomic_batch_mutate(args.Mutation_map, args.Consistency_level);
+        } catch (InvalidRequestException ire) {
+          result.Ire = ire;
+        } catch (UnavailableException ue) {
+          result.Ue = ue;
+        } catch (TimedOutException te) {
+          result.Te = te;
+        }
+        oprot.WriteMessageBegin(new TMessage("atomic_batch_mutate", TMessageType.Reply, seqid)); 
+        result.Write(oprot);
+        oprot.WriteMessageEnd();
+        oprot.Transport.Flush();
+      }
+
       public void truncate_Process(int seqid, TProtocol iprot, TProtocol oprot)
       {
         truncate_args args = new truncate_args();
@@ -3655,6 +4161,36 @@ namespace FluentCassandra.Apache.Cassandra
         oprot.Transport.Flush();
       }
 
+      public void trace_next_query_Process(int seqid, TProtocol iprot, TProtocol oprot)
+      {
+        trace_next_query_args args = new trace_next_query_args();
+        args.Read(iprot);
+        iprot.ReadMessageEnd();
+        trace_next_query_result result = new trace_next_query_result();
+        result.Success = iface_.trace_next_query();
+        oprot.WriteMessageBegin(new TMessage("trace_next_query", TMessageType.Reply, seqid)); 
+        result.Write(oprot);
+        oprot.WriteMessageEnd();
+        oprot.Transport.Flush();
+      }
+
+      public void describe_splits_ex_Process(int seqid, TProtocol iprot, TProtocol oprot)
+      {
+        describe_splits_ex_args args = new describe_splits_ex_args();
+        args.Read(iprot);
+        iprot.ReadMessageEnd();
+        describe_splits_ex_result result = new describe_splits_ex_result();
+        try {
+          result.Success = iface_.describe_splits_ex(args.CfName, args.Start_token, args.End_token, args.Keys_per_split);
+        } catch (InvalidRequestException ire) {
+          result.Ire = ire;
+        }
+        oprot.WriteMessageBegin(new TMessage("describe_splits_ex", TMessageType.Reply, seqid)); 
+        result.Write(oprot);
+        oprot.WriteMessageEnd();
+        oprot.Transport.Flush();
+      }
+
       public void system_add_column_family_Process(int seqid, TProtocol iprot, TProtocol oprot)
       {
         system_add_column_family_args args = new system_add_column_family_args();
@@ -3792,6 +4328,29 @@ namespace FluentCassandra.Apache.Cassandra
         oprot.Transport.Flush();
       }
 
+      public void execute_cql3_query_Process(int seqid, TProtocol iprot, TProtocol oprot)
+      {
+        execute_cql3_query_args args = new execute_cql3_query_args();
+        args.Read(iprot);
+        iprot.ReadMessageEnd();
+        execute_cql3_query_result result = new execute_cql3_query_result();
+        try {
+          result.Success = iface_.execute_cql3_query(args.Query, args.Compression, args.Consistency);
+        } catch (InvalidRequestException ire) {
+          result.Ire = ire;
+        } catch (UnavailableException ue) {
+          result.Ue = ue;
+        } catch (TimedOutException te) {
+          result.Te = te;
+        } catch (SchemaDisagreementException sde) {
+          result.Sde = sde;
+        }
+        oprot.WriteMessageBegin(new TMessage("execute_cql3_query", TMessageType.Reply, seqid)); 
+        result.Write(oprot);
+        oprot.WriteMessageEnd();
+        oprot.Transport.Flush();
+      }
+
       public void prepare_cql_query_Process(int seqid, TProtocol iprot, TProtocol oprot)
       {
         prepare_cql_query_args args = new prepare_cql_query_args();
@@ -3804,6 +4363,23 @@ namespace FluentCassandra.Apache.Cassandra
           result.Ire = ire;
         }
         oprot.WriteMessageBegin(new TMessage("prepare_cql_query", TMessageType.Reply, seqid)); 
+        result.Write(oprot);
+        oprot.WriteMessageEnd();
+        oprot.Transport.Flush();
+      }
+
+      public void prepare_cql3_query_Process(int seqid, TProtocol iprot, TProtocol oprot)
+      {
+        prepare_cql3_query_args args = new prepare_cql3_query_args();
+        args.Read(iprot);
+        iprot.ReadMessageEnd();
+        prepare_cql3_query_result result = new prepare_cql3_query_result();
+        try {
+          result.Success = iface_.prepare_cql3_query(args.Query, args.Compression);
+        } catch (InvalidRequestException ire) {
+          result.Ire = ire;
+        }
+        oprot.WriteMessageBegin(new TMessage("prepare_cql3_query", TMessageType.Reply, seqid)); 
         result.Write(oprot);
         oprot.WriteMessageEnd();
         oprot.Transport.Flush();
@@ -3827,6 +4403,29 @@ namespace FluentCassandra.Apache.Cassandra
           result.Sde = sde;
         }
         oprot.WriteMessageBegin(new TMessage("execute_prepared_cql_query", TMessageType.Reply, seqid)); 
+        result.Write(oprot);
+        oprot.WriteMessageEnd();
+        oprot.Transport.Flush();
+      }
+
+      public void execute_prepared_cql3_query_Process(int seqid, TProtocol iprot, TProtocol oprot)
+      {
+        execute_prepared_cql3_query_args args = new execute_prepared_cql3_query_args();
+        args.Read(iprot);
+        iprot.ReadMessageEnd();
+        execute_prepared_cql3_query_result result = new execute_prepared_cql3_query_result();
+        try {
+          result.Success = iface_.execute_prepared_cql3_query(args.ItemId, args.Values, args.Consistency);
+        } catch (InvalidRequestException ire) {
+          result.Ire = ire;
+        } catch (UnavailableException ue) {
+          result.Ue = ue;
+        } catch (TimedOutException te) {
+          result.Te = te;
+        } catch (SchemaDisagreementException sde) {
+          result.Sde = sde;
+        }
+        oprot.WriteMessageBegin(new TMessage("execute_prepared_cql3_query", TMessageType.Reply, seqid)); 
         result.Write(oprot);
         oprot.WriteMessageEnd();
         oprot.Transport.Flush();
@@ -9170,6 +9769,347 @@ namespace FluentCassandra.Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
+    public partial class atomic_batch_mutate_args : TBase
+    {
+      private Dictionary<byte[], Dictionary<string, List<Mutation>>> _mutation_map;
+      private ConsistencyLevel _consistency_level;
+
+      public Dictionary<byte[], Dictionary<string, List<Mutation>>> Mutation_map
+      {
+        get
+        {
+          return _mutation_map;
+        }
+        set
+        {
+          __isset.mutation_map = true;
+          this._mutation_map = value;
+        }
+      }
+
+      /// <summary>
+      /// 
+      /// <seealso cref="ConsistencyLevel"/>
+      /// </summary>
+      public ConsistencyLevel Consistency_level
+      {
+        get
+        {
+          return _consistency_level;
+        }
+        set
+        {
+          __isset.consistency_level = true;
+          this._consistency_level = value;
+        }
+      }
+
+
+      public Isset __isset;
+      #if !SILVERLIGHT
+      [Serializable]
+      #endif
+      public struct Isset {
+        public bool mutation_map;
+        public bool consistency_level;
+      }
+
+      public atomic_batch_mutate_args() {
+        this._consistency_level = (ConsistencyLevel)1;
+      }
+
+      public void Read (TProtocol iprot)
+      {
+        TField field;
+        iprot.ReadStructBegin();
+        while (true)
+        {
+          field = iprot.ReadFieldBegin();
+          if (field.Type == TType.Stop) { 
+            break;
+          }
+          switch (field.ID)
+          {
+            case 1:
+              if (field.Type == TType.Map) {
+                {
+                  Mutation_map = new Dictionary<byte[], Dictionary<string, List<Mutation>>>();
+                  TMap _map147 = iprot.ReadMapBegin();
+                  for( int _i148 = 0; _i148 < _map147.Count; ++_i148)
+                  {
+                    byte[] _key149;
+                    Dictionary<string, List<Mutation>> _val150;
+                    _key149 = iprot.ReadBinary();
+                    {
+                      _val150 = new Dictionary<string, List<Mutation>>();
+                      TMap _map151 = iprot.ReadMapBegin();
+                      for( int _i152 = 0; _i152 < _map151.Count; ++_i152)
+                      {
+                        string _key153;
+                        List<Mutation> _val154;
+                        _key153 = iprot.ReadString();
+                        {
+                          _val154 = new List<Mutation>();
+                          TList _list155 = iprot.ReadListBegin();
+                          for( int _i156 = 0; _i156 < _list155.Count; ++_i156)
+                          {
+                            Mutation _elem157 = new Mutation();
+                            _elem157 = new Mutation();
+                            _elem157.Read(iprot);
+                            _val154.Add(_elem157);
+                          }
+                          iprot.ReadListEnd();
+                        }
+                        _val150[_key153] = _val154;
+                      }
+                      iprot.ReadMapEnd();
+                    }
+                    Mutation_map[_key149] = _val150;
+                  }
+                  iprot.ReadMapEnd();
+                }
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            case 2:
+              if (field.Type == TType.I32) {
+                Consistency_level = (ConsistencyLevel)iprot.ReadI32();
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            default: 
+              TProtocolUtil.Skip(iprot, field.Type);
+              break;
+          }
+          iprot.ReadFieldEnd();
+        }
+        iprot.ReadStructEnd();
+      }
+
+      public void Write(TProtocol oprot) {
+        TStruct struc = new TStruct("atomic_batch_mutate_args");
+        oprot.WriteStructBegin(struc);
+        TField field = new TField();
+        if (Mutation_map != null && __isset.mutation_map) {
+          field.Name = "mutation_map";
+          field.Type = TType.Map;
+          field.ID = 1;
+          oprot.WriteFieldBegin(field);
+          {
+            oprot.WriteMapBegin(new TMap(TType.String, TType.Map, Mutation_map.Count));
+            foreach (byte[] _iter158 in Mutation_map.Keys)
+            {
+              oprot.WriteBinary(_iter158);
+              {
+                oprot.WriteMapBegin(new TMap(TType.String, TType.List, Mutation_map[_iter158].Count));
+                foreach (string _iter159 in Mutation_map[_iter158].Keys)
+                {
+                  oprot.WriteString(_iter159);
+                  {
+                    oprot.WriteListBegin(new TList(TType.Struct, Mutation_map[_iter158][_iter159].Count));
+                    foreach (Mutation _iter160 in Mutation_map[_iter158][_iter159])
+                    {
+                      _iter160.Write(oprot);
+                    }
+                    oprot.WriteListEnd();
+                  }
+                }
+                oprot.WriteMapEnd();
+              }
+            }
+            oprot.WriteMapEnd();
+          }
+          oprot.WriteFieldEnd();
+        }
+        if (__isset.consistency_level) {
+          field.Name = "consistency_level";
+          field.Type = TType.I32;
+          field.ID = 2;
+          oprot.WriteFieldBegin(field);
+          oprot.WriteI32((int)Consistency_level);
+          oprot.WriteFieldEnd();
+        }
+        oprot.WriteFieldStop();
+        oprot.WriteStructEnd();
+      }
+
+      public override string ToString() {
+        StringBuilder sb = new StringBuilder("atomic_batch_mutate_args(");
+        sb.Append("Mutation_map: ");
+        sb.Append(Mutation_map);
+        sb.Append(",Consistency_level: ");
+        sb.Append(Consistency_level);
+        sb.Append(")");
+        return sb.ToString();
+      }
+
+    }
+
+
+    #if !SILVERLIGHT
+    [Serializable]
+    #endif
+    public partial class atomic_batch_mutate_result : TBase
+    {
+      private InvalidRequestException _ire;
+      private UnavailableException _ue;
+      private TimedOutException _te;
+
+      public InvalidRequestException Ire
+      {
+        get
+        {
+          return _ire;
+        }
+        set
+        {
+          __isset.ire = true;
+          this._ire = value;
+        }
+      }
+
+      public UnavailableException Ue
+      {
+        get
+        {
+          return _ue;
+        }
+        set
+        {
+          __isset.ue = true;
+          this._ue = value;
+        }
+      }
+
+      public TimedOutException Te
+      {
+        get
+        {
+          return _te;
+        }
+        set
+        {
+          __isset.te = true;
+          this._te = value;
+        }
+      }
+
+
+      public Isset __isset;
+      #if !SILVERLIGHT
+      [Serializable]
+      #endif
+      public struct Isset {
+        public bool ire;
+        public bool ue;
+        public bool te;
+      }
+
+      public atomic_batch_mutate_result() {
+      }
+
+      public void Read (TProtocol iprot)
+      {
+        TField field;
+        iprot.ReadStructBegin();
+        while (true)
+        {
+          field = iprot.ReadFieldBegin();
+          if (field.Type == TType.Stop) { 
+            break;
+          }
+          switch (field.ID)
+          {
+            case 1:
+              if (field.Type == TType.Struct) {
+                Ire = new InvalidRequestException();
+                Ire.Read(iprot);
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            case 2:
+              if (field.Type == TType.Struct) {
+                Ue = new UnavailableException();
+                Ue.Read(iprot);
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            case 3:
+              if (field.Type == TType.Struct) {
+                Te = new TimedOutException();
+                Te.Read(iprot);
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            default: 
+              TProtocolUtil.Skip(iprot, field.Type);
+              break;
+          }
+          iprot.ReadFieldEnd();
+        }
+        iprot.ReadStructEnd();
+      }
+
+      public void Write(TProtocol oprot) {
+        TStruct struc = new TStruct("atomic_batch_mutate_result");
+        oprot.WriteStructBegin(struc);
+        TField field = new TField();
+
+        if (this.__isset.ire) {
+          if (Ire != null) {
+            field.Name = "Ire";
+            field.Type = TType.Struct;
+            field.ID = 1;
+            oprot.WriteFieldBegin(field);
+            Ire.Write(oprot);
+            oprot.WriteFieldEnd();
+          }
+        } else if (this.__isset.ue) {
+          if (Ue != null) {
+            field.Name = "Ue";
+            field.Type = TType.Struct;
+            field.ID = 2;
+            oprot.WriteFieldBegin(field);
+            Ue.Write(oprot);
+            oprot.WriteFieldEnd();
+          }
+        } else if (this.__isset.te) {
+          if (Te != null) {
+            field.Name = "Te";
+            field.Type = TType.Struct;
+            field.ID = 3;
+            oprot.WriteFieldBegin(field);
+            Te.Write(oprot);
+            oprot.WriteFieldEnd();
+          }
+        }
+        oprot.WriteFieldStop();
+        oprot.WriteStructEnd();
+      }
+
+      public override string ToString() {
+        StringBuilder sb = new StringBuilder("atomic_batch_mutate_result(");
+        sb.Append("Ire: ");
+        sb.Append(Ire== null ? "<null>" : Ire.ToString());
+        sb.Append(",Ue: ");
+        sb.Append(Ue== null ? "<null>" : Ue.ToString());
+        sb.Append(",Te: ");
+        sb.Append(Te== null ? "<null>" : Te.ToString());
+        sb.Append(")");
+        return sb.ToString();
+      }
+
+    }
+
+
+    #if !SILVERLIGHT
+    [Serializable]
+    #endif
     public partial class truncate_args : TBase
     {
       private string _cfname;
@@ -9522,24 +10462,24 @@ namespace FluentCassandra.Apache.Cassandra
               if (field.Type == TType.Map) {
                 {
                   Success = new Dictionary<string, List<string>>();
-                  TMap _map147 = iprot.ReadMapBegin();
-                  for( int _i148 = 0; _i148 < _map147.Count; ++_i148)
+                  TMap _map161 = iprot.ReadMapBegin();
+                  for( int _i162 = 0; _i162 < _map161.Count; ++_i162)
                   {
-                    string _key149;
-                    List<string> _val150;
-                    _key149 = iprot.ReadString();
+                    string _key163;
+                    List<string> _val164;
+                    _key163 = iprot.ReadString();
                     {
-                      _val150 = new List<string>();
-                      TList _list151 = iprot.ReadListBegin();
-                      for( int _i152 = 0; _i152 < _list151.Count; ++_i152)
+                      _val164 = new List<string>();
+                      TList _list165 = iprot.ReadListBegin();
+                      for( int _i166 = 0; _i166 < _list165.Count; ++_i166)
                       {
-                        string _elem153 = null;
-                        _elem153 = iprot.ReadString();
-                        _val150.Add(_elem153);
+                        string _elem167 = null;
+                        _elem167 = iprot.ReadString();
+                        _val164.Add(_elem167);
                       }
                       iprot.ReadListEnd();
                     }
-                    Success[_key149] = _val150;
+                    Success[_key163] = _val164;
                   }
                   iprot.ReadMapEnd();
                 }
@@ -9577,14 +10517,14 @@ namespace FluentCassandra.Apache.Cassandra
             oprot.WriteFieldBegin(field);
             {
               oprot.WriteMapBegin(new TMap(TType.String, TType.List, Success.Count));
-              foreach (string _iter154 in Success.Keys)
+              foreach (string _iter168 in Success.Keys)
               {
-                oprot.WriteString(_iter154);
+                oprot.WriteString(_iter168);
                 {
-                  oprot.WriteListBegin(new TList(TType.String, Success[_iter154].Count));
-                  foreach (string _iter155 in Success[_iter154])
+                  oprot.WriteListBegin(new TList(TType.String, Success[_iter168].Count));
+                  foreach (string _iter169 in Success[_iter168])
                   {
-                    oprot.WriteString(_iter155);
+                    oprot.WriteString(_iter169);
                   }
                   oprot.WriteListEnd();
                 }
@@ -9729,13 +10669,13 @@ namespace FluentCassandra.Apache.Cassandra
               if (field.Type == TType.List) {
                 {
                   Success = new List<KsDef>();
-                  TList _list156 = iprot.ReadListBegin();
-                  for( int _i157 = 0; _i157 < _list156.Count; ++_i157)
+                  TList _list170 = iprot.ReadListBegin();
+                  for( int _i171 = 0; _i171 < _list170.Count; ++_i171)
                   {
-                    KsDef _elem158 = new KsDef();
-                    _elem158 = new KsDef();
-                    _elem158.Read(iprot);
-                    Success.Add(_elem158);
+                    KsDef _elem172 = new KsDef();
+                    _elem172 = new KsDef();
+                    _elem172.Read(iprot);
+                    Success.Add(_elem172);
                   }
                   iprot.ReadListEnd();
                 }
@@ -9773,9 +10713,9 @@ namespace FluentCassandra.Apache.Cassandra
             oprot.WriteFieldBegin(field);
             {
               oprot.WriteListBegin(new TList(TType.Struct, Success.Count));
-              foreach (KsDef _iter159 in Success)
+              foreach (KsDef _iter173 in Success)
               {
-                _iter159.Write(oprot);
+                _iter173.Write(oprot);
               }
               oprot.WriteListEnd();
             }
@@ -10230,13 +11170,13 @@ namespace FluentCassandra.Apache.Cassandra
               if (field.Type == TType.List) {
                 {
                   Success = new List<TokenRange>();
-                  TList _list160 = iprot.ReadListBegin();
-                  for( int _i161 = 0; _i161 < _list160.Count; ++_i161)
+                  TList _list174 = iprot.ReadListBegin();
+                  for( int _i175 = 0; _i175 < _list174.Count; ++_i175)
                   {
-                    TokenRange _elem162 = new TokenRange();
-                    _elem162 = new TokenRange();
-                    _elem162.Read(iprot);
-                    Success.Add(_elem162);
+                    TokenRange _elem176 = new TokenRange();
+                    _elem176 = new TokenRange();
+                    _elem176.Read(iprot);
+                    Success.Add(_elem176);
                   }
                   iprot.ReadListEnd();
                 }
@@ -10274,9 +11214,9 @@ namespace FluentCassandra.Apache.Cassandra
             oprot.WriteFieldBegin(field);
             {
               oprot.WriteListBegin(new TList(TType.Struct, Success.Count));
-              foreach (TokenRange _iter163 in Success)
+              foreach (TokenRange _iter177 in Success)
               {
-                _iter163.Write(oprot);
+                _iter177.Write(oprot);
               }
               oprot.WriteListEnd();
             }
@@ -10418,14 +11358,14 @@ namespace FluentCassandra.Apache.Cassandra
               if (field.Type == TType.Map) {
                 {
                   Success = new Dictionary<string, string>();
-                  TMap _map164 = iprot.ReadMapBegin();
-                  for( int _i165 = 0; _i165 < _map164.Count; ++_i165)
+                  TMap _map178 = iprot.ReadMapBegin();
+                  for( int _i179 = 0; _i179 < _map178.Count; ++_i179)
                   {
-                    string _key166;
-                    string _val167;
-                    _key166 = iprot.ReadString();
-                    _val167 = iprot.ReadString();
-                    Success[_key166] = _val167;
+                    string _key180;
+                    string _val181;
+                    _key180 = iprot.ReadString();
+                    _val181 = iprot.ReadString();
+                    Success[_key180] = _val181;
                   }
                   iprot.ReadMapEnd();
                 }
@@ -10463,10 +11403,10 @@ namespace FluentCassandra.Apache.Cassandra
             oprot.WriteFieldBegin(field);
             {
               oprot.WriteMapBegin(new TMap(TType.String, TType.String, Success.Count));
-              foreach (string _iter168 in Success.Keys)
+              foreach (string _iter182 in Success.Keys)
               {
-                oprot.WriteString(_iter168);
-                oprot.WriteString(Success[_iter168]);
+                oprot.WriteString(_iter182);
+                oprot.WriteString(Success[_iter182]);
               }
               oprot.WriteMapEnd();
             }
@@ -11263,12 +12203,12 @@ namespace FluentCassandra.Apache.Cassandra
               if (field.Type == TType.List) {
                 {
                   Success = new List<string>();
-                  TList _list169 = iprot.ReadListBegin();
-                  for( int _i170 = 0; _i170 < _list169.Count; ++_i170)
+                  TList _list183 = iprot.ReadListBegin();
+                  for( int _i184 = 0; _i184 < _list183.Count; ++_i184)
                   {
-                    string _elem171 = null;
-                    _elem171 = iprot.ReadString();
-                    Success.Add(_elem171);
+                    string _elem185 = null;
+                    _elem185 = iprot.ReadString();
+                    Success.Add(_elem185);
                   }
                   iprot.ReadListEnd();
                 }
@@ -11306,9 +12246,9 @@ namespace FluentCassandra.Apache.Cassandra
             oprot.WriteFieldBegin(field);
             {
               oprot.WriteListBegin(new TList(TType.String, Success.Count));
-              foreach (string _iter172 in Success)
+              foreach (string _iter186 in Success)
               {
-                oprot.WriteString(_iter172);
+                oprot.WriteString(_iter186);
               }
               oprot.WriteListEnd();
             }
@@ -11330,6 +12270,467 @@ namespace FluentCassandra.Apache.Cassandra
 
       public override string ToString() {
         StringBuilder sb = new StringBuilder("describe_splits_result(");
+        sb.Append("Success: ");
+        sb.Append(Success);
+        sb.Append(",Ire: ");
+        sb.Append(Ire== null ? "<null>" : Ire.ToString());
+        sb.Append(")");
+        return sb.ToString();
+      }
+
+    }
+
+
+    #if !SILVERLIGHT
+    [Serializable]
+    #endif
+    public partial class trace_next_query_args : TBase
+    {
+
+      public trace_next_query_args() {
+      }
+
+      public void Read (TProtocol iprot)
+      {
+        TField field;
+        iprot.ReadStructBegin();
+        while (true)
+        {
+          field = iprot.ReadFieldBegin();
+          if (field.Type == TType.Stop) { 
+            break;
+          }
+          switch (field.ID)
+          {
+            default: 
+              TProtocolUtil.Skip(iprot, field.Type);
+              break;
+          }
+          iprot.ReadFieldEnd();
+        }
+        iprot.ReadStructEnd();
+      }
+
+      public void Write(TProtocol oprot) {
+        TStruct struc = new TStruct("trace_next_query_args");
+        oprot.WriteStructBegin(struc);
+        oprot.WriteFieldStop();
+        oprot.WriteStructEnd();
+      }
+
+      public override string ToString() {
+        StringBuilder sb = new StringBuilder("trace_next_query_args(");
+        sb.Append(")");
+        return sb.ToString();
+      }
+
+    }
+
+
+    #if !SILVERLIGHT
+    [Serializable]
+    #endif
+    public partial class trace_next_query_result : TBase
+    {
+      private byte[] _success;
+
+      public byte[] Success
+      {
+        get
+        {
+          return _success;
+        }
+        set
+        {
+          __isset.success = true;
+          this._success = value;
+        }
+      }
+
+
+      public Isset __isset;
+      #if !SILVERLIGHT
+      [Serializable]
+      #endif
+      public struct Isset {
+        public bool success;
+      }
+
+      public trace_next_query_result() {
+      }
+
+      public void Read (TProtocol iprot)
+      {
+        TField field;
+        iprot.ReadStructBegin();
+        while (true)
+        {
+          field = iprot.ReadFieldBegin();
+          if (field.Type == TType.Stop) { 
+            break;
+          }
+          switch (field.ID)
+          {
+            case 0:
+              if (field.Type == TType.String) {
+                Success = iprot.ReadBinary();
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            default: 
+              TProtocolUtil.Skip(iprot, field.Type);
+              break;
+          }
+          iprot.ReadFieldEnd();
+        }
+        iprot.ReadStructEnd();
+      }
+
+      public void Write(TProtocol oprot) {
+        TStruct struc = new TStruct("trace_next_query_result");
+        oprot.WriteStructBegin(struc);
+        TField field = new TField();
+
+        if (this.__isset.success) {
+          if (Success != null) {
+            field.Name = "Success";
+            field.Type = TType.String;
+            field.ID = 0;
+            oprot.WriteFieldBegin(field);
+            oprot.WriteBinary(Success);
+            oprot.WriteFieldEnd();
+          }
+        }
+        oprot.WriteFieldStop();
+        oprot.WriteStructEnd();
+      }
+
+      public override string ToString() {
+        StringBuilder sb = new StringBuilder("trace_next_query_result(");
+        sb.Append("Success: ");
+        sb.Append(Success);
+        sb.Append(")");
+        return sb.ToString();
+      }
+
+    }
+
+
+    #if !SILVERLIGHT
+    [Serializable]
+    #endif
+    public partial class describe_splits_ex_args : TBase
+    {
+      private string _cfName;
+      private string _start_token;
+      private string _end_token;
+      private int _keys_per_split;
+
+      public string CfName
+      {
+        get
+        {
+          return _cfName;
+        }
+        set
+        {
+          __isset.cfName = true;
+          this._cfName = value;
+        }
+      }
+
+      public string Start_token
+      {
+        get
+        {
+          return _start_token;
+        }
+        set
+        {
+          __isset.start_token = true;
+          this._start_token = value;
+        }
+      }
+
+      public string End_token
+      {
+        get
+        {
+          return _end_token;
+        }
+        set
+        {
+          __isset.end_token = true;
+          this._end_token = value;
+        }
+      }
+
+      public int Keys_per_split
+      {
+        get
+        {
+          return _keys_per_split;
+        }
+        set
+        {
+          __isset.keys_per_split = true;
+          this._keys_per_split = value;
+        }
+      }
+
+
+      public Isset __isset;
+      #if !SILVERLIGHT
+      [Serializable]
+      #endif
+      public struct Isset {
+        public bool cfName;
+        public bool start_token;
+        public bool end_token;
+        public bool keys_per_split;
+      }
+
+      public describe_splits_ex_args() {
+      }
+
+      public void Read (TProtocol iprot)
+      {
+        TField field;
+        iprot.ReadStructBegin();
+        while (true)
+        {
+          field = iprot.ReadFieldBegin();
+          if (field.Type == TType.Stop) { 
+            break;
+          }
+          switch (field.ID)
+          {
+            case 1:
+              if (field.Type == TType.String) {
+                CfName = iprot.ReadString();
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            case 2:
+              if (field.Type == TType.String) {
+                Start_token = iprot.ReadString();
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            case 3:
+              if (field.Type == TType.String) {
+                End_token = iprot.ReadString();
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            case 4:
+              if (field.Type == TType.I32) {
+                Keys_per_split = iprot.ReadI32();
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            default: 
+              TProtocolUtil.Skip(iprot, field.Type);
+              break;
+          }
+          iprot.ReadFieldEnd();
+        }
+        iprot.ReadStructEnd();
+      }
+
+      public void Write(TProtocol oprot) {
+        TStruct struc = new TStruct("describe_splits_ex_args");
+        oprot.WriteStructBegin(struc);
+        TField field = new TField();
+        if (CfName != null && __isset.cfName) {
+          field.Name = "cfName";
+          field.Type = TType.String;
+          field.ID = 1;
+          oprot.WriteFieldBegin(field);
+          oprot.WriteString(CfName);
+          oprot.WriteFieldEnd();
+        }
+        if (Start_token != null && __isset.start_token) {
+          field.Name = "start_token";
+          field.Type = TType.String;
+          field.ID = 2;
+          oprot.WriteFieldBegin(field);
+          oprot.WriteString(Start_token);
+          oprot.WriteFieldEnd();
+        }
+        if (End_token != null && __isset.end_token) {
+          field.Name = "end_token";
+          field.Type = TType.String;
+          field.ID = 3;
+          oprot.WriteFieldBegin(field);
+          oprot.WriteString(End_token);
+          oprot.WriteFieldEnd();
+        }
+        if (__isset.keys_per_split) {
+          field.Name = "keys_per_split";
+          field.Type = TType.I32;
+          field.ID = 4;
+          oprot.WriteFieldBegin(field);
+          oprot.WriteI32(Keys_per_split);
+          oprot.WriteFieldEnd();
+        }
+        oprot.WriteFieldStop();
+        oprot.WriteStructEnd();
+      }
+
+      public override string ToString() {
+        StringBuilder sb = new StringBuilder("describe_splits_ex_args(");
+        sb.Append("CfName: ");
+        sb.Append(CfName);
+        sb.Append(",Start_token: ");
+        sb.Append(Start_token);
+        sb.Append(",End_token: ");
+        sb.Append(End_token);
+        sb.Append(",Keys_per_split: ");
+        sb.Append(Keys_per_split);
+        sb.Append(")");
+        return sb.ToString();
+      }
+
+    }
+
+
+    #if !SILVERLIGHT
+    [Serializable]
+    #endif
+    public partial class describe_splits_ex_result : TBase
+    {
+      private List<CfSplit> _success;
+      private InvalidRequestException _ire;
+
+      public List<CfSplit> Success
+      {
+        get
+        {
+          return _success;
+        }
+        set
+        {
+          __isset.success = true;
+          this._success = value;
+        }
+      }
+
+      public InvalidRequestException Ire
+      {
+        get
+        {
+          return _ire;
+        }
+        set
+        {
+          __isset.ire = true;
+          this._ire = value;
+        }
+      }
+
+
+      public Isset __isset;
+      #if !SILVERLIGHT
+      [Serializable]
+      #endif
+      public struct Isset {
+        public bool success;
+        public bool ire;
+      }
+
+      public describe_splits_ex_result() {
+      }
+
+      public void Read (TProtocol iprot)
+      {
+        TField field;
+        iprot.ReadStructBegin();
+        while (true)
+        {
+          field = iprot.ReadFieldBegin();
+          if (field.Type == TType.Stop) { 
+            break;
+          }
+          switch (field.ID)
+          {
+            case 0:
+              if (field.Type == TType.List) {
+                {
+                  Success = new List<CfSplit>();
+                  TList _list187 = iprot.ReadListBegin();
+                  for( int _i188 = 0; _i188 < _list187.Count; ++_i188)
+                  {
+                    CfSplit _elem189 = new CfSplit();
+                    _elem189 = new CfSplit();
+                    _elem189.Read(iprot);
+                    Success.Add(_elem189);
+                  }
+                  iprot.ReadListEnd();
+                }
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            case 1:
+              if (field.Type == TType.Struct) {
+                Ire = new InvalidRequestException();
+                Ire.Read(iprot);
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            default: 
+              TProtocolUtil.Skip(iprot, field.Type);
+              break;
+          }
+          iprot.ReadFieldEnd();
+        }
+        iprot.ReadStructEnd();
+      }
+
+      public void Write(TProtocol oprot) {
+        TStruct struc = new TStruct("describe_splits_ex_result");
+        oprot.WriteStructBegin(struc);
+        TField field = new TField();
+
+        if (this.__isset.success) {
+          if (Success != null) {
+            field.Name = "Success";
+            field.Type = TType.List;
+            field.ID = 0;
+            oprot.WriteFieldBegin(field);
+            {
+              oprot.WriteListBegin(new TList(TType.Struct, Success.Count));
+              foreach (CfSplit _iter190 in Success)
+              {
+                _iter190.Write(oprot);
+              }
+              oprot.WriteListEnd();
+            }
+            oprot.WriteFieldEnd();
+          }
+        } else if (this.__isset.ire) {
+          if (Ire != null) {
+            field.Name = "Ire";
+            field.Type = TType.Struct;
+            field.ID = 1;
+            oprot.WriteFieldBegin(field);
+            Ire.Write(oprot);
+            oprot.WriteFieldEnd();
+          }
+        }
+        oprot.WriteFieldStop();
+        oprot.WriteStructEnd();
+      }
+
+      public override string ToString() {
+        StringBuilder sb = new StringBuilder("describe_splits_ex_result(");
         sb.Append("Success: ");
         sb.Append(Success);
         sb.Append(",Ire: ");
@@ -13168,6 +14569,392 @@ namespace FluentCassandra.Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
+    public partial class execute_cql3_query_args : TBase
+    {
+      private byte[] _query;
+      private Compression _compression;
+      private ConsistencyLevel _consistency;
+
+      public byte[] Query
+      {
+        get
+        {
+          return _query;
+        }
+        set
+        {
+          __isset.query = true;
+          this._query = value;
+        }
+      }
+
+      /// <summary>
+      /// 
+      /// <seealso cref="Compression"/>
+      /// </summary>
+      public Compression Compression
+      {
+        get
+        {
+          return _compression;
+        }
+        set
+        {
+          __isset.compression = true;
+          this._compression = value;
+        }
+      }
+
+      /// <summary>
+      /// 
+      /// <seealso cref="ConsistencyLevel"/>
+      /// </summary>
+      public ConsistencyLevel Consistency
+      {
+        get
+        {
+          return _consistency;
+        }
+        set
+        {
+          __isset.consistency = true;
+          this._consistency = value;
+        }
+      }
+
+
+      public Isset __isset;
+      #if !SILVERLIGHT
+      [Serializable]
+      #endif
+      public struct Isset {
+        public bool query;
+        public bool compression;
+        public bool consistency;
+      }
+
+      public execute_cql3_query_args() {
+      }
+
+      public void Read (TProtocol iprot)
+      {
+        TField field;
+        iprot.ReadStructBegin();
+        while (true)
+        {
+          field = iprot.ReadFieldBegin();
+          if (field.Type == TType.Stop) { 
+            break;
+          }
+          switch (field.ID)
+          {
+            case 1:
+              if (field.Type == TType.String) {
+                Query = iprot.ReadBinary();
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            case 2:
+              if (field.Type == TType.I32) {
+                Compression = (Compression)iprot.ReadI32();
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            case 3:
+              if (field.Type == TType.I32) {
+                Consistency = (ConsistencyLevel)iprot.ReadI32();
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            default: 
+              TProtocolUtil.Skip(iprot, field.Type);
+              break;
+          }
+          iprot.ReadFieldEnd();
+        }
+        iprot.ReadStructEnd();
+      }
+
+      public void Write(TProtocol oprot) {
+        TStruct struc = new TStruct("execute_cql3_query_args");
+        oprot.WriteStructBegin(struc);
+        TField field = new TField();
+        if (Query != null && __isset.query) {
+          field.Name = "query";
+          field.Type = TType.String;
+          field.ID = 1;
+          oprot.WriteFieldBegin(field);
+          oprot.WriteBinary(Query);
+          oprot.WriteFieldEnd();
+        }
+        if (__isset.compression) {
+          field.Name = "compression";
+          field.Type = TType.I32;
+          field.ID = 2;
+          oprot.WriteFieldBegin(field);
+          oprot.WriteI32((int)Compression);
+          oprot.WriteFieldEnd();
+        }
+        if (__isset.consistency) {
+          field.Name = "consistency";
+          field.Type = TType.I32;
+          field.ID = 3;
+          oprot.WriteFieldBegin(field);
+          oprot.WriteI32((int)Consistency);
+          oprot.WriteFieldEnd();
+        }
+        oprot.WriteFieldStop();
+        oprot.WriteStructEnd();
+      }
+
+      public override string ToString() {
+        StringBuilder sb = new StringBuilder("execute_cql3_query_args(");
+        sb.Append("Query: ");
+        sb.Append(Query);
+        sb.Append(",Compression: ");
+        sb.Append(Compression);
+        sb.Append(",Consistency: ");
+        sb.Append(Consistency);
+        sb.Append(")");
+        return sb.ToString();
+      }
+
+    }
+
+
+    #if !SILVERLIGHT
+    [Serializable]
+    #endif
+    public partial class execute_cql3_query_result : TBase
+    {
+      private CqlResult _success;
+      private InvalidRequestException _ire;
+      private UnavailableException _ue;
+      private TimedOutException _te;
+      private SchemaDisagreementException _sde;
+
+      public CqlResult Success
+      {
+        get
+        {
+          return _success;
+        }
+        set
+        {
+          __isset.success = true;
+          this._success = value;
+        }
+      }
+
+      public InvalidRequestException Ire
+      {
+        get
+        {
+          return _ire;
+        }
+        set
+        {
+          __isset.ire = true;
+          this._ire = value;
+        }
+      }
+
+      public UnavailableException Ue
+      {
+        get
+        {
+          return _ue;
+        }
+        set
+        {
+          __isset.ue = true;
+          this._ue = value;
+        }
+      }
+
+      public TimedOutException Te
+      {
+        get
+        {
+          return _te;
+        }
+        set
+        {
+          __isset.te = true;
+          this._te = value;
+        }
+      }
+
+      public SchemaDisagreementException Sde
+      {
+        get
+        {
+          return _sde;
+        }
+        set
+        {
+          __isset.sde = true;
+          this._sde = value;
+        }
+      }
+
+
+      public Isset __isset;
+      #if !SILVERLIGHT
+      [Serializable]
+      #endif
+      public struct Isset {
+        public bool success;
+        public bool ire;
+        public bool ue;
+        public bool te;
+        public bool sde;
+      }
+
+      public execute_cql3_query_result() {
+      }
+
+      public void Read (TProtocol iprot)
+      {
+        TField field;
+        iprot.ReadStructBegin();
+        while (true)
+        {
+          field = iprot.ReadFieldBegin();
+          if (field.Type == TType.Stop) { 
+            break;
+          }
+          switch (field.ID)
+          {
+            case 0:
+              if (field.Type == TType.Struct) {
+                Success = new CqlResult();
+                Success.Read(iprot);
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            case 1:
+              if (field.Type == TType.Struct) {
+                Ire = new InvalidRequestException();
+                Ire.Read(iprot);
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            case 2:
+              if (field.Type == TType.Struct) {
+                Ue = new UnavailableException();
+                Ue.Read(iprot);
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            case 3:
+              if (field.Type == TType.Struct) {
+                Te = new TimedOutException();
+                Te.Read(iprot);
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            case 4:
+              if (field.Type == TType.Struct) {
+                Sde = new SchemaDisagreementException();
+                Sde.Read(iprot);
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            default: 
+              TProtocolUtil.Skip(iprot, field.Type);
+              break;
+          }
+          iprot.ReadFieldEnd();
+        }
+        iprot.ReadStructEnd();
+      }
+
+      public void Write(TProtocol oprot) {
+        TStruct struc = new TStruct("execute_cql3_query_result");
+        oprot.WriteStructBegin(struc);
+        TField field = new TField();
+
+        if (this.__isset.success) {
+          if (Success != null) {
+            field.Name = "Success";
+            field.Type = TType.Struct;
+            field.ID = 0;
+            oprot.WriteFieldBegin(field);
+            Success.Write(oprot);
+            oprot.WriteFieldEnd();
+          }
+        } else if (this.__isset.ire) {
+          if (Ire != null) {
+            field.Name = "Ire";
+            field.Type = TType.Struct;
+            field.ID = 1;
+            oprot.WriteFieldBegin(field);
+            Ire.Write(oprot);
+            oprot.WriteFieldEnd();
+          }
+        } else if (this.__isset.ue) {
+          if (Ue != null) {
+            field.Name = "Ue";
+            field.Type = TType.Struct;
+            field.ID = 2;
+            oprot.WriteFieldBegin(field);
+            Ue.Write(oprot);
+            oprot.WriteFieldEnd();
+          }
+        } else if (this.__isset.te) {
+          if (Te != null) {
+            field.Name = "Te";
+            field.Type = TType.Struct;
+            field.ID = 3;
+            oprot.WriteFieldBegin(field);
+            Te.Write(oprot);
+            oprot.WriteFieldEnd();
+          }
+        } else if (this.__isset.sde) {
+          if (Sde != null) {
+            field.Name = "Sde";
+            field.Type = TType.Struct;
+            field.ID = 4;
+            oprot.WriteFieldBegin(field);
+            Sde.Write(oprot);
+            oprot.WriteFieldEnd();
+          }
+        }
+        oprot.WriteFieldStop();
+        oprot.WriteStructEnd();
+      }
+
+      public override string ToString() {
+        StringBuilder sb = new StringBuilder("execute_cql3_query_result(");
+        sb.Append("Success: ");
+        sb.Append(Success== null ? "<null>" : Success.ToString());
+        sb.Append(",Ire: ");
+        sb.Append(Ire== null ? "<null>" : Ire.ToString());
+        sb.Append(",Ue: ");
+        sb.Append(Ue== null ? "<null>" : Ue.ToString());
+        sb.Append(",Te: ");
+        sb.Append(Te== null ? "<null>" : Te.ToString());
+        sb.Append(",Sde: ");
+        sb.Append(Sde== null ? "<null>" : Sde.ToString());
+        sb.Append(")");
+        return sb.ToString();
+      }
+
+    }
+
+
+    #if !SILVERLIGHT
+    [Serializable]
+    #endif
     public partial class prepare_cql_query_args : TBase
     {
       private byte[] _query;
@@ -13416,6 +15203,254 @@ namespace FluentCassandra.Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
+    public partial class prepare_cql3_query_args : TBase
+    {
+      private byte[] _query;
+      private Compression _compression;
+
+      public byte[] Query
+      {
+        get
+        {
+          return _query;
+        }
+        set
+        {
+          __isset.query = true;
+          this._query = value;
+        }
+      }
+
+      /// <summary>
+      /// 
+      /// <seealso cref="Compression"/>
+      /// </summary>
+      public Compression Compression
+      {
+        get
+        {
+          return _compression;
+        }
+        set
+        {
+          __isset.compression = true;
+          this._compression = value;
+        }
+      }
+
+
+      public Isset __isset;
+      #if !SILVERLIGHT
+      [Serializable]
+      #endif
+      public struct Isset {
+        public bool query;
+        public bool compression;
+      }
+
+      public prepare_cql3_query_args() {
+      }
+
+      public void Read (TProtocol iprot)
+      {
+        TField field;
+        iprot.ReadStructBegin();
+        while (true)
+        {
+          field = iprot.ReadFieldBegin();
+          if (field.Type == TType.Stop) { 
+            break;
+          }
+          switch (field.ID)
+          {
+            case 1:
+              if (field.Type == TType.String) {
+                Query = iprot.ReadBinary();
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            case 2:
+              if (field.Type == TType.I32) {
+                Compression = (Compression)iprot.ReadI32();
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            default: 
+              TProtocolUtil.Skip(iprot, field.Type);
+              break;
+          }
+          iprot.ReadFieldEnd();
+        }
+        iprot.ReadStructEnd();
+      }
+
+      public void Write(TProtocol oprot) {
+        TStruct struc = new TStruct("prepare_cql3_query_args");
+        oprot.WriteStructBegin(struc);
+        TField field = new TField();
+        if (Query != null && __isset.query) {
+          field.Name = "query";
+          field.Type = TType.String;
+          field.ID = 1;
+          oprot.WriteFieldBegin(field);
+          oprot.WriteBinary(Query);
+          oprot.WriteFieldEnd();
+        }
+        if (__isset.compression) {
+          field.Name = "compression";
+          field.Type = TType.I32;
+          field.ID = 2;
+          oprot.WriteFieldBegin(field);
+          oprot.WriteI32((int)Compression);
+          oprot.WriteFieldEnd();
+        }
+        oprot.WriteFieldStop();
+        oprot.WriteStructEnd();
+      }
+
+      public override string ToString() {
+        StringBuilder sb = new StringBuilder("prepare_cql3_query_args(");
+        sb.Append("Query: ");
+        sb.Append(Query);
+        sb.Append(",Compression: ");
+        sb.Append(Compression);
+        sb.Append(")");
+        return sb.ToString();
+      }
+
+    }
+
+
+    #if !SILVERLIGHT
+    [Serializable]
+    #endif
+    public partial class prepare_cql3_query_result : TBase
+    {
+      private CqlPreparedResult _success;
+      private InvalidRequestException _ire;
+
+      public CqlPreparedResult Success
+      {
+        get
+        {
+          return _success;
+        }
+        set
+        {
+          __isset.success = true;
+          this._success = value;
+        }
+      }
+
+      public InvalidRequestException Ire
+      {
+        get
+        {
+          return _ire;
+        }
+        set
+        {
+          __isset.ire = true;
+          this._ire = value;
+        }
+      }
+
+
+      public Isset __isset;
+      #if !SILVERLIGHT
+      [Serializable]
+      #endif
+      public struct Isset {
+        public bool success;
+        public bool ire;
+      }
+
+      public prepare_cql3_query_result() {
+      }
+
+      public void Read (TProtocol iprot)
+      {
+        TField field;
+        iprot.ReadStructBegin();
+        while (true)
+        {
+          field = iprot.ReadFieldBegin();
+          if (field.Type == TType.Stop) { 
+            break;
+          }
+          switch (field.ID)
+          {
+            case 0:
+              if (field.Type == TType.Struct) {
+                Success = new CqlPreparedResult();
+                Success.Read(iprot);
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            case 1:
+              if (field.Type == TType.Struct) {
+                Ire = new InvalidRequestException();
+                Ire.Read(iprot);
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            default: 
+              TProtocolUtil.Skip(iprot, field.Type);
+              break;
+          }
+          iprot.ReadFieldEnd();
+        }
+        iprot.ReadStructEnd();
+      }
+
+      public void Write(TProtocol oprot) {
+        TStruct struc = new TStruct("prepare_cql3_query_result");
+        oprot.WriteStructBegin(struc);
+        TField field = new TField();
+
+        if (this.__isset.success) {
+          if (Success != null) {
+            field.Name = "Success";
+            field.Type = TType.Struct;
+            field.ID = 0;
+            oprot.WriteFieldBegin(field);
+            Success.Write(oprot);
+            oprot.WriteFieldEnd();
+          }
+        } else if (this.__isset.ire) {
+          if (Ire != null) {
+            field.Name = "Ire";
+            field.Type = TType.Struct;
+            field.ID = 1;
+            oprot.WriteFieldBegin(field);
+            Ire.Write(oprot);
+            oprot.WriteFieldEnd();
+          }
+        }
+        oprot.WriteFieldStop();
+        oprot.WriteStructEnd();
+      }
+
+      public override string ToString() {
+        StringBuilder sb = new StringBuilder("prepare_cql3_query_result(");
+        sb.Append("Success: ");
+        sb.Append(Success== null ? "<null>" : Success.ToString());
+        sb.Append(",Ire: ");
+        sb.Append(Ire== null ? "<null>" : Ire.ToString());
+        sb.Append(")");
+        return sb.ToString();
+      }
+
+    }
+
+
+    #if !SILVERLIGHT
+    [Serializable]
+    #endif
     public partial class execute_prepared_cql_query_args : TBase
     {
       private int _itemId;
@@ -13483,12 +15518,12 @@ namespace FluentCassandra.Apache.Cassandra
               if (field.Type == TType.List) {
                 {
                   Values = new List<byte[]>();
-                  TList _list173 = iprot.ReadListBegin();
-                  for( int _i174 = 0; _i174 < _list173.Count; ++_i174)
+                  TList _list191 = iprot.ReadListBegin();
+                  for( int _i192 = 0; _i192 < _list191.Count; ++_i192)
                   {
-                    byte[] _elem175 = null;
-                    _elem175 = iprot.ReadBinary();
-                    Values.Add(_elem175);
+                    byte[] _elem193 = null;
+                    _elem193 = iprot.ReadBinary();
+                    Values.Add(_elem193);
                   }
                   iprot.ReadListEnd();
                 }
@@ -13524,9 +15559,9 @@ namespace FluentCassandra.Apache.Cassandra
           oprot.WriteFieldBegin(field);
           {
             oprot.WriteListBegin(new TList(TType.String, Values.Count));
-            foreach (byte[] _iter176 in Values)
+            foreach (byte[] _iter194 in Values)
             {
-              oprot.WriteBinary(_iter176);
+              oprot.WriteBinary(_iter194);
             }
             oprot.WriteListEnd();
           }
@@ -13759,6 +15794,405 @@ namespace FluentCassandra.Apache.Cassandra
 
       public override string ToString() {
         StringBuilder sb = new StringBuilder("execute_prepared_cql_query_result(");
+        sb.Append("Success: ");
+        sb.Append(Success== null ? "<null>" : Success.ToString());
+        sb.Append(",Ire: ");
+        sb.Append(Ire== null ? "<null>" : Ire.ToString());
+        sb.Append(",Ue: ");
+        sb.Append(Ue== null ? "<null>" : Ue.ToString());
+        sb.Append(",Te: ");
+        sb.Append(Te== null ? "<null>" : Te.ToString());
+        sb.Append(",Sde: ");
+        sb.Append(Sde== null ? "<null>" : Sde.ToString());
+        sb.Append(")");
+        return sb.ToString();
+      }
+
+    }
+
+
+    #if !SILVERLIGHT
+    [Serializable]
+    #endif
+    public partial class execute_prepared_cql3_query_args : TBase
+    {
+      private int _itemId;
+      private List<byte[]> _values;
+      private ConsistencyLevel _consistency;
+
+      public int ItemId
+      {
+        get
+        {
+          return _itemId;
+        }
+        set
+        {
+          __isset.itemId = true;
+          this._itemId = value;
+        }
+      }
+
+      public List<byte[]> Values
+      {
+        get
+        {
+          return _values;
+        }
+        set
+        {
+          __isset.values = true;
+          this._values = value;
+        }
+      }
+
+      /// <summary>
+      /// 
+      /// <seealso cref="ConsistencyLevel"/>
+      /// </summary>
+      public ConsistencyLevel Consistency
+      {
+        get
+        {
+          return _consistency;
+        }
+        set
+        {
+          __isset.consistency = true;
+          this._consistency = value;
+        }
+      }
+
+
+      public Isset __isset;
+      #if !SILVERLIGHT
+      [Serializable]
+      #endif
+      public struct Isset {
+        public bool itemId;
+        public bool values;
+        public bool consistency;
+      }
+
+      public execute_prepared_cql3_query_args() {
+      }
+
+      public void Read (TProtocol iprot)
+      {
+        TField field;
+        iprot.ReadStructBegin();
+        while (true)
+        {
+          field = iprot.ReadFieldBegin();
+          if (field.Type == TType.Stop) { 
+            break;
+          }
+          switch (field.ID)
+          {
+            case 1:
+              if (field.Type == TType.I32) {
+                ItemId = iprot.ReadI32();
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            case 2:
+              if (field.Type == TType.List) {
+                {
+                  Values = new List<byte[]>();
+                  TList _list195 = iprot.ReadListBegin();
+                  for( int _i196 = 0; _i196 < _list195.Count; ++_i196)
+                  {
+                    byte[] _elem197 = null;
+                    _elem197 = iprot.ReadBinary();
+                    Values.Add(_elem197);
+                  }
+                  iprot.ReadListEnd();
+                }
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            case 3:
+              if (field.Type == TType.I32) {
+                Consistency = (ConsistencyLevel)iprot.ReadI32();
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            default: 
+              TProtocolUtil.Skip(iprot, field.Type);
+              break;
+          }
+          iprot.ReadFieldEnd();
+        }
+        iprot.ReadStructEnd();
+      }
+
+      public void Write(TProtocol oprot) {
+        TStruct struc = new TStruct("execute_prepared_cql3_query_args");
+        oprot.WriteStructBegin(struc);
+        TField field = new TField();
+        if (__isset.itemId) {
+          field.Name = "itemId";
+          field.Type = TType.I32;
+          field.ID = 1;
+          oprot.WriteFieldBegin(field);
+          oprot.WriteI32(ItemId);
+          oprot.WriteFieldEnd();
+        }
+        if (Values != null && __isset.values) {
+          field.Name = "values";
+          field.Type = TType.List;
+          field.ID = 2;
+          oprot.WriteFieldBegin(field);
+          {
+            oprot.WriteListBegin(new TList(TType.String, Values.Count));
+            foreach (byte[] _iter198 in Values)
+            {
+              oprot.WriteBinary(_iter198);
+            }
+            oprot.WriteListEnd();
+          }
+          oprot.WriteFieldEnd();
+        }
+        if (__isset.consistency) {
+          field.Name = "consistency";
+          field.Type = TType.I32;
+          field.ID = 3;
+          oprot.WriteFieldBegin(field);
+          oprot.WriteI32((int)Consistency);
+          oprot.WriteFieldEnd();
+        }
+        oprot.WriteFieldStop();
+        oprot.WriteStructEnd();
+      }
+
+      public override string ToString() {
+        StringBuilder sb = new StringBuilder("execute_prepared_cql3_query_args(");
+        sb.Append("ItemId: ");
+        sb.Append(ItemId);
+        sb.Append(",Values: ");
+        sb.Append(Values);
+        sb.Append(",Consistency: ");
+        sb.Append(Consistency);
+        sb.Append(")");
+        return sb.ToString();
+      }
+
+    }
+
+
+    #if !SILVERLIGHT
+    [Serializable]
+    #endif
+    public partial class execute_prepared_cql3_query_result : TBase
+    {
+      private CqlResult _success;
+      private InvalidRequestException _ire;
+      private UnavailableException _ue;
+      private TimedOutException _te;
+      private SchemaDisagreementException _sde;
+
+      public CqlResult Success
+      {
+        get
+        {
+          return _success;
+        }
+        set
+        {
+          __isset.success = true;
+          this._success = value;
+        }
+      }
+
+      public InvalidRequestException Ire
+      {
+        get
+        {
+          return _ire;
+        }
+        set
+        {
+          __isset.ire = true;
+          this._ire = value;
+        }
+      }
+
+      public UnavailableException Ue
+      {
+        get
+        {
+          return _ue;
+        }
+        set
+        {
+          __isset.ue = true;
+          this._ue = value;
+        }
+      }
+
+      public TimedOutException Te
+      {
+        get
+        {
+          return _te;
+        }
+        set
+        {
+          __isset.te = true;
+          this._te = value;
+        }
+      }
+
+      public SchemaDisagreementException Sde
+      {
+        get
+        {
+          return _sde;
+        }
+        set
+        {
+          __isset.sde = true;
+          this._sde = value;
+        }
+      }
+
+
+      public Isset __isset;
+      #if !SILVERLIGHT
+      [Serializable]
+      #endif
+      public struct Isset {
+        public bool success;
+        public bool ire;
+        public bool ue;
+        public bool te;
+        public bool sde;
+      }
+
+      public execute_prepared_cql3_query_result() {
+      }
+
+      public void Read (TProtocol iprot)
+      {
+        TField field;
+        iprot.ReadStructBegin();
+        while (true)
+        {
+          field = iprot.ReadFieldBegin();
+          if (field.Type == TType.Stop) { 
+            break;
+          }
+          switch (field.ID)
+          {
+            case 0:
+              if (field.Type == TType.Struct) {
+                Success = new CqlResult();
+                Success.Read(iprot);
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            case 1:
+              if (field.Type == TType.Struct) {
+                Ire = new InvalidRequestException();
+                Ire.Read(iprot);
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            case 2:
+              if (field.Type == TType.Struct) {
+                Ue = new UnavailableException();
+                Ue.Read(iprot);
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            case 3:
+              if (field.Type == TType.Struct) {
+                Te = new TimedOutException();
+                Te.Read(iprot);
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            case 4:
+              if (field.Type == TType.Struct) {
+                Sde = new SchemaDisagreementException();
+                Sde.Read(iprot);
+              } else { 
+                TProtocolUtil.Skip(iprot, field.Type);
+              }
+              break;
+            default: 
+              TProtocolUtil.Skip(iprot, field.Type);
+              break;
+          }
+          iprot.ReadFieldEnd();
+        }
+        iprot.ReadStructEnd();
+      }
+
+      public void Write(TProtocol oprot) {
+        TStruct struc = new TStruct("execute_prepared_cql3_query_result");
+        oprot.WriteStructBegin(struc);
+        TField field = new TField();
+
+        if (this.__isset.success) {
+          if (Success != null) {
+            field.Name = "Success";
+            field.Type = TType.Struct;
+            field.ID = 0;
+            oprot.WriteFieldBegin(field);
+            Success.Write(oprot);
+            oprot.WriteFieldEnd();
+          }
+        } else if (this.__isset.ire) {
+          if (Ire != null) {
+            field.Name = "Ire";
+            field.Type = TType.Struct;
+            field.ID = 1;
+            oprot.WriteFieldBegin(field);
+            Ire.Write(oprot);
+            oprot.WriteFieldEnd();
+          }
+        } else if (this.__isset.ue) {
+          if (Ue != null) {
+            field.Name = "Ue";
+            field.Type = TType.Struct;
+            field.ID = 2;
+            oprot.WriteFieldBegin(field);
+            Ue.Write(oprot);
+            oprot.WriteFieldEnd();
+          }
+        } else if (this.__isset.te) {
+          if (Te != null) {
+            field.Name = "Te";
+            field.Type = TType.Struct;
+            field.ID = 3;
+            oprot.WriteFieldBegin(field);
+            Te.Write(oprot);
+            oprot.WriteFieldEnd();
+          }
+        } else if (this.__isset.sde) {
+          if (Sde != null) {
+            field.Name = "Sde";
+            field.Type = TType.Struct;
+            field.ID = 4;
+            oprot.WriteFieldBegin(field);
+            Sde.Write(oprot);
+            oprot.WriteFieldEnd();
+          }
+        }
+        oprot.WriteFieldStop();
+        oprot.WriteStructEnd();
+      }
+
+      public override string ToString() {
+        StringBuilder sb = new StringBuilder("execute_prepared_cql3_query_result(");
         sb.Append("Success: ");
         sb.Append(Success== null ? "<null>" : Success.ToString());
         sb.Append(",Ire: ");

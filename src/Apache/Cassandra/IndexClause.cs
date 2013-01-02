@@ -19,11 +19,12 @@ namespace FluentCassandra.Apache.Cassandra
 {
 
   /// <summary>
-  /// @Deprecated: use a KeyRange with row_filter in get_range_slices instead
+  /// @deprecated use a KeyRange with row_filter in get_range_slices instead
   /// </summary>
   #if !SILVERLIGHT
   [Serializable]
   #endif
+  [Obsolete("use a KeyRange with row_filter in get_range_slices instead", error: false)]
   public partial class IndexClause : TBase
   {
     private List<IndexExpression> _expressions;

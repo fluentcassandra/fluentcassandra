@@ -11,5 +11,6 @@ namespace FluentCassandra.Apache.Cassandra
   {
     KEYS = 0,
     CUSTOM = 1,
+    COMPOSITES = 2,
   }
 }
