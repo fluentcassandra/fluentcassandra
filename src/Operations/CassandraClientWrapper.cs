@@ -5,7 +5,7 @@ using FluentCassandra.Types;
 
 namespace FluentCassandra.Operations
 {
-	public class CassandraClientWrapper //: Apache.Cassandra.Cassandra.Iface
+	public class CassandraClientWrapper : Apache.Cassandra.Cassandra.Iface
 	{
 		private readonly Apache.Cassandra.Cassandra.Iface _client;
 
@@ -70,7 +70,7 @@ namespace FluentCassandra.Operations
 
 		public List<Apache.Cassandra.KeySlice> get_range_slices(CassandraColumnParent column_parent, CassandraSlicePredicate predicate, CassandraKeyRange range, Apache.Cassandra.ConsistencyLevel consistency_level)
 		{
-        	return _client.get_range_slices(
+			return _client.get_range_slices(
 				Helper.CreateColumnParent(column_parent),
 				Helper.CreateSlicePredicate(predicate),
 				Helper.CreateKeyRange(range),
@@ -244,6 +244,40 @@ namespace FluentCassandra.Operations
 		public Dictionary<string, string> describe_token_map()
 		{
 			return _client.describe_token_map();
+		}
+
+		#endregion
+
+		#region version 1.2.0
+
+		public void atomic_batch_mutate(Dictionary<byte[], Dictionary<string, List<Apache.Cassandra.Mutation>>> mutation_map, Apache.Cassandra.ConsistencyLevel consistency_level)
+		{
+			_client.atomic_batch_mutate(mutation_map, consistency_level);
+		}
+
+		public byte[] trace_next_query()
+		{
+			return _client.trace_next_query();
+		}
+
+		public List<Apache.Cassandra.CfSplit> describe_splits_ex(string cfName, string start_token, string end_token, int keys_per_split)
+		{
+			return _client.describe_splits_ex(cfName, start_token, end_token, keys_per_split);
+		}
+
+		public Apache.Cassandra.CqlResult execute_cql3_query(byte[] query, Apache.Cassandra.Compression compression, Apache.Cassandra.ConsistencyLevel consistency)
+		{
+			return _client.execute_cql3_query(query, compression, consistency);
+		}
+
+		public Apache.Cassandra.CqlPreparedResult prepare_cql3_query(byte[] query, Apache.Cassandra.Compression compression)
+		{
+			return _client.prepare_cql3_query(query, compression);
+		}
+
+		public Apache.Cassandra.CqlResult execute_prepared_cql3_query(int itemId, List<byte[]> values, Apache.Cassandra.ConsistencyLevel consistency)
+		{
+			return _client.execute_prepared_cql3_query(itemId, values, consistency);
 		}
 
 		#endregion
