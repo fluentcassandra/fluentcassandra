@@ -7,11 +7,8 @@ namespace FluentCassandra.Operations
 {
 	public class BatchMutate : Operation<Void>
 	{
-		/*
-		 * batch_mutate(keyspace, mutation_map, consistency_level)
-		 */
-
 		public IEnumerable<FluentMutation> Mutations { get; private set; }
+		public bool Atomic { get; private set; }
 
 		public override Void Execute()
 		{
@@ -20,12 +17,10 @@ namespace FluentCassandra.Operations
 
 			var mutationMap = new Dictionary<byte[], Dictionary<string, List<Mutation>>>();
 
-			foreach (var key in Mutations.GroupBy(x => x.Column.Family.Key))
-			{
+			foreach (var key in Mutations.GroupBy(x => x.Column.Family.Key)) {
 				var keyMutations = new Dictionary<string, List<Mutation>>();
 
-				foreach (var columnFamily in key.GroupBy(x => x.Column.Family.FamilyName))
-				{
+				foreach (var columnFamily in key.GroupBy(x => x.Column.Family.FamilyName)) {
 					var columnFamilyMutations = columnFamily
 						.Where(m => m.Type == MutationType.Added || m.Type == MutationType.Changed)
 						.Select(m => Helper.CreateInsertedOrChangedMutation(m))
@@ -49,18 +44,30 @@ namespace FluentCassandra.Operations
 				mutationMap.Add(key.Key.TryToBigEndian(), keyMutations);
 			}
 
-			// Dictionary<string : key, Dicationary<string : columnFamily, List<Mutation>>>
-			Session.GetClient().batch_mutate(
-				mutationMap,
-				Session.WriteConsistency
-			);
+			var client = Session.GetClient();
+
+			if (Atomic && client.describe_version() >= RpcApiVersion.Cassandra120)
+				client.atomic_batch_mutate(
+					mutationMap,
+					Session.WriteConsistency);
+			else
+				client.batch_mutate(
+					mutationMap,
+					Session.WriteConsistency);
 
 			return new Void();
 		}
 
-		public BatchMutate(IEnumerable<FluentMutation> mutations)
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="mutations"></param>
+		/// <param name="atomic">in the database sense that if any part of the batch succeeds, all of it will. No other guarantees are implied; in particular, there is no isolation; other clients will be able to read the first updated rows from the batch, while others are in progress</param>
+		/// <seealso href="http://www.datastax.com/dev/blog/atomic-batches-in-cassandra-1-2"/>
+		public BatchMutate(IEnumerable<FluentMutation> mutations, bool atomic)
 		{
 			Mutations = mutations;
+			Atomic = atomic;
 		}
 	}
 }

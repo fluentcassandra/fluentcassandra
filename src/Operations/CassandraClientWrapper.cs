@@ -147,9 +147,9 @@ namespace FluentCassandra.Operations
 			return _client.describe_cluster_name();
 		}
 
-		public string describe_version()
+		public Version describe_version()
 		{
-			return _client.describe_version();
+			return new Version(_client.describe_version());
 		}
 
 		public List<Apache.Cassandra.TokenRange> describe_ring(string keyspace)

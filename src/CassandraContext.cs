@@ -241,9 +241,9 @@ namespace FluentCassandra
 			}));
 		}
 
-		public string DescribeVersion()
+		public Version DescribeVersion()
 		{
-			return ExecuteOperation(new SimpleOperation<string>(ctx => {
+			return ExecuteOperation(new SimpleOperation<Version>(ctx => {
 				return ctx.Session.GetClient(setKeyspace: false).describe_version();
 			}));
 		}
@@ -281,7 +281,9 @@ namespace FluentCassandra
 		/// <summary>
 		/// Saves the pending changes.
 		/// </summary>
-		public void SaveChanges()
+		/// <param name="atomic">in the database sense that if any part of the batch succeeds, all of it will. No other guarantees are implied; in particular, there is no isolation; other clients will be able to read the first updated rows from the batch, while others are in progress</param>
+		/// <seealso href="http://www.datastax.com/dev/blog/atomic-batches-in-cassandra-1-2"/>
+		public void SaveChanges(bool atomic = true)
 		{
 			lock (_trackers)
 			{
@@ -290,7 +292,7 @@ namespace FluentCassandra
 				foreach (var tracker in _trackers)
 					mutations.AddRange(tracker.GetMutations());
 
-				var op = new BatchMutate(mutations);
+				var op = new BatchMutate(mutations, atomic);
 				ExecuteOperation(op);
 
 				foreach (var tracker in _trackers)
@@ -304,11 +306,14 @@ namespace FluentCassandra
 		/// 
 		/// </summary>
 		/// <param name="record"></param>
-		public void SaveChanges(IFluentRecord record)
+		/// <param name="atomic">in the database sense that if any part of the batch succeeds, all of it will. No other guarantees are implied; in particular, there is no isolation; other clients will be able to read the first updated rows from the batch, while others are in progress</param>
+		/// <seealso href="http://www.datastax.com/dev/blog/atomic-batches-in-cassandra-1-2"/>
+		public void SaveChanges(IFluentRecord record, bool atomic = true)
 		{
 			var tracker = record.MutationTracker;
 			var mutations = tracker.GetMutations();
-			var op = new BatchMutate(mutations);
+
+			var op = new BatchMutate(mutations, atomic);
 			ExecuteOperation(op);
 
 			tracker.Clear();

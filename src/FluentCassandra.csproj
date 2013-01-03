@@ -215,6 +215,7 @@
     <Compile Include="Operations\QueryableColumnFamilyOperation.cs" />
     <Compile Include="Operations\CassandraRangeSlicePredicate.cs" />
     <Compile Include="Operations\Remove.cs" />
+    <Compile Include="Operations\RpcApiVersion.cs" />
     <Compile Include="Operations\SimpleOperation.cs" />
     <Compile Include="Operations\Void.cs">
       <SubType>Code</SubType>
