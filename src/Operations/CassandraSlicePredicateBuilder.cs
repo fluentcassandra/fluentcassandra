@@ -148,7 +148,7 @@ namespace FluentCassandra.Operations
 			{
 				if (setup.IndexClause != null)
 				{
-					var indexClause = new CassandraIndexClause(setup.StartKey, setup.ColumnCount, setup.IndexClause);
+					var indexClause = new CassandraIndexClause(setup.StartKey, setup.KeyCount, setup.IndexClause);
 					return new GetColumnFamilyIndexedSlices(indexClause, predicate);
 				}
 				else if (setup.Keys.Count() > 0)
