@@ -345,6 +345,7 @@ namespace FluentCassandra.Apache.Cassandra
     /// <summary>
     /// @deprecated
     /// </summary>
+    [Obsolete("in Cassandra 1.2", error: false)]
     public double Row_cache_size
     {
       get
@@ -361,6 +362,7 @@ namespace FluentCassandra.Apache.Cassandra
     /// <summary>
     /// @deprecated
     /// </summary>
+	[Obsolete("in Cassandra 1.2", error: false)]
     public double Key_cache_size
     {
       get
@@ -377,6 +379,7 @@ namespace FluentCassandra.Apache.Cassandra
     /// <summary>
     /// @deprecated
     /// </summary>
+	[Obsolete("in Cassandra 1.2", error: false)]
     public int Row_cache_save_period_in_seconds
     {
       get
@@ -390,9 +393,10 @@ namespace FluentCassandra.Apache.Cassandra
       }
     }
 
-    /// <summary>
-    /// @deprecated
-    /// </summary>
+	/// <summary>
+	/// @deprecated
+	/// </summary>
+	[Obsolete("in Cassandra 1.2", error: false)]
     public int Key_cache_save_period_in_seconds
     {
       get
@@ -406,9 +410,10 @@ namespace FluentCassandra.Apache.Cassandra
       }
     }
 
-    /// <summary>
-    /// @deprecated
-    /// </summary>
+	/// <summary>
+	/// @deprecated
+	/// </summary>
+	[Obsolete("in Cassandra 1.2", error: false)]
     public int Memtable_flush_after_mins
     {
       get
@@ -422,9 +427,10 @@ namespace FluentCassandra.Apache.Cassandra
       }
     }
 
-    /// <summary>
-    /// @deprecated
-    /// </summary>
+	/// <summary>
+	/// @deprecated
+	/// </summary>
+	[Obsolete("in Cassandra 1.2", error: false)]
     public int Memtable_throughput_in_mb
     {
       get
@@ -438,9 +444,10 @@ namespace FluentCassandra.Apache.Cassandra
       }
     }
 
-    /// <summary>
-    /// @deprecated
-    /// </summary>
+	/// <summary>
+	/// @deprecated
+	/// </summary>
+	[Obsolete("in Cassandra 1.2", error: false)]
     public double Memtable_operations_in_millions
     {
       get
@@ -454,9 +461,10 @@ namespace FluentCassandra.Apache.Cassandra
       }
     }
 
-    /// <summary>
-    /// @deprecated
-    /// </summary>
+	/// <summary>
+	/// @deprecated
+	/// </summary>
+	[Obsolete("in Cassandra 1.2", error: false)]
     public double Merge_shards_chance
     {
       get
@@ -470,9 +478,10 @@ namespace FluentCassandra.Apache.Cassandra
       }
     }
 
-    /// <summary>
-    /// @deprecated
-    /// </summary>
+	/// <summary>
+	/// @deprecated
+	/// </summary>
+	[Obsolete("in Cassandra 1.2", error: false)]
     public string Row_cache_provider
     {
       get
@@ -486,9 +495,10 @@ namespace FluentCassandra.Apache.Cassandra
       }
     }
 
-    /// <summary>
-    /// @deprecated
-    /// </summary>
+	/// <summary>
+	/// @deprecated
+	/// </summary>
+	[Obsolete("in Cassandra 1.2", error: false)]
     public int Row_cache_keys_to_save
     {
       get

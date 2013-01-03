@@ -72,7 +72,7 @@ namespace FluentCassandra.Apache.Cassandra
     /// <summary>
     /// @deprecated ignored
     /// </summary>
-	[Obsolete("ignored by Cassandra 1.2", error:false)]
+    [Obsolete("ignored by Cassandra 1.2", error:false)]
     public int Replication_factor
     {
       get

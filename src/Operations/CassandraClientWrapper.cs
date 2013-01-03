@@ -5,7 +5,7 @@ using FluentCassandra.Types;
 
 namespace FluentCassandra.Operations
 {
-	public class CassandraClientWrapper : Apache.Cassandra.Cassandra.Iface
+	public class CassandraClientWrapper //: Apache.Cassandra.Cassandra.Iface
 	{
 		private readonly Apache.Cassandra.Cassandra.Iface _client;
 
