@@ -8,8 +8,7 @@ namespace FluentCassandra.Operations
 	public class ExecuteCqlNonQuery : Operation<Void>
 	{
 		public UTF8Type CqlQuery { get; private set; }
-
-		public bool CompressCqlQuery { get; private set; }
+		public string CqlVersion { get; private set; }
 
 		public override Void Execute()
 		{
@@ -17,21 +16,38 @@ namespace FluentCassandra.Operations
 			byte[] query = CqlQuery;
 			bool isCqlQueryCompressed = query.Length > 200 && Session.ConnectionBuilder.CompressCqlQueries;
 
-			// it doesn't make sense to compress queryies that are really small
+			// it doesn't make sense to compress queries that are really small
 			if (isCqlQueryCompressed)
 				query = Helper.ZlibCompress(query);
 
-			var result = Session.GetClient().execute_cql_query(
-				query,
-				isCqlQueryCompressed ? Apache.Cassandra.Compression.GZIP : Apache.Cassandra.Compression.NONE
-			);
+			if (CqlVersion == FluentCassandra.Connections.CqlVersion.ConnectionDefault)
+				CqlVersion = Session.ConnectionBuilder.CqlVersion;
+
+			switch(CqlVersion) {
+				case FluentCassandra.Connections.CqlVersion.Cql:
+					Session.GetClient().execute_cql_query(
+						query,
+						isCqlQueryCompressed ? Apache.Cassandra.Compression.GZIP : Apache.Cassandra.Compression.NONE);
+					break;
+
+				case FluentCassandra.Connections.CqlVersion.Cql3:
+					Session.GetClient().execute_cql3_query(
+						query,
+						isCqlQueryCompressed ? Apache.Cassandra.Compression.GZIP : Apache.Cassandra.Compression.NONE,
+						Session.WriteConsistency);
+					break;
+
+				default:
+					throw new FluentCassandraException(CqlVersion + " is not a valid CQL version.");
+			}
 
 			return new Void();
 		}
 
-		public ExecuteCqlNonQuery(UTF8Type cqlQuery)
+		public ExecuteCqlNonQuery(UTF8Type cqlQuery, string cqlVersion)
 		{
 			CqlQuery = cqlQuery;
+			CqlVersion = cqlVersion;
 		}
 	}
 }

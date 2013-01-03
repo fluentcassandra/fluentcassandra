@@ -318,9 +318,9 @@ namespace FluentCassandra
 		/// 
 		/// </summary>
 		/// <param name="cqlQuery"></param>
-		public IEnumerable<ICqlRow> ExecuteQuery(UTF8Type cqlQuery)
+		public IEnumerable<ICqlRow> ExecuteQuery(UTF8Type cqlQuery, string cqlVersion = CqlVersion.ConnectionDefault)
 		{
-			var op = new ExecuteCqlQuery(cqlQuery);
+			var op = new ExecuteCqlQuery(cqlQuery, cqlVersion);
 			return ExecuteOperation(op);
 		}
 
@@ -328,10 +328,10 @@ namespace FluentCassandra
 		/// 
 		/// </summary>
 		/// <param name="cqlQuery"></param>
-		public void TryExecuteNonQuery(UTF8Type cqlQuery)
+		public void TryExecuteNonQuery(UTF8Type cqlQuery, string cqlVersion = CqlVersion.ConnectionDefault)
 		{
 			try {
-				ExecuteNonQuery(cqlQuery);
+				ExecuteNonQuery(cqlQuery, cqlVersion);
 			} catch (Exception exc) {
 				Debug.WriteLine(exc);
 			}
@@ -341,19 +341,19 @@ namespace FluentCassandra
 		/// 
 		/// </summary>
 		/// <param name="cqlQuery"></param>
-		public void ExecuteNonQuery(UTF8Type cqlQuery)
+		public void ExecuteNonQuery(UTF8Type cqlQuery, string cqlVersion = CqlVersion.ConnectionDefault)
 		{
-			var op = new ExecuteCqlNonQuery(cqlQuery);
+			var op = new ExecuteCqlNonQuery(cqlQuery, cqlVersion);
 			ExecuteOperation(op);
 		}
 
 		/// <summary>
-		/// The last error that occured during the execution of an operation.
+		/// The last error that occurred during the execution of an operation.
 		/// </summary>
 		public CassandraException LastError { get; private set; }
 
 		/// <summary>
-		/// Indicates if errors should be thrown when occuring on operation.
+		/// Indicates if errors should be thrown when occurring on operation.
 		/// </summary>
 		public bool ThrowErrors { get; set; }
 

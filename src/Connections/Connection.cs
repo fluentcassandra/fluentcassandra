@@ -178,6 +178,7 @@ namespace FluentCassandra.Connections
 		/// 
 		/// </summary>
 		/// <param name="cqlVersion"></param>
+		[Obsolete("This will be retired soon, please pass the CQL version through the Execute method.", error: false)]
 		public void SetCqlVersion(string cqlVersion)
 		{
 			CheckWasDisposed();
