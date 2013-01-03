@@ -123,7 +123,7 @@ namespace FluentCassandra.Apache.Cassandra
       /// <param name="index_clause"></param>
       /// <param name="column_predicate"></param>
       /// <param name="consistency_level"></param>
-	  [Obsolete("use get_range_slices instead with range.row_filter specified", error:true)]
+	  [Obsolete("use get_range_slices instead with range.row_filter specified", error:false)]
       List<KeySlice> get_indexed_slices(ColumnParent column_parent, IndexClause index_clause, SlicePredicate column_predicate, ConsistencyLevel consistency_level);
       #if SILVERLIGHT
       IAsyncResult Begin_get_indexed_slices(AsyncCallback callback, object state, ColumnParent column_parent, IndexClause index_clause, SlicePredicate column_predicate, ConsistencyLevel consistency_level);
@@ -443,7 +443,7 @@ namespace FluentCassandra.Apache.Cassandra
       /// @deprecated This is now a no-op. Please use the CQL3 specific methods instead.
       /// </summary>
       /// <param name="version"></param>
-	  [Obsolete("This is now a no-op. Please use the CQL3 specific methods instead.", error: true)]
+	  [Obsolete("This is now a no-op. Please use the CQL3 specific methods instead.", error: false)]
       void set_cql_version(string version);
       #if SILVERLIGHT
       IAsyncResult Begin_set_cql_version(AsyncCallback callback, object state, string version);

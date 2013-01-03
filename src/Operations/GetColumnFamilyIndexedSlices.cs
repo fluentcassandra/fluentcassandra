@@ -5,6 +5,7 @@ using FluentCassandra.Types;
 
 namespace FluentCassandra.Operations
 {
+	[Obsolete("use get_range_slices instead with range.row_filter specified", error: false)]
 	public class GetColumnFamilyIndexedSlices : QueryableColumnFamilyOperation<FluentColumnFamily>
 	{
 		/*

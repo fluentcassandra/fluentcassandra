@@ -77,6 +77,7 @@ namespace FluentCassandra.Operations
 				consistency_level);
 		}
 
+		[Obsolete("use get_range_slices instead with range.row_filter specified", error: false)]
 		public List<Apache.Cassandra.KeySlice> get_indexed_slices(CassandraColumnParent column_parent, CassandraIndexClause index_clause, CassandraSlicePredicate column_predicate, Apache.Cassandra.ConsistencyLevel consistency_level)
 		{
 			return _client.get_indexed_slices(
@@ -232,6 +233,7 @@ namespace FluentCassandra.Operations
 			return _client.execute_prepared_cql_query(itemId, values);
 		}
 
+		[Obsolete("This is now a no-op. Please use the CQL3 specific methods instead.", error: false)]
 		public void set_cql_version(string version)
 		{
 			_client.set_cql_version(version);
