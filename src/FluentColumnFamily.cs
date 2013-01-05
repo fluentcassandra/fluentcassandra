@@ -189,7 +189,7 @@ namespace FluentCassandra
 			if (colSchema != null)
 				return colSchema;
 
-			return new CassandraColumnSchema { NameType = schema.ColumnNameType, ValueType = typeof(BytesType) };
+			return new CassandraColumnSchema { NameType = schema.ColumnNameType, ValueType = schema.DefaultColumnValueType ?? typeof(BytesType) };
 		}
 
 		/// <summary>
