@@ -11,7 +11,7 @@ namespace FluentCassandra.Types
 		[Fact]
 		public void CassandraType_Cast()
 		{
-			// arranage
+			// arrange
 			string expected = "The quick brown fox jumps over the lazy dog.";
 			AsciiType actualType = expected;
 

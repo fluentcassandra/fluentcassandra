@@ -11,7 +11,7 @@ namespace FluentCassandra.Types
 		[Fact]
 		public void CassandraType_Cast()
 		{
-			// arranage
+			// arrange
 			BigInteger expected = 100;
 			IntegerType actualType = expected;
 

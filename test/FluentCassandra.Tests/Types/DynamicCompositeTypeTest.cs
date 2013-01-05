@@ -50,7 +50,7 @@ namespace FluentCassandra.Types
 		[Fact]
 		public void CassandraType_Cast()
 		{
-			// arranage
+			// arrange
 			var expected = new CassandraObject[] { (AsciiType)"string1", (LongType)300L };
 
 			// act

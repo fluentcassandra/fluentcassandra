@@ -14,7 +14,7 @@ namespace FluentCassandra.Types
 		[Fact]
 		public void CassandraType_Cast()
 		{
-			// arranage
+			// arrange
 			Guid expected = guid;
 			LexicalUUIDType actualType = expected;
 
