@@ -10,7 +10,7 @@ namespace FluentCassandra
 		public FluentColumn()
 			: base(new CassandraColumnSchema {
 				NameType = typeof(CompareWith),
-				ValueType = typeof(BytesType)
+				ValueType = CassandraType.BytesType
 			}) { }
 	}
 
@@ -135,8 +135,24 @@ namespace FluentCassandra
 		/// </summary>
 		public CassandraColumnSchema GetSchema()
 		{
-			if (_schema == null)
-				_schema = new CassandraColumnSchema { Name = ColumnName, ValueType = ColumnValue.GetType() };
+			if (_schema == null) {
+				var nameType = CassandraType.BytesType;
+				var valueType = CassandraType.BytesType;
+
+				if (_name != null)
+					nameType = _name.GetCassandraType();
+
+				if (_value != null)
+					valueType = _value.GetCassandraType();
+				
+				_schema = new CassandraColumnSchema {
+					NameType = nameType,
+					ValueType = valueType
+				};
+
+				if (_name != null)
+					_schema.Name = _name;
+			}
 
 			return _schema;
 		}

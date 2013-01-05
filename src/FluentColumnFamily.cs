@@ -12,7 +12,7 @@ namespace FluentCassandra
 		public FluentColumnFamily(CassandraObject key, string columnFamily)
 			: base(key, columnFamily, new CassandraColumnFamilySchema {
 				FamilyName = columnFamily,
-				KeyValueType = typeof(BytesType),
+				KeyValueType = CassandraType.BytesType,
 				ColumnNameType = typeof(CompareWith)
 			}) { }
 	}
@@ -90,7 +90,7 @@ namespace FluentCassandra
 		public CassandraColumnFamilySchema GetSchema()
 		{
 			if (_schema == null)
-				_schema = new CassandraColumnFamilySchema { FamilyName = FamilyName };
+				_schema = new CassandraColumnFamilySchema(name: FamilyName);
 
 			return _schema;
 		}
@@ -102,7 +102,7 @@ namespace FluentCassandra
 		public void SetSchema(CassandraColumnFamilySchema schema)
 		{
 			if (schema == null)
-				schema = new CassandraColumnFamilySchema { FamilyName = FamilyName };
+				schema = new CassandraColumnFamilySchema(name: FamilyName);
 
 			_schema = schema;
 		}
@@ -189,7 +189,10 @@ namespace FluentCassandra
 			if (colSchema != null)
 				return colSchema;
 
-			return new CassandraColumnSchema { NameType = schema.ColumnNameType, ValueType = schema.DefaultColumnValueType ?? typeof(BytesType) };
+			return new CassandraColumnSchema {
+				NameType = schema.ColumnNameType,
+				ValueType = schema.DefaultColumnValueType
+			};
 		}
 
 		/// <summary>
