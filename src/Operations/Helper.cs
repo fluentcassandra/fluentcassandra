@@ -144,9 +144,9 @@ namespace FluentCassandra.Operations
 			else if (col.Column != null)
 				return ConvertColumnToFluentColumn(col.Column, schema);
 			else if (col.Counter_super_column != null)
-				return ConvertColumnToFluentCounterColumn(col.Counter_column, schema);
+                return ConvertSuperColumnToFluentCounterSuperColumn(col.Counter_super_column, schema);
 			else if (col.Counter_column != null)
-				return ConvertSuperColumnToFluentCounterSuperColumn(col.Counter_super_column, schema);
+                return ConvertColumnToFluentCounterColumn(col.Counter_column, schema);
 			else
 				return null;
 		}
