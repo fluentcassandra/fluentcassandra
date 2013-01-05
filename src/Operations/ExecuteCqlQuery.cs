@@ -43,24 +43,20 @@ namespace FluentCassandra.Operations
 			if (CqlVersion == FluentCassandra.Connections.CqlVersion.ConnectionDefault)
 				CqlVersion = Session.ConnectionBuilder.CqlVersion;
 
+			var client = Session.GetClient();
 			var result = (CqlResult)null;
 
-			switch (CqlVersion) {
-				case FluentCassandra.Connections.CqlVersion.Cql:
-					result = Session.GetClient().execute_cql_query(
-						query,
-						isCqlQueryCompressed ? Apache.Cassandra.Compression.GZIP : Apache.Cassandra.Compression.NONE);
-					break;
-				
-				case FluentCassandra.Connections.CqlVersion.Cql3:
-					result = Session.GetClient().execute_cql3_query(
-						query,
-						isCqlQueryCompressed ? Apache.Cassandra.Compression.GZIP : Apache.Cassandra.Compression.NONE,
-						Session.ReadConsistency);
-					break;
-			
-				default:
-					throw new FluentCassandraException(CqlVersion + " is not a valid CQL version.");
+			if (CqlVersion == FluentCassandra.Connections.CqlVersion.Cql || client.describe_version() < RpcApiVersion.Cassandra120) {
+				result = client.execute_cql_query(
+					query,
+					isCqlQueryCompressed ? Apache.Cassandra.Compression.GZIP : Apache.Cassandra.Compression.NONE); 
+			} else if (CqlVersion == FluentCassandra.Connections.CqlVersion.Cql3) {
+				result = client.execute_cql3_query(
+					query,
+					isCqlQueryCompressed ? Apache.Cassandra.Compression.GZIP : Apache.Cassandra.Compression.NONE,
+					Session.ReadConsistency);
+			} else {
+				throw new FluentCassandraException(CqlVersion + " is not a valid CQL version.");
 			}
 
 			return GetRows(result);
