@@ -48,6 +48,11 @@ namespace FluentCassandra.Types
 		public abstract byte[] ToBigEndian();
 		public abstract void SetValueFromBigEndian(byte[] value);
 
+		public override string ToString()
+		{
+			return GetValue<string>();
+		}
+
 		#region Equality
 
 		public override bool Equals(object obj)

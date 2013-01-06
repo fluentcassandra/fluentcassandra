@@ -33,11 +33,6 @@ namespace FluentCassandra.Types
 			get { return TypeCode.Int64; }
 		}
 
-		public override string ToString()
-		{
-			return _value.ToString("N");
-		}
-
 		#endregion
 
 		public override object GetValue() { return _value; }

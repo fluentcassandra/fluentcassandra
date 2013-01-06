@@ -9,7 +9,7 @@ namespace FluentCassandra.Types
 		[Fact]
 		public void Implicity_Cast_To_Int64()
 		{
-			// arranage
+			// arrange
 			long? expected = null;
 			dynamic family = new FluentColumnFamily<AsciiType>("Test1", "Test1");
 
@@ -23,7 +23,7 @@ namespace FluentCassandra.Types
 		[Fact]
 		public void Implicity_Cast_To_FluentSuperColumn()
 		{
-			// arranage
+			// arrange
 			var expectedName = "ShouldNotBeFound";
 			var expectedColumnCount = 0;
 			dynamic family = new FluentSuperColumnFamily<AsciiType, AsciiType>("Test1", "SubTest1");

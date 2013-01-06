@@ -59,11 +59,6 @@ namespace FluentCassandra.Types
 			get { return TypeCode.Object; }
 		}
 
-		public override string ToString()
-		{
-			return GetValue<string>();
-		}
-
 		#endregion
 
 		public override object GetValue() { return _value; }
