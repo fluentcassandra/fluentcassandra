@@ -88,8 +88,8 @@ namespace FluentCassandra
 				keyspace.TryCreateColumnFamily<UUIDType>("StandardUUIDType");
                 keyspace.TryCreateColumnFamily(new CassandraColumnFamilySchema()
                     {
-                        FamilyName = "Counter", 
-                        ColumnNameType = CassandraType.UTF8Type, 
+                        FamilyName = "Counters", 
+                        ColumnNameType = CassandraType.AsciiType,
                         DefaultColumnValueType = CassandraType.CounterColumnType
                     });
 				keyspace.TryCreateColumnFamily(new CassandraColumnFamilySchema {
@@ -105,24 +105,24 @@ namespace FluentCassandra
 					ColumnNameType = CassandraType.DynamicCompositeType(new Dictionary<char, CassandraType> { { 'a', CassandraType.AsciiType }, { 'd', CassandraType.DoubleType } })
 				});
 
-				db.ExecuteNonQuery(@"
+                db.ExecuteNonQuery(@"
 CREATE COLUMNFAMILY Users (
 	Id int PRIMARY KEY,
 	Name ascii,
 	Email ascii,
 	Age int
 );");
-				db.ExecuteNonQuery(@"CREATE INDEX User_Age ON Users (Age);");
+                db.ExecuteNonQuery(@"CREATE INDEX User_Age ON Users (Age);");
 				db.Keyspace.ClearCachedKeyspaceSchema();
 
 				var family = db.GetColumnFamily<AsciiType>("Standard");
 				var superFamily = db.GetColumnFamily<AsciiType, AsciiType>("Super");
-				var userFamily = db.GetColumnFamily("Users");
-			    var counterFamily = db.GetColumnFamily("Counters");
+                var userFamily = db.GetColumnFamily("Users");
+			    var counterFamily = db.GetColumnFamily("Counter");
 
 				ResetFamily(family);
 				ResetSuperFamily(superFamily);
-				ResetUsersFamily(userFamily);
+                ResetUsersFamily(userFamily);
                 ResetCounterColumnFamily(counterFamily);
 			}
 		}

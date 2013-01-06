@@ -10,6 +10,8 @@ namespace FluentCassandra.Operations
 	{
 		private CassandraContext _db;
 		private CassandraColumnFamily<AsciiType> _family;
+	    private CassandraColumnFamily _counterFamily;
+
 		private CassandraSuperColumnFamily<AsciiType, AsciiType> _superFamily;
 
 		public void SetFixture(CassandraDatabaseSetupFixture data)
@@ -18,6 +20,7 @@ namespace FluentCassandra.Operations
 			_db = setup.DB;
 			_family = setup.Family;
 			_superFamily = setup.SuperFamily;
+		    _counterFamily = setup.CounterFamily;
 		}
 
 		public void Dispose()
@@ -45,6 +48,22 @@ namespace FluentCassandra.Operations
 			// assert
 			Assert.Equal(expectedCount, columns.Count());
 		}
+
+        [Fact]
+        public void Counter_GetSlice_Columns()
+        {
+            // arrange
+            int expectedCount = 2;
+
+            // act
+            var columns = _counterFamily
+                .Get(new BytesType[] { _testKey, _testKey2 })
+                .FetchColumns(new AsciiType[] { "Test1", "Test2" })
+                .Execute();
+
+            // assert
+            Assert.Equal(expectedCount, columns.Count());
+        }
 
 		[Fact]
 		public void Super_GetSlice_Columns()
