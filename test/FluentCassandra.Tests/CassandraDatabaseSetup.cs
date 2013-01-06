@@ -13,8 +13,11 @@ namespace FluentCassandra
 		public CassandraContext DB;
 
 		public CassandraColumnFamily<AsciiType> Family;
+	   
 		public CassandraSuperColumnFamily<AsciiType, AsciiType> SuperFamily;
+
 		public CassandraColumnFamily UserFamily;
+        public CassandraColumnFamily CounterFamily;
 
 		public User[] Users = new[] {
 					new User { Id = 1, Name = "Darren Gemmell", Email = "darren@somewhere.com", Age = 32 },
@@ -51,6 +54,7 @@ namespace FluentCassandra
 			Family = DB.GetColumnFamily<AsciiType>("Standard");
 			SuperFamily = DB.GetColumnFamily<AsciiType, AsciiType>("Super");
 			UserFamily = DB.GetColumnFamily("Users");
+		    CounterFamily = DB.GetColumnFamily("Counters");
 
 			if (exists && !reset)
 				return;
@@ -82,6 +86,12 @@ namespace FluentCassandra
 				keyspace.TryCreateColumnFamily<TimeUUIDType>("StandardTimeUUIDType");
 				keyspace.TryCreateColumnFamily<UTF8Type>("StandardUTF8Type");
 				keyspace.TryCreateColumnFamily<UUIDType>("StandardUUIDType");
+                keyspace.TryCreateColumnFamily(new CassandraColumnFamilySchema()
+                    {
+                        FamilyName = "Counter", 
+                        ColumnNameType = CassandraType.UTF8Type, 
+                        DefaultColumnValueType = CassandraType.CounterColumnType
+                    });
 				keyspace.TryCreateColumnFamily(new CassandraColumnFamilySchema {
 					FamilyName = "StandardDecimalType",
 					ColumnNameType = CassandraType.DecimalType
@@ -108,10 +118,12 @@ CREATE COLUMNFAMILY Users (
 				var family = db.GetColumnFamily<AsciiType>("Standard");
 				var superFamily = db.GetColumnFamily<AsciiType, AsciiType>("Super");
 				var userFamily = db.GetColumnFamily("Users");
+			    var counterFamily = db.GetColumnFamily("Counters");
 
 				ResetFamily(family);
 				ResetSuperFamily(superFamily);
 				ResetUsersFamily(userFamily);
+                ResetCounterColumnFamily(counterFamily);
 			}
 		}
 
@@ -164,5 +176,20 @@ CREATE COLUMNFAMILY Users (
 			superFamily.InsertColumn(TestKey2, TestSuperName, "Test2", Math.PI);
 			superFamily.InsertColumn(TestKey2, TestSuperName, "Test3", Math.PI);
 		}
+
+        public void ResetCounterColumnFamily(CassandraColumnFamily counterFamily = null)
+        {
+            counterFamily = counterFamily ?? CounterFamily;
+
+            counterFamily.RemoveAllRows();
+
+            counterFamily.InsertCounterColumn(TestKey1, "Test1", 1);
+            counterFamily.InsertCounterColumn(TestKey1, "Test2", 2);
+            counterFamily.InsertCounterColumn(TestKey1, "Test3", 3);
+
+            counterFamily.InsertCounterColumn(TestKey2, "Test1", 2);
+            counterFamily.InsertCounterColumn(TestKey2, "Test2", 4);
+            counterFamily.InsertCounterColumn(TestKey2, "Test3", 6);
+        }
 	}
 }
