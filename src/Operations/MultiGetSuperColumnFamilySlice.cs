@@ -53,7 +53,12 @@ namespace FluentCassandra.Operations
 				}
 				else
 				{
-					superColumns = result.Value.Select(col => Helper.ConvertSuperColumnToFluentSuperColumn(col.Super_column, schema));
+					superColumns = result.Value.Select(col =>
+					    {
+					        if (col.Counter_super_column != null)
+					            return Helper.ConvertSuperColumnToFluentCounterSuperColumn(col.Counter_super_column, schema);
+                            return Helper.ConvertSuperColumnToFluentSuperColumn(col.Super_column, schema);
+                        });
 				}
 
 				var familyName = ColumnFamily.FamilyName;
