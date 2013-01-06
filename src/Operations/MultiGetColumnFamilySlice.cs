@@ -36,7 +36,9 @@ namespace FluentCassandra.Operations
 				var key = CassandraObject.GetCassandraObjectFromDatabaseByteArray(result.Key, schema.KeyValueType);
 
 				var r = new FluentColumnFamily(key, ColumnFamily.FamilyName, schema, result.Value.Select(col => {
-					return Helper.ConvertColumnToFluentColumn(col.Column, schema);
+                    if(col.Counter_column != null)
+					    return Helper.ConvertColumnToFluentCounterColumn(col.Counter_column, schema);
+                    return Helper.ConvertColumnToFluentColumn(col.Column, schema);
 				}));
 				ColumnFamily.Context.Attach(r);
 				r.MutationTracker.Clear();
