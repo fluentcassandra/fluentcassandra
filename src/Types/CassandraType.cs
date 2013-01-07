@@ -23,6 +23,7 @@ namespace FluentCassandra.Types
 		public static readonly CassandraType UTF8Type = new CassandraType("org.apache.cassandra.db.marshal.UTF8Type");
 		public static readonly CassandraType UUIDType = new CassandraType("org.apache.cassandra.db.marshal.UUIDType");
 		public static readonly CassandraType CounterColumnType = new CassandraType("org.apache.cassandra.db.marshal.CounterColumnType");
+		public static readonly CassandraType EmptyType = new CassandraType("org.apache.cassandra.db.marshal.EmptyType");
 
 		private static readonly CassandraType _CompositeType = new CassandraType("org.apache.cassandra.db.marshal.CompositeType");
 		private static readonly CassandraType _DynamicCompositeType = new CassandraType("org.apache.cassandra.db.marshal.DynamicCompositeType");
@@ -176,6 +177,7 @@ namespace FluentCassandra.Types
 				case "dynamiccompositetype": type = typeof(DynamicCompositeType); break;
 				case "countercolumntype": type = typeof(CounterColumnType); break;
 				case "reversedtype": type = typeof(ReversedType); break;
+				case "emptytype": type = typeof(EmptyType); break;
 				default: throw new CassandraException("Type '" + _dbType + "' not found.");
 			}
 
@@ -246,7 +248,7 @@ namespace FluentCassandra.Types
 				case "timeuuidtype": cassandraType = TimeUUIDType; break;
 				case "utf8type": cassandraType = UTF8Type; break;
 				case "uuidtype": cassandraType = UUIDType; break;
-
+				case "emptytype": cassandraType = EmptyType; break;
 				// these need work
 				//case "compositetype": cassandraType = CompositeType; break;
 				//case "dynamiccompositetype": cassandraType = DynamicCompositeType; break;
