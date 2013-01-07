@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Numerics;
 
 namespace FluentCassandra.Types
@@ -126,6 +127,7 @@ namespace FluentCassandra.Types
 		public static implicit operator CassandraObject(DateTimeOffset o) { return ConvertFrom(o); }
 		public static implicit operator CassandraObject(BigInteger o) { return ConvertFrom(o); }
 		public static implicit operator CassandraObject(BigDecimal o) { return ConvertFrom(o); }
+		public static implicit operator CassandraObject(IPAddress o) { return ConvertFrom(o); }
 
 		public static implicit operator byte[](CassandraObject o) { return ConvertTo<byte[]>(o); }
 		public static implicit operator char[](CassandraObject o) { return ConvertTo<char[]>(o); }
@@ -149,6 +151,7 @@ namespace FluentCassandra.Types
 		public static implicit operator DateTimeOffset(CassandraObject o) { return ConvertTo<DateTimeOffset>(o); }
 		public static implicit operator BigInteger(CassandraObject o) { return ConvertTo<BigInteger>(o); }
 		public static implicit operator BigDecimal(CassandraObject o) { return ConvertTo<BigDecimal>(o); }
+		public static implicit operator IPAddress(CassandraObject o) { return ConvertTo<IPAddress>(o); }
 
 		public static implicit operator byte?(CassandraObject o) { return ConvertTo<byte?>(o); }
 		public static implicit operator sbyte?(CassandraObject o) { return ConvertTo<sbyte?>(o); }

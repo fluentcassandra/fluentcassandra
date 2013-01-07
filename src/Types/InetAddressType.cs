@@ -60,20 +60,13 @@ namespace FluentCassandra.Types
 
 		#region Conversion
 
-		public static implicit operator IPAddress(InetAddressType type)
-		{
-			return type._value;
-		}
-
-		public static implicit operator InetAddressType(IPAddress o)
-		{
-			return new InetAddressType {
-				_value = o
-			};
-		}
-
+		public static implicit operator InetAddressType(IPAddress o) { return ConvertFrom(o); }
 		public static implicit operator InetAddressType(byte[] o) { return ConvertFrom(o); }
+		public static implicit operator InetAddressType(string o) { return ConvertFrom(o); }
+
+		public static implicit operator IPAddress(InetAddressType o) { return ConvertTo<IPAddress>(o); }
 		public static implicit operator byte[](InetAddressType o) { return ConvertTo<byte[]>(o); }
+		public static implicit operator string(InetAddressType o) { return ConvertTo<string>(o); }
 
 		private static T ConvertTo<T>(InetAddressType type)
 		{
