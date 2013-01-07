@@ -280,6 +280,8 @@
     <Compile Include="Types\DateType.cs" />
     <Compile Include="Types\DateTypeConverter.cs" />
     <Compile Include="Types\EmptyType.cs" />
+    <Compile Include="Types\InetAddressType.cs" />
+    <Compile Include="Types\InetAddressTypeConverter.cs" />
     <Compile Include="Types\Int32Type.cs" />
     <Compile Include="Types\Int32TypeConverter.cs" />
     <Compile Include="Types\FloatType.cs" />

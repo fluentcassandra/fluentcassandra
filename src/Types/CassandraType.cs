@@ -1,7 +1,8 @@
 ﻿using System;
-using System.Linq;
-using System.Numerics;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Numerics;
 using System.Text;
 
 namespace FluentCassandra.Types
@@ -24,6 +25,7 @@ namespace FluentCassandra.Types
 		public static readonly CassandraType UUIDType = new CassandraType("org.apache.cassandra.db.marshal.UUIDType");
 		public static readonly CassandraType CounterColumnType = new CassandraType("org.apache.cassandra.db.marshal.CounterColumnType");
 		public static readonly CassandraType EmptyType = new CassandraType("org.apache.cassandra.db.marshal.EmptyType");
+		public static readonly CassandraType InetAddressType = new CassandraType("org.apache.cassandra.db.marshal.InetAddressType");
 
 		private static readonly CassandraType _CompositeType = new CassandraType("org.apache.cassandra.db.marshal.CompositeType");
 		private static readonly CassandraType _DynamicCompositeType = new CassandraType("org.apache.cassandra.db.marshal.DynamicCompositeType");
@@ -178,6 +180,7 @@ namespace FluentCassandra.Types
 				case "countercolumntype": type = typeof(CounterColumnType); break;
 				case "reversedtype": type = typeof(ReversedType); break;
 				case "emptytype": type = typeof(EmptyType); break;
+				case "inetaddresstype": type = typeof(InetAddressType); break;
 				default: throw new CassandraException("Type '" + _dbType + "' not found.");
 			}
 
@@ -249,6 +252,7 @@ namespace FluentCassandra.Types
 				case "utf8type": cassandraType = UTF8Type; break;
 				case "uuidtype": cassandraType = UUIDType; break;
 				case "emptytype": cassandraType = EmptyType; break;
+				case "inetaddresstype": cassandraType = InetAddressType; break;
 				// these need work
 				//case "compositetype": cassandraType = CompositeType; break;
 				//case "dynamiccompositetype": cassandraType = DynamicCompositeType; break;
@@ -312,6 +316,9 @@ namespace FluentCassandra.Types
 					break;
 
 				default:
+					if (sourceType == typeof(IPAddress))
+						destinationType = InetAddressType;
+
 					if (sourceType == typeof(DateTimeOffset))
 						destinationType = DateType;
 
