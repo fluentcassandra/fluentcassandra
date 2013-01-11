@@ -121,6 +121,7 @@ namespace FluentCassandra
 
 			source = source.Family.CreateCassandraSlicePredicateQuery<TResult>(Expression.Call(null, ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(new Type[] { typeof(TResult) }), new Expression[] { source.Expression }));
 			var op = (ColumnCount)source.BuildQueryableOperation();
+		    op.ColumnFamily = source.Family;
 			return source.Family.Context.ExecuteOperation(op);
 		}
 
@@ -131,6 +132,7 @@ namespace FluentCassandra
 
 			source = source.Family.CreateCassandraSlicePredicateQuery<TResult>(Expression.Call(null, ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(new Type[] { typeof(TResult) }), new Expression[] { source.Expression }));
 			var op = (MultiGetColumnCount)source.BuildQueryableOperation();
+		    op.ColumnFamily = source.Family;
 			return source.Family.Context.ExecuteOperation(op);
 		}
 
