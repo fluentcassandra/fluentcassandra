@@ -3,7 +3,7 @@ using System.Net;
 
 namespace FluentCassandra.Types
 {
-	public class InetAddressTypeConverter : CassandraObjectConverter<IPAddress>
+	internal class InetAddressTypeConverter : CassandraObjectConverter<IPAddress>
 	{
 		public override bool CanConvertFrom(Type sourceType)
 		{
