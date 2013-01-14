@@ -4,7 +4,7 @@ using System.ComponentModel;
 
 namespace FluentCassandra.Types
 {
-    public abstract class CassandraObjectConverter<T>
+    internal abstract class CassandraObjectConverter<T>
 	{
 		public abstract bool CanConvertFrom(Type sourceType);
 
