@@ -76,7 +76,7 @@ namespace FluentCassandra.Types
 
 		public override int GetHashCode()
 		{
-			return _value.GetHashCode();
+			return -1494218850;
 		}
 
 		#endregion
