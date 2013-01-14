@@ -93,7 +93,13 @@ namespace FluentCassandra.Types
 
 		public override int GetHashCode()
 		{
-			return _value.GetHashCode();
+			unchecked {
+				int hash = 17;
+				foreach (var keyPart in _value) {
+					hash = hash * 23 + keyPart.GetHashCode();
+				}
+				return hash;
+			}
 		}
 
 		#endregion

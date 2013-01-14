@@ -135,13 +135,10 @@ namespace FluentCassandra.Types
 
 		public override int GetHashCode()
 		{
-			//Compute a hash from the sum of the parts
-			unchecked
-			{
+			unchecked {
 				int hash = 17;
-				foreach (var keyPart in _value)
-				{
-					hash = hash*23 + keyPart.GetHashCode();
+				foreach (var keyPart in _value) {
+					hash = hash * 23 + keyPart.GetHashCode();
 				}
 				return hash;
 			}
