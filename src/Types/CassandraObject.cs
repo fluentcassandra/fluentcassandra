@@ -172,6 +172,7 @@ namespace FluentCassandra.Types
 		public static implicit operator DateTimeOffset?(CassandraObject o) { return ConvertTo<DateTimeOffset?>(o); }
 		public static implicit operator BigInteger?(CassandraObject o) { return ConvertTo<BigInteger?>(o); }
 		public static implicit operator BigDecimal?(CassandraObject o) { return ConvertTo<BigDecimal?>(o); }
+		//public static implicit operator IPAddress(CassandraObject o) { return ConvertTo<IPAddress>(o); }
 
 		public static explicit operator object[](CassandraObject o) { return ConvertTo<object[]>(o); }
 		public static explicit operator List<object>(CassandraObject o) { return ConvertTo<List<object>>(o); }
