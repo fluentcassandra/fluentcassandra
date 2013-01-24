@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using FluentCassandra.Types;
 using FluentCassandra.Connections;
-using Apache.Cassandra;
+using FluentCassandra.Apache.Cassandra;
 
 namespace FluentCassandra.StressTest
 {
