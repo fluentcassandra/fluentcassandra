@@ -6,12 +6,12 @@ using System.Diagnostics;
 
 namespace FluentCassandra.Connections
 {
-    public class LoadBalancerServerManager : IServerManager
+    public class SingleServerManager : IServerManager
      {
 		private readonly object _lock = new object();
 		private Server _server;
 
-        public LoadBalancerServerManager(IConnectionBuilder builder)
+        public SingleServerManager(IConnectionBuilder builder)
 		{
 			_server = builder.Servers[0]; 
 		}
@@ -39,14 +39,14 @@ namespace FluentCassandra.Connections
         }
         public void Remove(Server server)
         {
-            throw new NotImplementedException ("LoadBalancerServerManager does not implement Remove(server)");
+            throw new NotImplementedException ("SingleServerManager does not implement Remove(server)");
         }
 		#endregion
         #region IEnumerable<Server> Members
 
 		public IEnumerator<Server> GetEnumerator()
 		{
-		    throw new NotImplementedException ("LoadBalancerServerManager does not implement Enumerable(server)");
+            throw new NotImplementedException("SingleServerManager does not implement Enumerable(server)");
 		}
 
 		#endregion
