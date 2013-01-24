@@ -39,14 +39,14 @@ namespace FluentCassandra.Connections
         }
         public void Remove(Server server)
         {
-            throw new NotImplementedException ("LoadBalancedServerManager does not implement Remove(server)");
+            throw new NotImplementedException ("LoadBalancerServerManager does not implement Remove(server)");
         }
 		#endregion
         #region IEnumerable<Server> Members
 
 		public IEnumerator<Server> GetEnumerator()
 		{
-		    throw new NotImplementedException ("LoadBalancedServerManager does not implement Enumerable(server)");
+		    throw new NotImplementedException ("LoadBalancerServerManager does not implement Enumerable(server)");
 		}
 
 		#endregion
