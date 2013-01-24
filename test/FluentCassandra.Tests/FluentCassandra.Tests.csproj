@@ -61,6 +61,7 @@
     <Compile Include="CassandraQueryTest.cs" />
     <Compile Include="Connections\ConnectionBuilderTests.cs" />
     <Compile Include="Connections\ConnectionProviderTests.cs" />
+    <Compile Include="Connections\LoadBalancerServerManagerTests.cs" />
     <Compile Include="Connections\NormalConnectionProviderTests.cs" />
     <Compile Include="Connections\RoundRobinServerManagerTests.cs" />
     <Compile Include="CqlHelperTest.cs" />

@@ -11,7 +11,7 @@ namespace FluentCassandra.Connections
 		protected ConnectionProvider(IConnectionBuilder builder)
 		{
 			ConnectionBuilder = builder;
-			Servers = new RoundRobinServerManager(builder);
+			Servers = new LoadBalancerServerManager(builder);
 		}
 
 		/// <summary>
