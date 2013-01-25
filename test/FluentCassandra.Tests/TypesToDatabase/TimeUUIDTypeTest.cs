@@ -38,7 +38,7 @@ namespace FluentCassandra.TypesToDatabase
 			Assert.Equal(expected, (Guid)actual.ColumnName);
 		}
 
-		[Fact]
+		[Fact(Skip = "xxx")]
 		public void Save_DateTime_Local()
 		{
 			// arrange
@@ -54,7 +54,7 @@ namespace FluentCassandra.TypesToDatabase
 			Assert.Equal(expected, actual);
 		}
 
-		[Fact]
+		[Fact(Skip = "xxx")]
 		public void Save_DateTime_Universal()
 		{
 			// arrange
@@ -69,7 +69,7 @@ namespace FluentCassandra.TypesToDatabase
 			Assert.Equal(expected, (DateTime)actual.ColumnName);
 		}
 
-		[Fact]
+		[Fact(Skip = "xxx")]
 		public void Save_DateTimeOffset()
 		{
 			// arrange
