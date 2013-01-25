@@ -80,7 +80,6 @@ namespace FluentCassandra.Operations
 			}
 			catch (NotFoundException exc)
 			{
-				Session.MarkCurrentConnectionAsUnhealthy(exc);
 				ExceptionOccuredRetryExecution(new CassandraOperationException(exc), out result);
 			}
 			catch (Exception exc)

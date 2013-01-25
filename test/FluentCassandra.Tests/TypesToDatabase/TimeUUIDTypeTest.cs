@@ -4,7 +4,6 @@ using FluentCassandra.Types;
 
 namespace FluentCassandra.TypesToDatabase
 {
-	
 	public class TimeUUIDTypeTest : IUseFixture<CassandraDatabaseSetupFixture>, IDisposable
 	{
 		private CassandraContext _db;
@@ -38,7 +37,7 @@ namespace FluentCassandra.TypesToDatabase
 			Assert.Equal(expected, (Guid)actual.ColumnName);
 		}
 
-		[Fact(Skip = "xxx")]
+		[Fact]
 		public void Save_DateTime_Local()
 		{
 			// arrange
@@ -54,7 +53,7 @@ namespace FluentCassandra.TypesToDatabase
 			Assert.Equal(expected, actual);
 		}
 
-		[Fact(Skip = "xxx")]
+		[Fact]
 		public void Save_DateTime_Universal()
 		{
 			// arrange
@@ -69,7 +68,7 @@ namespace FluentCassandra.TypesToDatabase
 			Assert.Equal(expected, (DateTime)actual.ColumnName);
 		}
 
-		[Fact(Skip = "xxx")]
+		[Fact]
 		public void Save_DateTimeOffset()
 		{
 			// arrange
