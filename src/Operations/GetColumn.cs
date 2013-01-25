@@ -24,10 +24,10 @@ namespace FluentCassandra.Operations
 			};
 
 			if (SuperColumnName != null)
-				path.SuperColumn = SuperColumnName.GetValue(schema.SuperColumnNameType) as CassandraObject;
+				path.SuperColumn = SuperColumnName.GetValue(schema.SuperColumnNameType);
 
 			if (ColumnName != null)
-				path.Column = ColumnName.GetValue(schema.ColumnNameType) as CassandraObject;
+				path.Column = ColumnName.GetValue(schema.ColumnNameType);
 
 			var output = Session.GetClient().get(
 				Key,
