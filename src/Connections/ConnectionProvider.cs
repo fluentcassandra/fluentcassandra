@@ -11,7 +11,7 @@ namespace FluentCassandra.Connections
 		protected ConnectionProvider(IConnectionBuilder builder)
 		{
 			ConnectionBuilder = builder;
-			Servers = new SingleServerManager(builder);
+			Servers = ServerManagerFactory.Get(builder);
 		}
 
 		/// <summary>

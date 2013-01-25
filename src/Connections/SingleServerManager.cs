@@ -6,12 +6,12 @@ using System.Diagnostics;
 
 namespace FluentCassandra.Connections
 {
-    public class SingleServerManager : IServerManager
-     {
+	public class SingleServerManager : IServerManager
+	{
 		private readonly object _lock = new object();
 		private Server _server;
 
-        public SingleServerManager(IConnectionBuilder builder)
+		public SingleServerManager(IConnectionBuilder builder)
 		{
 			_server = builder.Servers[0]; 
 		}
@@ -20,44 +20,48 @@ namespace FluentCassandra.Connections
 
 		public bool HasNext
 		{
-            get { return true; }
+			get { return true; }
 		}
 
 		public Server Next()
 		{
-            return _server;
-        }
+			return _server;
+		}
 
 		public void ErrorOccurred(Server server, Exception exc = null)
 		{
 			Debug.WriteLineIf(exc != null, exc, "connection");
 		}
 
-        public void Add(Server server)
-        {
-            _server = server;
-        }
-        public void Remove(Server server)
-        {
-            throw new NotImplementedException ("SingleServerManager does not implement Remove(server)");
-        }
-		#endregion
-        #region IEnumerable<Server> Members
-
-		public IEnumerator<Server> GetEnumerator()
+		public void Add(Server server)
 		{
-            throw new NotImplementedException("SingleServerManager does not implement Enumerable(server)");
+			_server = server;
+		}
+
+		public void Remove(Server server)
+		{
+			throw new NotSupportedException("You cannot remove a server since SingleServerManager supports one server. Call the Add method to change the server.");
 		}
 
 		#endregion
-
+		
+		#region IEnumerable<Server> Members
+		
+		public IEnumerator<Server> GetEnumerator()
+		{
+			throw new NotImplementedException("SingleServerManager does not implement Enumerable(server)");
+		}
+		
+		#endregion
+		
 		#region IEnumerable Members
-
+		
 		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
 		{
 			return GetEnumerator();
 		}
-
+		
 		#endregion
+
 	}
 }

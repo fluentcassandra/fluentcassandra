@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2010
+# Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentCassandra", "src\FluentCassandra.csproj", "{EAA32600-3C2A-4B34-B9B2-5764F280FCE3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentCassandra.Sandbox", "test\FluentCassandra.Sandbox\FluentCassandra.Sandbox.csproj", "{DE6B46DE-C37A-49AF-8B9A-B9B6D4F03A55}"

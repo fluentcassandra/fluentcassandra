@@ -39,10 +39,7 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
-  </PropertyGroup>
-  <PropertyGroup>
-    <AssemblyOriginatorKeyFile>fluentCassandra-me.snk</AssemblyOriginatorKeyFile>
+    <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -114,6 +111,7 @@
     <Compile Include="Connections\ConnectionType.cs" />
     <Compile Include="Connections\CqlVersion.cs" />
     <Compile Include="Connections\IConnectionBuilder.cs" />
+    <Compile Include="Connections\ServerManagerFactory.cs" />
     <Compile Include="Connections\SingleServerManager.cs" />
     <Compile Include="Connections\NormalConnectionProvider.cs" />
     <Compile Include="Connections\IConnection.cs" />

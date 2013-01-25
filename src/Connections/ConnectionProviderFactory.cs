@@ -10,12 +10,10 @@ namespace FluentCassandra.Connections
 
 		public static IConnectionProvider Get(IConnectionBuilder connectionBuilder)
 		{
-			lock(Lock)
-			{
+			lock (Lock) {
 				IConnectionProvider provider;
 	
-				if (!Providers.TryGetValue(connectionBuilder.Uuid, out provider))
-				{
+				if (!Providers.TryGetValue(connectionBuilder.Uuid, out provider)) {
 					provider = CreateProvider(connectionBuilder);
 					Providers.Add(connectionBuilder.Uuid, provider);
 				}
@@ -26,10 +24,11 @@ namespace FluentCassandra.Connections
 
 		private static IConnectionProvider CreateProvider(IConnectionBuilder builder)
 		{
-			if (builder.Pooling)
+			if (builder.Pooling) {
 				return new PooledConnectionProvider(builder);
-			else
+			} else {
 				return new NormalConnectionProvider(builder);
+			}
 		}
 	}
 }
