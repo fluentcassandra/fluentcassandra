@@ -310,7 +310,6 @@
     <Compile Include="Types\VoidType.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="fluentCassandra-me.snk" />
     <None Include="FluentCassandra.nuspec">
       <SubType>Designer</SubType>
     </None>
