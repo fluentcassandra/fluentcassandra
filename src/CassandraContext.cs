@@ -323,7 +323,7 @@ namespace FluentCassandra
 		/// 
 		/// </summary>
 		/// <param name="cqlQuery"></param>
-		public IEnumerable<ICqlRow> ExecuteQuery(UTF8Type cqlQuery, string cqlVersion = CqlVersion.ConnectionDefault)
+		public IEnumerable<ICqlRow> ExecuteQuery(UTF8Type cqlQuery, string cqlVersion = null)
 		{
 			var op = new ExecuteCqlQuery(cqlQuery, cqlVersion);
 			return ExecuteOperation(op);
@@ -333,7 +333,7 @@ namespace FluentCassandra
 		/// 
 		/// </summary>
 		/// <param name="cqlQuery"></param>
-		public void TryExecuteNonQuery(UTF8Type cqlQuery, string cqlVersion = CqlVersion.ConnectionDefault)
+		public void TryExecuteNonQuery(UTF8Type cqlQuery, string cqlVersion = null)
 		{
 			try {
 				ExecuteNonQuery(cqlQuery, cqlVersion);
@@ -346,7 +346,7 @@ namespace FluentCassandra
 		/// 
 		/// </summary>
 		/// <param name="cqlQuery"></param>
-		public void ExecuteNonQuery(UTF8Type cqlQuery, string cqlVersion = CqlVersion.ConnectionDefault)
+		public void ExecuteNonQuery(UTF8Type cqlQuery, string cqlVersion = null)
 		{
 			var op = new ExecuteCqlNonQuery(cqlQuery, cqlVersion);
 			ExecuteOperation(op);

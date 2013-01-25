@@ -20,7 +20,7 @@ namespace FluentCassandra.Operations
 			if (isCqlQueryCompressed)
 				query = Helper.ZlibCompress(query);
 
-			if (CqlVersion == FluentCassandra.Connections.CqlVersion.ConnectionDefault)
+			if (CqlVersion == null)
 				CqlVersion = Session.ConnectionBuilder.CqlVersion;
 
 			var client = Session.GetClient();

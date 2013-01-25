@@ -14,7 +14,7 @@ namespace FluentCassandra.Connections
 		/// <param name="host"></param>
 		/// <param name="port"></param>
 		/// <param name="timeout"></param>
-		public ConnectionBuilder(string keyspace, string host, int port = Server.DefaultPort, int connectionTimeout = Server.DefaultTimeout, bool pooling = false, int minPoolSize = 0, int maxPoolSize = 100, int maxRetries = 0, int serverPollingInterval = 30, int connectionLifetime = 0, ConnectionType connectionType = ConnectionType.Framed, int bufferSize = 1024, ConsistencyLevel read = ConsistencyLevel.QUORUM, ConsistencyLevel write = ConsistencyLevel.QUORUM, string cqlVersion = FluentCassandra.Connections.CqlVersion.ConnectionDefault , bool compressCqlQueries = true, string username = null, string password = null)
+		public ConnectionBuilder(string keyspace, string host, int port = Server.DefaultPort, int connectionTimeout = Server.DefaultTimeout, bool pooling = false, int minPoolSize = 0, int maxPoolSize = 100, int maxRetries = 0, int serverPollingInterval = 30, int connectionLifetime = 0, ConnectionType connectionType = ConnectionType.Framed, int bufferSize = 1024, ConsistencyLevel read = ConsistencyLevel.QUORUM, ConsistencyLevel write = ConsistencyLevel.QUORUM, string cqlVersion = FluentCassandra.Connections.CqlVersion.Edge , bool compressCqlQueries = true, string username = null, string password = null)
 		{
 			Keyspace = keyspace;
 			Servers = new List<Server>() { new Server(host, port) };
@@ -37,7 +37,7 @@ namespace FluentCassandra.Connections
 			ConnectionString = GetConnectionString();
 		}
 
-		public ConnectionBuilder(string keyspace, Server server, bool pooling = false, int minPoolSize = 0, int maxPoolSize = 100, int maxRetries = 0, int serverPollingInterval = 30, int connectionLifetime = 0, ConnectionType connectionType = ConnectionType.Framed, int bufferSize = 1024, ConsistencyLevel read = ConsistencyLevel.QUORUM, ConsistencyLevel write = ConsistencyLevel.QUORUM, string cqlVersion = FluentCassandra.Connections.CqlVersion.ConnectionDefault, bool compressCqlQueries = true, string username = null, string password = null)
+		public ConnectionBuilder(string keyspace, Server server, bool pooling = false, int minPoolSize = 0, int maxPoolSize = 100, int maxRetries = 0, int serverPollingInterval = 30, int connectionLifetime = 0, ConnectionType connectionType = ConnectionType.Framed, int bufferSize = 1024, ConsistencyLevel read = ConsistencyLevel.QUORUM, ConsistencyLevel write = ConsistencyLevel.QUORUM, string cqlVersion = FluentCassandra.Connections.CqlVersion.Edge, bool compressCqlQueries = true, string username = null, string password = null)
 		{
 			Keyspace = keyspace;
 			Servers = new List<Server>() { server };
