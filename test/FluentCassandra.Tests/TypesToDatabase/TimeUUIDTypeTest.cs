@@ -44,11 +44,12 @@ namespace FluentCassandra.TypesToDatabase
 			// arrange
 			var family = _db.GetColumnFamily<TimeUUIDType>(FamilyName);
 			var expected = new DateTime(2010, 11, 20, 0, 0, 0, DateTimeKind.Local);
+		    var expectedGuid = GuidGenerator.GenerateTimeBasedGuid(expected);
 
 			// act
-			family.InsertColumn(TestKey, expected, Math.PI);
-			var actualColumn = family.GetColumn(TestKey, expected);
-			var actual = ((DateTime)actualColumn.ColumnName).ToLocalTime();
+			family.InsertColumn(TestKey, expectedGuid, Math.PI);
+			var actualColumn = family.GetColumn(TestKey, expectedGuid);
+			var actual = GuidGenerator.GetLocalDateTime((Guid)actualColumn.ColumnName);
 
 			// assert
 			Assert.Equal(expected, actual);
@@ -60,13 +61,15 @@ namespace FluentCassandra.TypesToDatabase
 			// arrange
 			var family = _db.GetColumnFamily<TimeUUIDType>(FamilyName);
 			var expected = new DateTime(2010, 11, 21, 0, 0, 0, DateTimeKind.Utc);
+		    var expectedGuid = GuidGenerator.GenerateTimeBasedGuid(expected);
 
 			// act
-			family.InsertColumn(TestKey, expected, Math.PI);
-			var actual = family.GetColumn(TestKey, expected);
+			family.InsertColumn(TestKey, expectedGuid, Math.PI);
+			var actualColumn = family.GetColumn(TestKey, expectedGuid);
+		    var actual = GuidGenerator.GetUtcDateTime((Guid) actualColumn.ColumnName);
 
 			// assert
-			Assert.Equal(expected, (DateTime)actual.ColumnName);
+			Assert.Equal(expected, actual);
 		}
 
 		[Fact]
@@ -75,13 +78,15 @@ namespace FluentCassandra.TypesToDatabase
 			// arrange
 			var family = _db.GetColumnFamily<TimeUUIDType>(FamilyName);
 			var expected = new DateTimeOffset(2010, 11, 22, 0, 0, 0, TimeSpan.Zero);
+		    var expectedGuid = GuidGenerator.GenerateTimeBasedGuid(expected);
 
 			// act
-			family.InsertColumn(TestKey, expected, Math.PI);
-			var actual = family.GetColumn(TestKey, expected);
+			family.InsertColumn(TestKey, expectedGuid, Math.PI);
+			var actualColumn = family.GetColumn(TestKey, expectedGuid);
+		    var actual = GuidGenerator.GetDateTimeOffset((Guid)actualColumn.ColumnName);
 
 			// assert
-			Assert.Equal(expected, (DateTimeOffset)actual.ColumnName);
+			Assert.Equal(expected, actual);
 		}
 	}
 }
