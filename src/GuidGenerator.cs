@@ -112,15 +112,8 @@ namespace FluentCassandra
 		/// </summary>
 		public static byte[] GenerateClockSequenceBytes(DateTime dt)
 		{
-			var bytes = BitConverter.GetBytes(dt.Ticks);
-
-			if (bytes.Length == 0)
-				return new byte[] { 0x0, 0x0 };
-
-			if (bytes.Length == 1)
-				return new byte[] { 0x0, bytes[0] };
-
-			return new byte[] { bytes[0], bytes[1] };
+			var utc = dt.ToUniversalTime();
+			return GenerateClockSequenceBytes(utc.Ticks);
 		}
 
 		/// <summary>
@@ -128,7 +121,13 @@ namespace FluentCassandra
 		/// </summary>
 		public static byte[] GenerateClockSequenceBytes(DateTimeOffset dt)
 		{
-			var bytes = BitConverter.GetBytes(dt.Ticks);
+			var utc = dt.ToUniversalTime();
+			return GenerateClockSequenceBytes(utc.Ticks);
+		}
+
+		public static byte[] GenerateClockSequenceBytes(long ticks)
+		{
+			var bytes = BitConverter.GetBytes(ticks);
 
 			if (bytes.Length == 0)
 				return new byte[] { 0x0, 0x0 };
