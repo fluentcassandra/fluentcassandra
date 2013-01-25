@@ -5,14 +5,14 @@ using System.Text;
 
 namespace FluentCassandra.StressTest
 {
-    class Program
+    class Program1
     {
         static void Main(string[] args)
         {
             Console.Error.WriteLine("Stress Test 1");
             try
             {
-                StressTest.StressTest1.Test();
+                //tressTest1.Test();
             }
             catch (Exception ex)
             {
