@@ -45,7 +45,8 @@ namespace FluentCassandra.Linq
 		/// <returns></returns>
 		public IEnumerator<ICqlRow> GetEnumerator()
 		{
-			var result = CqlQueryEvaluator.GetCql(Expression);
+			var cqlVersion = _provider.Context.ConnectionBuilder.CqlVersion;
+			var result = CqlQueryEvaluator.GetCql(Expression, cqlVersion);
 			return Provider.Context.ExecuteQuery(result).GetEnumerator();
 		}
 
@@ -105,7 +106,8 @@ namespace FluentCassandra.Linq
 		/// <returns></returns>
 		public override string ToString()
 		{
-			return CqlQueryEvaluator.GetCql(Expression);
+			var cqlVersion = _provider.Context.ConnectionBuilder.CqlVersion;
+			return CqlQueryEvaluator.GetCql(Expression, cqlVersion);
 		}
 	}
 }

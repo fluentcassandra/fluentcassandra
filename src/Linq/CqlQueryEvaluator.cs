@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using FluentCassandra.Connections;
 using FluentCassandra.Types;
 using FluentCassandra.ObjectSerializer;
 
@@ -13,6 +14,7 @@ namespace FluentCassandra.Linq
 	internal class CqlQueryEvaluator
 	{
 		private string _columnFamily;
+		private string _cqlVersion;
 		private CassandraColumnFamilySchema _schema;
 
 		internal CqlQueryEvaluator()
@@ -26,7 +28,7 @@ namespace FluentCassandra.Linq
 			get
 			{
 				var select = Fields;
-				var from = _columnFamily;
+				var from = QuoteIfNessisary(_columnFamily);
 				var where = WhereCriteria;
 				var orderBy = OrderBy;
 				var limit = LimitCount;
@@ -44,6 +46,14 @@ namespace FluentCassandra.Linq
 
 				return query;
 			}
+		}
+
+		private string QuoteIfNessisary(string s)
+		{
+			if (_cqlVersion == CqlVersion.Cql3)
+				return '"' + s + '"';
+
+			return s;
 		}
 
 		private IList<string> SelectFieldsArray { get; set; }
@@ -185,9 +195,10 @@ namespace FluentCassandra.Linq
 
 		#region Expression Parsing
 
-		public static string GetCql(Expression expression)
+		public static string GetCql(Expression expression, string cqlVersion)
 		{
 			var eval = new CqlQueryEvaluator();
+			eval._cqlVersion = cqlVersion;
 			eval.Evaluate(expression);
 
 			return eval.Query;

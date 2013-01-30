@@ -18,7 +18,7 @@ namespace FluentCassandra.Linq
 			var keyspaceName = ConfigurationManager.AppSettings["TestKeySpace"];
 			var server = new Server(ConfigurationManager.AppSettings["TestServer"]);
 
-			_db = new CassandraContext(keyspace: keyspaceName, server: server);
+			_db = new CassandraContext(new ConnectionBuilder(keyspace: keyspaceName, server: server, cqlVersion: CqlVersion.Cql));
 			_family = _db.GetColumnFamily<AsciiType>("Users");
 		}
 

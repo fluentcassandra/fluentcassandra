@@ -45,14 +45,11 @@ namespace FluentCassandra.Operations
 		{
 			// arrange
 			var insertQuery = @"INSERT INTO ""Users"" (""Id"", ""Name"", ""Email"", ""Age"") VALUES (23, '" + new String('X', 200) + "', 'test@test.com', 43)";
-
-			// act
 			_db.ExecuteNonQuery(insertQuery);
 
+			// act
 			var table = _db.GetColumnFamily("Users");
-
 			var q = from row in table select row;
-
 			var actual = q.ToList();
 
 			// assert
@@ -60,21 +57,18 @@ namespace FluentCassandra.Operations
 		}
 
 		/// <summary>
-		/// Count() is not woriking 
+		/// Count() is not working 
 		/// </summary>
 		[Fact]
 		public void TestLinq_CountDoNotWork()
 		{
 			// arrange
 			var insertQuery = @"INSERT INTO ""Users"" (""Id"", ""Name"", ""Email"", ""Age"") VALUES (23, '" + new String('X', 200) + "', 'test@test.com', 43)";
-
-			// act
 			_db.ExecuteNonQuery(insertQuery);
 
+			// act
 			var table = _db.GetColumnFamily("Users");
-
 			var q = from row in table select row;
-
 			var actualCount = q.Count();
 
 			// assert

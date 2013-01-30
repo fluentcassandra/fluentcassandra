@@ -30,40 +30,38 @@ namespace FluentCassandra.Bugs
 			// create column family using API
 			_db.TryDropColumnFamily("supercolumns");
 
-         keyspace.TryCreateColumnFamily(new CassandraColumnFamilySchema
-         {
-            FamilyName = "supercolumns",
-            FamilyType = ColumnType.Super,
-            KeyValueType = CassandraType.UTF8Type,
-            SuperColumnNameType = CassandraType.TimeUUIDType,
-            ColumnNameType = CassandraType.UTF8Type,
-            DefaultColumnValueType = CassandraType.UTF8Type
-         });
+			keyspace.TryCreateColumnFamily(new CassandraColumnFamilySchema {
+				FamilyName = "supercolumns",
+				FamilyType = ColumnType.Super,
+				KeyValueType = CassandraType.UTF8Type,
+				SuperColumnNameType = CassandraType.TimeUUIDType,
+				ColumnNameType = CassandraType.UTF8Type,
+				DefaultColumnValueType = CassandraType.UTF8Type
+			});
 
-		   InsertData("testKey");
+			InsertData("testKey");
 
 			// act
-		   var actual = _db.GetSuperColumnFamily("supercolumns").Get().TakeKeys(5);
+			var actual = _db.GetSuperColumnFamily("supercolumns").Get().TakeKeys(5);
 
 			// assert
 			Assert.NotNull(actual);
 			Assert.Equal(1, actual.Count());
-		   Assert.Equal("testKey", actual.First().Key.ToString());
+			Assert.Equal("testKey", actual.First().Key.ToString());
 		}
 
 		public void InsertData(string key)
 		{
 			var productFamily = _db.GetSuperColumnFamily("supercolumns");
 
-         var post = productFamily.CreateRecord(key);
-         _db.Attach(post);
-          
-         for (int i = 0; i < 4; i++)
-		   {
-            dynamic d = post.CreateSuperColumn(GuidGenerator.GenerateTimeBasedGuid(DateTimeOffset.Now.Subtract(TimeSpan.FromSeconds(i))));
-		      d.columnone = Guid.NewGuid().ToString();
-		      d.columntwo = Guid.NewGuid().ToString();
-		   }
+			var post = productFamily.CreateRecord(key);
+			_db.Attach(post);
+		  
+			for (int i = 0; i < 4; i++) {
+				dynamic d = post.CreateSuperColumn(GuidGenerator.GenerateTimeBasedGuid(DateTimeOffset.Now.Subtract(TimeSpan.FromSeconds(i))));
+				d.columnone = Guid.NewGuid().ToString();
+				d.columntwo = Guid.NewGuid().ToString();
+			}
 
 			_db.SaveChanges();
 		}
