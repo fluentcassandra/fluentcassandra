@@ -114,7 +114,7 @@ namespace FluentCassandra.Linq
 			string newCriteria = VisitWhereExpression(exp);
 
 			if (!String.IsNullOrEmpty(WhereCriteria))
-				WhereCriteria = "(" + WhereCriteria + " AND " + newCriteria + ")";
+				WhereCriteria = WhereCriteria + " AND " + newCriteria;
 			else
 				WhereCriteria = newCriteria;
 		}
@@ -167,6 +167,9 @@ namespace FluentCassandra.Linq
 				case ExpressionType.Call:
 
 					var field = SimplifyExpression(((MethodCallExpression)exp).Arguments[0]);
+
+					if (field.NodeType == ExpressionType.MemberAccess)
+						return (string)Expression.Lambda(field).Compile().DynamicInvoke();
 
 					if (field.NodeType != ExpressionType.Constant)
 						throw new NotSupportedException(exp.NodeType.ToString() + " is not supported.");

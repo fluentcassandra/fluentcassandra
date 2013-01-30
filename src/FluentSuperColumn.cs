@@ -232,7 +232,9 @@ namespace FluentCassandra
 		{
 			result = GetColumnValue(name);
 
-			return !(result is NullType);
+			// return !(result is NullType);
+			// value always is valid, a NullType is returned if it isn't found
+			return true;
 		}
 
 		/// <summary>
