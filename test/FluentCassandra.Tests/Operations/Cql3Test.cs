@@ -28,13 +28,13 @@ namespace FluentCassandra.Operations
 		public void TestOverwritingOfUsersOnPrimaryKeys()
 		{
 			// arrange
-			var insertQuery = @"INSERT INTO users (Id, Name, Email, Age) VALUES (23, '" + new String('X', 200) + "', 'test@test.com', 43)";
-			var insertQuery2 = @"INSERT INTO users (Id, Name, Email, Age) VALUES (23, '" + new String('Y', 200) + "', 'test@test.com', 53)";
+			var insertQuery = @"INSERT INTO ""Users"" (""Id"", ""Name"", ""Email"", ""Age"") VALUES (23, '" + new String('X', 200) + "', 'test@test.com', 43)";
+			var insertQuery2 = @"INSERT INTO ""Users"" (""Id"", ""Name"", ""Email"", ""Age"") VALUES (23, '" + new String('Y', 200) + "', 'test@test.com', 53)";
 
 			// act
 			_db.ExecuteNonQuery(insertQuery);
 			_db.ExecuteNonQuery(insertQuery2);
-			var actual = _db.ExecuteQuery("SELECT * FROM users");
+			var actual = _db.ExecuteQuery("SELECT * FROM \"Users\"");
 
 			// assert
 			Assert.Equal(6, actual.Count());
@@ -44,12 +44,12 @@ namespace FluentCassandra.Operations
 		public void TestLinq()
 		{
 			// arrange
-			var insertQuery = @"INSERT INTO users (Id, Name, Email, Age) VALUES (23, '" + new String('X', 200) + "', 'test@test.com', 43)";
+			var insertQuery = @"INSERT INTO ""Users"" (""Id"", ""Name"", ""Email"", ""Age"") VALUES (23, '" + new String('X', 200) + "', 'test@test.com', 43)";
 
 			// act
 			_db.ExecuteNonQuery(insertQuery);
 
-			var table = _db.GetColumnFamily("users");
+			var table = _db.GetColumnFamily("Users");
 
 			var q = from row in table select row;
 
@@ -66,12 +66,12 @@ namespace FluentCassandra.Operations
 		public void TestLinq_CountDoNotWork()
 		{
 			// arrange
-			var insertQuery = @"INSERT INTO users (Id, Name, Email, Age) VALUES (23, '" + new String('X', 200) + "', 'test@test.com', 43)";
+			var insertQuery = @"INSERT INTO ""Users"" (""Id"", ""Name"", ""Email"", ""Age"") VALUES (23, '" + new String('X', 200) + "', 'test@test.com', 43)";
 
 			// act
 			_db.ExecuteNonQuery(insertQuery);
 
-			var table = _db.GetColumnFamily("users");
+			var table = _db.GetColumnFamily("Users");
 
 			var q = from row in table select row;
 
