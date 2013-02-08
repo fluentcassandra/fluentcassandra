@@ -131,7 +131,24 @@ namespace FluentCassandra.Types
 
 			_compositeTypes = new List<CassandraType>();
 			foreach (var p in parts)
-				_compositeTypes.Add(Parse(p));
+			{
+                int reversedStart = p.IndexOf('(');
+
+                // check for reversed type
+                if (reversedStart == -1)
+                {
+                    _compositeTypes.Add(Parse(p));
+                }
+                else
+                {
+                    var part1 = p.Substring(0, reversedStart);
+
+                    if (Parse(part1) == typeof(ReversedType))
+                        _compositeTypes.Add(new CassandraType(p));
+                    else
+                        throw new CassandraException("Type '" + part1 + "' not found.");
+                }
+            }
 		}
 
 		private void ParseDynamicCompositeType(string part)
