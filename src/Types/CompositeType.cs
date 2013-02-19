@@ -79,7 +79,7 @@ namespace FluentCassandra.Types
 		public override void SetValue(object obj)
 		{
 			if (obj != null && obj.GetType().GetInterfaces().Contains(typeof(IEnumerable<CassandraObject>)))
-				ComponentTypeHints = ((IEnumerable<CassandraObject>)obj).Select(t => new CassandraType(t.GetType().Name)).ToList();
+				ComponentTypeHints = ((IEnumerable<CassandraObject>)obj).Select(t => t.GetCassandraType()).ToList();
 
 			_value = Converter.ConvertFrom(obj);
 		}

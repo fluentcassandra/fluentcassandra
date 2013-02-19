@@ -58,6 +58,20 @@ namespace FluentCassandra.Types
 		}
 		
 		[Fact]
+		public void Parse_Reversed_Type_With_Complex_Value()
+		{
+			// arrange
+			Type expected = typeof(CompositeType);
+			string cassandraString = "org.apache.cassandra.db.marshal.ReversedType(org.apache.cassandra.db.marshal.CompositeType(org.apache.cassandra.db.marshal.LongType,org.apache.cassandra.db.marshal.AsciiType))";
+
+			// act
+			Type actual = new CassandraType(cassandraString).FluentType;
+
+			// assert
+			Assert.Equal(expected, actual);
+		}
+
+		[Fact]
 		public void Parse_CompositeType_UnknownInnerType()
 		{
 			// arrange
