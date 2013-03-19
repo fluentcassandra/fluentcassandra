@@ -131,7 +131,26 @@ namespace FluentCassandra.Thrift.Transport
 				InitSocket();
 			}
 
-			client.Connect(host, port);
+            var connectTimeout = timeout;
+            if(connectTimeout == 0)
+            {
+                connectTimeout = -1;
+            }
+            else if(connectTimeout > 0 && connectTimeout < 500)
+            {
+                connectTimeout = 500;
+            }
+
+            var ar = client.BeginConnect(host, port, null, null);
+            if(ar.AsyncWaitHandle.WaitOne(connectTimeout))
+            {
+                client.EndConnect(ar);
+            }
+            else
+            {
+                client.Close();
+                throw new TimeoutException();
+            }
 			inputStream = client.GetStream();
 			outputStream = client.GetStream();
 		}
