@@ -104,6 +104,7 @@
     <Compile Include="CassandraSuperColumnFamily.cs" />
     <Compile Include="CassandraTokenRange.cs" />
     <Compile Include="Connections\CassandraConnectionException.cs" />
+    <Compile Include="Connections\TSocketWithConnectTimeout.cs" />
     <Compile Include="Connections\Connection.cs" />
     <Compile Include="Connections\ConnectionBuilder.cs" />
     <Compile Include="Connections\ConnectionProvider.cs" />
