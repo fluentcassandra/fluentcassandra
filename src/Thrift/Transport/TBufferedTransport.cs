@@ -20,9 +20,9 @@
 using System;
 using System.IO;
 
-namespace Thrift.Transport
+namespace FluentCassandra.Thrift.Transport
 {
-	public class TBufferedTransport : TTransport
+  public class TBufferedTransport : TTransport, IDisposable
 	{
 		private BufferedStream inputBuffer;
 		private BufferedStream outputBuffer;
@@ -96,5 +96,25 @@ namespace Thrift.Transport
 		{
 			outputBuffer.Flush();
 		}
-	}
+
+    #region " IDisposable Support "
+    private bool _IsDisposed;
+
+    // IDisposable
+    protected override void Dispose(bool disposing)
+    {
+      if (!_IsDisposed)
+      {
+        if (disposing)
+        {
+          if (inputBuffer != null)
+            inputBuffer.Dispose();
+          if (outputBuffer != null)
+            outputBuffer.Dispose();
+        }
+      }
+      _IsDisposed = true;
+    }
+    #endregion
+  }
 }

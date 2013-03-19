@@ -5,6 +5,7 @@ using FluentCassandra.Types;
 
 namespace FluentCassandra.Operations
 {
+	[Obsolete("use get_range_slices instead with range.row_filter specified", error: false)]
 	public class GetColumnFamilyIndexedSlices : QueryableColumnFamilyOperation<FluentColumnFamily>
 	{
 		/*
@@ -15,15 +16,12 @@ namespace FluentCassandra.Operations
 
 		public override IEnumerable<FluentColumnFamily> Execute()
 		{
-			return GetFamilies(ColumnFamily);
-		}
-
-		private IEnumerable<FluentColumnFamily> GetFamilies(BaseCassandraColumnFamily columnFamily)
-		{
 			var schema = ColumnFamily.GetSchema();
+			var list = new List<FluentColumnFamily>();
 
-			var parent = new CassandraColumnParent {
-				ColumnFamily = columnFamily.FamilyName
+			var parent = new CassandraColumnParent
+			{
+				ColumnFamily = ColumnFamily.FamilyName
 			};
 
 			SlicePredicate = Helper.SetSchemaForSlicePredicate(SlicePredicate, schema);
@@ -39,14 +37,17 @@ namespace FluentCassandra.Operations
 			{
 				var key = CassandraObject.GetCassandraObjectFromDatabaseByteArray(result.Key, schema.KeyValueType);
 
-				var r = new FluentColumnFamily(key, columnFamily.FamilyName, columnFamily.GetSchema(), result.Columns.Select(col => {
+				var r = new FluentColumnFamily(key, ColumnFamily.FamilyName, schema, result.Columns.Select(col =>
+				{
 					return Helper.ConvertColumnToFluentColumn(col.Column, schema);
 				}));
-				columnFamily.Context.Attach(r);
+				ColumnFamily.Context.Attach(r);
 				r.MutationTracker.Clear();
 
-				yield return r;
+				list.Add(r);
 			}
+
+			return list;
 		}
 
 		public GetColumnFamilyIndexedSlices(CassandraIndexClause indexClause, CassandraSlicePredicate columnSlicePredicate)

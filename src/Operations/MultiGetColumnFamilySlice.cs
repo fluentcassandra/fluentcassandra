@@ -16,6 +16,7 @@ namespace FluentCassandra.Operations
 		public override IEnumerable<FluentColumnFamily> Execute()
 		{
 			var schema = ColumnFamily.GetSchema();
+            var list = new List<FluentColumnFamily>();
 
 			var parent = new CassandraColumnParent {
 				ColumnFamily = ColumnFamily.FamilyName
@@ -35,13 +36,17 @@ namespace FluentCassandra.Operations
 				var key = CassandraObject.GetCassandraObjectFromDatabaseByteArray(result.Key, schema.KeyValueType);
 
 				var r = new FluentColumnFamily(key, ColumnFamily.FamilyName, schema, result.Value.Select(col => {
-					return Helper.ConvertColumnToFluentColumn(col.Column, schema);
+                    if(col.Counter_column != null)
+					    return Helper.ConvertColumnToFluentCounterColumn(col.Counter_column, schema);
+                    return Helper.ConvertColumnToFluentColumn(col.Column, schema);
 				}));
 				ColumnFamily.Context.Attach(r);
 				r.MutationTracker.Clear();
 
-				yield return r;
+                list.Add(r);
 			}
+
+            return list;
 		}
 
 		public MultiGetColumnFamilySlice(IEnumerable<CassandraObject> keys, CassandraSlicePredicate columnSlicePredicate)

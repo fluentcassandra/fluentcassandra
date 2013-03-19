@@ -23,7 +23,7 @@
 
 using System;
 
-namespace Thrift.Protocol
+namespace FluentCassandra.Thrift.Protocol
 {
 	public static class TProtocolUtil
 	{

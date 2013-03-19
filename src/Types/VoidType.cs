@@ -7,39 +7,36 @@ namespace FluentCassandra.Types
 	/// </summary>
 	internal class VoidType : CassandraObject
 	{
+		private VoidType() { }
+
 		public override void SetValue(object obj)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		protected override object GetValueInternal(Type type)
 		{
-			throw new NotImplementedException();
-		}
-
-		public override string ToString()
-		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		protected override TypeCode TypeCode
 		{
-			get { throw new NotImplementedException(); }
+			get { throw new NotSupportedException(); }
 		}
 
 		public override void SetValueFromBigEndian(byte[] value)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		public override byte[] ToBigEndian()
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		public override object GetValue()
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 	}
 }

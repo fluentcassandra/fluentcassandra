@@ -4,7 +4,6 @@ using FluentCassandra.Types;
 
 namespace FluentCassandra.TypesToDatabase
 {
-	
 	public class TimeUUIDTypeTest : IUseFixture<CassandraDatabaseSetupFixture>, IDisposable
 	{
 		private CassandraContext _db;
@@ -28,7 +27,7 @@ namespace FluentCassandra.TypesToDatabase
 		{
 			// arrange
 			var family = _db.GetColumnFamily<TimeUUIDType>(FamilyName);
-			Guid expected = new Guid("38400000-8cf0-11bd-b23e-10b96e4ef00d");
+			var expected = new Guid("38400000-8cf0-11bd-b23e-10b96e4ef00d");
 
 			// act
 			family.InsertColumn(TestKey, expected, Math.PI);

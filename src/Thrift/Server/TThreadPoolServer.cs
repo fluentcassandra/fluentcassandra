@@ -23,10 +23,10 @@
 
 using System;
 using System.Threading;
-using Thrift.Protocol;
-using Thrift.Transport;
+using FluentCassandra.Thrift.Protocol;
+using FluentCassandra.Thrift.Transport;
 
-namespace Thrift.Server
+namespace FluentCassandra.Thrift.Server
 {
 	/// <summary>
 	/// Server that uses C# built-in ThreadPool to spawn threads when handling requests
@@ -75,15 +75,19 @@ namespace Thrift.Server
 			:base(processor, serverTransport, inputTransportFactory, outputTransportFactory,
 				  inputProtocolFactory, outputProtocolFactory, logDel)
 		{
-			if (!ThreadPool.SetMinThreads(minThreadPoolThreads, minThreadPoolThreads))
-			{
-				throw new Exception("Error: could not SetMinThreads in ThreadPool");
-			}
-			if (!ThreadPool.SetMaxThreads(maxThreadPoolThreads, maxThreadPoolThreads))
-			{
-				throw new Exception("Error: could not SetMaxThreads in ThreadPool");
+      lock (typeof(TThreadPoolServer))
+      {
+        if (!ThreadPool.SetMinThreads(minThreadPoolThreads, minThreadPoolThreads))
+        {
+          throw new Exception("Error: could not SetMinThreads in ThreadPool");
+        }
+        if (!ThreadPool.SetMaxThreads(maxThreadPoolThreads, maxThreadPoolThreads))
+        {
+          throw new Exception("Error: could not SetMaxThreads in ThreadPool");
+        }
 			}
 		}
+
 
 		/// <summary>
 		/// Use new ThreadPool thread for each new client connection

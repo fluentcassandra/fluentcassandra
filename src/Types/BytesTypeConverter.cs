@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Net;
 using System.Numerics;
 using System.Text;
 
@@ -102,6 +103,9 @@ namespace FluentCassandra.Types
 			if (value is Guid)
 				return ((Guid)value).ToByteArray();
 
+			if (value is IPAddress)
+				return ((IPAddress)value).GetAddressBytes();
+
 			if (value is byte[])
 				return (byte[])value;
 
@@ -176,6 +180,9 @@ namespace FluentCassandra.Types
 		{
 			if (destinationType == typeof(Guid))
 				return new Guid(value);
+
+			if (destinationType == typeof(IPAddress))
+				return new IPAddress(value);
 
 			if (destinationType == typeof(byte[]))
 				return value;

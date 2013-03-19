@@ -121,7 +121,7 @@ namespace FluentCassandra
 
 			source = source.Family.CreateCassandraSlicePredicateQuery<TResult>(Expression.Call(null, ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(new Type[] { typeof(TResult) }), new Expression[] { source.Expression }));
 			var op = (ColumnCount)source.BuildQueryableOperation();
-			return source.Family.Context.ExecuteOperation(op);
+			return source.Family.ExecuteOperation(op);
 		}
 
 		public static IDictionary<CassandraObject, int> CountColumnsByKey<TResult>(this CassandraSlicePredicateQuery<TResult> source)
@@ -131,7 +131,7 @@ namespace FluentCassandra
 
 			source = source.Family.CreateCassandraSlicePredicateQuery<TResult>(Expression.Call(null, ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(new Type[] { typeof(TResult) }), new Expression[] { source.Expression }));
 			var op = (MultiGetColumnCount)source.BuildQueryableOperation();
-			return source.Family.Context.ExecuteOperation(op);
+			return source.Family.ExecuteOperation(op);
 		}
 
 		public static IEnumerable<TResult> Execute<TResult>(this CassandraSlicePredicateQuery<TResult> source)

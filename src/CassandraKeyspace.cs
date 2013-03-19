@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Apache.Cassandra;
+using FluentCassandra.Apache.Cassandra;
 using FluentCassandra.Operations;
 using FluentCassandra.Types;
 

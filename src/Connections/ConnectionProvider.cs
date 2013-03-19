@@ -11,7 +11,7 @@ namespace FluentCassandra.Connections
 		protected ConnectionProvider(IConnectionBuilder builder)
 		{
 			ConnectionBuilder = builder;
-			Servers = new RoundRobinServerManager(builder);
+			Servers = ServerManagerFactory.Get(builder);
 		}
 
 		/// <summary>
@@ -41,6 +41,8 @@ namespace FluentCassandra.Connections
 
 			return conn;
 		}
+
+		public abstract void ErrorOccurred(IConnection connection, Exception exc = null);
 
 		/// <summary>
 		/// 

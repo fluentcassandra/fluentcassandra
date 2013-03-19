@@ -13,8 +13,11 @@ namespace FluentCassandra
 		public CassandraContext DB;
 
 		public CassandraColumnFamily<AsciiType> Family;
+	   
 		public CassandraSuperColumnFamily<AsciiType, AsciiType> SuperFamily;
+
 		public CassandraColumnFamily UserFamily;
+		public CassandraColumnFamily CounterFamily;
 
 		public User[] Users = new[] {
 					new User { Id = 1, Name = "Darren Gemmell", Email = "darren@somewhere.com", Age = 32 },
@@ -39,11 +42,11 @@ namespace FluentCassandra
 		public const string TestSuperName = "SubTest1";
 
 		public static readonly string Keyspace = ConfigurationManager.AppSettings["TestKeySpace"];
-        public static readonly Server Server = new Server(ConfigurationManager.AppSettings["TestServer"]);
-		
-		public CassandraDatabaseSetup(bool reset = false)
+		public static readonly Server Server = new Server(ConfigurationManager.AppSettings["TestServer"]);
+
+		public CassandraDatabaseSetup(bool reset = false, string cqlVersion = CqlVersion.Edge)
 		{
-			ConnectionBuilder = new ConnectionBuilder(keyspace: Keyspace, server: Server);
+			ConnectionBuilder = new ConnectionBuilder(keyspace: Keyspace, server: Server, cqlVersion: cqlVersion);
 			DB = new CassandraContext(ConnectionBuilder);
 			
 			var exists = DB.KeyspaceExists(Keyspace);
@@ -51,6 +54,7 @@ namespace FluentCassandra
 			Family = DB.GetColumnFamily<AsciiType>("Standard");
 			SuperFamily = DB.GetColumnFamily<AsciiType, AsciiType>("Super");
 			UserFamily = DB.GetColumnFamily("Users");
+			CounterFamily = DB.GetColumnFamily("Counters");
 
 			if (exists && !reset)
 				return;
@@ -82,6 +86,15 @@ namespace FluentCassandra
 				keyspace.TryCreateColumnFamily<TimeUUIDType>("StandardTimeUUIDType");
 				keyspace.TryCreateColumnFamily<UTF8Type>("StandardUTF8Type");
 				keyspace.TryCreateColumnFamily<UUIDType>("StandardUUIDType");
+				keyspace.TryCreateColumnFamily(new CassandraColumnFamilySchema() {
+					FamilyName = "Counters",
+					ColumnNameType = CassandraType.AsciiType,
+					DefaultColumnValueType = CassandraType.CounterColumnType
+				});
+				keyspace.TryCreateColumnFamily(new CassandraColumnFamilySchema {
+					FamilyName = "StandardDecimalType",
+					ColumnNameType = CassandraType.DecimalType
+				});
 				keyspace.TryCreateColumnFamily(new CassandraColumnFamilySchema {
 					FamilyName = "StandardCompositeType",
 					ColumnNameType = CassandraType.CompositeType(new[] { CassandraType.AsciiType, CassandraType.DoubleType })
@@ -97,17 +110,19 @@ CREATE COLUMNFAMILY Users (
 	Name ascii,
 	Email ascii,
 	Age int
-);");
-				db.ExecuteNonQuery(@"CREATE INDEX User_Age ON Users (Age);");
+);", CqlVersion.Cql);
+				db.ExecuteNonQuery(@"CREATE INDEX User_Age ON Users (Age);", CqlVersion.Cql);
 				db.Keyspace.ClearCachedKeyspaceSchema();
 
 				var family = db.GetColumnFamily<AsciiType>("Standard");
 				var superFamily = db.GetColumnFamily<AsciiType, AsciiType>("Super");
 				var userFamily = db.GetColumnFamily("Users");
+				var counterFamily = db.GetColumnFamily("Counters");
 
 				ResetFamily(family);
 				ResetSuperFamily(superFamily);
 				ResetUsersFamily(userFamily);
+				ResetCounterColumnFamily(counterFamily);
 			}
 		}
 
@@ -159,6 +174,21 @@ CREATE COLUMNFAMILY Users (
 			superFamily.InsertColumn(TestKey2, TestSuperName, "Test1", Math.PI);
 			superFamily.InsertColumn(TestKey2, TestSuperName, "Test2", Math.PI);
 			superFamily.InsertColumn(TestKey2, TestSuperName, "Test3", Math.PI);
+		}
+
+		public void ResetCounterColumnFamily(CassandraColumnFamily counterFamily = null)
+		{
+			counterFamily = counterFamily ?? CounterFamily;
+
+			counterFamily.RemoveAllRows();
+
+			counterFamily.InsertCounterColumn(TestKey1, "Test1", 1);
+			counterFamily.InsertCounterColumn(TestKey1, "Test2", 2);
+			counterFamily.InsertCounterColumn(TestKey1, "Test3", 3);
+
+			counterFamily.InsertCounterColumn(TestKey2, "Test1", 2);
+			counterFamily.InsertCounterColumn(TestKey2, "Test2", 4);
+			counterFamily.InsertCounterColumn(TestKey2, "Test3", 6);
 		}
 	}
 }

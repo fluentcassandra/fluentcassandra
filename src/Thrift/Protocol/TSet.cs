@@ -25,7 +25,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Thrift.Protocol
+namespace FluentCassandra.Thrift.Protocol
 {
 	public struct TSet
 	{
@@ -37,6 +37,11 @@ namespace Thrift.Protocol
 		{
 			this.elementType = elementType;
 			this.count = count;
+		}
+
+		public TSet(TList list)
+			: this(list.ElementType, list.Count)
+		{
 		}
 
 		public TType ElementType

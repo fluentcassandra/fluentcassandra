@@ -18,14 +18,16 @@ namespace FluentCassandra
 
 		public virtual void ColumnMutated(MutationType type, IFluentBaseColumn column)
 		{
-			if (ParentRecord is FluentSuperColumn)
-			{
+			if (ParentRecord is FluentSuperColumn) {
 				var superColumn = (FluentSuperColumn)ParentRecord;
-				var superColumnFamilyMutationTracker = superColumn.Family.MutationTracker;
 
-				// check to see if there is a mutation for this column already, so we don't create duplicate mutations
-				if (!superColumnFamilyMutationTracker.GetMutations().Any(x => x.Column.ColumnName == superColumn.ColumnName))
-					superColumnFamilyMutationTracker.ColumnMutated(MutationType.Changed, superColumn);
+				if (superColumn.Family != null) {
+					var superColumnFamilyMutationTracker = superColumn.Family.MutationTracker;
+
+					// check to see if there is a mutation for this column already, so we don't create duplicate mutations
+					if (!superColumnFamilyMutationTracker.GetMutations().Any(x => x.Column.ColumnName == superColumn.ColumnName))
+						superColumnFamilyMutationTracker.ColumnMutated(MutationType.Changed, superColumn);
+				}
 			}
 
 			_mutation.Add(new FluentMutation {

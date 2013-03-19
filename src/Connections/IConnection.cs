@@ -1,5 +1,5 @@
 ﻿using System;
-using Apache.Cassandra;
+using FluentCassandra.Apache.Cassandra;
 
 namespace FluentCassandra.Connections
 {
@@ -12,6 +12,8 @@ namespace FluentCassandra.Connections
 		Cassandra.Client Client { get; }
 
 		void SetKeyspace(string keyspace);
+
+		[Obsolete("This will be retired soon, please pass the CQL version through the Execute method.", error: false)]
 		void SetCqlVersion(string cqlVersion);
 
 		void Open();

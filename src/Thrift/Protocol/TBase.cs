@@ -17,7 +17,7 @@
  * under the License.
  */
 
-namespace Thrift.Protocol
+namespace FluentCassandra.Thrift.Protocol
 {
 	public interface TBase
 	{

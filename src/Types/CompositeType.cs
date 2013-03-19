@@ -79,7 +79,7 @@ namespace FluentCassandra.Types
 		public override void SetValue(object obj)
 		{
 			if (obj != null && obj.GetType().GetInterfaces().Contains(typeof(IEnumerable<CassandraObject>)))
-				ComponentTypeHints = ((IEnumerable<CassandraObject>)obj).Select(t => new CassandraType(t.GetType().Name)).ToList();
+				ComponentTypeHints = ((IEnumerable<CassandraObject>)obj).Select(t => t.GetCassandraType()).ToList();
 
 			_value = Converter.ConvertFrom(obj);
 		}
@@ -97,11 +97,6 @@ namespace FluentCassandra.Types
 		protected override TypeCode TypeCode
 		{
 			get { return TypeCode.Object; }
-		}
-
-		public override string ToString()
-		{
-			return GetValue<string>();
 		}
 
 		#endregion
@@ -140,7 +135,13 @@ namespace FluentCassandra.Types
 
 		public override int GetHashCode()
 		{
-			return _value.GetHashCode();
+			unchecked {
+				int hash = 17;
+				foreach (var keyPart in _value) {
+					hash = hash * 23 + keyPart.GetHashCode();
+				}
+				return hash;
+			}
 		}
 
 		#endregion

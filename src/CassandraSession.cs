@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Apache.Cassandra;
+using FluentCassandra.Apache.Cassandra;
 using FluentCassandra.Connections;
 using FluentCassandra.Operations;
 
@@ -94,7 +94,7 @@ namespace FluentCassandra
 		/// </summary>
 		/// <param name="setKeyspace"></param>
 		/// <returns></returns>
-		internal CassandraClientWrapper GetClient(bool setKeyspace = true, bool? setCqlVersion = null)
+		internal CassandraClientWrapper GetClient(bool setKeyspace = true, bool? setCqlVersion = null, bool setLogin = true)
 		{
 			var builder = ConnectionProvider.ConnectionBuilder;
 			setCqlVersion = setCqlVersion ?? (builder.CqlVersion != null);
@@ -111,10 +111,16 @@ namespace FluentCassandra
 			if (setCqlVersion.Value)
 				_connection.SetCqlVersion(builder.CqlVersion);
 
-			if (!String.IsNullOrWhiteSpace(builder.Username) && !String.IsNullOrWhiteSpace(builder.Password))
+			if (setLogin && !String.IsNullOrWhiteSpace(builder.Username) && !String.IsNullOrWhiteSpace(builder.Password))
 				Login(builder.Username, builder.Password);
 
 			return new CassandraClientWrapper(_connection.Client);
+		}
+
+		internal void MarkCurrentConnectionAsUnhealthy(Exception exc)
+		{
+			ConnectionProvider.ErrorOccurred(_connection, exc);
+			_connection = null;
 		}
 
 		/// <summary>
@@ -143,7 +149,7 @@ namespace FluentCassandra
 
 			try
 			{
-				GetClient().login(auth);
+				GetClient(setLogin: false).login(auth);
 				IsAuthenticated = true;
 			}
 			catch (Exception exc)
@@ -154,12 +160,12 @@ namespace FluentCassandra
 		}
 
 		/// <summary>
-		/// The last error that occured during the execution of an operation.
+		/// The last error that occurred during the execution of an operation.
 		/// </summary>
 		public CassandraException LastError { get; private set; }
 
 		/// <summary>
-		/// Indicates if errors should be thrown when occuring on opperation.
+		/// Indicates if errors should be thrown when occurring on operation.
 		/// </summary>
 		public bool ThrowErrors { get; set; }
 
@@ -221,7 +227,7 @@ namespace FluentCassandra
 		/// </param>
 		protected virtual void Dispose(bool disposing)
 		{
-			if (!WasDisposed && disposing && _connection != null) 
+			if (!WasDisposed && disposing && _connection != null)
 				ConnectionProvider.Close(_connection);
 
 			WasDisposed = true;

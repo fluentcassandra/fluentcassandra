@@ -10,7 +10,7 @@ namespace FluentCassandra.Types
 		[Fact]
 		public void CassandraType_Cast()
 		{
-			// arranage
+			// arrange
 			byte[] expected = new byte[] { 0, 32, 0, 16, 0, 0, 64, 128 };
 			BytesType actualType = expected;
 

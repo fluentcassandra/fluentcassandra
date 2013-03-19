@@ -41,10 +41,6 @@
   <PropertyGroup>
     <SignAssembly>false</SignAssembly>
   </PropertyGroup>
-  <PropertyGroup>
-    <AssemblyOriginatorKeyFile>
-    </AssemblyOriginatorKeyFile>
-  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core">
@@ -59,6 +55,7 @@
     <Compile Include="Apache\Cassandra\AuthorizationException.cs" />
     <Compile Include="Apache\Cassandra\Cassandra.cs" />
     <Compile Include="Apache\Cassandra\CfDef.cs" />
+    <Compile Include="Apache\Cassandra\CfSplit.cs" />
     <Compile Include="Apache\Cassandra\Column.cs" />
     <Compile Include="Apache\Cassandra\ColumnDef.cs" />
     <Compile Include="Apache\Cassandra\ColumnOrSuperColumn.cs" />
@@ -114,6 +111,8 @@
     <Compile Include="Connections\ConnectionType.cs" />
     <Compile Include="Connections\CqlVersion.cs" />
     <Compile Include="Connections\IConnectionBuilder.cs" />
+    <Compile Include="Connections\ServerManagerFactory.cs" />
+    <Compile Include="Connections\SingleServerManager.cs" />
     <Compile Include="Connections\NormalConnectionProvider.cs" />
     <Compile Include="Connections\IConnection.cs" />
     <Compile Include="Connections\IConnectionProvider.cs" />
@@ -214,6 +213,7 @@
     <Compile Include="Operations\QueryableColumnFamilyOperation.cs" />
     <Compile Include="Operations\CassandraRangeSlicePredicate.cs" />
     <Compile Include="Operations\Remove.cs" />
+    <Compile Include="Operations\RpcApiVersion.cs" />
     <Compile Include="Operations\SimpleOperation.cs" />
     <Compile Include="Operations\Void.cs">
       <SubType>Code</SubType>
@@ -223,6 +223,7 @@
     <Compile Include="Thrift\Protocol\TBase.cs" />
     <Compile Include="Thrift\Protocol\TBase64Utils.cs" />
     <Compile Include="Thrift\Protocol\TBinaryProtocol.cs" />
+    <Compile Include="Thrift\Protocol\TCompactProtocol.cs" />
     <Compile Include="Thrift\Protocol\TField.cs" />
     <Compile Include="Thrift\Protocol\TJSONProtocol.cs" />
     <Compile Include="Thrift\Protocol\TList.cs" />
@@ -276,6 +277,9 @@
     <Compile Include="Types\CounterColumnType.cs" />
     <Compile Include="Types\DateType.cs" />
     <Compile Include="Types\DateTypeConverter.cs" />
+    <Compile Include="Types\EmptyType.cs" />
+    <Compile Include="Types\InetAddressType.cs" />
+    <Compile Include="Types\InetAddressTypeConverter.cs" />
     <Compile Include="Types\Int32Type.cs" />
     <Compile Include="Types\Int32TypeConverter.cs" />
     <Compile Include="Types\FloatType.cs" />

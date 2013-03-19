@@ -11,7 +11,7 @@ namespace FluentCassandra.Operations
 
 		public void SetFixture(CassandraDatabaseSetupFixture data)
 		{
-			var setup = data.DatabaseSetup();
+			var setup = data.DatabaseSetup(cqlVersion: CqlVersion.Cql);
 			_db = setup.DB;
 		}
 

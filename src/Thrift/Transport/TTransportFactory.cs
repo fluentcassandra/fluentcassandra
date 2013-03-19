@@ -23,7 +23,7 @@
 
 using System;
 
-namespace Thrift.Transport
+namespace FluentCassandra.Thrift.Transport
 {
 	/// <summary>
 	/// From Mark Slee & Aditya Agarwal of Facebook:

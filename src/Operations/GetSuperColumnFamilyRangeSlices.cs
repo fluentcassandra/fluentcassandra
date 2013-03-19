@@ -14,6 +14,7 @@ namespace FluentCassandra.Operations
 		public override IEnumerable<FluentSuperColumnFamily> Execute()
 		{
 			var schema = ColumnFamily.GetSchema();
+			var list = new List<FluentSuperColumnFamily>();
 
 			var parent = new CassandraColumnParent {
 				ColumnFamily = ColumnFamily.FamilyName
@@ -41,9 +42,10 @@ namespace FluentCassandra.Operations
 				}));
 				ColumnFamily.Context.Attach(r);
 				r.MutationTracker.Clear();
-
-				yield return r;
+				list.Add(r);
 			}
+
+			return list;
 		}
 
 		public GetSuperColumnFamilyRangeSlices(CassandraKeyRange keyRange, CassandraObject superColumnName, CassandraSlicePredicate columnSlicePredicate)

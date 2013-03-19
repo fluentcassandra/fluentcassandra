@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using Apache.Cassandra;
+using FluentCassandra.Apache.Cassandra;
 using FluentCassandra.Types;
 using System.IO;
 using System.IO.Compression;
@@ -144,9 +144,9 @@ namespace FluentCassandra.Operations
 			else if (col.Column != null)
 				return ConvertColumnToFluentColumn(col.Column, schema);
 			else if (col.Counter_super_column != null)
-				return ConvertColumnToFluentCounterColumn(col.Counter_column, schema);
+                return ConvertSuperColumnToFluentCounterSuperColumn(col.Counter_super_column, schema);
 			else if (col.Counter_column != null)
-				return ConvertSuperColumnToFluentCounterSuperColumn(col.Counter_super_column, schema);
+                return ConvertColumnToFluentCounterColumn(col.Counter_column, schema);
 			else
 				return null;
 		}
@@ -266,6 +266,8 @@ namespace FluentCassandra.Operations
 
 		public static IEnumerable<Mutation> CreateDeletedColumnMutation(IEnumerable<FluentMutation> mutation)
 		{
+			var list = new List<Mutation>();
+
 			foreach (var col in mutation)
 			{
 				var deletion = new Deletion {
@@ -273,14 +275,18 @@ namespace FluentCassandra.Operations
 					Predicate = CreateSlicePredicate(new[] { col.Column.ColumnName })
 				};
 
-				yield return new Mutation {
+				list.Add(new Mutation {
 					Deletion = deletion
-				};
+				});
 			}
+
+			return list;
 		}
 
 		public static IEnumerable<Mutation> CreateDeletedSuperColumnMutation(IEnumerable<FluentMutation> mutation)
 		{
+			var list = new List<Mutation>();
+
 			foreach (var col in mutation)
 			{
 				var superColumn = col.Column.GetPath().SuperColumn.ColumnName.TryToBigEndian();
@@ -291,10 +297,12 @@ namespace FluentCassandra.Operations
 					Predicate = CreateSlicePredicate(new[] { col.Column.ColumnName })
 				};
 
-				yield return new Mutation {
+				list.Add(new Mutation {
 					Deletion = deletion
-				};
+				});
 			}
+
+			return list;
 		}
 
 		public static Mutation CreateInsertedOrChangedMutation(FluentMutation mutation)

@@ -71,6 +71,9 @@ namespace System.Numerics
 		public bool IsZero { get { return _unscaledValue.IsZero; } }
 		public int Sign { get { return _unscaledValue.Sign; } }
 
+		public BigInteger UnscaledValue { get { return _unscaledValue; } }
+		public int Scale { get { return _scale; } }
+
 		public override string ToString()
 		{
 			var number = _unscaledValue.ToString("G");

@@ -1,5 +1,5 @@
 ﻿using System;
-using Apache.Cassandra;
+using FluentCassandra.Apache.Cassandra;
 using System.Collections.Generic;
 
 namespace FluentCassandra.Connections
@@ -12,10 +12,12 @@ namespace FluentCassandra.Connections
 		bool Pooling { get; }
 		int MinPoolSize { get; }
 		int MaxPoolSize { get; }
-		TimeSpan ConnectionTimeout { get; }
-		TimeSpan ConnectionLifetime { get; }
-		ConnectionType ConnectionType { get; }
+		int MaxRetries { get; }
+		TimeSpan ServerPollingInterval { get; }
 
+		TimeSpan ConnectionTimeout { get; }
+		ConnectionType ConnectionType { get; }
+		TimeSpan ConnectionLifetime { get; }
 		int BufferSize { get; }
 		ConsistencyLevel ReadConsistency { get; }
 		ConsistencyLevel WriteConsistency { get; }

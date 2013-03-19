@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using FluentCassandra.Connections;
 using Xunit;
 
 namespace FluentCassandra.Bugs
@@ -10,7 +11,7 @@ namespace FluentCassandra.Bugs
 
 		public void SetFixture(CassandraDatabaseSetupFixture data)
 		{
-			var setup = data.DatabaseSetup();
+			var setup = data.DatabaseSetup(cqlVersion: CqlVersion.Cql);
 			_db = setup.DB;
 		}
 

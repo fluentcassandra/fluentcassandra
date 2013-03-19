@@ -22,9 +22,9 @@
  */
 
 using System;
-using Thrift.Transport;
+using FluentCassandra.Thrift.Transport;
 
-namespace Thrift.Protocol
+namespace FluentCassandra.Thrift.Protocol
 {
 	public interface TProtocolFactory
 	{

@@ -61,7 +61,9 @@
     <Compile Include="CassandraQueryTest.cs" />
     <Compile Include="Connections\ConnectionBuilderTests.cs" />
     <Compile Include="Connections\ConnectionProviderTests.cs" />
+    <Compile Include="Connections\SingleServerManagerTests.cs" />
     <Compile Include="Connections\NormalConnectionProviderTests.cs" />
+    <Compile Include="Connections\RoundRobinServerManagerTests.cs" />
     <Compile Include="CqlHelperTest.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="Linq\LinqToCqlObjectsCassandraTests.cs" />
@@ -75,6 +77,7 @@
     <Compile Include="TypesToDatabase\AsciiTypeTest.cs" />
     <Compile Include="TypesToDatabase\BytesTypeTest.cs" />
     <Compile Include="TypesToDatabase\CompositeTypeTest.cs" />
+    <Compile Include="TypesToDatabase\DecimalTypeTest.cs" />
     <Compile Include="TypesToDatabase\DynamicCompositeTypeTest.cs" />
     <Compile Include="TypesToDatabase\TimeUUIDTypeTest.cs" />
     <Compile Include="TypesToDatabase\LexicalUUIDTypeTest.cs" />
@@ -83,6 +86,7 @@
     <Compile Include="TypesToDatabase\UTF8TypeTest.cs" />
     <Compile Include="Types\CompositeTypeTest.cs" />
     <Compile Include="Types\CassandraTypeTest.cs" />
+    <Compile Include="Types\DecimalTypeTest.cs" />
     <Compile Include="Types\DynamicCompositeTypeTest.cs" />
     <Compile Include="Types\IntegerTypeTest.cs" />
     <Compile Include="CassandraDatabaseSetup.cs" />

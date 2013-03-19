@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace FluentCassandra.Linq
 {
-	public interface ICassandraColumnFamilyInfo
+	internal interface ICassandraColumnFamilyInfo
 	{
 		string FamilyName { get; }
 		CassandraColumnFamilySchema GetSchema();

@@ -21,10 +21,10 @@ namespace FluentCassandra.Bugs
 		}
 
 		[Fact]
-		public void Test_Cql2()
+		public void Test_Cql()
 		{
 			var connBuilder = _db.ConnectionBuilder;
-			connBuilder = new ConnectionBuilder(connBuilder.Keyspace, connBuilder.Servers[0], cqlVersion: CqlVersion.Cql2);
+			connBuilder = new ConnectionBuilder(connBuilder.Keyspace, connBuilder.Servers[0], cqlVersion: CqlVersion.Cql);
 			var db = new CassandraContext(connBuilder);
 
 			// arrange

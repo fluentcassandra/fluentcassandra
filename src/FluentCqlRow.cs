@@ -74,7 +74,10 @@ namespace FluentCassandra
 			if (colSchema != null)
 				return colSchema;
 
-			return new CassandraColumnSchema { NameType = schema.DefaultColumnNameType, ValueType = typeof(BytesType) };
+			return new CassandraColumnSchema {
+				NameType = schema.DefaultColumnNameType,
+				ValueType = schema.DefaultColumnValueType
+			};
 		}
 
 		/// <summary>
@@ -96,9 +99,9 @@ namespace FluentCassandra
 		}
 
 		public override bool TryRemoveColumn(object name)
-	    {
-            throw new NotSupportedException();
-	    }
+		{
+			throw new NotSupportedException();
+		}
 
 		public string FamilyName
 		{
@@ -117,7 +120,7 @@ namespace FluentCassandra
 			get { return _columns; }
 		}
 
-	    public CassandraObject this[CassandraObject columnName]
+		public CassandraObject this[CassandraObject columnName]
 		{
 			get
 			{

@@ -58,9 +58,23 @@ namespace FluentCassandra.Types
 		}
 		
 		[Fact]
+		public void Parse_Reversed_Type_With_Complex_Value()
+		{
+			// arrange
+			Type expected = typeof(CompositeType);
+			string cassandraString = "org.apache.cassandra.db.marshal.ReversedType(org.apache.cassandra.db.marshal.CompositeType(org.apache.cassandra.db.marshal.LongType,org.apache.cassandra.db.marshal.AsciiType))";
+
+			// act
+			Type actual = new CassandraType(cassandraString).FluentType;
+
+			// assert
+			Assert.Equal(expected, actual);
+		}
+
+		[Fact]
 		public void Parse_CompositeType_UnknownInnerType()
 		{
-			// arranage
+			// arrange
 			string cassandraString = "org.apache.cassandra.db.marshal.CompositeType(org.apache.cassandra.db.marshal.TimeUUIDType,org.apache.cassandra.db.marshal.UnkownTypeForTesting)";
 
 			// act
@@ -72,7 +86,7 @@ namespace FluentCassandra.Types
 		[Fact]
 		public void Parse_UnknownType()
 		{
-			// arranage
+			// arrange
 			string cassandraString = "org.apache.cassandra.db.marshal.UnkownTypeForTesting";
 
 			// act
@@ -84,7 +98,7 @@ namespace FluentCassandra.Types
 		[Fact]
 		public void Parse_UnknownTypeWithParams()
 		{
-			// arranage
+			// arrange
 			string cassandraString = "org.apache.cassandra.db.marshal.UnkownTypeForTesting(org.apache.cassandra.db.marshal.TimeUUIDType,org.apache.cassandra.db.marshal.UTF8Type)";
 
 			// act

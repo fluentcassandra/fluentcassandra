@@ -9,7 +9,6 @@ namespace FluentCassandra.Connections
 		Server Next();
 
 		void ErrorOccurred(Server server, Exception exc = null);
-		void BlackList(Server server);
 
 		void Add(Server server);
 		void Remove(Server server);

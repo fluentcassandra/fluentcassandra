@@ -1,7 +1,8 @@
 ﻿using System;
-using System.Linq;
-using System.Numerics;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Numerics;
 using System.Text;
 
 namespace FluentCassandra.Types
@@ -23,6 +24,8 @@ namespace FluentCassandra.Types
 		public static readonly CassandraType UTF8Type = new CassandraType("org.apache.cassandra.db.marshal.UTF8Type");
 		public static readonly CassandraType UUIDType = new CassandraType("org.apache.cassandra.db.marshal.UUIDType");
 		public static readonly CassandraType CounterColumnType = new CassandraType("org.apache.cassandra.db.marshal.CounterColumnType");
+		public static readonly CassandraType EmptyType = new CassandraType("org.apache.cassandra.db.marshal.EmptyType");
+		public static readonly CassandraType InetAddressType = new CassandraType("org.apache.cassandra.db.marshal.InetAddressType");
 
 		private static readonly CassandraType _CompositeType = new CassandraType("org.apache.cassandra.db.marshal.CompositeType");
 		private static readonly CassandraType _DynamicCompositeType = new CassandraType("org.apache.cassandra.db.marshal.DynamicCompositeType");
@@ -91,18 +94,23 @@ namespace FluentCassandra.Types
 		private void Init()
 		{
 			_typeReversed = false;
-			int compositeStart = _dbType.IndexOf('(');
+			Parse(_dbType);
+		}
+
+		private void Parse(string dbType) 
+		{
+			int compositeStart = dbType.IndexOf('(');
 
 			// check for composite type
 			if (compositeStart == -1) {
-				_type = Parse(_dbType);
+				_type = GetSystemType(dbType);
 				return;
 			}
 
-			var part1 = _dbType.Substring(0, compositeStart);
-			var part2 = _dbType.Substring(compositeStart);
+			var part1 = dbType.Substring(0, compositeStart);
+			var part2 = dbType.Substring(compositeStart);
 
-			_type = Parse(part1);
+			_type = GetSystemType(part1);
 
 			if (_type == typeof(CompositeType))
 				ParseCompositeType(part2);
@@ -111,14 +119,14 @@ namespace FluentCassandra.Types
 			else if (_type == typeof(ReversedType))
 				ParseReversedType(part2);
 			else
-				throw new CassandraException("Type '" + _dbType + "' not found.");
+				throw new CassandraException("Type '" + dbType + "' not found.");
 		}
 
 		private void ParseReversedType(string part)
 		{
 			part = part.Trim('(', ')');
 			_typeReversed = true;
-			_type = Parse(part);
+			Parse(part);
 		}
 
 		private void ParseCompositeType(string part)
@@ -128,7 +136,7 @@ namespace FluentCassandra.Types
 
 			_compositeTypes = new List<CassandraType>();
 			foreach (var p in parts)
-				_compositeTypes.Add(Parse(p));
+				_compositeTypes.Add(GetSystemType(p));
 		}
 
 		private void ParseDynamicCompositeType(string part)
@@ -148,38 +156,8 @@ namespace FluentCassandra.Types
 					throw new CassandraException("Expecting operator '=>' after the alias");
 
 				string type = p.Substring(3);
-				_dynamicCompositeType.Add(alias, Parse(type));
+				_dynamicCompositeType.Add(alias, GetSystemType(type));
 			}
-		}
-
-		private Type Parse(string dbType)
-		{
-			Type type;
-
-			switch (dbType.Substring(dbType.LastIndexOf('.') + 1).ToLower())
-			{
-				case "asciitype": type = typeof(AsciiType); break;
-				case "booleantype": type = typeof(BooleanType); break;
-				case "bytestype": type = typeof(BytesType); break;
-				case "datetype": type = typeof(DateType); break;
-				case "decimaltype": type = typeof(DecimalType); break;
-				case "doubletype": type = typeof(DoubleType); break;
-				case "floattype": type = typeof(FloatType); break;
-				case "int32type": type = typeof(Int32Type); break;
-				case "integertype": type = typeof(IntegerType); break;
-				case "lexicaluuidtype": type = typeof(LexicalUUIDType); break;
-				case "longtype": type = typeof(LongType); break;
-				case "timeuuidtype": type = typeof(TimeUUIDType); break;
-				case "utf8type": type = typeof(UTF8Type); break;
-				case "uuidtype": type = typeof(UUIDType); break;
-				case "compositetype": type = typeof(CompositeType); break;
-				case "dynamiccompositetype": type = typeof(DynamicCompositeType); break;
-				case "countercolumntype": type = typeof(CounterColumnType); break;
-				case "reversedtype": type = typeof(ReversedType); break;
-				default: throw new CassandraException("Type '" + _dbType + "' not found.");
-			}
-
-			return type;
 		}
 
 		public override string ToString()
@@ -246,7 +224,8 @@ namespace FluentCassandra.Types
 				case "timeuuidtype": cassandraType = TimeUUIDType; break;
 				case "utf8type": cassandraType = UTF8Type; break;
 				case "uuidtype": cassandraType = UUIDType; break;
-
+				case "emptytype": cassandraType = EmptyType; break;
+				case "inetaddresstype": cassandraType = InetAddressType; break;
 				// these need work
 				//case "compositetype": cassandraType = CompositeType; break;
 				//case "dynamiccompositetype": cassandraType = DynamicCompositeType; break;
@@ -310,6 +289,9 @@ namespace FluentCassandra.Types
 					break;
 
 				default:
+					if (sourceType == typeof(IPAddress))
+						destinationType = InetAddressType;
+
 					if (sourceType == typeof(DateTimeOffset))
 						destinationType = DateType;
 
@@ -339,6 +321,42 @@ namespace FluentCassandra.Types
 		public static CassandraType GetCassandraType(string type)
 		{
 			return new CassandraType(type);
+		}
+
+		public static Type GetSystemType(CassandraType baseType)
+		{
+			return GetSystemType(baseType.DatabaseType);
+		}
+
+		public static Type GetSystemType(string dbType)
+		{
+			Type type;
+
+			switch (dbType.Substring(dbType.LastIndexOf('.') + 1).ToLower()) {
+				case "asciitype": type = typeof(AsciiType); break;
+				case "booleantype": type = typeof(BooleanType); break;
+				case "bytestype": type = typeof(BytesType); break;
+				case "datetype": type = typeof(DateType); break;
+				case "decimaltype": type = typeof(DecimalType); break;
+				case "doubletype": type = typeof(DoubleType); break;
+				case "floattype": type = typeof(FloatType); break;
+				case "int32type": type = typeof(Int32Type); break;
+				case "integertype": type = typeof(IntegerType); break;
+				case "lexicaluuidtype": type = typeof(LexicalUUIDType); break;
+				case "longtype": type = typeof(LongType); break;
+				case "timeuuidtype": type = typeof(TimeUUIDType); break;
+				case "utf8type": type = typeof(UTF8Type); break;
+				case "uuidtype": type = typeof(UUIDType); break;
+				case "compositetype": type = typeof(CompositeType); break;
+				case "dynamiccompositetype": type = typeof(DynamicCompositeType); break;
+				case "countercolumntype": type = typeof(CounterColumnType); break;
+				case "reversedtype": type = typeof(ReversedType); break;
+				case "emptytype": type = typeof(EmptyType); break;
+				case "inetaddresstype": type = typeof(InetAddressType); break;
+				default: throw new CassandraException("Type '" + dbType + "' not found.");
+			}
+
+			return type;
 		}
 
 		public static implicit operator CassandraType(Type type)

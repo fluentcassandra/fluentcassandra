@@ -132,8 +132,21 @@ namespace FluentCassandra
 		/// </summary>
 		public CassandraColumnSchema GetSchema()
 		{
-			if (_schema == null)
-				_schema = new CassandraColumnSchema { Name = ColumnName, ValueType = typeof(BytesType) };
+			if (_schema == null) {
+				var nameType = CassandraType.BytesType;
+				var valueType = CassandraType.BytesType;
+
+				if (_name != null)
+					nameType = _name.GetCassandraType();
+
+				_schema = new CassandraColumnSchema {
+					NameType = nameType,
+					ValueType = valueType
+				};
+
+				if (_name != null)
+					_schema.Name = _name;
+			}
 
 			return _schema;
 		}
@@ -145,7 +158,10 @@ namespace FluentCassandra
 		public void SetSchema(CassandraColumnSchema schema)
 		{
 			if (schema == null)
-				schema = new CassandraColumnSchema { Name = ColumnName, ValueType = typeof(BytesType) };
+				schema = new CassandraColumnSchema();
+
+			if (_name != null)
+				_name = _name.GetValue(schema.NameType);
 
 			_schema = schema;
 		}
@@ -193,13 +209,17 @@ namespace FluentCassandra
 		private CassandraColumnSchema GetColumnSchema(object name)
 		{
 			var schema = GetSchema();
-			var valueType = CassandraType.BytesType;
 
-			if (Family != null)
-				valueType = Family.GetSchema().DefaultColumnValueType;
+			// the following two variables are correct, because the value type of a super column is the name type of the children column
+			// and the default value type is the families value type 
+			var nameType = schema.ValueType;
+			var valueType = (Family != null) ? Family.GetSchema().DefaultColumnValueType : CassandraType.BytesType;
 
 			// mock up a fake schema to send to the fluent column
-			return new CassandraColumnSchema { NameType = schema.ValueType, ValueType = valueType };
+			var colSchema = new CassandraColumnSchema { NameType = nameType, ValueType = valueType };
+			colSchema.Name = CassandraObject.GetCassandraObjectFromObject(name, schema.NameType);
+
+			return colSchema;
 		}
 
 		/// <summary>
@@ -212,7 +232,9 @@ namespace FluentCassandra
 		{
 			result = GetColumnValue(name);
 
-			return !(result is NullType);
+			// return !(result is NullType);
+			// value always is valid, a NullType is returned if it isn't found
+			return true;
 		}
 
 		/// <summary>

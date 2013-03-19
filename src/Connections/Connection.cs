@@ -1,7 +1,7 @@
 ﻿using System;
-using Thrift.Transport;
-using Thrift.Protocol;
-using Apache.Cassandra;
+using FluentCassandra.Thrift.Transport;
+using FluentCassandra.Thrift.Protocol;
+using FluentCassandra.Apache.Cassandra;
 
 namespace FluentCassandra.Connections
 {
@@ -14,6 +14,8 @@ namespace FluentCassandra.Connections
 	{
 		private TTransport _transport;
 		private Cassandra.Client _client;
+		private string _activeKeyspace;
+		private string _activeCqlVersion;
 		private readonly object _lock = new object();
 
 		/// <summary>
@@ -36,7 +38,6 @@ namespace FluentCassandra.Connections
 			Server = server;
 			ConnectionType = connectionType;
 			BufferSize = bufferSize;
-
 			InitTransportAndClient();
 		}
 
@@ -166,13 +167,18 @@ namespace FluentCassandra.Connections
 			if (!IsOpen)
 				throw new CassandraConnectionException("A connection to Cassandra has not been opened.");
 
-			Client.set_keyspace(keyspace);
+			if (_activeKeyspace == null || !_activeKeyspace.Equals(keyspace))
+			{
+				Client.set_keyspace(keyspace);
+				_activeKeyspace = keyspace;
+			}
 		}
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="cqlVersion"></param>
+		[Obsolete("This will be retired soon, please pass the CQL version through the Execute method.", error: false)]
 		public void SetCqlVersion(string cqlVersion)
 		{
 			CheckWasDisposed();
@@ -180,7 +186,11 @@ namespace FluentCassandra.Connections
 			if (!IsOpen)
 				throw new CassandraConnectionException("A connection to Cassandra has not been opened.");
 
-			Client.set_cql_version(cqlVersion);
+			if (_activeCqlVersion == null || !_activeCqlVersion.Equals(cqlVersion))
+			{
+				Client.set_cql_version(cqlVersion);
+				_activeCqlVersion = cqlVersion;
+			}
 		}
 
 		/// <summary>

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Linq;
+using FluentCassandra.Connections;
 using Xunit;
 
 namespace FluentCassandra.Linq
-{
-	
+{	
 	public class LinqToCqlCassandraTests : IUseFixture<CassandraDatabaseSetupFixture>, IDisposable
 	{
 		private CassandraContext _db;
@@ -13,7 +13,7 @@ namespace FluentCassandra.Linq
 
 		public void SetFixture(CassandraDatabaseSetupFixture data)
 		{
-			var setup = data.DatabaseSetup();
+			var setup = data.DatabaseSetup(cqlVersion: CqlVersion.Cql);
 			_db = setup.DB;
 			_family = setup.UserFamily;
 			_users = setup.Users;

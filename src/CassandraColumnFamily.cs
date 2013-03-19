@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using FluentCassandra.ObjectSerializer;
 using FluentCassandra.Types;
 
 namespace FluentCassandra
@@ -26,11 +25,11 @@ namespace FluentCassandra
 		public CassandraColumnFamily(CassandraContext context, string columnFamily)
 			: base(context, columnFamily) { }
 
-        public CassandraColumnFamily(CassandraContext context, CassandraColumnFamilySchema schema)
-            : base(context, schema.FamilyName)
-        {
-            _cachedSchema = schema;
-        }
+		public CassandraColumnFamily(CassandraContext context, CassandraColumnFamilySchema schema)
+			: base(context, schema.FamilyName)
+		{
+			_cachedSchema = schema;
+		}
 
 		public FluentColumnFamily CreateRecord(CassandraObject key)
 		{
@@ -42,12 +41,12 @@ namespace FluentCassandra
 
 		public override CassandraColumnFamilySchema GetSchema()
 		{
-			var schema = Context.Keyspace.GetColumnFamilySchema(FamilyName);
-
-			if (_cachedSchema == null)
+			if (_cachedSchema == null) {
+				var schema = Context.Keyspace.GetColumnFamilySchema(FamilyName);
 				_cachedSchema = (schema == null)
-					? new CassandraColumnFamilySchema(FamilyName, ColumnType.Standard)
-					: schema;
+								? new CassandraColumnFamilySchema(FamilyName, ColumnType.Standard)
+								: schema;
+			}
 
 			return _cachedSchema;
 		}

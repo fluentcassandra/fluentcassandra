@@ -94,5 +94,41 @@ namespace FluentCassandra.Types
 
 			return null;
 		}
+
+		public override byte[] ToBigEndian(BigDecimal value)
+		{
+			var scale = value.Scale;
+			var number = value.UnscaledValue;
+
+			var int32Converter = new Int32TypeConverter();
+			var bigIntegerConverter = new IntegerTypeConverter();
+
+			var scaleBytes = int32Converter.ToBigEndian(scale);
+			var numberBytes = bigIntegerConverter.ToBigEndian(number);
+
+			var bytes = new byte[scaleBytes.Length + numberBytes.Length];
+
+			Array.Copy(scaleBytes, 0, bytes, 0, scaleBytes.Length);
+			Array.Copy(numberBytes, 0, bytes, scaleBytes.Length, numberBytes.Length);
+
+			return bytes;
+		}
+
+		public override BigDecimal FromBigEndian(byte[] value)
+		{
+			var scaleBytes = new byte[4];
+			var numberBytes = new byte[value.Length - 4];
+
+			Array.Copy(value, 0, scaleBytes, 0, scaleBytes.Length);
+			Array.Copy(value, scaleBytes.Length, numberBytes, 0, numberBytes.Length);
+
+			var int32Converter = new Int32TypeConverter();
+			var bigIntegerConverter = new IntegerTypeConverter();
+
+			var scale = int32Converter.FromBigEndian(scaleBytes);
+			var number = bigIntegerConverter.FromBigEndian(numberBytes);
+
+			return new BigDecimal(number, scale);
+		}
 	}
 }

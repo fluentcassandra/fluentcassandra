@@ -9,13 +9,19 @@ namespace FluentCassandra.Types
 
 		private NullType() { }
 
+		public override object GetValue()
+		{
+			return null;
+		}
+
 		public override void SetValue(object obj)
 		{
+			throw new NotSupportedException();
 		}
 
 		protected override object GetValueInternal(Type type)
 		{
-			return type.IsValueType ? Activator.CreateInstance(type) : null;
+			return null;
 		}
 
 		protected override TypeCode TypeCode
@@ -23,9 +29,27 @@ namespace FluentCassandra.Types
 			get { return TypeCode.DBNull; }
 		}
 
-		#region Equality
+		public override byte[] ToBigEndian()
+		{
+			return new byte[0];
+		}
+
+		public override void SetValueFromBigEndian(byte[] value)
+		{
+			throw new NotSupportedException();
+		}
+
+		public override int GetHashCode()
+		{
+			return -1494218850;
+		}
 
 		public override bool Equals(object obj)
+		{
+			return EqualsNull(obj);
+		}
+
+		private static bool EqualsNull(object obj)
 		{
 			if (obj == null)
 				return true;
@@ -36,57 +60,24 @@ namespace FluentCassandra.Types
 			return false;
 		}
 
-		public override int GetHashCode()
+		public static bool operator ==(object a, NullType b)
 		{
-			return 0;
+			return EqualsNull(a);
 		}
 
-		public static bool operator ==(NullType type, object obj)
+		public static bool operator ==(NullType a, object b)
 		{
-			if (Object.Equals(type, null))
-				type = Value;
-
-			return type.Equals(obj);
+			return EqualsNull(b);
 		}
 
-		public static bool operator !=(NullType type, object obj)
+		public static bool operator !=(object a, NullType b)
 		{
-			if (Object.Equals(type, null))
-				type = Value;
-
-			return !type.Equals(obj);
+			return !EqualsNull(a);
 		}
 
-		#endregion
-
-		public override byte[] ToBigEndian()
+		public static bool operator !=(NullType a, object b)
 		{
-			return new byte[0];
+			return !EqualsNull(b);
 		}
-
-		public override void SetValueFromBigEndian(byte[] value)
-		{
-		}
-
-		public override object GetValue() { return null; }
-
-		public static implicit operator byte?(NullType o) { return null; }
-		public static implicit operator sbyte?(NullType o) { return null; }
-		public static implicit operator short?(NullType o) { return null; }
-		public static implicit operator ushort?(NullType o) { return null; }
-		public static implicit operator int?(NullType o) { return null; }
-		public static implicit operator uint?(NullType o) { return null; }
-		public static implicit operator long?(NullType o) { return null; }
-		public static implicit operator ulong?(NullType o) { return null; }
-		public static implicit operator float?(NullType o) { return null; }
-		public static implicit operator double?(NullType o) { return null; }
-		public static implicit operator decimal?(NullType o) { return null; }
-		public static implicit operator bool?(NullType o) { return null; }
-		public static implicit operator string(NullType o) { return null; }
-		public static implicit operator char?(NullType o) { return null; }
-		public static implicit operator Guid?(NullType o) { return null; }
-		public static implicit operator DateTime?(NullType o) { return null; }
-		public static implicit operator DateTimeOffset?(NullType o) { return null; }
-		public static implicit operator BigInteger?(NullType o) { return null; }
 	}
 }

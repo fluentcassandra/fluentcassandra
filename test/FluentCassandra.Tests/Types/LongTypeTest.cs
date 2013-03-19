@@ -10,7 +10,7 @@ namespace FluentCassandra.Types
 		[Fact]
 		public void CassandraType_Cast()
 		{
-			// arranage
+			// arrange
 			long expected = 100L;
 			IntegerType actualType = expected;
 

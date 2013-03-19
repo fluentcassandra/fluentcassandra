@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Numerics;
 
 namespace FluentCassandra.Types
@@ -47,6 +48,11 @@ namespace FluentCassandra.Types
 
 		public abstract byte[] ToBigEndian();
 		public abstract void SetValueFromBigEndian(byte[] value);
+
+		public override string ToString()
+		{
+			return GetValue<string>();
+		}
 
 		#region Equality
 
@@ -120,6 +126,8 @@ namespace FluentCassandra.Types
 		public static implicit operator CassandraObject(DateTime o) { return ConvertFrom(o); }
 		public static implicit operator CassandraObject(DateTimeOffset o) { return ConvertFrom(o); }
 		public static implicit operator CassandraObject(BigInteger o) { return ConvertFrom(o); }
+		public static implicit operator CassandraObject(BigDecimal o) { return ConvertFrom(o); }
+		public static implicit operator CassandraObject(IPAddress o) { return ConvertFrom(o); }
 
 		public static implicit operator byte[](CassandraObject o) { return ConvertTo<byte[]>(o); }
 		public static implicit operator char[](CassandraObject o) { return ConvertTo<char[]>(o); }
@@ -142,6 +150,8 @@ namespace FluentCassandra.Types
 		public static implicit operator DateTime(CassandraObject o) { return ConvertTo<DateTime>(o); }
 		public static implicit operator DateTimeOffset(CassandraObject o) { return ConvertTo<DateTimeOffset>(o); }
 		public static implicit operator BigInteger(CassandraObject o) { return ConvertTo<BigInteger>(o); }
+		public static implicit operator BigDecimal(CassandraObject o) { return ConvertTo<BigDecimal>(o); }
+		public static implicit operator IPAddress(CassandraObject o) { return ConvertTo<IPAddress>(o); }
 
 		public static implicit operator byte?(CassandraObject o) { return ConvertTo<byte?>(o); }
 		public static implicit operator sbyte?(CassandraObject o) { return ConvertTo<sbyte?>(o); }
@@ -161,6 +171,8 @@ namespace FluentCassandra.Types
 		public static implicit operator DateTime?(CassandraObject o) { return ConvertTo<DateTime?>(o); }
 		public static implicit operator DateTimeOffset?(CassandraObject o) { return ConvertTo<DateTimeOffset?>(o); }
 		public static implicit operator BigInteger?(CassandraObject o) { return ConvertTo<BigInteger?>(o); }
+		public static implicit operator BigDecimal?(CassandraObject o) { return ConvertTo<BigDecimal?>(o); }
+		//public static implicit operator IPAddress(CassandraObject o) { return ConvertTo<IPAddress>(o); }
 
 		public static explicit operator object[](CassandraObject o) { return ConvertTo<object[]>(o); }
 		public static explicit operator List<object>(CassandraObject o) { return ConvertTo<List<object>>(o); }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Apache.Cassandra;
+using FluentCassandra.Apache.Cassandra;
 using FluentCassandra.Connections;
 using FluentCassandra.Linq;
 using FluentCassandra.Operations;
@@ -82,7 +82,7 @@ namespace FluentCassandra
 				if(schema != null)
 					return new CassandraColumnFamily(this, schema);
 			}
-         
+		 
 			return new CassandraColumnFamily(this, columnFamily);
 		}
 
@@ -241,9 +241,9 @@ namespace FluentCassandra
 			}));
 		}
 
-		public string DescribeVersion()
+		public Version DescribeVersion()
 		{
-			return ExecuteOperation(new SimpleOperation<string>(ctx => {
+			return ExecuteOperation(new SimpleOperation<Version>(ctx => {
 				return ctx.Session.GetClient(setKeyspace: false).describe_version();
 			}));
 		}
@@ -281,7 +281,9 @@ namespace FluentCassandra
 		/// <summary>
 		/// Saves the pending changes.
 		/// </summary>
-		public void SaveChanges()
+		/// <param name="atomic">in the database sense that if any part of the batch succeeds, all of it will. No other guarantees are implied; in particular, there is no isolation; other clients will be able to read the first updated rows from the batch, while others are in progress</param>
+		/// <seealso href="http://www.datastax.com/dev/blog/atomic-batches-in-cassandra-1-2"/>
+		public void SaveChanges(bool atomic = true)
 		{
 			lock (_trackers)
 			{
@@ -290,7 +292,7 @@ namespace FluentCassandra
 				foreach (var tracker in _trackers)
 					mutations.AddRange(tracker.GetMutations());
 
-				var op = new BatchMutate(mutations);
+				var op = new BatchMutate(mutations, atomic);
 				ExecuteOperation(op);
 
 				foreach (var tracker in _trackers)
@@ -304,11 +306,14 @@ namespace FluentCassandra
 		/// 
 		/// </summary>
 		/// <param name="record"></param>
-		public void SaveChanges(IFluentRecord record)
+		/// <param name="atomic">in the database sense that if any part of the batch succeeds, all of it will. No other guarantees are implied; in particular, there is no isolation; other clients will be able to read the first updated rows from the batch, while others are in progress</param>
+		/// <seealso href="http://www.datastax.com/dev/blog/atomic-batches-in-cassandra-1-2"/>
+		public void SaveChanges(IFluentRecord record, bool atomic = true)
 		{
 			var tracker = record.MutationTracker;
 			var mutations = tracker.GetMutations();
-			var op = new BatchMutate(mutations);
+
+			var op = new BatchMutate(mutations, atomic);
 			ExecuteOperation(op);
 
 			tracker.Clear();
@@ -318,9 +323,9 @@ namespace FluentCassandra
 		/// 
 		/// </summary>
 		/// <param name="cqlQuery"></param>
-		public IEnumerable<ICqlRow> ExecuteQuery(UTF8Type cqlQuery)
+		public IEnumerable<ICqlRow> ExecuteQuery(UTF8Type cqlQuery, string cqlVersion = null)
 		{
-			var op = new ExecuteCqlQuery(cqlQuery);
+			var op = new ExecuteCqlQuery(cqlQuery, cqlVersion);
 			return ExecuteOperation(op);
 		}
 
@@ -328,13 +333,11 @@ namespace FluentCassandra
 		/// 
 		/// </summary>
 		/// <param name="cqlQuery"></param>
-		public void TryExecuteNonQuery(UTF8Type cqlQuery) {
-			try
-			{
-				ExecuteNonQuery(cqlQuery);
-			}
-			catch (Exception exc)
-			{
+		public void TryExecuteNonQuery(UTF8Type cqlQuery, string cqlVersion = null)
+		{
+			try {
+				ExecuteNonQuery(cqlQuery, cqlVersion);
+			} catch (Exception exc) {
 				Debug.WriteLine(exc);
 			}
 		}
@@ -343,19 +346,19 @@ namespace FluentCassandra
 		/// 
 		/// </summary>
 		/// <param name="cqlQuery"></param>
-		public void ExecuteNonQuery(UTF8Type cqlQuery)
+		public void ExecuteNonQuery(UTF8Type cqlQuery, string cqlVersion = null)
 		{
-			var op = new ExecuteCqlNonQuery(cqlQuery);
+			var op = new ExecuteCqlNonQuery(cqlQuery, cqlVersion);
 			ExecuteOperation(op);
 		}
 
 		/// <summary>
-		/// The last error that occured during the execution of an operation.
+		/// The last error that occurred during the execution of an operation.
 		/// </summary>
 		public CassandraException LastError { get; private set; }
 
 		/// <summary>
-		/// Indicates if errors should be thrown when occuring on operation.
+		/// Indicates if errors should be thrown when occurring on operation.
 		/// </summary>
 		public bool ThrowErrors { get; set; }
 
@@ -388,7 +391,9 @@ namespace FluentCassandra
 			finally
 			{
 				if (localSession && session != null)
+				{
 					session.Dispose();
+				}
 			}
 		}
 

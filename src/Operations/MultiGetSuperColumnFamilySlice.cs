@@ -14,6 +14,7 @@ namespace FluentCassandra.Operations
 		public override IEnumerable<FluentSuperColumnFamily> Execute()
 		{
 			var schema = ColumnFamily.GetSchema();
+            var list = new List<FluentSuperColumnFamily>();
 
 			var parent = new CassandraColumnParent {
 				ColumnFamily = ColumnFamily.FamilyName
@@ -52,15 +53,22 @@ namespace FluentCassandra.Operations
 				}
 				else
 				{
-					superColumns = result.Value.Select(col => Helper.ConvertSuperColumnToFluentSuperColumn(col.Super_column, schema));
+					superColumns = result.Value.Select(col =>
+					    {
+					        if (col.Counter_super_column != null)
+					            return Helper.ConvertSuperColumnToFluentCounterSuperColumn(col.Counter_super_column, schema);
+                            return Helper.ConvertSuperColumnToFluentSuperColumn(col.Super_column, schema);
+                        });
 				}
 
 				var familyName = ColumnFamily.FamilyName;
 				var r = new FluentSuperColumnFamily(key, familyName, schema, superColumns);
 				ColumnFamily.Context.Attach(r);
 
-				yield return r;
+                list.Add(r);
 			}
+
+            return list;
 		}
 
 		public MultiGetSuperColumnFamilySlice(IEnumerable<CassandraObject> keys, CassandraObject superColumnName, CassandraSlicePredicate columnSlicePredicate)

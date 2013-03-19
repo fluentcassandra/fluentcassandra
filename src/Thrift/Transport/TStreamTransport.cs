@@ -24,7 +24,7 @@
 using System;
 using System.IO;
 
-namespace Thrift.Transport
+namespace FluentCassandra.Thrift.Transport
 {
 	public class TStreamTransport : TTransport
 	{
@@ -103,5 +103,26 @@ namespace Thrift.Transport
 
 			outputStream.Flush();
 		}
-	}
+
+
+    #region " IDisposable Support "
+    private bool _IsDisposed;
+
+    // IDisposable
+    protected override void Dispose(bool disposing)
+    {
+      if (!_IsDisposed)
+      {
+        if (disposing)
+        {
+          if (InputStream != null)
+            InputStream.Dispose();
+          if (OutputStream != null)
+            OutputStream.Dispose();
+        }
+      }
+      _IsDisposed = true;
+    }
+    #endregion
+  }
 }

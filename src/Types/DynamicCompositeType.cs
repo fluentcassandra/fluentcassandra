@@ -59,11 +59,6 @@ namespace FluentCassandra.Types
 			get { return TypeCode.Object; }
 		}
 
-		public override string ToString()
-		{
-			return GetValue<string>();
-		}
-
 		#endregion
 
 		public override object GetValue() { return _value; }
@@ -98,7 +93,13 @@ namespace FluentCassandra.Types
 
 		public override int GetHashCode()
 		{
-			return _value.GetHashCode();
+			unchecked {
+				int hash = 17;
+				foreach (var keyPart in _value) {
+					hash = hash * 23 + keyPart.GetHashCode();
+				}
+				return hash;
+			}
 		}
 
 		#endregion
