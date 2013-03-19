@@ -46,7 +46,7 @@ namespace FluentCassandra.Connections
 		/// </summary>
 		private void InitTransportAndClient()
 		{
-			var socket = new TSocket(Server.Host, Server.Port, Server.Timeout * 1000);
+            var socket = new TSocketWithConnectTimeout(Server.Host, Server.Port, Server.Timeout * 1000);
 
 			switch (ConnectionType)
 			{
