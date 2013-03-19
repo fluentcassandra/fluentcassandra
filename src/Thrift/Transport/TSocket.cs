@@ -130,8 +130,13 @@ namespace Thrift.Transport
 			{
 				InitSocket();
 			}
-
-			client.Connect(host, port);
+            var ar = client.BeginConnect(host, port, null, null);
+            if(ar.AsyncWaitHandle.WaitOne(timeout)) {
+                client.EndConnect(ar);
+            } else {
+                client.Close();
+                throw new TimeoutException();
+            }
 			inputStream = client.GetStream();
 			outputStream = client.GetStream();
 		}
