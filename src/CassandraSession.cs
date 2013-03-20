@@ -111,7 +111,7 @@ namespace FluentCassandra
 			if (setCqlVersion.Value)
 				_connection.SetCqlVersion(builder.CqlVersion);
 
-			if (setLogin && !String.IsNullOrWhiteSpace(builder.Username) && !String.IsNullOrWhiteSpace(builder.Password))
+			if (!IsAuthenticated && setLogin && !String.IsNullOrWhiteSpace(builder.Username) && !String.IsNullOrWhiteSpace(builder.Password))
 				Login(builder.Username, builder.Password);
 
 			return new CassandraClientWrapper(_connection.Client);
@@ -149,7 +149,7 @@ namespace FluentCassandra
 
 			try
 			{
-				GetClient(setLogin: false).login(auth);
+				GetClient(setKeyspace: false, setLogin: false).login(auth);
 				IsAuthenticated = true;
 			}
 			catch (Exception exc)
