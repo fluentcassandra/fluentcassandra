@@ -149,7 +149,7 @@ namespace FluentCassandra
 
 			try
 			{
-				GetClient(setLogin: false).login(auth);
+				GetClient(setKeyspace: false, setLogin: false).login(auth);
 				IsAuthenticated = true;
 			}
 			catch (Exception exc)
