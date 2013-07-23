@@ -1,0 +1,1 @@
+﻿This project shall contain all the tests that require a running Cassandra datanase

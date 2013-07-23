@@ -21,10 +21,10 @@
  * details.
  */
 
-using System;
-using System.Threading;
 using FluentCassandra.Thrift.Protocol;
 using FluentCassandra.Thrift.Transport;
+using System;
+using System.Threading;
 
 namespace FluentCassandra.Thrift.Server
 {

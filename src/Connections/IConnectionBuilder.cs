@@ -1,5 +1,5 @@
-﻿using System;
-using FluentCassandra.Apache.Cassandra;
+﻿using FluentCassandra.Apache.Cassandra;
+using System;
 using System.Collections.Generic;
 
 namespace FluentCassandra.Connections

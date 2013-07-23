@@ -1,8 +1,8 @@
-﻿using System;
+﻿using FluentCassandra.Types;
+using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using Cassandra = FluentCassandra.Apache.Cassandra;
-using FluentCassandra.Types;
 
 namespace FluentCassandra.Operations
 {

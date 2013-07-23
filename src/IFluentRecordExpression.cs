@@ -1,6 +1,5 @@
-using System;
-using System.Dynamic;
 using FluentCassandra.Types;
+using System.Dynamic;
 
 namespace FluentCassandra
 {

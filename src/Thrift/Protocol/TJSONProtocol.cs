@@ -17,13 +17,12 @@
  * under the License.
  */
 
+using FluentCassandra.Thrift.Transport;
 using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Text;
-using System.Collections.Generic;
-
-using FluentCassandra.Thrift.Transport;
-using System.Globalization;
 
 namespace FluentCassandra.Thrift.Protocol
 {

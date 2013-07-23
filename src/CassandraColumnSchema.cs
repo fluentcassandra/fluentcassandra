@@ -1,4 +1,3 @@
-using System;
 using FluentCassandra.Apache.Cassandra;
 using FluentCassandra.Types;
 

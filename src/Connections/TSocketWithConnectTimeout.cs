@@ -21,9 +21,9 @@
  * details.
  */
 
+using FluentCassandra.Thrift.Transport;
 using System;
 using System.Net.Sockets;
-using FluentCassandra.Thrift.Transport;
 
 namespace FluentCassandra.Connections {
 

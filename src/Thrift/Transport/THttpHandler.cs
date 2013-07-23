@@ -7,12 +7,11 @@
 //  Distributed under the Apache Public License
 //
 
-using System;
-using System.Web;
-using System.Net;
-using System.IO;
-
 using FluentCassandra.Thrift.Protocol;
+using System;
+using System.IO;
+using System.Net;
+using System.Web;
 
 namespace FluentCassandra.Thrift.Transport
 {

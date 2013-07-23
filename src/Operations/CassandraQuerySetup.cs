@@ -1,7 +1,6 @@
-﻿using System;
+﻿using FluentCassandra.Types;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using FluentCassandra.Types;
 using System.Linq.Expressions;
 
 namespace FluentCassandra.Operations

@@ -21,7 +21,6 @@
  * details.
  */
 
-using System;
 using System.IO;
 
 namespace FluentCassandra.Thrift.Transport
