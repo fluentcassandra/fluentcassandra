@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Threading;
-using System.Runtime.Serialization;
 using System.Collections;
 using System.Diagnostics;
+using System.Runtime.Serialization;
+using System.Threading;
 
 namespace FluentCassandra.Connections
 {
