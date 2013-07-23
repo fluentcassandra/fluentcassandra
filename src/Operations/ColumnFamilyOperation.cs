@@ -1,5 +1,4 @@
-﻿using System;
-
+﻿
 namespace FluentCassandra.Operations
 {
 	public abstract class ColumnFamilyOperation<TResult> : Operation<TResult>
