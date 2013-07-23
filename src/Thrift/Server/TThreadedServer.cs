@@ -17,12 +17,12 @@
  * under the License.
  */
 
-using System;
-using System.Collections.Generic;
-using System.Threading;
 using FluentCassandra.Thrift.Collections;
 using FluentCassandra.Thrift.Protocol;
 using FluentCassandra.Thrift.Transport;
+using System;
+using System.Collections.Generic;
+using System.Threading;
 
 namespace FluentCassandra.Thrift.Server
 {

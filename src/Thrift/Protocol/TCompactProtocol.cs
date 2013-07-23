@@ -21,12 +21,10 @@
  * details.
  */
 
-using System;
-using System.Text;
 using FluentCassandra.Thrift.Transport;
-using System.Collections;
-using System.IO;
+using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace FluentCassandra.Thrift.Protocol
 {
