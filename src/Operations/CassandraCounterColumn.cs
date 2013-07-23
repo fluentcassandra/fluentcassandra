@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using FluentCassandra.Types;
+﻿using FluentCassandra.Types;
 
 namespace FluentCassandra.Operations
 {

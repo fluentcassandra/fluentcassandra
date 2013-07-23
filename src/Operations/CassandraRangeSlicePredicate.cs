@@ -1,4 +1,3 @@
-using System;
 using FluentCassandra.Types;
 
 namespace FluentCassandra.Operations

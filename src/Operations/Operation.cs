@@ -1,8 +1,8 @@
-﻿using System;
+﻿using FluentCassandra.Apache.Cassandra;
+using FluentCassandra.Thrift.Transport;
+using System;
 using System.Diagnostics;
 using System.IO;
-using FluentCassandra.Apache.Cassandra;
-using FluentCassandra.Thrift.Transport;
 
 namespace FluentCassandra.Operations
 {

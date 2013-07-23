@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using FluentCassandra.Apache.Cassandra;
+﻿using FluentCassandra.Apache.Cassandra;
 using FluentCassandra.Connections;
 using FluentCassandra.Linq;
 using FluentCassandra.Operations;
 using FluentCassandra.Types;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 
 namespace FluentCassandra
 {

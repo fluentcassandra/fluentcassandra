@@ -1,6 +1,6 @@
-﻿using System;
+﻿using FluentCassandra.Types;
+using System;
 using System.Linq;
-using FluentCassandra.Types;
 using System.Linq.Expressions;
 using System.Reflection;
 

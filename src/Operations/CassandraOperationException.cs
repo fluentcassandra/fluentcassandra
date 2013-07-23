@@ -1,7 +1,6 @@
-﻿using System;
-using System.Linq;
-using FluentCassandra.Apache.Cassandra;
+﻿using FluentCassandra.Apache.Cassandra;
 using FluentCassandra.Thrift.Transport;
+using System;
 
 namespace FluentCassandra.Operations
 {

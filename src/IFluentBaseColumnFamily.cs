@@ -1,5 +1,4 @@
-﻿using System;
-using FluentCassandra.Types;
+﻿using FluentCassandra.Types;
 
 namespace FluentCassandra
 {

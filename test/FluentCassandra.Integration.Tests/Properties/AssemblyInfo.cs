@@ -4,12 +4,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("FluentCassandra")]
-[assembly: AssemblyDescription("FluentCassandra is a .NET library for accessing Cassandra, which wraps the Thrift client library and provides a more fluent POCO interface for accessing and querying the objects in Cassandra.")]
-[assembly: AssemblyProduct("FluentCassandra")]
+[assembly: AssemblyTitle("FluentCassandra.Integration.Tests")]
+[assembly: AssemblyDescription("Integration tests with real Cassandra database")]
+[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyProduct("FluentCassandra.Integration.Tests")]
 [assembly: AssemblyCompany("Managed Fusion, LLC")]
 [assembly: AssemblyCopyright("Copyright © Nick Berardi, Managed Fusion, LLC 2011")]
-[assembly: AssemblyConfiguration("")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -19,7 +19,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("f2fac76e-0d80-4099-a64f-2686d4d99b6b")]
+[assembly: Guid("4f0cbb9e-db27-49c1-abac-fc56d9775412")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -31,5 +31,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.2.0.0")]
-[assembly: AssemblyFileVersion("1.2.0.0")]
+[assembly: AssemblyVersion("1.0.0.0")]
+[assembly: AssemblyFileVersion("1.0.0.0")]
