@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using FluentCassandra.Operations;
+﻿using FluentCassandra.Operations;
 using FluentCassandra.Types;
+using System;
+using System.Collections.Generic;
 
 namespace FluentCassandra
 {
