@@ -1,5 +1,4 @@
-﻿using System;
-
+﻿
 namespace FluentCassandra
 {
 	public class FluentColumnParent

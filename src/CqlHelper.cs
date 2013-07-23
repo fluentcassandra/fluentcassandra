@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-
+﻿
 namespace FluentCassandra
 {
     public static class CqlHelper

@@ -1,9 +1,8 @@
-﻿using System;
+﻿using FluentCassandra.Linq;
+using FluentCassandra.Types;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using FluentCassandra.Linq;
-using FluentCassandra.Types;
 
 namespace FluentCassandra
 {
