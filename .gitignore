@@ -112,5 +112,5 @@ Desktop.ini
 .Trashes
 
 # DotSettings files
-.DotSettings
+*.DotSettings
 
