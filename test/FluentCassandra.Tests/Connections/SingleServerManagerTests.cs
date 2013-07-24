@@ -1,7 +1,7 @@
 ﻿using System;
 using Xunit;
 
-namespace FluentCassandra.Connections.Tests
+namespace FluentCassandra.Connections
 {
 	public class SingleServerManagerTests
 	{
