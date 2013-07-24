@@ -11,6 +11,9 @@
     <AssemblyName>FluentCassandra.Integration.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -20,6 +23,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -28,14 +32,75 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Bugs\Issue25JavaBigDecimalBinaryConversion.cs" />
+    <Compile Include="Bugs\Issue36KeyAliasSupport.cs" />
+    <Compile Include="Bugs\Issue39CompositeTypeAsKey.cs" />
+    <Compile Include="Bugs\Issue61SuperColumnRangeSliceKeyBackwards.cs" />
+    <Compile Include="CassandraDatabaseSetup.cs" />
+    <Compile Include="CassandraDatabaseSetupFixture.cs" />
+    <Compile Include="CassandraQueryTest.cs" />
+    <Compile Include="Connections\ConnectionBuilderTests.cs" />
+    <Compile Include="Connections\ConnectionProviderTests.cs" />
+    <Compile Include="Connections\NormalConnectionProviderTests.cs" />
+    <Compile Include="Linq\LinqToCqlCassandraTests.cs" />
+    <Compile Include="Linq\LinqToCqlObjectsCassandraTests.cs" />
+    <Compile Include="Linq\LinqToCqlObjectsTests.cs" />
+    <Compile Include="Linq\LinqToCqlTests.cs" />
+    <Compile Include="Operations\ColumnCountTest.cs" />
+    <Compile Include="Operations\Cql3Test.cs" />
+    <Compile Include="Operations\CqlTest.cs" />
+    <Compile Include="Operations\GetColumnTest.cs" />
+    <Compile Include="Operations\GetRangeSliceTest.cs" />
+    <Compile Include="Operations\GetSliceTest.cs" />
+    <Compile Include="Operations\InsertColumnTest.cs" />
+    <Compile Include="Operations\MultiGetSliceTest.cs" />
+    <Compile Include="Operations\RemoveColumnTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReportedIssuesTests.cs" />
+    <Compile Include="TypesToDatabase\AsciiTypeTest.cs" />
+    <Compile Include="TypesToDatabase\BytesTypeTest.cs" />
+    <Compile Include="TypesToDatabase\CompositeTypeTest.cs" />
+    <Compile Include="TypesToDatabase\DecimalTypeTest.cs" />
+    <Compile Include="TypesToDatabase\DynamicCompositeTypeTest.cs" />
+    <Compile Include="TypesToDatabase\IntegerTypeTest.cs" />
+    <Compile Include="TypesToDatabase\LexicalUUIDTypeTest.cs" />
+    <Compile Include="TypesToDatabase\LongTypeTest.cs" />
+    <Compile Include="TypesToDatabase\TimeUUIDTypeTest.cs" />
+    <Compile Include="TypesToDatabase\UTF8TypeTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Readme.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="xunit">
+      <HintPath>..\..\packages\xunit.1.9.1\lib\net20\xunit.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\FluentCassandra.csproj">
+      <Project>{eaa32600-3c2a-4b34-b9b2-5764f280fce3}</Project>
+      <Name>FluentCassandra</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FluentCassandra.Tests\FluentCassandra.Tests.csproj">
+      <Project>{9daf7022-5820-4214-b13e-ac0a1b37691f}</Project>
+      <Name>FluentCassandra.Tests</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
