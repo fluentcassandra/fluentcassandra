@@ -104,6 +104,7 @@
     <Compile Include="CassandraSuperColumnFamily.cs" />
     <Compile Include="CassandraTokenRange.cs" />
     <Compile Include="Connections\CassandraConnectionException.cs" />
+    <Compile Include="Connections\LockTimeoutException.cs" />
     <Compile Include="Connections\TSocketWithConnectTimeout.cs" />
     <Compile Include="Connections\Connection.cs" />
     <Compile Include="Connections\ConnectionBuilder.cs" />
@@ -134,7 +135,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="FluentColumnFamily.cs" />
-    <Compile Include="FluentColumnList`1.cs" />
+    <Compile Include="FluentColumnList.cs" />
     <Compile Include="FluentColumnParent.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -166,7 +167,7 @@
     <Compile Include="Linq\CqlObjectQueryProvider.cs" />
     <Compile Include="Linq\CqlQuery.cs" />
     <Compile Include="Linq\CqlQueryEvaluator.cs" />
-    <Compile Include="Linq\CassandraColumnFamily+QueryProvider.cs" />
+    <Compile Include="Linq\CassandraColumnFamily.cs" />
     <Compile Include="Linq\CqlQueryExtensions.cs" />
     <Compile Include="Linq\ICqlRow.cs" />
     <Compile Include="ObjectSerializer\ReflectionObjectSerializer.cs" />
