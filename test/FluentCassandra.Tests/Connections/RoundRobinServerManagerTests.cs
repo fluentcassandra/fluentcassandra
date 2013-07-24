@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Xunit;
 
-namespace FluentCassandra.Connections.Tests
+namespace FluentCassandra.Connections
 {
 	public class RoundRobinServerManagerTests
 	{
