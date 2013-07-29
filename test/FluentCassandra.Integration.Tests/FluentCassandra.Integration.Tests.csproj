@@ -56,6 +56,7 @@
     <Compile Include="Operations\GetRangeSliceTest.cs" />
     <Compile Include="Operations\GetSliceTest.cs" />
     <Compile Include="Operations\InsertColumnTest.cs" />
+    <Compile Include="Operations\InsertCounterColumnTest.cs" />
     <Compile Include="Operations\MultiGetSliceTest.cs" />
     <Compile Include="Operations\RemoveColumnTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

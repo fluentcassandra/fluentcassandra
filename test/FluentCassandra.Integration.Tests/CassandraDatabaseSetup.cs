@@ -92,7 +92,7 @@ namespace FluentCassandra.Integration.Tests
 					ColumnNameType = CassandraType.AsciiType,
 					DefaultColumnValueType = CassandraType.CounterColumnType
 				});
-				keyspace.TryCreateColumnFamily(new CassandraColumnFamilySchema()
+				keyspace.TryCreateColumnFamily(new CassandraColumnFamilySchema(type:ColumnType.Super)
 					{
 						FamilyName = "SuperCounters",
 						SuperColumnNameType = CassandraType.AsciiType,
