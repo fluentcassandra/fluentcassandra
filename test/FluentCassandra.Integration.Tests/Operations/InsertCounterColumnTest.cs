@@ -12,12 +12,6 @@ namespace FluentCassandra.Integration.Tests.Operations
         private CassandraColumnFamily _counterFamily;
         private CassandraSuperColumnFamily _superCounterFamily;
 
-        public InsertCounterColumnTest()
-        {
-            //Create a new row each time we run the test, so the expected counter values are always equal to 1
-            _testKey = Guid.NewGuid().ToString(); 
-        }
-
         public void SetFixture(CassandraDatabaseSetupFixture data)
         {
             var setup = data.DatabaseSetup();
@@ -31,7 +25,7 @@ namespace FluentCassandra.Integration.Tests.Operations
             _db.Dispose();
         }
 
-        private readonly string _testKey;
+        private const string _testKey = "CounterTest1";
         private const string _testName = "Test1";
         private const string _testSuperName = "SubTest1";
 
