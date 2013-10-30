@@ -120,6 +120,14 @@ CREATE COLUMNFAMILY Users (
 	Age int
 );", CqlVersion.Cql);
 				db.ExecuteNonQuery(@"CREATE INDEX User_Age ON Users (Age);", CqlVersion.Cql);
+
+                db.ExecuteNonQuery(@"
+CREATE COLUMNFAMILY Cql3Collections (
+    Id int PRIMARY KEY,
+    Set set<text>, --used for storing blobs of text
+    List list<uuid>, --list of guids
+    Map map<bigint, text> -- dictionary of <long,string>
+);", CqlVersion.Cql3);
 				db.Keyspace.ClearCachedKeyspaceSchema();
 
 				var family = db.GetColumnFamily<AsciiType>("Standard");
