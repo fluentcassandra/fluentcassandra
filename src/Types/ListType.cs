@@ -107,7 +107,33 @@ namespace FluentCassandra.Types
 
         #region Conversion
 
+        public static implicit operator List<T>(ListType<T> type)
+        {
+            return type._value;
+        }
 
+        public static implicit operator ListType<T>(List<T> obj)
+        {
+            return new ListType<T>(obj);
+        }
+
+        public static implicit operator byte[](ListType<T> o) { return ConvertTo<byte[]>(o); }
+        public static implicit operator ListType<T>(byte[] o) { return ConvertFrom(o); }
+
+        private static TOut ConvertTo<TOut>(ListType<T> type)
+        {
+            if (type == null)
+                return default(TOut);
+
+            return type.GetValue<TOut>();
+        }
+
+        private static ListType<T> ConvertFrom(object o)
+        {
+            var type = new ListType<T>();
+            type.SetValue(o);
+            return type;
+        }
 
         #endregion
 
