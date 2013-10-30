@@ -295,6 +295,8 @@
     <Compile Include="Types\IntegerTypeConverter.cs" />
     <Compile Include="Types\IntegerType.cs" />
     <Compile Include="Types\LexicalUUIDTypeConverter.cs" />
+    <Compile Include="Types\ListType.cs" />
+    <Compile Include="Types\ListTypeConverter.cs" />
     <Compile Include="Types\LongTypeConverter.cs" />
     <Compile Include="Types\NullType.cs" />
     <Compile Include="Types\ReversedType.cs" />
