@@ -112,22 +112,22 @@ namespace FluentCassandra.Integration.Tests
 					ColumnNameType = CassandraType.DynamicCompositeType(new Dictionary<char, CassandraType> { { 'a', CassandraType.AsciiType }, { 'd', CassandraType.DoubleType } })
 				});
 
-				db.ExecuteNonQuery(@"
-CREATE COLUMNFAMILY Users (
+                db.ExecuteNonQuery(@"
+CREATE COLUMNFAMILY ""Users"" (
 	Id int PRIMARY KEY,
 	Name ascii,
 	Email ascii,
 	Age int
-);", CqlVersion.Cql);
-				db.ExecuteNonQuery(@"CREATE INDEX User_Age ON Users (Age);", CqlVersion.Cql);
+);");
+                db.ExecuteNonQuery(@"CREATE INDEX User_Age ON ""Users"" (Age);");
 
                 db.ExecuteNonQuery(@"
 CREATE COLUMNFAMILY Cql3Collections (
     Id int PRIMARY KEY,
-    Set set<text>, --used for storing blobs of text
-    List list<uuid>, --list of guids
-    Map map<bigint, text> -- dictionary of <long,string>
-);", CqlVersion.Cql3);
+    TagSet set<text>, --used for storing blobs of text
+    TagList list<uuid>, --list of guids
+    TagMap map<bigint, text> -- dictionary of <long,string>
+);");
 				db.Keyspace.ClearCachedKeyspaceSchema();
 
 				var family = db.GetColumnFamily<AsciiType>("Standard");
@@ -151,15 +151,9 @@ CREATE COLUMNFAMILY Cql3Collections (
 
 			foreach (var user in Users)
 			{
-				dynamic record = userFamily.CreateRecord(user.Id);
-				record.Name = user.Name;
-				record.Email = user.Email;
-				record.Age = user.Age;
-
-				db.Attach(record);
+                var insertQuery = @"INSERT INTO ""Users"" (Id, Name, Email, Age) VALUES ("+ user.Id +", '" + user.Name + "', '"+ user.Email +"', "+ user.Age +")";
+                db.ExecuteNonQuery(insertQuery);
 			}
-
-			db.SaveChanges();
 		}
 
 		public void ResetFamily(CassandraColumnFamily family = null)
