@@ -34,6 +34,10 @@ namespace FluentCassandra.Types
 			return GetValueInternal(type);
 		}
 
+	    public abstract bool CanConvertFrom(Type sourceType);
+
+	    public abstract bool CanConvertTo(Type destinationType);
+
 		public abstract object GetValue();
 
 		public abstract void SetValue(object obj);

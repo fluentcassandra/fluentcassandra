@@ -295,10 +295,17 @@
     <Compile Include="Types\IntegerTypeConverter.cs" />
     <Compile Include="Types\IntegerType.cs" />
     <Compile Include="Types\LexicalUUIDTypeConverter.cs" />
+    <Compile Include="Types\ListType.cs" />
+    <Compile Include="Types\ListTypeConverter.cs" />
     <Compile Include="Types\LongTypeConverter.cs" />
+    <Compile Include="Types\MapType.cs" />
+    <Compile Include="Types\MapTypeConverter.cs" />
     <Compile Include="Types\NullType.cs" />
     <Compile Include="Types\ReversedType.cs" />
+    <Compile Include="Types\SetType.cs" />
+    <Compile Include="Types\SetTypeConverter.cs" />
     <Compile Include="Types\TimeUUIDTypeConverter.cs" />
+    <Compile Include="Types\TypeHelper.cs" />
     <Compile Include="Types\UTF8TypeConverter.cs" />
     <Compile Include="Types\LexicalUUIDType.cs" />
     <Compile Include="IFluentMutationTracker.cs" />

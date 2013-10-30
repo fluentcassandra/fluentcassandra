@@ -14,7 +14,17 @@ namespace FluentCassandra.Types
 			throw new NotImplementedException();
 		}
 
-		public override object GetValue()
+	    public override bool CanConvertFrom(Type sourceType)
+	    {
+	        throw new NotImplementedException();
+	    }
+
+	    public override bool CanConvertTo(Type destinationType)
+	    {
+	        throw new NotImplementedException();
+	    }
+
+	    public override object GetValue()
 		{
 			throw new NotImplementedException();
 		}
