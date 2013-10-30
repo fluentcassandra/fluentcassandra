@@ -22,14 +22,15 @@ namespace FluentCassandra.Integration.Tests
 
         public void Dispose()
         {
-            _db.Dispose();
+            if(_db != null)
+                _db.Dispose();
         }
 
         [Fact]
         public void TestReadingCql3Set()
         {
             //arrange
-            var insertQuery = @"INSERT INTO Cql3Collectons (Id, Set) VALUES(1, {'item1','item2'});";
+            var insertQuery = @"INSERT INTO Cql3Collections (Id, TagSet) VALUES(1, {'item1','item2'});";
 
             //act
             _db.ExecuteNonQuery(insertQuery);
