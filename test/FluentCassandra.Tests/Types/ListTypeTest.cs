@@ -17,7 +17,7 @@ namespace FluentCassandra.Types
             (UTF8Type) "item1",
             (UTF8Type) "item2"
         };
-        private readonly byte[] _javaByteOrder = new byte[] { 0, 2, 0, 5, 105, 116, 101, 109, 49, 0, 5, 105, 116, 01, 109, 50 };
+        private readonly byte[] _javaByteOrder = new byte[] { 0, 2, 0, 5, 105, 116, 101, 109, 49, 0, 5, 105, 116, 101, 109, 50 };
 
         [Fact]
         public void CassandraType_Cast()
@@ -48,6 +48,32 @@ namespace FluentCassandra.Types
             Assert.True(expected.SequenceEqual(actualValues.Select(Convert.ToInt32)));
         }
 
+        [Fact]
+        public void ListType_to_JavaBytes()
+        {
+            //arrange
+            var type = (ListType<UTF8Type>) _listType;
+            var expected = _javaByteOrder;
 
+            //act
+            byte[] actual = type.ToBigEndian();
+
+            //assert
+            Assert.True(expected.SequenceEqual(actual));
+        }
+
+        [Fact]
+        public void JavaBytes_to_ListType()
+        {
+            //arrange
+            var expected = new CassandraObject[] { (BytesType)_listType[0].GetValue<string>(), (BytesType)_listType[1].GetValue<string>() };
+
+            //act
+            var actual = new ListType<BytesType>();
+            actual.SetValueFromBigEndian(_javaByteOrder);
+
+            //assert
+            Assert.True(expected.SequenceEqual((CassandraObject[])actual));
+        }
     }
 }

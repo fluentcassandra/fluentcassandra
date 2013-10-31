@@ -119,6 +119,10 @@ namespace FluentCassandra.Types
 
             using (var bytes = new MemoryStream())
             {
+                //write the number of lengths
+                var elements = (ushort)components.Count;
+                bytes.Write(ConvertEndian(BitConverter.GetBytes(elements)), 0, 2);
+
                 foreach (var c in components)
                 {
                     var b = c.ToBigEndian();
@@ -129,9 +133,6 @@ namespace FluentCassandra.Types
 
                     // value
                     bytes.Write(b, 0, length);
-
-                    // end of component
-                    bytes.WriteByte((byte)0);
                 }
 
                 return bytes.ToArray();
@@ -141,30 +142,29 @@ namespace FluentCassandra.Types
         public override List<T> FromBigEndian(byte[] value)
         {
             var components = new List<T>();
-            var hintIndex = 0;
 
             var typeHint = typeof (T);
 
             using (var bytes = new MemoryStream(value))
             {
-                while (true)
+                // number of elements
+                var numElementsBytes = new byte[2];
+                if (bytes.Read(numElementsBytes, 0, 2) <= 0)
+                    return components;
+
+                var nElements = BitConverter.ToUInt16(ConvertEndian(numElementsBytes), 0);
+                for (var i = 0; i < nElements; i++)
                 {
-                    // value length
-                    var byteLength = new byte[2];
-                    if (bytes.Read(byteLength, 0, 2) <= 0)
-                        break;
+                    //get the length of this element
+                    var elementLengthBytes = new byte[2];
+                    bytes.Read(elementLengthBytes, 0, 2);
+                    var elementLength = BitConverter.ToUInt16(ConvertEndian(elementLengthBytes), 0);
 
-                    // value
-                    var length = BitConverter.ToUInt16(ConvertEndian(byteLength), 0);
-                    var buffer = new byte[length];
-                    bytes.Read(buffer, 0, length);
-
+                    //read the content of the element into a buffer
+                    var buffer = new byte[elementLength];
+                    bytes.Read(buffer, 0, elementLength);
                     var component = CassandraObject.GetCassandraObjectFromDatabaseByteArray(buffer, typeHint);
                     components.Add((T)component);
-
-                    // end of component
-                    if (bytes.ReadByte() != 0)
-                        break;
                 }
             }
 
