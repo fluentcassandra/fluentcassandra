@@ -43,6 +43,18 @@ namespace FluentCassandra.Types
 
         protected override object GetValueInternal(Type type)
         {
+            //If we're converting to a List<> type
+            if (type.IsList())
+            {
+                var listType = type.GetPrimaryGenericType();
+
+                //Check to see if this list's data type can be converted to the requested type
+                if (ComponentType.CreateInstance().CanConvertTo(listType))
+                {
+                    return TypeHelper.PopulateGenericList(_value.Select(o => (CassandraObject)o).ToList(), listType);
+                }
+            }
+
             return Converter.ConvertTo(_value, type);
         }
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using FluentCassandra.Connections;
 using Xunit;
@@ -32,10 +33,20 @@ namespace FluentCassandra.Integration.Tests.Operations
 
             //act
             _db.ExecuteNonQuery(insertQuery);
-            var results = _db.ExecuteQuery("SELECT * FROM Cql3List");
+            var results = _db.ExecuteQuery("SELECT * FROM Cql3List").ToList();
 
             //assert
             Assert.Equal(1, results.Count());
+            Assert.Equal(2, results.First().Columns.Count);
+
+            var row = (FluentCqlRow)results.First();
+            var id = row.GetColumn("id").ColumnValue.GetValue<int>();
+            var taglist = row.GetColumn("taglist").ColumnValue.GetValue<List<string>>();
+
+            Assert.Equal(1, id);
+            Assert.Equal(2, taglist.Count);
+            Assert.Equal("item1", taglist[0]);
+            Assert.Equal("item2", taglist[1]);
         }
 
         [Fact]
