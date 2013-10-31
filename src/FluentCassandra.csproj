@@ -300,6 +300,8 @@
     <Compile Include="Types\LongTypeConverter.cs" />
     <Compile Include="Types\NullType.cs" />
     <Compile Include="Types\ReversedType.cs" />
+    <Compile Include="Types\SetType.cs" />
+    <Compile Include="Types\SetTypeConverter.cs" />
     <Compile Include="Types\TimeUUIDTypeConverter.cs" />
     <Compile Include="Types\TypeHelper.cs" />
     <Compile Include="Types\UTF8TypeConverter.cs" />

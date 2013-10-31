@@ -7,6 +7,16 @@ namespace FluentCassandra.Types
 {
     internal class ListTypeConverter<T> : CassandraObjectConverter<List<T>> where T : CassandraObject
     {
+        protected virtual string CollectionStringBegin
+        {
+            get { return "["; }
+        }
+
+        protected virtual string CollectionStringEnd
+        {
+            get { return "]"; }
+        }
+
         public override bool CanConvertFrom(Type sourceType)
         {
             return sourceType == typeof(byte[]) ||
@@ -71,7 +81,7 @@ namespace FluentCassandra.Types
         public override object ConvertToInternal(List<T> value, Type destinationType)
         {
             if (destinationType == typeof(string))
-                return "[" + String.Join(",", value) + "]"; //should format the list into a JSON-esque object
+                return CollectionStringBegin + String.Join(",", value) + CollectionStringEnd; //should format the list into a JSON-esque object
 
             if (destinationType == typeof(byte[]))
             {
