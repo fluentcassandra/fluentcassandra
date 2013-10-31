@@ -7,15 +7,9 @@ namespace FluentCassandra.Types
 {
     internal class ListTypeConverter<T> : CassandraObjectConverter<List<T>> where T : CassandraObject
     {
-        protected virtual string CollectionStringBegin
-        {
-            get { return "["; }
-        }
+        protected virtual string CollectionStringBegin { get { return "["; } }
 
-        protected virtual string CollectionStringEnd
-        {
-            get { return "]"; }
-        }
+        protected virtual string CollectionStringEnd { get { return "]"; } }
 
         public override bool CanConvertFrom(Type sourceType)
         {

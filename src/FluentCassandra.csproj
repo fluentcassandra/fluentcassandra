@@ -298,6 +298,8 @@
     <Compile Include="Types\ListType.cs" />
     <Compile Include="Types\ListTypeConverter.cs" />
     <Compile Include="Types\LongTypeConverter.cs" />
+    <Compile Include="Types\MapType.cs" />
+    <Compile Include="Types\MapTypeConverter.cs" />
     <Compile Include="Types\NullType.cs" />
     <Compile Include="Types\ReversedType.cs" />
     <Compile Include="Types\SetType.cs" />
