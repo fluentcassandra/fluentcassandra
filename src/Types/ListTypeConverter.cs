@@ -10,7 +10,8 @@ namespace FluentCassandra.Types
         public override bool CanConvertFrom(Type sourceType)
         {
             return sourceType == typeof(byte[]) ||
-                 sourceType.GetInterfaces().Contains(typeof(IEnumerable<T>));
+                 sourceType.GetInterfaces().Contains(typeof(IEnumerable<T>)) ||
+                 sourceType.GetInterfaces().Contains(typeof(IEnumerable<object>));
         }
 
         public override bool CanConvertTo(Type destinationType)
@@ -54,6 +55,9 @@ namespace FluentCassandra.Types
 
                 return components;
             }
+
+            if (value.GetType().GetInterfaces().Contains(typeof(IEnumerable<object>)))
+                return new List<T>(((IEnumerable<object>)value).Cast<T>());
 
             if (value.GetType().GetInterfaces().Contains(typeof(IEnumerable<T>)))
                 return new List<T>((IEnumerable<T>)value);

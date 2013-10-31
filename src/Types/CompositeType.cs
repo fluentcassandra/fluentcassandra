@@ -216,6 +216,16 @@ namespace FluentCassandra.Types
 			return type;
 		}
 
+        public override bool CanConvertFrom(Type sourceType)
+        {
+            return Converter.CanConvertFrom(sourceType);
+        }
+
+        public override bool CanConvertTo(Type destinationType)
+        {
+            return Converter.CanConvertTo(destinationType);
+        }
+
 		#endregion
 
 		#region IList<CassandraType> Members

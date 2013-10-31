@@ -34,7 +34,17 @@ namespace FluentCassandra.Types
 			throw new NotSupportedException();
 		}
 
-		public override object GetValue()
+	    public override bool CanConvertFrom(Type sourceType)
+	    {
+            throw new NotSupportedException();
+	    }
+
+	    public override bool CanConvertTo(Type destinationType)
+	    {
+            throw new NotSupportedException();
+	    }
+
+	    public override object GetValue()
 		{
 			throw new NotSupportedException();
 		}

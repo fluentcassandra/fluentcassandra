@@ -18,14 +18,15 @@ namespace FluentCassandra.Types
         public ListType(IEnumerable<T> objects)
         {
             _value = new List<T>(objects);
-            ComponentType = typeof(T);
         }
 
         #endregion
 
         private List<T> _value;
 
-        public CassandraType ComponentType { get; set; }
+        public static CassandraType ComponentType {
+            get { return (CassandraType)typeof(T); } 
+        }
 
         #region Implementation
 
@@ -37,9 +38,7 @@ namespace FluentCassandra.Types
         public override void SetValue(object obj)
         {
             if (obj != null && obj.GetType().GetInterfaces().Contains(typeof (IEnumerable<T>)))
-                ComponentType = ((IEnumerable<T>) obj).Select(t => t.GetCassandraType()).First();
-
-            _value = Converter.ConvertFrom(obj);
+                _value = Converter.ConvertFrom(obj);
         }
 
         protected override object GetValueInternal(Type type)
@@ -117,8 +116,42 @@ namespace FluentCassandra.Types
             return new ListType<T>(obj);
         }
 
+        public static ListType<T> From<TIn>(List<TIn> obj)
+        {
+            //Check to make sure we can convert
+            if (CassandraType.GetCassandraType(typeof(TIn)) == ComponentType)
+            {
+                var listType =
+                    new ListType<T>(obj.Select(o => (T) CassandraObject.GetCassandraObjectFromObject(o, typeof (T))));
+            }
+
+            throw new ArgumentException(string.Format("can't convert list of type {0} to ListType of type {1}", typeof(TIn), typeof(T)));
+        }
+
+        public static List<TOut> To<TOut>(ListType<T> obj)
+        {
+            //Check to make sure we can convert
+            if (CassandraType.GetCassandraType(typeof(TOut)) == ComponentType)
+            {
+                var list =
+                    new List<TOut>(obj.Select(o => o.GetValue<TOut>()));
+            }
+
+            throw new ArgumentException(string.Format("can't convert ListType of type {1} to List of type {0} to ", typeof(T), typeof(TOut)));
+        }
+
         public static implicit operator byte[](ListType<T> o) { return ConvertTo<byte[]>(o); }
         public static implicit operator ListType<T>(byte[] o) { return ConvertFrom(o); }
+
+        public static implicit operator ListType<T>(object[] s)
+        {
+            return new ListType<T>{ _value = new List<T>(s.Select(o => (T)CassandraObject.GetCassandraObjectFromObject(o, typeof(T)))) };
+        }
+
+        public static implicit operator ListType<T>(List<object> s)
+        {
+            return new ListType<T>{ _value = new List<T>(s.Select(o => (T)CassandraObject.GetCassandraObjectFromObject(o, typeof(T)))) };
+        }
 
         private static TOut ConvertTo<TOut>(ListType<T> type)
         {
@@ -133,6 +166,16 @@ namespace FluentCassandra.Types
             var type = new ListType<T>();
             type.SetValue(o);
             return type;
+        }
+
+        public override bool CanConvertFrom(Type sourceType)
+        {
+            return Converter.CanConvertFrom(sourceType);
+        }
+
+        public override bool CanConvertTo(Type destinationType)
+        {
+            return Converter.CanConvertTo(destinationType);
         }
 
         #endregion
