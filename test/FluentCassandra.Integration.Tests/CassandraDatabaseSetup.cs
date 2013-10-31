@@ -130,7 +130,7 @@ CREATE COLUMNFAMILY Cql3List (
                 db.ExecuteNonQuery(@"
 CREATE COLUMNFAMILY Cql3Set (
     Id int PRIMARY KEY,
-    TagSet list<uuid> --set of Guids
+    TagSet set<uuid> --set of Guids
 );");
 				db.Keyspace.ClearCachedKeyspaceSchema();
 

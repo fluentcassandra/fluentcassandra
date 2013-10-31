@@ -29,6 +29,7 @@ namespace FluentCassandra.Types
 
 
         private static readonly CassandraType _ListType = new CassandraType("org.apache.cassandra.db.marshal.ListType");
+        private static readonly CassandraType _SetType = new CassandraType("org.apache.cassandra.db.marshal.SetType");
 		private static readonly CassandraType _CompositeType = new CassandraType("org.apache.cassandra.db.marshal.CompositeType");
 		private static readonly CassandraType _DynamicCompositeType = new CassandraType("org.apache.cassandra.db.marshal.DynamicCompositeType");
 
@@ -122,9 +123,17 @@ namespace FluentCassandra.Types
 				ParseReversedType(part2);
             else if (_type == typeof (ListType<>))
                 ParseListType(part2);
+            else if (_type == typeof(SetType<>))
+                ParseSetType(part2);
 			else
 				throw new CassandraException("Type '" + dbType + "' not found.");
 		}
+
+        private void ParseSetType(string part)
+        {
+            //construct the generic SetType (has an indentical implmentation to ListType)
+            ParseListType(part);
+        }
 
 	    private void ParseListType(string part)
 	    {
@@ -366,6 +375,7 @@ namespace FluentCassandra.Types
 				case "emptytype": type = typeof(EmptyType); break;
 				case "inetaddresstype": type = typeof(InetAddressType); break;
                 case "listtype": type = typeof (ListType<>); break;
+                case "settype": type = typeof (SetType<>); break;
 				default: throw new CassandraException("Type '" + dbType + "' not found.");
 			}
 
