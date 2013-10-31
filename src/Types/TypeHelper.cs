@@ -15,8 +15,8 @@ namespace FluentCassandra.Types
         {
             var enumerable = (from i in t.GetInterfaces()
                               where i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IList<>)
-                              select i).Any();
-            return enumerable;
+                              select i);
+            return enumerable.Any();
         }
 
         public static bool IsDictionary(this Type t)
@@ -27,9 +27,21 @@ namespace FluentCassandra.Types
             return dict;
         }
 
+        public static Type GetIListImplementation(Type t)
+        {
+            return (from i in t.GetInterfaces()
+                    where i.IsGenericType && (i.GetGenericTypeDefinition() == typeof(IList<>) || i.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+             select i).FirstOrDefault();
+        }
+
         public static Type GetPrimaryGenericType(this Type t)
         {
-            Type[] genericArguments = t.GetGenericArguments();
+            var listInterface = GetIListImplementation(t);
+
+            if (listInterface == default(Type))
+                throw new ArgumentException(string.Format("type {0} is does not implement an IList implementation", t));
+
+            Type[] genericArguments = listInterface.GetGenericArguments();
 
             if(genericArguments.Length == 0)
                 throw new ArgumentException(string.Format("type {0} is not generic, thus it has no generic arguments.", t));
@@ -39,7 +51,12 @@ namespace FluentCassandra.Types
 
         public static Type[] GetAllGenericTypes(this Type t)
         {
-            Type[] genericArguments = t.GetGenericArguments();
+            var listInterface = GetIListImplementation(t);
+
+            if (listInterface == default(Type))
+                throw new ArgumentException(string.Format("type {0} is does not implement an IList implementation", t));
+
+            Type[] genericArguments = listInterface.GetGenericArguments();
 
             if (genericArguments.Length == 0)
                 throw new ArgumentException(string.Format("type {0} is not generic, thus it has no generic arguments.", t));

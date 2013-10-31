@@ -70,6 +70,7 @@
     <Compile Include="Types\ListTypeTest.cs" />
     <Compile Include="Types\NullTypeTest.cs" />
     <Compile Include="Types\LexicalUUIDTypeTest.cs" />
+    <Compile Include="Types\SetTypeTest.cs" />
     <Compile Include="Types\TimeUUIDTypeTest.cs" />
     <Compile Include="Types\LongTypeTest.cs" />
     <Compile Include="Types\UTF8TypeTest.cs" />

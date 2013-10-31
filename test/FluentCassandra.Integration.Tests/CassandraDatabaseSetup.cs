@@ -126,6 +126,12 @@ CREATE COLUMNFAMILY Cql3List (
     Id int PRIMARY KEY,
     TagList list<text> --list of strings
 );");
+
+                db.ExecuteNonQuery(@"
+CREATE COLUMNFAMILY Cql3Set (
+    Id int PRIMARY KEY,
+    TagSet list<uuid> --set of Guids
+);");
 				db.Keyspace.ClearCachedKeyspaceSchema();
 
 				var family = db.GetColumnFamily<AsciiType>("Standard");
