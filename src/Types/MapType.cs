@@ -47,6 +47,21 @@ namespace FluentCassandra.Types
 
         protected override object GetValueInternal(Type type)
         {
+            //If we're converting to a Dictionary<> type
+            if (type.IsDictionary())
+            {
+                var dictionaryTypes = type.GetAllGenericTypes();
+
+                //Check to see if this list's data type can be converted to the requested type
+                if (KeyType.CreateInstance().CanConvertTo(dictionaryTypes[0]) && ValueType.CreateInstance().CanConvertTo(dictionaryTypes[1]))
+                {
+                    return
+                        TypeHelper.PopulateGenericDictionary(
+                            _value.ToDictionary(k => (CassandraObject) k.Key, v => (CassandraObject) v.Value),
+                            dictionaryTypes[0], dictionaryTypes[1]);
+                }
+            }
+
             return Converter.ConvertTo(_value, type);
         }
 
@@ -68,6 +83,30 @@ namespace FluentCassandra.Types
         #endregion
 
         #region Equality
+
+        public override bool Equals(object obj)
+        {
+            Dictionary<TKey, TValue> objDict;
+
+            if (obj is Dictionary<TKey, TValue>)
+                objDict = ((MapType<TKey, TValue>)obj)._value;
+            else
+                objDict = Converter.ConvertFrom(obj);
+
+            if (objDict == null)
+                return false;
+
+            if (objDict.Count != _value.Count)
+                return false;
+
+            foreach(var dictItem in objDict)
+            {
+                if (!_value[dictItem.Key].Equals(objDict[dictItem.Key]))
+                    return false;
+            }
+
+            return true;
+        }
 
         public override int GetHashCode()
         {

@@ -27,7 +27,7 @@ namespace FluentCassandra.Types
 		public static readonly CassandraType EmptyType = new CassandraType("org.apache.cassandra.db.marshal.EmptyType");
 		public static readonly CassandraType InetAddressType = new CassandraType("org.apache.cassandra.db.marshal.InetAddressType");
 
-
+        private static readonly CassandraType _MapType = new CassandraType("org.apache.cassandra.db.marshal.MapType");
         private static readonly CassandraType _ListType = new CassandraType("org.apache.cassandra.db.marshal.ListType");
         private static readonly CassandraType _SetType = new CassandraType("org.apache.cassandra.db.marshal.SetType");
 		private static readonly CassandraType _CompositeType = new CassandraType("org.apache.cassandra.db.marshal.CompositeType");
@@ -125,9 +125,21 @@ namespace FluentCassandra.Types
                 ParseListType(part2);
             else if (_type == typeof(SetType<>))
                 ParseSetType(part2);
+            else if (_type == typeof(MapType<,>))
+                ParseMapType(part2);
 			else
 				throw new CassandraException("Type '" + dbType + "' not found.");
 		}
+
+	    private void ParseMapType(string part)
+	    {
+            part = part.Trim('(', ')');
+            var parts = part.Split(',');
+
+	        var keyType = GetSystemType(parts[0]);
+	        var valueType = GetSystemType(parts[1]);
+	        _type = _type.MakeGenericType(keyType, valueType);
+	    }
 
         private void ParseSetType(string part)
         {
@@ -376,6 +388,7 @@ namespace FluentCassandra.Types
 				case "inetaddresstype": type = typeof(InetAddressType); break;
                 case "listtype": type = typeof (ListType<>); break;
                 case "settype": type = typeof (SetType<>); break;
+                case "maptype": type = typeof(MapType<,>); break;
 				default: throw new CassandraException("Type '" + dbType + "' not found.");
 			}
 

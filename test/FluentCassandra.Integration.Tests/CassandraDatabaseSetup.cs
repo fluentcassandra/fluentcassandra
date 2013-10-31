@@ -132,6 +132,12 @@ CREATE COLUMNFAMILY Cql3Set (
     Id int PRIMARY KEY,
     TagSet set<uuid> --set of Guids
 );");
+
+                db.ExecuteNonQuery(@"
+CREATE COLUMNFAMILY Cql3Map (
+    Id int PRIMARY KEY,
+    TagMap map<bigint,uuid> --map of long integers and Guids
+);");
 				db.Keyspace.ClearCachedKeyspaceSchema();
 
 				var family = db.GetColumnFamily<AsciiType>("Standard");

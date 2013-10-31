@@ -79,10 +79,30 @@ namespace FluentCassandra.Integration.Tests.Operations
         public void TestReadingCql3Map()
         {
             //arrange
+            var mapItem1 = new KeyValuePair<long, Guid>(11310101L, new Guid("88F1F2FE-B13B-4241-B17E-B8FAB8AC588B"));
+            var mapItem2 = new KeyValuePair<long, Guid>(-452117101L, new Guid("1AFBBD02-C4D5-46BD-B5F5-D0DCA91BC049"));
+            var items = new[] {mapItem1, mapItem2};
+
+            var insertQuery = @"INSERT INTO Cql3Map (Id, TagMap) VALUES(1, {" + mapItem1.Key + ":" + mapItem1.Value + ", " + mapItem2.Key + ":" + mapItem2.Value + "});";
 
             //act
+            _db.ExecuteNonQuery(insertQuery);
+            var results = _db.ExecuteQuery("SELECT * FROM Cql3Map").ToList();
 
             //assert
+            Assert.Equal(1, results.Count());
+            Assert.Equal(2, results.First().Columns.Count);
+
+            var row = (FluentCqlRow)results.First();
+            var id = row.GetColumn("id").ColumnValue.GetValue<int>();
+            var tagmap = row.GetColumn("tagmap").ColumnValue.GetValue<Dictionary<long,Guid>>();
+
+            Assert.Equal(1, id);
+            Assert.Equal(2, tagmap.Count);
+            Assert.True(tagmap.ContainsKey(mapItem1.Key));
+            Assert.True(tagmap.ContainsKey(mapItem2.Key));
+            Assert.Equal(mapItem1.Value, tagmap[mapItem1.Key]);
+            Assert.Equal(mapItem2.Value, tagmap[mapItem2.Key]);
         }
     }
 }

@@ -67,7 +67,7 @@ namespace FluentCassandra.Types
 
                         //get the length of the value
                         var valueLengthBytes = new byte[2];
-                        bytes.Read(keyLengthBytes, 0, 2);
+                        bytes.Read(valueLengthBytes, 0, 2);
                         var valueLength = BitConverter.ToUInt16(valueLengthBytes, 0);
 
                         //read the content of the key into a buffer
@@ -202,13 +202,13 @@ namespace FluentCassandra.Types
                 if (bytes.Read(numEntriesBytes, 0, 2) <= 0)
                     return components;
 
-                var nEntries = BitConverter.ToUInt16(numEntriesBytes, 0);
+                var nEntries = BitConverter.ToUInt16(ConvertEndian(numEntriesBytes), 0);
                 for (var i = 0; i < nEntries; i++)
                 {
                     //get the length of the key
                     var keyLengthBytes = new byte[2];
                     bytes.Read(keyLengthBytes, 0, 2);
-                    var keyLength = BitConverter.ToUInt16(keyLengthBytes, 0);
+                    var keyLength = BitConverter.ToUInt16(ConvertEndian(keyLengthBytes), 0);
 
                     //read the content of the key into a buffer
                     var keyBuffer = new byte[keyLength];
@@ -217,8 +217,8 @@ namespace FluentCassandra.Types
 
                     //get the length of the value
                     var valueLengthBytes = new byte[2];
-                    bytes.Read(keyLengthBytes, 0, 2);
-                    var valueLength = BitConverter.ToUInt16(valueLengthBytes, 0);
+                    bytes.Read(valueLengthBytes, 0, 2);
+                    var valueLength = BitConverter.ToUInt16(ConvertEndian(valueLengthBytes), 0);
 
                     //read the content of the key into a buffer
                     var valueBuffer = new byte[valueLength];
