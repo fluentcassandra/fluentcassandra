@@ -119,10 +119,9 @@ namespace FluentCassandra.Types
         public static ListType<T> From<TIn>(List<TIn> obj)
         {
             //Check to make sure we can convert
-            if (CassandraType.GetCassandraType(typeof(TIn)) == ComponentType)
+            if (ComponentType.CreateInstance().CanConvertFrom(typeof(TIn)))
             {
-                var listType =
-                    new ListType<T>(obj.Select(o => (T) CassandraObject.GetCassandraObjectFromObject(o, typeof (T))));
+                return new ListType<T>(obj.Select(o => (T) CassandraObject.GetCassandraObjectFromObject(o, typeof (T))));
             }
 
             throw new ArgumentException(string.Format("can't convert list of type {0} to ListType of type {1}", typeof(TIn), typeof(T)));
@@ -131,10 +130,9 @@ namespace FluentCassandra.Types
         public static List<TOut> To<TOut>(ListType<T> obj)
         {
             //Check to make sure we can convert
-            if (CassandraType.GetCassandraType(typeof(TOut)) == ComponentType)
+            if (ComponentType.CreateInstance().CanConvertTo(typeof(TOut)))
             {
-                var list =
-                    new List<TOut>(obj.Select(o => o.GetValue<TOut>()));
+                return new List<TOut>(obj.Select(o => o.GetValue<TOut>()));
             }
 
             throw new ArgumentException(string.Format("can't convert ListType of type {1} to List of type {0} to ", typeof(T), typeof(TOut)));

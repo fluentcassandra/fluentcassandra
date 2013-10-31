@@ -68,7 +68,7 @@ namespace FluentCassandra.Types
         public override object ConvertToInternal(List<T> value, Type destinationType)
         {
             if (destinationType == typeof (string))
-                return "{" + String.Join(",", value) + "}"; //should format the list into a JSON-esque object
+                return "[" + String.Join(",", value) + "]"; //should format the list into a JSON-esque object
 
             if (destinationType == typeof(byte[]))
             {

@@ -122,11 +122,9 @@ CREATE COLUMNFAMILY ""Users"" (
                 db.ExecuteNonQuery(@"CREATE INDEX User_Age ON ""Users"" (Age);");
 
                 db.ExecuteNonQuery(@"
-CREATE COLUMNFAMILY Cql3Collections (
+CREATE COLUMNFAMILY Cql3List (
     Id int PRIMARY KEY,
-    TagSet set<text>, --used for storing blobs of text
-    TagList list<uuid>, --list of guids
-    TagMap map<bigint, text> -- dictionary of <long,string>
+    TagList list<text> --list of strings
 );");
 				db.Keyspace.ClearCachedKeyspaceSchema();
 

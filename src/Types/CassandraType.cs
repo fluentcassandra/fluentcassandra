@@ -27,6 +27,8 @@ namespace FluentCassandra.Types
 		public static readonly CassandraType EmptyType = new CassandraType("org.apache.cassandra.db.marshal.EmptyType");
 		public static readonly CassandraType InetAddressType = new CassandraType("org.apache.cassandra.db.marshal.InetAddressType");
 
+
+        private static readonly CassandraType _ListType = new CassandraType("org.apache.cassandra.db.marshal.ListType");
 		private static readonly CassandraType _CompositeType = new CassandraType("org.apache.cassandra.db.marshal.CompositeType");
 		private static readonly CassandraType _DynamicCompositeType = new CassandraType("org.apache.cassandra.db.marshal.DynamicCompositeType");
 
@@ -118,11 +120,21 @@ namespace FluentCassandra.Types
 				ParseDynamicCompositeType(part2);
 			else if (_type == typeof(ReversedType))
 				ParseReversedType(part2);
+            else if (_type == typeof (ListType<>))
+                ParseListType(part2);
 			else
 				throw new CassandraException("Type '" + dbType + "' not found.");
 		}
 
-		private void ParseReversedType(string part)
+	    private void ParseListType(string part)
+	    {
+            //construct the generic ListType
+            part = part.Trim('(', ')');
+	        var listType = GetSystemType(part);
+	        _type = _type.MakeGenericType(listType);
+	    }
+
+	    private void ParseReversedType(string part)
 		{
 			part = part.Trim('(', ')');
 			_typeReversed = true;
@@ -353,6 +365,7 @@ namespace FluentCassandra.Types
 				case "reversedtype": type = typeof(ReversedType); break;
 				case "emptytype": type = typeof(EmptyType); break;
 				case "inetaddresstype": type = typeof(InetAddressType); break;
+                case "listtype": type = typeof (ListType<>); break;
 				default: throw new CassandraException("Type '" + dbType + "' not found.");
 			}
 

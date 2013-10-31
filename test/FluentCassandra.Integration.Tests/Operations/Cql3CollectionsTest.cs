@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using FluentCassandra.Connections;
 using Xunit;
 
-namespace FluentCassandra.Integration.Tests
+namespace FluentCassandra.Integration.Tests.Operations
 {
     /// <summary>
     /// fluent-cassandra support for CQL3 collection types, such as map / list / set
@@ -27,17 +25,17 @@ namespace FluentCassandra.Integration.Tests
         }
 
         [Fact]
-        public void TestReadingCql3Set()
+        public void TestReadingCql3List()
         {
             //arrange
-            var insertQuery = @"INSERT INTO Cql3Collections (Id, TagSet) VALUES(1, {'item1','item2'});";
+            var insertQuery = @"INSERT INTO Cql3List (Id, TagList) VALUES(1, ['item1','item2']);";
 
             //act
             _db.ExecuteNonQuery(insertQuery);
-            var results = _db.ExecuteQuery("SELECT * FROM Cql3Collections");
+            var results = _db.ExecuteQuery("SELECT * FROM Cql3List");
 
             //assert
-            Assert.Equal(4, results.Count());
+            Assert.Equal(1, results.Count());
         }
 
         [Fact]
@@ -51,7 +49,7 @@ namespace FluentCassandra.Integration.Tests
         }
 
         [Fact]
-        public void TestReadingCql3List()
+        public void TestReadingCql3Set()
         {
             //arrange
 
