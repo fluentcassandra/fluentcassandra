@@ -96,16 +96,10 @@ namespace FluentCassandra.Types
             return Converter.CanConvertTo(destinationType);
         }
 
-        public static implicit operator Dictionary<TKey, TValue>(MapType<TKey, TValue> type)
-        {
-            return type._value;
-        }
-
-        public static implicit operator MapType<TKey, TValue>(Dictionary<TKey, TValue> obj)
-        {
-            return new MapType<TKey, TValue>(obj);
-        }
-
+        public static implicit operator MapType<TKey, TValue>(List<KeyValuePair<TKey, TValue>> obj) { return new MapType<TKey, TValue>(obj.ToDictionary(k => k.Key, v => v.Value)); }
+        public static implicit operator List<KeyValuePair<TKey, TValue>>(MapType<TKey, TValue> type) { return type._value.ToList(); }
+        public static implicit operator Dictionary<TKey, TValue>(MapType<TKey, TValue> type){ return type._value; }
+        public static implicit operator MapType<TKey, TValue>(Dictionary<TKey, TValue> obj){ return new MapType<TKey, TValue>(obj); }
         public static implicit operator byte[](MapType<TKey, TValue> o) { return ConvertTo<byte[]>(o); }
         public static implicit operator MapType<TKey, TValue>(byte[] o) { return ConvertFrom(o); }
 
@@ -122,6 +116,30 @@ namespace FluentCassandra.Types
             var type = new MapType<TKey, TValue>();
             type.SetValue(o);
             return type;
+        }
+
+        public static MapType<TKey, TValue> From<TKeyIn, TValueIn>(IDictionary<TKeyIn, TValueIn> obj)
+        {
+            //Check to make sure we can convert
+            if (KeyType.CreateInstance().CanConvertFrom(typeof(TKeyIn)) && ValueType.CreateInstance().CanConvertFrom(typeof(TValueIn)))
+            {
+                return new MapType<TKey, TValue>(obj.ToDictionary(
+                    k => (TKey)CassandraObject.GetCassandraObjectFromObject(k, KeyType), 
+                    v => (TValue)CassandraObject.GetCassandraObjectFromObject(v, ValueType)));
+            }
+
+            throw new ArgumentException(string.Format("can't convert IDictionary of type {0},{1} to MapType of type {2},{3}", typeof(TKeyIn), typeof(TValueIn), typeof(TKey), typeof(TValue)));
+        }
+
+        public static Dictionary<TKeyOut, TValueOut> To<TKeyOut, TValueOut>(MapType<TKey, TValue> obj)
+        {
+            //Check to make sure we can convert
+            if (KeyType.CreateInstance().CanConvertFrom(typeof(TKeyOut)) && ValueType.CreateInstance().CanConvertFrom(typeof(TValueOut)))
+            {
+                return obj.ToDictionary(k => k.Key.GetValue<TKeyOut>(), v => v.Value.GetValue<TValueOut>());
+            }
+
+            throw new ArgumentException(string.Format("can't convert MapType of type {0},{1} to Dictionary of type {2},{3}", typeof(TKey), typeof(TValue), typeof(TKeyOut), typeof(TValueOut)));
         }
 
         #endregion
