@@ -37,7 +37,7 @@ namespace FluentCassandra.Types
 
         public override void SetValue(object obj)
         {
-            if (obj != null && obj.GetType().GetInterfaces().Contains(typeof (IEnumerable<T>)))
+            if (obj != null)
                 _value = Converter.ConvertFrom(obj);
         }
 
