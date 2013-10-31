@@ -21,8 +21,7 @@ namespace FluentCassandra.Integration.Tests.Operations
 
         public void Dispose()
         {
-            if(_db != null)
-                _db.Dispose();
+            _db.Dispose();
         }
 
         [Fact]
@@ -55,8 +54,8 @@ namespace FluentCassandra.Integration.Tests.Operations
             //arrange
             var guid1 = new Guid("88F1F2FE-B13B-4241-B17E-B8FAB8AC588B");
             var guid2 = new Guid("1AFBBD02-C4D5-46BD-B5F5-D0DCA91BC049");
-            var guids = new[] {guid1, guid2};
-            var insertQuery = @"INSERT INTO Cql3Set (Id, TagSet) VALUES(1, {"+ guid1 +","+ guid2 +"});";
+            var guids = new[] { guid1, guid2 };
+            var insertQuery = @"INSERT INTO Cql3Set (Id, TagSet) VALUES(1, {" + guid1 + "," + guid2 + "});";
 
             //act
             _db.ExecuteNonQuery(insertQuery);
