@@ -65,9 +65,9 @@ namespace FluentCassandra.Types
         {
             //arrange
             List<int> expected = new List<int>() {1, 2, 3};
-            ListType<IntegerType> actualType = ListType<IntegerType>.From(expected);
 
             //act
+            ListType<IntegerType> actualType = ListType<IntegerType>.From(expected);
             CassandraObject actual = actualType;
             var actualValues = actual.GetValue<List<object>>();
 

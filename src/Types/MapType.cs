@@ -136,8 +136,10 @@ namespace FluentCassandra.Types
         }
 
         public static implicit operator MapType<TKey, TValue>(List<KeyValuePair<TKey, TValue>> obj) { return new MapType<TKey, TValue>(obj.ToDictionary(k => k.Key, v => v.Value)); }
+        public static implicit operator KeyValuePair<TKey, TValue>[](MapType<TKey, TValue> type) { return type._value.ToArray(); }
         public static implicit operator List<KeyValuePair<TKey, TValue>>(MapType<TKey, TValue> type) { return type._value.ToList(); }
         public static implicit operator Dictionary<TKey, TValue>(MapType<TKey, TValue> type){ return type._value; }
+        public static implicit operator Dictionary<CassandraObject, CassandraObject>(MapType<TKey, TValue> type) { return type._value.ToDictionary(x => (CassandraObject)x.Key, v => (CassandraObject)v.Value); }
         public static implicit operator MapType<TKey, TValue>(Dictionary<TKey, TValue> obj){ return new MapType<TKey, TValue>(obj); }
         public static implicit operator byte[](MapType<TKey, TValue> o) { return ConvertTo<byte[]>(o); }
         public static implicit operator MapType<TKey, TValue>(byte[] o) { return ConvertFrom(o); }
@@ -163,8 +165,8 @@ namespace FluentCassandra.Types
             if (KeyType.CreateInstance().CanConvertFrom(typeof(TKeyIn)) && ValueType.CreateInstance().CanConvertFrom(typeof(TValueIn)))
             {
                 return new MapType<TKey, TValue>(obj.ToDictionary(
-                    k => (TKey)CassandraObject.GetCassandraObjectFromObject(k, KeyType), 
-                    v => (TValue)CassandraObject.GetCassandraObjectFromObject(v, ValueType)));
+                    k => (TKey)CassandraObject.GetCassandraObjectFromObject(k.Key, KeyType), 
+                    v => (TValue)CassandraObject.GetCassandraObjectFromObject(v.Value, ValueType)));
             }
 
             throw new ArgumentException(string.Format("can't convert IDictionary of type {0},{1} to MapType of type {2},{3}", typeof(TKeyIn), typeof(TValueIn), typeof(TKey), typeof(TValue)));
