@@ -18,7 +18,7 @@ namespace FluentCassandra.Types
             {(LongType)11310101L, (UUIDType)(new Guid("88F1F2FE-B13B-4241-B17E-B8FAB8AC588B"))}
         };
         private readonly byte[] _javaByteOrder = new byte[] {0,2,0,8,255,255,255,255,229,13,61,147,0,16,26,
-	                                                        251,189,2,196,70,213,189,181,245,208,220,169,27,192,73,
+	                                                        251,189,2,196,213,70,189,181,245,208,220,169,27,192,73,
 	                                                        0,8,0,0,0,0,0,172,148,21,0,16,136,241,242,
 	                                                        254,177,59,66,65,177,126,184,250,184,172,88,139 };
 
@@ -110,7 +110,12 @@ namespace FluentCassandra.Types
             //act
             byte[] actual = type.ToBigEndian();
 
+            var actStr = String.Join(",",actual.Select(x => x.ToString()));
+            var expectedStr = String.Join(",",expected.Select(x => x.ToString()));
+
             //assert
+            Assert.NotEmpty(actStr);
+            Assert.NotEmpty(expectedStr);
             Assert.True(expected.SequenceEqual(actual));
         }
 
