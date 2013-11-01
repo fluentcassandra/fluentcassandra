@@ -17,6 +17,7 @@ namespace FluentCassandra.Integration.Tests
 
 		public CassandraColumnFamily UserFamily;
 		public CassandraColumnFamily CounterFamily;
+		public CassandraSuperColumnFamily SuperCounterFamily;
 
 		public User[] Users = new[] {
 					new User { Id = 1, Name = "Darren Gemmell", Email = "darren@somewhere.com", Age = 32 },
@@ -54,6 +55,7 @@ namespace FluentCassandra.Integration.Tests
 			SuperFamily = DB.GetColumnFamily<AsciiType, AsciiType>("Super");
 			UserFamily = DB.GetColumnFamily("Users");
 			CounterFamily = DB.GetColumnFamily("Counters");
+			SuperCounterFamily = DB.GetSuperColumnFamily("SuperCounters");
 
 			if (exists && !reset)
 				return;
@@ -90,6 +92,13 @@ namespace FluentCassandra.Integration.Tests
 					ColumnNameType = CassandraType.AsciiType,
 					DefaultColumnValueType = CassandraType.CounterColumnType
 				});
+				keyspace.TryCreateColumnFamily(new CassandraColumnFamilySchema(type:ColumnType.Super)
+					{
+						FamilyName = "SuperCounters",
+						SuperColumnNameType = CassandraType.AsciiType,
+						ColumnNameType = CassandraType.AsciiType,
+						DefaultColumnValueType = CassandraType.CounterColumnType
+					});
 				keyspace.TryCreateColumnFamily(new CassandraColumnFamilySchema {
 					FamilyName = "StandardDecimalType",
 					ColumnNameType = CassandraType.DecimalType

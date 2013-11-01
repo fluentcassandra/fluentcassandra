@@ -62,6 +62,14 @@ namespace FluentCassandra
 			family.ExecuteOperation(op);
 		}
 
+        public static void InsertCounterColumn(this CassandraColumnFamily family, CassandraObject key,
+                                               CassandraObject superColumnName, CassandraObject columnName,
+                                               long columnValue)
+        {
+            var op = new AddColumn(key, superColumnName, columnName, columnValue);
+            family.ExecuteOperation(op);
+        }
+
 		#endregion
 
 		#region GetColumn

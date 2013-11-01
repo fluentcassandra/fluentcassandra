@@ -57,12 +57,13 @@ namespace FluentCassandra.Integration.Tests.Operations
 
 			// act
 			_superFamily.InsertColumn(_testKey, _testSuperName, _testName, value, timestamp, timeToLive);
-			var column = _family.Get(_testKey).Execute();
+			var column = _superFamily.Get(_testKey).Execute();
 			var actual = column.FirstOrDefault().Columns.FirstOrDefault();
 
 			// assert
-			Assert.Equal(_testName, (string)actual.ColumnName);
-			Assert.Equal(value, (double)actual.ColumnValue);
+			Assert.Equal(_testSuperName, (string)actual.ColumnName);
+			Assert.Equal(_testName, (string)actual.Columns[0].ColumnName);
+			Assert.Equal(value, (double)actual.Columns[0].ColumnValue);
 		}
 	}
 }
