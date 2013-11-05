@@ -194,7 +194,7 @@ namespace FluentCassandra.Types
 
             var keyTypeHint = typeof(TKey);
             var valueTypeHint = typeof(TValue);
-
+            if (value == null) return components;
             using (var bytes = new MemoryStream((byte[])value))
             {
                 // number of key / value pairs

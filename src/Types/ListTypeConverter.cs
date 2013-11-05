@@ -153,7 +153,7 @@ namespace FluentCassandra.Types
             var components = new List<T>();
 
             var typeHint = typeof(T);
-
+            if (value == null) return components;
             using (var bytes = new MemoryStream(value))
             {
                 // number of elements
