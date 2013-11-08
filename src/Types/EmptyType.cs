@@ -54,12 +54,12 @@ namespace FluentCassandra.Types
 
 		#endregion
 
-		public override object GetValue()
-		{
-			return _value;
-		}
+	    public override bool CanConvertFrom(Type sourceType)
+	    {
+	        return true;
+	    }
 
-		private readonly byte[] _value = new byte[0];
+	    private readonly byte[] _value = new byte[0];
 
 		#region Equality
 
@@ -177,6 +177,16 @@ namespace FluentCassandra.Types
 			type.SetValue(o);
 			return type;
 		}
+
+        public override bool CanConvertTo(Type destinationType)
+        {
+            return true;
+        }
+
+        public override object GetValue()
+        {
+            return _value;
+        }
 
 		#endregion
 	}

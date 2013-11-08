@@ -35,7 +35,7 @@ namespace FluentCassandra.Types
 
 		#endregion
 
-		public override object GetValue() { return _value; }
+	    public override object GetValue() { return _value; }
 
 		private Guid _value;
 
@@ -90,6 +90,16 @@ namespace FluentCassandra.Types
 			type.SetValue(o);
 			return type;
 		}
+
+        public override bool CanConvertFrom(Type sourceType)
+        {
+            return Converter.CanConvertFrom(sourceType);
+        }
+
+        public override bool CanConvertTo(Type destinationType)
+        {
+            return Converter.CanConvertTo(destinationType);
+        }
 
 		#endregion
 	}

@@ -45,6 +45,7 @@
     <Compile Include="Connections\ConnectionBuilderTests.cs" />
     <Compile Include="Connections\ConnectionProviderTests.cs" />
     <Compile Include="Connections\NormalConnectionProviderTests.cs" />
+    <Compile Include="Operations\Cql3CollectionsTest.cs" />
     <Compile Include="Linq\LinqToCqlCassandraTests.cs" />
     <Compile Include="Linq\LinqToCqlObjectsCassandraTests.cs" />
     <Compile Include="Linq\LinqToCqlObjectsTests.cs" />
@@ -99,6 +100,9 @@
       <Project>{9daf7022-5820-4214-b13e-ac0a1b37691f}</Project>
       <Name>FluentCassandra.Tests</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
