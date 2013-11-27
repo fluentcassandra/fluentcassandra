@@ -41,3 +41,20 @@ There was an indepth 2 part series of blog posts made on the subject of creating
 
 1. [Your First Fluent Cassandra Application](http://coderjournal.com/2010/06/your-first-fluent-cassandra-application/)
 2. [Your First Fluent Cassandra Application (part 2)](http://coderjournal.com/2010/06/your-first-fluent-cassandra-application-part-2/)
+
+Building FluentCassandra
+--------------------
+
+If you need to build FluentCassandra locally, know that FluentCassandra uses [Albacore][0] - a Ruby-based build system for Windows.
+
+To build FluentCassandra, [install Ruby][1] onto your machine and then open a new command prompt to your local FluentCassandra directory and execute the following command:
+
+````
+$: rake
+````
+
+And that's it! The build will automatically run for you. You can also execute `rake -T` to see a list of additional commands.
+
+[0]: https://github.com/Albacore/albacore "Albacore is a professional quality suite of Rake tasks for building .NET or Mono based systems."
+
+[1]: http://www.railsinstaller.org/ "Rails Installer for Windows"
