@@ -37,10 +37,10 @@ desc "Creates a new Debug build of FluentCassandra locally"
 task :debug => [:set_debug_config, :build]
 
 desc "Packs a Release build of FluentCassandra for NuGet"
-task :nuget => [:build, :pack]
+task :nuget => [:build, :pack, :pack_symbol]
 
 desc "Packs a Debug build of FluentCassandra for NuGet"
-task :nuget_debug => [:debug, :pack]
+task :nuget_debug => [:debug, :pack, :pack_symbol]
 
 #-----------------------
 # Environment variables
@@ -123,6 +123,11 @@ task :create_output_folders => :clean_output_folders do
     create_dir(Folders[:fluentcassandra_nuspec][:root])
     create_dir(Folders[:fluentcassandra_nuspec][:lib])
     create_dir(Folders[:fluentcassandra_nuspec][:net40])
+
+    create_dir(Folders[:fluentcassandra_symbol_nuspec][:root])
+    create_dir(Folders[:fluentcassandra_symbol_nuspec][:lib])
+    create_dir(Folders[:fluentcassandra_symbol_nuspec][:src])
+    create_dir(Folders[:fluentcassandra_symbol_nuspec][:net40])
 end
 
 #-----------------------
@@ -132,11 +137,32 @@ output :fluentcassandra_net40_nuget_output => [:create_output_folders] do |out|
     out.from Folders[:bin][:fluentcassandra_net40]
     out.to Folders[:fluentcassandra_nuspec][:net40]
     out.file Files[:fluentcassandra_net40][:bin]
+end
+
+output :fluentcassandra_symbol_nuget_output => [:create_output_folders] do |out|
+    out.from Folders[:bin][:fluentcassandra_net40]
+    out.to Folders[:fluentcassandra_symbol_nuspec][:net40]
+    out.file Files[:fluentcassandra_net40][:bin]
     out.file Files[:fluentcassandra_net40][:pdb]
 end
 
+task :fluentcassandra_symbol_src_nuget_output => [:create_output_folders] do |out|
+    src = File.join(Folders[:src], Projects[:fluentcassandra_net40][:dir])
+    dest = Folders[:fluentcassandra_symbol_nuspec][:src]
+    FileUtils.cp_r Dir.glob(src + '/*.cs'), dest
+    FileUtils.cp_r File.join(src, "Apache"), dest
+    FileUtils.cp_r File.join(src, "Connections"), dest
+    FileUtils.cp_r File.join(src, "Linq"), dest
+    FileUtils.cp_r File.join(src, "ObjectSerializer"), dest
+    FileUtils.cp_r File.join(src, "Operations"), dest
+    FileUtils.cp_r File.join(src, "Properties"), dest
+    FileUtils.cp_r File.join(src, "System"), dest
+    FileUtils.cp_r File.join(src, "Thrift"), dest
+    FileUtils.cp_r File.join(src, "Types"), dest
+end
+
 desc "Executes all file/copy tasks"
-task :all_output => [:fluentcassandra_net40_nuget_output]
+task :all_output => [:fluentcassandra_net40_nuget_output, :fluentcassandra_symbol_nuget_output, :fluentcassandra_symbol_src_nuget_output]
 
 #-----------------------
 # NuSpec
@@ -172,6 +198,13 @@ nugetpack :pack => [:nuspec] do |nuget|
     nuget.nuspec = File.join(Folders[:nuget_out], "#{Projects[:fluentcassandra_net40][:id]}-v#{env_nuget_version}(#{@env_buildconfigname}).nuspec")
     nuget.base_folder = Folders[:fluentcassandra_nuspec][:root]
     nuget.output = Folders[:nuget_out]
-    nuget.symbols = true
 end
 
+desc "Packs a symbol build of FluentCassandra into a NuGet package"
+nugetpack :pack_symbol => [:nuspec] do |nuget|
+    nuget.command = Commands[:nuget]
+    nuget.nuspec = File.join(Folders[:nuget_out], "#{Projects[:fluentcassandra_net40][:id]}-v#{env_nuget_version}(#{@env_buildconfigname}).nuspec")
+    nuget.base_folder = Folders[:fluentcassandra_symbol_nuspec][:root]
+    nuget.output = Folders[:nuget_out]
+    nuget.symbols = true
+end
