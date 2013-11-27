@@ -17,6 +17,13 @@ Folders = {
         :net40 => File.join(root_folder, "build", "nuget", "FluentCassandra", "lib", "net40"),
     },
 
+    :fluentcassandra_symbol_nuspec => {
+        :root => File.join(root_folder, "build", "nuget", "FluentCassandra-Symbol"),
+        :lib => File.join(root_folder, "build", "nuget", "FluentCassandra-Symbol", "lib"),
+        :src => File.join(root_folder, "build", "nuget", "FluentCassandra-Symbol", "src"),
+        :net40 => File.join(root_folder, "build", "nuget", "FluentCassandra-Symbol", "lib", "net40"),
+    },
+
     #specifies the locations of the binary DLLs we want to use in NuGet / XUnit
     :bin => {
         :fluentcassandra_net40 => 'placeholder - specify build environment',
