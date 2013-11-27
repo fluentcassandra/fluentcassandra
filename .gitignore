@@ -4,6 +4,10 @@ msbuild.log
 # nuget package files
 *.nupkg
 
+# Build system output
+Gemfile.lock
+build/
+
 # Don't include NuGet Packages
 packages/
 
