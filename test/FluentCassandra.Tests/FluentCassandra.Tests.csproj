@@ -49,8 +49,10 @@
     <Compile Include="BigDecimalTest.cs" />
     <Compile Include="Bugs\Issue28GuidGeneratorInParallelContext.cs" />
     <Compile Include="Bugs\Issue65ServerTimeoutLost.cs" />
-    <Compile Include="Connections\SingleServerManagerTests.cs" />
+    <Compile Include="Connections\InfallibleSingleServerManagerTests.cs" />
     <Compile Include="Connections\RoundRobinServerManagerTests.cs" />
+    <Compile Include="Connections\ServerManagerFactoryTests.cs" />
+    <Compile Include="Connections\SingleServerManagerTests.cs" />
     <Compile Include="CqlHelperTest.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="Operations\CassandraIndexClauseTest.cs" />
