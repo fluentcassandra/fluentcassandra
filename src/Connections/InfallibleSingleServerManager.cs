@@ -8,7 +8,7 @@ namespace FluentCassandra.Connections
 	{
 		private Server _server;
 
-        public InfallibleSingleServerManager(IConnectionBuilder builder)
+		public InfallibleSingleServerManager(IConnectionBuilder builder)
 		{
 			_server = builder.Servers[0]; 
 		}

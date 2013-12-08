@@ -3,7 +3,7 @@ using Xunit;
 
 namespace FluentCassandra.Connections
 {
-    public class InfallibleSingleServerManagerTests
+	public class InfallibleSingleServerManagerTests
 	{
 		[Fact]
 		public void CanGetServerAfterError()
@@ -14,10 +14,10 @@ namespace FluentCassandra.Connections
 
 			for (int i = 0; i < 10; i++)
 			{
-                Assert.True(target.HasNext, "InfallibleSingleServerManager should always have another server available.");
+				Assert.True(target.HasNext, "InfallibleSingleServerManager should always have another server available.");
 				
 				Server next = target.Next();
-                Assert.True(original.ToString().Equals(next.ToString(), StringComparison.OrdinalIgnoreCase), "InfallibleSingleServerManager always returns the same server.");
+				Assert.True(original.ToString().Equals(next.ToString(), StringComparison.OrdinalIgnoreCase), "InfallibleSingleServerManager always returns the same server.");
 
 				//mark the server as failing to set up the next test iteration.
 				target.ErrorOccurred(next);
