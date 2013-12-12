@@ -1,27 +1,23 @@
 ﻿using System;
 using Xunit;
 
-namespace FluentCassandra.Connections
+namespace FluentCassandra.Connections 
 {
+
 	public class SingleServerManagerTests
 	{
+	
 		[Fact]
-		public void CanGetServerAfterError()
+		public void HasNextIsFalseAfterServerFailure()
 		{
-			SingleServerManager target = new SingleServerManager(new ConnectionBuilder("Server=unit-test-1"));
 
-			Server original = target.Next();
+			var manager = new SingleServerManager(new ConnectionBuilder("Server=unit-test-1"));
+			
+			Assert.True(manager.HasNext, "SingleServerManager was not initialized with a server");
+			var server = manager.Next();
+			manager.ErrorOccurred(server,new Exception());
 
-			for (int i = 0; i < 10; i++)
-			{
-				Assert.True(target.HasNext, "SingleServerManager should always have another server available.");
-				
-				Server next = target.Next();
-				Assert.True(original.ToString().Equals(next.ToString(), StringComparison.OrdinalIgnoreCase), "SingleServerManager always returns the same server.");
-
-				//mark the server as failing to set up the next test iteration.
-				target.ErrorOccurred(next);
-			}
+			Assert.False(manager.HasNext, "SingleServerManager still has a server after its failure");
 		}
 	}
 }
