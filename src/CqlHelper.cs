@@ -1,8 +1,25 @@
 ﻿
+using System.Text;
+
 namespace FluentCassandra
 {
     public static class CqlHelper
     {
+        /// <summary>
+        /// Formats a provided byte array into a hex string for use with CQL.
+        /// </summary>
+        /// <param name="value">The byte array to format</param>
+        /// <returns>A hexidecimal string with a leading "0x", which is expected by the CQL3 format.</returns>
+        /// <remarks>Intended to be used with blob data types in CQL only.</remarks>
+        public static string EscapeForCql(byte[] value)
+        {
+            var hex = new StringBuilder((value.Length * 2) + 2);
+            hex.Append("0x");
+            foreach (var b in value)
+                hex.AppendFormat("{0:x2}", b);
+            return hex.ToString();
+        }
+
         /// <summary>
         /// Escapse the provided string for use with CQL.
         /// </summary>
