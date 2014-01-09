@@ -21,12 +21,12 @@
  * details.
  */
 
-using FluentCassandra.Thrift.Protocol;
 using System;
+using FluentCassandra.Thrift.Protocol;
 
 namespace FluentCassandra.Thrift
 {
-	public class TApplicationException : Exception
+	public class TApplicationException : TException
 	{
 		protected ExceptionType type;
 
@@ -130,7 +130,12 @@ namespace FluentCassandra.Thrift
 			InvalidMessageType,
 			WrongMethodName,
 			BadSequenceID,
-			MissingResult
+			MissingResult,
+			InternalError,
+			ProtocolError,
+			InvalidTransform,
+			InvalidProtocol,
+			UnsupportedClientType
 		}
 	}
 }

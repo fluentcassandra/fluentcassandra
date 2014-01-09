@@ -21,7 +21,6 @@
  * details.
  */
 
-
 namespace FluentCassandra.Thrift.Transport
 {
 	public abstract class TServerTransport

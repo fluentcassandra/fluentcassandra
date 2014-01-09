@@ -14,30 +14,32 @@ namespace FluentCassandra.Apache.Cassandra
 {
 
   /// <summary>
-  /// Row returned from a CQL query
+  /// Describes a trigger.
+  /// `options` should include at least 'class' param.
+  /// Other options are not supported yet.
   /// </summary>
   #if !SILVERLIGHT
   [Serializable]
   #endif
-  public partial class CqlRow : TBase
+  public partial class TriggerDef : TBase
   {
 
-    public byte[] Key { get; set; }
+    public string Name { get; set; }
 
-    public List<Column> Columns { get; set; }
+    public Dictionary<string, string> Options { get; set; }
 
-    public CqlRow() {
+    public TriggerDef() {
     }
 
-    public CqlRow(byte[] key, List<Column> columns) : this() {
-      this.Key = key;
-      this.Columns = columns;
+    public TriggerDef(string name, Dictionary<string, string> options) : this() {
+      this.Name = name;
+      this.Options = options;
     }
 
     public void Read (TProtocol iprot)
     {
-      bool isset_key = false;
-      bool isset_columns = false;
+      bool isset_name = false;
+      bool isset_options = false;
       TField field;
       iprot.ReadStructBegin();
       while (true)
@@ -50,27 +52,28 @@ namespace FluentCassandra.Apache.Cassandra
         {
           case 1:
             if (field.Type == TType.String) {
-              Key = iprot.ReadBinary();
-              isset_key = true;
+              Name = iprot.ReadString();
+              isset_name = true;
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
             break;
           case 2:
-            if (field.Type == TType.List) {
+            if (field.Type == TType.Map) {
               {
-                Columns = new List<Column>();
-                TList _list82 = iprot.ReadListBegin();
-                for( int _i83 = 0; _i83 < _list82.Count; ++_i83)
+                Options = new Dictionary<string, string>();
+                TMap _map50 = iprot.ReadMapBegin();
+                for( int _i51 = 0; _i51 < _map50.Count; ++_i51)
                 {
-                  Column _elem84 = new Column();
-                  _elem84 = new Column();
-                  _elem84.Read(iprot);
-                  Columns.Add(_elem84);
+                  string _key52;
+                  string _val53;
+                  _key52 = iprot.ReadString();
+                  _val53 = iprot.ReadString();
+                  Options[_key52] = _val53;
                 }
-                iprot.ReadListEnd();
+                iprot.ReadMapEnd();
               }
-              isset_columns = true;
+              isset_options = true;
             } else { 
               TProtocolUtil.Skip(iprot, field.Type);
             }
@@ -82,33 +85,34 @@ namespace FluentCassandra.Apache.Cassandra
         iprot.ReadFieldEnd();
       }
       iprot.ReadStructEnd();
-      if (!isset_key)
+      if (!isset_name)
         throw new TProtocolException(TProtocolException.INVALID_DATA);
-      if (!isset_columns)
+      if (!isset_options)
         throw new TProtocolException(TProtocolException.INVALID_DATA);
     }
 
     public void Write(TProtocol oprot) {
-      TStruct struc = new TStruct("CqlRow");
+      TStruct struc = new TStruct("TriggerDef");
       oprot.WriteStructBegin(struc);
       TField field = new TField();
-      field.Name = "key";
+      field.Name = "name";
       field.Type = TType.String;
       field.ID = 1;
       oprot.WriteFieldBegin(field);
-      oprot.WriteBinary(Key);
+      oprot.WriteString(Name);
       oprot.WriteFieldEnd();
-      field.Name = "columns";
-      field.Type = TType.List;
+      field.Name = "options";
+      field.Type = TType.Map;
       field.ID = 2;
       oprot.WriteFieldBegin(field);
       {
-        oprot.WriteListBegin(new TList(TType.Struct, Columns.Count));
-        foreach (Column _iter85 in Columns)
+        oprot.WriteMapBegin(new TMap(TType.String, TType.String, Options.Count));
+        foreach (string _iter54 in Options.Keys)
         {
-          _iter85.Write(oprot);
+          oprot.WriteString(_iter54);
+          oprot.WriteString(Options[_iter54]);
         }
-        oprot.WriteListEnd();
+        oprot.WriteMapEnd();
       }
       oprot.WriteFieldEnd();
       oprot.WriteFieldStop();
@@ -116,11 +120,11 @@ namespace FluentCassandra.Apache.Cassandra
     }
 
     public override string ToString() {
-      StringBuilder sb = new StringBuilder("CqlRow(");
-      sb.Append("Key: ");
-      sb.Append(Key);
-      sb.Append(",Columns: ");
-      sb.Append(Columns);
+      StringBuilder sb = new StringBuilder("TriggerDef(");
+      sb.Append("Name: ");
+      sb.Append(Name);
+      sb.Append(",Options: ");
+      sb.Append(Options);
       sb.Append(")");
       return sb.ToString();
     }

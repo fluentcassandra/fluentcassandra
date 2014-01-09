@@ -21,12 +21,13 @@
  * details.
  */
 
-using FluentCassandra.Thrift.Transport;
+using System;
 using System.Text;
+using FluentCassandra.Thrift.Transport;
 
 namespace FluentCassandra.Thrift.Protocol
 {
-	public abstract class TProtocol
+	public abstract class TProtocol : IDisposable
 	{
 		protected TTransport trans;
 
@@ -39,6 +40,29 @@ namespace FluentCassandra.Thrift.Protocol
 		{
 			get { return trans; }
 		}
+
+        #region " IDisposable Support "
+        private bool _IsDisposed;
+
+        // IDisposable
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_IsDisposed)
+            {
+                if (disposing)
+                {
+                    if (trans is IDisposable)
+                        (trans as IDisposable).Dispose();
+                }
+            }
+            _IsDisposed = true;
+        }
+        #endregion
 
 		public abstract void WriteMessageBegin(TMessage message);
 		public abstract void WriteMessageEnd();
@@ -54,7 +78,7 @@ namespace FluentCassandra.Thrift.Protocol
 		public abstract void WriteSetBegin(TSet set);
 		public abstract void WriteSetEnd();
 		public abstract void WriteBool(bool b);
-		public abstract void WriteByte(byte b);
+		public abstract void WriteByte(sbyte b);
 		public abstract void WriteI16(short i16);
 		public abstract void WriteI32(int i32);
 		public abstract void WriteI64(long i64);
@@ -77,7 +101,7 @@ namespace FluentCassandra.Thrift.Protocol
 		public abstract TSet ReadSetBegin();
 		public abstract void ReadSetEnd();
 		public abstract bool ReadBool();
-		public abstract byte ReadByte();
+		public abstract sbyte ReadByte();
 		public abstract short ReadI16();
 		public abstract int ReadI32();
 		public abstract long ReadI64();

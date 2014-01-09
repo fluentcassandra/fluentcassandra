@@ -21,7 +21,6 @@
  * details.
  */
 
-
 namespace FluentCassandra.Thrift.Protocol
 {
 	public enum TType : byte

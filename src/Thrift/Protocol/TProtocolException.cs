@@ -25,7 +25,7 @@ using System;
 
 namespace FluentCassandra.Thrift.Protocol
 {
-	public class TProtocolException : Exception
+	public class TProtocolException : TException
 	{
 		public const int UNKNOWN = 0;
 		public const int INVALID_DATA = 1;

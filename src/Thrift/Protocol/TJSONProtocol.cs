@@ -17,12 +17,12 @@
  * under the License.
  */
 
-using FluentCassandra.Thrift.Transport;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using FluentCassandra.Thrift.Transport;
 
 namespace FluentCassandra.Thrift.Protocol
 {
@@ -406,6 +406,7 @@ namespace FluentCassandra.Thrift.Protocol
 			}
 			else if ((ch >= 'a') && (ch <= 'f'))
 			{
+				ch += 10;
 				return (byte)((char)ch - 'a');
 			}
 			else
@@ -427,6 +428,7 @@ namespace FluentCassandra.Thrift.Protocol
 			}
 			else
 			{
+				val -= 10;
 				return (byte)((char)val + 'a');
 			}
 		}
@@ -671,7 +673,7 @@ namespace FluentCassandra.Thrift.Protocol
 			WriteJSONInteger(b ? (long)1 : (long)0);
 		}
 
-		public override void WriteByte(byte b)
+		public override void WriteByte(sbyte b)
 		{
 			WriteJSONInteger((long)b);
 		}
@@ -1032,9 +1034,9 @@ namespace FluentCassandra.Thrift.Protocol
 			return (ReadJSONInteger() == 0 ? false : true);
 		}
 
-		public override byte ReadByte()
+		public override sbyte ReadByte()
 		{
-			return (byte)ReadJSONInteger();
+			return (sbyte)ReadJSONInteger();
 		}
 
 		public override short ReadI16()

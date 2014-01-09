@@ -15,36 +15,15 @@
  * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
- *
- * Contains some contributions under the Thrift Software License.
- * Please see doc/old-thrift-license.txt in the Thrift distribution for
- * details.
  */
 
 namespace FluentCassandra.Thrift.Protocol
 {
-	public struct TList
+	public interface TAbstractBase
 	{
-		private TType elementType;
-		private int count;
-
-		public TList(TType elementType, int count)
-			:this()
-		{
-			this.elementType = elementType;
-			this.count = count;
-		}
-
-		public TType ElementType
-		{
-			get { return elementType; }
-			set { elementType = value; }
-		}
-
-		public int Count
-		{
-			get { return count; }
-			set { count = value; }
-		}
+		///
+		/// Writes the objects out to the protocol
+		///
+		void Write(TProtocol tProtocol);
 	}
 }
