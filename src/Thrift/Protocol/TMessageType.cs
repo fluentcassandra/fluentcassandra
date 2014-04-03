@@ -17,7 +17,6 @@
  * under the License.
  */
 
-
 namespace FluentCassandra.Thrift.Protocol
 {
 	public enum TMessageType

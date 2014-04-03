@@ -21,9 +21,9 @@
  * details.
  */
 
-using FluentCassandra.Thrift.Transport;
 using System;
 using System.Text;
+using FluentCassandra.Thrift.Transport;
 
 namespace FluentCassandra.Thrift.Protocol
 {
@@ -34,10 +34,6 @@ namespace FluentCassandra.Thrift.Protocol
 
 		protected bool strictRead_ = false;
 		protected bool strictWrite_ = true;
-
-		protected int readLength_;
-		protected bool checkReadLength_ = false;
-
 
 		#region BinaryProtocol Factory
 		 /**
@@ -92,7 +88,7 @@ namespace FluentCassandra.Thrift.Protocol
 			else
 			{
 				WriteString(message.Name);
-				WriteByte((byte)message.Type);
+				WriteByte((sbyte)message.Type);
 				WriteI32(message.SeqID);
 			}
 		}
@@ -111,7 +107,7 @@ namespace FluentCassandra.Thrift.Protocol
 
 		public override void WriteFieldBegin(TField field)
 		{
-			WriteByte((byte)field.Type);
+			WriteByte((sbyte)field.Type);
 			WriteI16(field.ID);
 		}
 
@@ -121,13 +117,13 @@ namespace FluentCassandra.Thrift.Protocol
 
 		public override void WriteFieldStop()
 		{
-			WriteByte((byte)TType.Stop);
+			WriteByte((sbyte)TType.Stop);
 		}
 
 		public override void WriteMapBegin(TMap map)
 		{
-			WriteByte((byte)map.KeyType);
-			WriteByte((byte)map.ValueType);
+			WriteByte((sbyte)map.KeyType);
+			WriteByte((sbyte)map.ValueType);
 			WriteI32(map.Count);
 		}
 
@@ -137,7 +133,7 @@ namespace FluentCassandra.Thrift.Protocol
 
 		public override void WriteListBegin(TList list)
 		{
-			WriteByte((byte)list.ElementType);
+			WriteByte((sbyte)list.ElementType);
 			WriteI32(list.Count);
 		}
 
@@ -147,7 +143,7 @@ namespace FluentCassandra.Thrift.Protocol
 
 		public override void WriteSetBegin(TSet set)
 		{
-			WriteByte((byte)set.ElementType);
+			WriteByte((sbyte)set.ElementType);
 			WriteI32(set.Count);
 		}
 
@@ -157,13 +153,13 @@ namespace FluentCassandra.Thrift.Protocol
 
 		public override void WriteBool(bool b)
 		{
-			WriteByte(b ? (byte)1 : (byte)0);
+			WriteByte(b ? (sbyte)1 : (sbyte)0);
 		}
 
 		private byte[] bout = new byte[1];
-		public override void WriteByte(byte b)
+		public override void WriteByte(sbyte b)
 		{
-			bout[0] = b;
+			bout[0] = (byte)b;
 			trans.Write(bout, 0, 1);
 		}
 
@@ -323,10 +319,10 @@ namespace FluentCassandra.Thrift.Protocol
 		}
 
 		private byte[] bin = new byte[1];
-		public override byte ReadByte()
+		public override sbyte ReadByte()
 		{
 			ReadAll(bin, 0, 1);
-			return bin[0];
+			return (sbyte)bin[0];
 		}
 
 		private byte[] i16in = new byte[2];
@@ -343,22 +339,28 @@ namespace FluentCassandra.Thrift.Protocol
 			return (int)(((i32in[0] & 0xff) << 24) | ((i32in[1] & 0xff) << 16) | ((i32in[2] & 0xff) << 8) | ((i32in[3] & 0xff)));
 		}
 
-		private byte[] i64in = new byte[8];
+#pragma warning disable 675
+
+        private byte[] i64in = new byte[8];
 		public override long ReadI64()
 		{
 			ReadAll(i64in, 0, 8);
-            return (long)(
-                (ulong)((ulong)(i64in[0] & 0xff) << 56) |
-                (ulong)((ulong)(i64in[1] & 0xff) << 48) |
-                (ulong)((ulong)(i64in[2] & 0xff) << 40) |
-                (ulong)((ulong)(i64in[3] & 0xff) << 32) |
-                (ulong)((ulong)(i64in[4] & 0xff) << 24) |
-                (ulong)((ulong)(i64in[5] & 0xff) << 16) |
-                (ulong)((ulong)(i64in[6] & 0xff) << 8) |
-                (ulong)((ulong)(i64in[7] & 0xff)));
+            unchecked {
+              return (long)(
+                  ((long)(i64in[0] & 0xff) << 56) |
+                  ((long)(i64in[1] & 0xff) << 48) |
+                  ((long)(i64in[2] & 0xff) << 40) |
+                  ((long)(i64in[3] & 0xff) << 32) |
+                  ((long)(i64in[4] & 0xff) << 24) |
+                  ((long)(i64in[5] & 0xff) << 16) |
+                  ((long)(i64in[6] & 0xff) << 8) |
+                  ((long)(i64in[7] & 0xff)));
+            }
         }
 
-		public override double ReadDouble()
+#pragma warning restore 675
+
+        public override double ReadDouble()
 		{
 #if !SILVERLIGHT
 			return BitConverter.Int64BitsToDouble(ReadI64());
@@ -369,35 +371,15 @@ namespace FluentCassandra.Thrift.Protocol
 #endif
 		}
 
-		public void SetReadLength(int readLength)
-		{
-			readLength_ = readLength;
-			checkReadLength_ = true;
-		}
-
-		protected void CheckReadLength(int length)
-		{
-			if (checkReadLength_)
-			{
-				readLength_ -= length;
-				if (readLength_ < 0)
-				{
-					throw new Exception("Message length exceeded: " + length);
-				}
-			}
-		}
-
 		public override byte[] ReadBinary()
 		{
 			int size = ReadI32();
-			CheckReadLength(size);
 			byte[] buf = new byte[size];
 			trans.ReadAll(buf, 0, size);
 			return buf;
 		}
 		private  string ReadStringBody(int size)
 		{
-			CheckReadLength(size);
 			byte[] buf = new byte[size];
 			trans.ReadAll(buf, 0, size);
 			return Encoding.UTF8.GetString(buf, 0, buf.Length);
@@ -405,7 +387,6 @@ namespace FluentCassandra.Thrift.Protocol
 
 		private int ReadAll(byte[] buf, int off, int len)
 		{
-			CheckReadLength(len);
 			return trans.ReadAll(buf, off, len);
 		}
 

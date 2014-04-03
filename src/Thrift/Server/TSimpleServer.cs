@@ -21,9 +21,9 @@
  * details.
  */
 
+using System;
 using FluentCassandra.Thrift.Protocol;
 using FluentCassandra.Thrift.Transport;
-using System;
 
 namespace FluentCassandra.Thrift.Server
 {

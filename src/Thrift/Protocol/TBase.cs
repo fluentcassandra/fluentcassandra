@@ -19,16 +19,11 @@
 
 namespace FluentCassandra.Thrift.Protocol
 {
-	public interface TBase
+	public interface TBase : TAbstractBase
 	{
 		///
 		/// Reads the TObject from the given input protocol.
 		///
 		void Read(TProtocol tProtocol);
-
-		///
-		/// Writes the objects out to the protocol
-		///
-		void Write(TProtocol tProtocol);
 	}
 }

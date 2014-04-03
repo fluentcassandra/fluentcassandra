@@ -21,7 +21,6 @@
  * details.
  */
 
-
 namespace FluentCassandra.Thrift.Protocol
 {
 	public static class TProtocolUtil

@@ -21,11 +21,9 @@
  * details.
  */
 
-using System;
-
 namespace FluentCassandra.Thrift.Transport
 {
-	public class TTransportException : Exception
+	public class TTransportException : TException
 	{
 		protected ExceptionType type;
 

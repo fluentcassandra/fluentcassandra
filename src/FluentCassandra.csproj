@@ -56,6 +56,8 @@
     <Compile Include="Apache\Cassandra\AuthenticationException.cs" />
     <Compile Include="Apache\Cassandra\AuthenticationRequest.cs" />
     <Compile Include="Apache\Cassandra\AuthorizationException.cs" />
+    <Compile Include="Apache\Cassandra\CASResult.cs" />
+    <Compile Include="Apache\Cassandra\cassandra.Constants.cs" />
     <Compile Include="Apache\Cassandra\Cassandra.cs" />
     <Compile Include="Apache\Cassandra\CfDef.cs" />
     <Compile Include="Apache\Cassandra\CfSplit.cs" />
@@ -66,7 +68,6 @@
     <Compile Include="Apache\Cassandra\ColumnPath.cs" />
     <Compile Include="Apache\Cassandra\Compression.cs" />
     <Compile Include="Apache\Cassandra\ConsistencyLevel.cs" />
-    <Compile Include="Apache\Cassandra\Constants.cs" />
     <Compile Include="Apache\Cassandra\CounterColumn.cs" />
     <Compile Include="Apache\Cassandra\CounterSuperColumn.cs" />
     <Compile Include="Apache\Cassandra\CqlMetadata.cs" />
@@ -93,6 +94,7 @@
     <Compile Include="Apache\Cassandra\SuperColumn.cs" />
     <Compile Include="Apache\Cassandra\TimedOutException.cs" />
     <Compile Include="Apache\Cassandra\TokenRange.cs" />
+    <Compile Include="Apache\Cassandra\TriggerDef.cs" />
     <Compile Include="Apache\Cassandra\UnavailableException.cs" />
     <Compile Include="BaseCassandraColumnFamily.cs" />
     <Compile Include="CassandraColumnFamilySchema.cs" />
@@ -225,7 +227,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System\DateTimePrecise.cs" />
+    <Compile Include="Thrift\Collections\TCollections.cs" />
     <Compile Include="Thrift\Collections\THashSet.cs" />
+    <Compile Include="Thrift\Protocol\TAbstractBase.cs" />
     <Compile Include="Thrift\Protocol\TBase.cs" />
     <Compile Include="Thrift\Protocol\TBase64Utils.cs" />
     <Compile Include="Thrift\Protocol\TBinaryProtocol.cs" />
@@ -236,7 +240,10 @@
     <Compile Include="Thrift\Protocol\TMap.cs" />
     <Compile Include="Thrift\Protocol\TMessage.cs" />
     <Compile Include="Thrift\Protocol\TMessageType.cs" />
+    <Compile Include="Thrift\Protocol\TMultiplexedProcessor.cs" />
+    <Compile Include="Thrift\Protocol\TMultiplexedProtocol.cs" />
     <Compile Include="Thrift\Protocol\TProtocol.cs" />
+    <Compile Include="Thrift\Protocol\TProtocolDecorator.cs" />
     <Compile Include="Thrift\Protocol\TProtocolException.cs" />
     <Compile Include="Thrift\Protocol\TProtocolFactory.cs" />
     <Compile Include="Thrift\Protocol\TProtocolUtil.cs" />
@@ -248,11 +255,13 @@
     <Compile Include="Thrift\Server\TThreadedServer.cs" />
     <Compile Include="Thrift\Server\TThreadPoolServer.cs" />
     <Compile Include="Thrift\TApplicationException.cs" />
+    <Compile Include="Thrift\TException.cs" />
     <Compile Include="Thrift\TProcessor.cs" />
     <Compile Include="Thrift\Transport\TBufferedTransport.cs" />
     <Compile Include="Thrift\Transport\TFramedTransport.cs" />
     <Compile Include="Thrift\Transport\THttpClient.cs" />
     <Compile Include="Thrift\Transport\THttpHandler.cs" />
+    <Compile Include="Thrift\Transport\TMemoryBuffer.cs" />
     <Compile Include="Thrift\Transport\TServerSocket.cs" />
     <Compile Include="Thrift\Transport\TServerTransport.cs" />
     <Compile Include="Thrift\Transport\TSocket.cs" />

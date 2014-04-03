@@ -21,30 +21,20 @@
  * details.
  */
 
-namespace FluentCassandra.Thrift.Protocol
+using System;
+
+namespace FluentCassandra.Thrift
 {
-	public struct TList
+	public class TException : Exception
 	{
-		private TType elementType;
-		private int count;
-
-		public TList(TType elementType, int count)
-			:this()
+		public TException()
 		{
-			this.elementType = elementType;
-			this.count = count;
 		}
 
-		public TType ElementType
+		public TException( string message)
+			: base(message)
 		{
-			get { return elementType; }
-			set { elementType = value; }
 		}
 
-		public int Count
-		{
-			get { return count; }
-			set { count = value; }
-		}
 	}
 }
