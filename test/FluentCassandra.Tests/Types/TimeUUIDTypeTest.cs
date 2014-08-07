@@ -145,5 +145,18 @@ namespace FluentCassandra.Types
 			// assert
 			Assert.Equal(guid, (Guid)actual);
 		}
+
+        [Fact]
+	    public void Null_to_Guid()
+	    {
+            // arrange
+
+            // act
+            TimeUUIDType actual = new TimeUUIDType();
+            actual.SetValueFromBigEndian(null);
+
+            // assert
+            Assert.Equal(Guid.Empty, (Guid)actual);
+	    }
 	}
 }

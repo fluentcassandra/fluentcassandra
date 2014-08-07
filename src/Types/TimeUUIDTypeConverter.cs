@@ -57,6 +57,7 @@ namespace FluentCassandra.Types
 
 		public override Guid FromBigEndian(byte[] value)
 		{
+		    if (value == null || value.Length == 0) return Guid.Empty;
 			return value.ToGuidFromBigEndianBytes();
 		}
 	}
